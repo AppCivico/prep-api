@@ -5,9 +5,6 @@ BEGIN;
 CREATE TABLE "user"
 (
     id                 SERIAL PRIMARY KEY,
-    fb_id              TEXT,
-    name               TEXT,
-    picture            TEXT,
     email              TEXT NOT NULL UNIQUE,
     password           TEXT NOT NULL,
     email_confirmed    BOOLEAN NOT NULL DEFAULT false,
@@ -16,8 +13,18 @@ CREATE TABLE "user"
     created_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now()
 );
 
+CREATE TABLE recipient (
+    id         SERIAL PRIMARY KEY,
+    fb_id      VARCHAR NOT NULL UNIQUE,
+    page_id    VARCHAR NOT NULL,
+    name       TEXT    NOT NULL,
+    picture    TEXT,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE chatbot_session (
-    user_id            INTEGER PRIMARY KEY REFERENCES "user"(id),
+    recipient_id       INTEGER PRIMARY KEY REFERENCES recipient(id),
     session_content    JSON NOT NULL,
     session_updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
 );
@@ -38,7 +45,6 @@ CREATE TABLE role (
 
 INSERT INTO role VALUES (1, 'super_admin');
 INSERT INTO role VALUES (2, 'admin');
-INSERT INTO role VALUES (3, 'recipient');
 
 CREATE TABLE user_role (
     user_id integer references "user"(id),
