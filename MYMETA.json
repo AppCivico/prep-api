@@ -1,0 +1,86 @@
+{
+   "abstract" : "PREP API",
+   "author" : [
+      "Lucas Ansei <lucastakushi@hotmail.com.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "ExtUtils::MakeMaker version 7.1001, CPAN::Meta::Converter version 2.150005",
+   "license" : [
+      "open_source"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "prep_api",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "inc"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0",
+            "File::Spec" : "0",
+            "IO::Handle" : "0",
+            "IPC::Open3" : "0",
+            "Mojo::Util" : "0",
+            "Test::Mojo" : "0",
+            "Test::More" : "0",
+            "lib" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "App::Sqitch" : "0.9996",
+            "Config::General" : "0",
+            "Crypt::PRNG" : "0",
+            "DBD::Pg" : "0",
+            "DBIx::Class::Core" : "0",
+            "DBIx::Class::InflateColumn::Serializer" : "0",
+            "DBIx::Class::PassphraseColumn" : "0",
+            "DBIx::Class::ResultSet" : "0",
+            "DBIx::Class::Schema" : "0",
+            "DBIx::Class::TimeStamp" : "0",
+            "DDP" : "0",
+            "Data::Diver" : "0",
+            "Data::Manager" : "0",
+            "Data::Printer" : "0",
+            "Data::Section::Simple" : "0",
+            "Data::Validate::URI" : "0",
+            "Data::Verifier::Field" : "0",
+            "Data::Verifier::Filters" : "0",
+            "Data::Verifier::Results" : "0",
+            "Data::Visitor" : "0",
+            "Data::Visitor::Callback" : "0",
+            "Exporter" : "0",
+            "FindBin" : "0",
+            "Mojo::Base" : "0",
+            "Moose" : "0",
+            "Moose::Role" : "0",
+            "Moose::Util::TypeConstraints" : "0",
+            "MooseX::MarkAsMethods" : "0",
+            "MooseX::NonMoose" : "0",
+            "MooseX::Types" : "0",
+            "Scalar::Util" : "0",
+            "common::sense" : "0",
+            "namespace::autoclean" : "0",
+            "perl" : "5.014002",
+            "strict" : "0",
+            "utf8" : "0",
+            "vars" : "0",
+            "warnings" : "0"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "version" : "20190114",
+   "x_serialization_backend" : "JSON::PP version 2.27300"
+}
