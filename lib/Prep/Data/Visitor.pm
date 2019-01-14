@@ -1,4 +1,4 @@
-package MandatoAberto::Data::Visitor;
+package Prep::Data::Visitor;
 use Moose;
 use namespace::autoclean;
 

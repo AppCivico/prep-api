@@ -1,10 +1,10 @@
-package MandatoAberto::Data::Manager;
+package Prep::Data::Manager;
 use Moose;
 use namespace::autoclean;
 
 extends 'Data::Manager';
 
-use MandatoAberto::Data::Visitor;
+use Prep::Data::Visitor;
 
 has _input => ( is => 'ro', isa => 'HashRef', init_arg => 'input' );
 

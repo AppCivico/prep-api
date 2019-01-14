@@ -10,12 +10,6 @@ use Prep::SchemaConnected;
 sub startup {
     my $self = shift;
 
-    # Load configuration from hash returned by config file
-    my $config = $self->plugin('Config');
-
-    # Configure the application
-    $self->secrets($config->{secrets});
-
     # Plugins.
     $self->plugin('Detach');
 

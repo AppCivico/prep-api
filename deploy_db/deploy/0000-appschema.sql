@@ -19,6 +19,7 @@ CREATE TABLE recipient (
     page_id    VARCHAR NOT NULL,
     name       TEXT    NOT NULL,
     picture    TEXT,
+    opt_in     BOOLEAN   NOT NULL DEFAULT TRUE,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
 );

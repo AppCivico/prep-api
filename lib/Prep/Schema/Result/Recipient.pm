@@ -55,6 +55,12 @@ __PACKAGE__->table("recipient");
   is_nullable: 0
   original: {data_type => "varchar"}
 
+=head2 page_id
+
+  data_type: 'text'
+  is_nullable: 0
+  original: {data_type => "varchar"}
+
 =head2 name
 
   data_type: 'text'
@@ -64,6 +70,12 @@ __PACKAGE__->table("recipient");
 
   data_type: 'text'
   is_nullable: 1
+
+=head2 opt_in
+
+  data_type: 'boolean'
+  default_value: true
+  is_nullable: 0
 
 =head2 updated_at
 
@@ -93,10 +105,18 @@ __PACKAGE__->add_columns(
     is_nullable => 0,
     original    => { data_type => "varchar" },
   },
+  "page_id",
+  {
+    data_type   => "text",
+    is_nullable => 0,
+    original    => { data_type => "varchar" },
+  },
   "name",
   { data_type => "text", is_nullable => 0 },
   "picture",
   { data_type => "text", is_nullable => 1 },
+  "opt_in",
+  { data_type => "boolean", default_value => \"true", is_nullable => 0 },
   "updated_at",
   { data_type => "timestamp", is_nullable => 1 },
   "created_at",
@@ -152,10 +172,53 @@ __PACKAGE__->might_have(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-13 23:09:01
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:r8FrvqA3PxKv9hVpWgkzhA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-14 18:25:46
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:jmp4zJ43s+SjCtHqQ3xJ4Q
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
+
+with 'Prep::Role::Verification';
+with 'Prep::Role::Verification::TransactionalActions::DBIC';
+
+sub verifiers_specs {
+    my $self = shift;
+
+    return {
+        update => Data::Verifier->new(
+            filters => [qw(trim)],
+            profile => {
+                name => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                picture => {
+                    required => 0,
+                    type     => 'Str',
+                },
+                opt_in => {
+                    required => 0,
+                    type     => 'Bool'
+                }
+            }
+        ),
+    };
+}
+
+sub action_specs {
+    my ($self) = @_;
+
+    return {
+        update => sub {
+            my $r = shift;
+
+            my %values = $r->valid_values;
+            not defined $values{$_} and delete $values{$_} for keys %values;
+
+            $self->update(\%values);
+        }
+    };
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

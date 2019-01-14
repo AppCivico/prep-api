@@ -8,7 +8,7 @@ extends "DBIx::Class::ResultSet";
 with "Prep::Role::Verification";
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
 
-use Prep::Types qw( URI );
+# use Prep::Types qw( URI );
 
 use Data::Verifier;
 use Data::Printer;
@@ -26,7 +26,14 @@ sub verifiers_specs {
                 },
                 fb_id => {
                     required => 1,
-                    type     => 'Num'
+                    type     => 'Num',
+                    post_check => sub {
+                        my $fb_id = $_[0]->get_value('fb_id');
+
+                        $self->search( { fb_id => $fb_id } )->count and die \['fb_id', 'invalid'];
+
+                        return 1;
+                    }
                 },
                 page_id => {
                     required => 1,
@@ -34,7 +41,7 @@ sub verifiers_specs {
                 },
                 picture => {
                     required => 0,
-                    type     => URI
+                    type     => 'Str'
                 },
             }
         ),

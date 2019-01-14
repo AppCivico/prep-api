@@ -12,7 +12,9 @@ sub register {
 
     # Recipient
     my $recipient = $chatbot->route('/recipient');
-    $recipient->post('/')->to('chatbot-recipient#post');
+	$recipient->post('/')->to('chatbot-recipient#post');
+	$recipient->get('/')->to('chatbot-recipient#get');
+	$recipient->put('/')->to('chatbot-recipient#put');
 }
 
 1;
