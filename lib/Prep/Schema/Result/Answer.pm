@@ -61,6 +61,12 @@ __PACKAGE__->table("answer");
   is_foreign_key: 1
   is_nullable: 0
 
+=head2 question_map_id
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 0
+
 =head2 answer_value
 
   data_type: 'text'
@@ -86,6 +92,8 @@ __PACKAGE__->add_columns(
   "recipient_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
   "question_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
+  "question_map_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
   "answer_value",
   { data_type => "text", is_nullable => 0 },
@@ -146,6 +154,21 @@ __PACKAGE__->belongs_to(
   { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
 );
 
+=head2 question_map
+
+Type: belongs_to
+
+Related object: L<Prep::Schema::Result::QuestionMap>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "question_map",
+  "Prep::Schema::Result::QuestionMap",
+  { id => "question_map_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+);
+
 =head2 recipient
 
 Type: belongs_to
@@ -162,8 +185,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 09:58:48
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:o3U6zprdtgT5Ywf7nzZH+w
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 14:05:33
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:nq1aMwE6LM9s9C/qNJ7kfw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

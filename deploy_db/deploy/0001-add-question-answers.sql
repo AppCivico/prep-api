@@ -5,7 +5,7 @@ BEGIN;
 
 CREATE TABLE question (
     id                  SERIAL PRIMARY KEY,
-    code                VARCHAR(2) NOT NULL UNIQUE,
+    code                VARCHAR(4) NOT NULL UNIQUE,
     type                TEXT       NOT NULL CHECK ( type IN ( 'multiple_choice', 'open_text' ) ),
     text                TEXT       NOT NULL,
     multiple_choices    JSON,
@@ -17,17 +17,18 @@ CREATE TABLE question (
 );
 
 CREATE TABLE question_map (
-    id  INTEGER UNIQUE DEFAULT 1,
-    map JSON    NOT NULL,
-    CONSTRAINT chk_question_map CHECK ( id = 1 )
+    id         SERIAL  PRIMARY KEY,
+    map        JSON    NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE answer (
-    id           SERIAL PRIMARY KEY,
-    recipient_id INTEGER NOT NULL REFERENCES recipient(id),
-    question_id  INTEGER NOT NULL REFERENCES question(id),
-    answer_value TEXT NOT NULL,
-    created_at   TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+    id              SERIAL PRIMARY KEY,
+    recipient_id    INTEGER NOT NULL REFERENCES recipient(id),
+    question_id     INTEGER NOT NULL REFERENCES question(id),
+    question_map_id INTEGER NOT NULL REFERENCES question_map(id),
+    answer_value    TEXT NOT NULL,
+    created_at      TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     UNIQUE( recipient_id, question_id )
 );
 

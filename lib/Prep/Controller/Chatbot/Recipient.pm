@@ -1,6 +1,27 @@
 package Prep::Controller::Chatbot::Recipient;
 use Mojo::Base 'Prep::Controller';
 
+sub stasher {
+    my $c = shift;
+
+	$c->validate_request_params(
+		fb_id => {
+			type     => 'Num',
+			required => 1,
+		},
+	);
+
+    $c->stash( collection => $c->schema->resultset('Recipient') );
+
+	my $recipient = $c->schema->resultset('Recipient')->search( { fb_id => $c->req->params->to_hash->{fb_id} } )->next;
+	die \['fb_id', 'invalid'] unless $recipient;
+
+    $c->stash(
+        recipient  => $recipient,
+        collection => $c->stash('collection')->search_rs( { id => $recipient->id } )
+    )
+}
+
 sub post {
     my $c = shift;
 
@@ -23,17 +44,7 @@ sub post {
 sub get {
     my $c = shift;
 
-	$c->validate_request_params(
-		fb_id => {
-			type     => 'Num',
-			required => 1,
-		},
-	);
-
-    my $params = $c->req->params->to_hash;
-
-    my $recipient = $c->schema->resultset('Recipient')->search( { fb_id => $params->{fb_id} } )->next;
-    die \['fb_id', 'invalid'] unless $recipient;
+    my $recipient = $c->stash('recipient');
 
     return $c->render(
         status => 200,
@@ -48,17 +59,9 @@ sub get {
 sub put {
 	my $c = shift;
 
-	$c->validate_request_params(
-		fb_id => {
-			type     => 'Num',
-			required => 1,
-		},
-	);
-
 	my $params = $c->req->params->to_hash;
 
-	my $recipient = $c->schema->resultset('Recipient')->search( { fb_id => $params->{fb_id} } )->next;
-	die \['fb_id', 'invalid'] unless $recipient;
+	my $recipient = $c->stash('recipient');
 
     $recipient->execute(
         $c,

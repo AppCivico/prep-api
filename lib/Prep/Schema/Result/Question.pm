@@ -53,7 +53,7 @@ __PACKAGE__->table("question");
 
   data_type: 'varchar'
   is_nullable: 0
-  size: 2
+  size: 4
 
 =head2 type
 
@@ -103,7 +103,7 @@ __PACKAGE__->add_columns(
     sequence          => "question_id_seq",
   },
   "code",
-  { data_type => "varchar", is_nullable => 0, size => 2 },
+  { data_type => "varchar", is_nullable => 0, size => 4 },
   "type",
   { data_type => "text", is_nullable => 0 },
   "text",
@@ -169,10 +169,29 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 09:58:48
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:MQnzOi1b1psmBtqaWMhM4w
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 14:05:33
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZvI2TeBcDECjXKfSAFkDxw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
+
+use JSON::MaybeXS;
+
+sub decoded {
+    my ($self) = @_;
+
+    return {
+        id                  => $self->id,
+        code                => $self->code,
+        type                => $self->type,
+        text                => $self->text,
+        is_differentiator   => $self->is_differentiator,
+        multiple_choices    => $self->multiple_choices    ? decode_json( $self->multiple_choices )    : undef,
+        extra_quick_replies => $self->extra_quick_replies ? decode_json( $self->extra_quick_replies ) : undef,
+        updated_at          => $self->updated_at,
+        created_at          => $self->created_at
+    }
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

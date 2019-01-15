@@ -187,14 +187,16 @@ __PACKAGE__->might_have(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 09:58:48
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:DSZH7k4N45m4DgReBjTzhw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 17:39:11
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:qM6kD1xaVvwcLYVwtJgnfQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 
 with 'Prep::Role::Verification';
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
+
+use DateTime;
 
 sub verifiers_specs {
     my $self = shift;
@@ -233,6 +235,19 @@ sub action_specs {
             $self->update(\%values);
         }
     };
+}
+
+sub get_pending_question {
+    my ($self) = @_;
+
+    my $question_rs  = $self->result_source->schema->resultset('Question');
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->parsed;
+
+    my @answered_questions = $self->answers->search( undef, { prefetch => 'question' } )->get_column('question.code')->all();
+
+    my @pending_questions = grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
+
+	return $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next;
 }
 
 __PACKAGE__->meta->make_immutable;
