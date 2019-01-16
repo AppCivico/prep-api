@@ -133,7 +133,61 @@ db_transaction {
         ->json_is('/multiple_choices/1', 'foo')
         ->json_is('/multiple_choices/2', 'bar');
 
+        # Repetindo a requisição obtenho o mesmo resultado
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
+        ->json_has('/code')
+        ->json_has('/text')
+        ->json_has('/type')
+        ->json_has('/extra_quick_replies')
+		->json_has('/multiple_choices')
+        ->json_is('/code', 'A1')
+        ->json_is('/text', 'Foobar?')
+        ->json_is('/type', 'multiple_choice')
+        ->json_is('/multiple_choices/1', 'foo')
+        ->json_is('/multiple_choices/2', 'bar');
+
+        # Respondendo primeira pergunta
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'A1',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201);
+
+        # A pergunta esperada agora é a C4
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
+        ->json_has('/code')
+        ->json_has('/text')
+        ->json_has('/type')
+        ->json_has('/extra_quick_replies')
+		->json_has('/multiple_choices')
+        ->json_is('/code', 'C4')
+        ->json_is('/text', 'barbaz?')
+        ->json_is('/type', 'multiple_choice')
+        ->json_is('/multiple_choices/1', 'Sim')
+        ->json_is('/multiple_choices/2', 'Nunca')
+        ->json_is('/multiple_choices/3', 'Regularmente');
     };
+
+    # TODO testar quando houver atualização no fluxo
 };
 
 done_testing();

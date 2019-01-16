@@ -19,9 +19,13 @@ sub register {
     # Para não passar pelo método stasher
 	$chatbot->route('/recipient')->post('/')->to('chatbot-recipient#post');
 
-    # Pending question
+    # Recipient::PendingQuestion
     my $pending_question = $recipient->route('/pending-question');
     $pending_question->get('/')->to('chatbot-recipient-pending_question#get');
+
+    # Recipient::Answer
+    my $answer = $recipient->route('/answer');
+    $answer->post('/')->to('chatbot-recipient-answer#post');
 }
 
 1;
