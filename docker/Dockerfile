@@ -1,6 +1,4 @@
 FROM phusion/baseimage:0.9.22
-
-# Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
 RUN apt-get update && apt-get install -y \
@@ -24,6 +22,10 @@ RUN apt-get update && apt-get install -y \
 && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 USER app
+
+ADD install-cpan-modules.sh /tmp/install-cpan-modules.sh
+RUN /tmp/install-cpan-modules.sh
+
 ADD Makefile_local.PL /tmp/Makefile.PL
 ADD install-cpan-extra-modules.sh /tmp/install-cpan-extra-modules.sh
 RUN /tmp/install-cpan-extra-modules.sh
