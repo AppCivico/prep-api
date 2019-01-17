@@ -12,12 +12,12 @@ sub register {
 
     # Recipient
     my $recipient = $chatbot->route('/recipient')->under->to('chatbot-recipient#stasher');
-	$recipient->get('/')->to('chatbot-recipient#get');
-	$recipient->put('/')->to('chatbot-recipient#put');
+    $recipient->get('/')->to('chatbot-recipient#get');
+    $recipient->put('/')->to('chatbot-recipient#put');
 
     # Recipient POST
     # Para não passar pelo método stasher
-	$chatbot->route('/recipient')->post('/')->to('chatbot-recipient#post');
+    $chatbot->route('/recipient')->post('/')->to('chatbot-recipient#post');
 
     # Recipient::PendingQuestion
     my $pending_question = $recipient->route('/pending-question');

@@ -4,17 +4,17 @@ use Mojo::Base 'Prep::Controller';
 sub stasher {
     my $c = shift;
 
-	$c->validate_request_params(
-		fb_id => {
-			type     => 'Num',
-			required => 1,
-		},
-	);
+    $c->validate_request_params(
+        fb_id => {
+            type     => 'Num',
+            required => 1,
+        },
+    );
 
     $c->stash( collection => $c->schema->resultset('Recipient') );
 
-	my $recipient = $c->schema->resultset('Recipient')->search( { fb_id => $c->req->params->to_hash->{fb_id} } )->next;
-	die \['fb_id', 'invalid'] unless $recipient;
+    my $recipient = $c->schema->resultset('Recipient')->search( { fb_id => $c->req->params->to_hash->{fb_id} } )->next;
+    die \['fb_id', 'invalid'] unless $recipient;
 
     $c->stash(
         recipient  => $recipient,
@@ -33,12 +33,12 @@ sub post {
         with => $params
     );
 
-	return $c
+    return $c
     ->redirect_to('current')
     ->render(
-		json   => { id => $recipient->id },
-		status => 201,
-	);
+        json   => { id => $recipient->id },
+        status => 201,
+    );
 }
 
 sub get {
@@ -57,11 +57,11 @@ sub get {
 }
 
 sub put {
-	my $c = shift;
+    my $c = shift;
 
-	my $params = $c->req->params->to_hash;
+    my $params = $c->req->params->to_hash;
 
-	my $recipient = $c->stash('recipient');
+    my $recipient = $c->stash('recipient');
 
     $recipient->execute(
         $c,

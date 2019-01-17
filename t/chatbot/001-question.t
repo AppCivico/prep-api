@@ -10,7 +10,7 @@ my $t      = test_instance;
 my $schema = $t->app->schema;
 
 db_transaction {
-	my $security_token = $ENV{CHATBOT_SECURITY_TOKEN};
+    my $security_token = $ENV{CHATBOT_SECURITY_TOKEN};
 
     my( $first_question, $second_question, $third_question, $fourth_question, $question_map );
     subtest 'Create questions and question map' => sub {
@@ -111,8 +111,8 @@ db_transaction {
             form => { security_token => $security_token }
         )
         ->status_is(400)
-		->json_has('/form_error/fb_id')
-		->json_is('/form_error/fb_id', 'missing');
+        ->json_has('/form_error/fb_id')
+        ->json_is('/form_error/fb_id', 'missing');
 
         $t->get_ok(
             '/api/chatbot/recipient/pending-question',
@@ -126,7 +126,7 @@ db_transaction {
         ->json_has('/text')
         ->json_has('/type')
         ->json_has('/extra_quick_replies')
-		->json_has('/multiple_choices')
+        ->json_has('/multiple_choices')
         ->json_is('/code', 'A1')
         ->json_is('/text', 'Foobar?')
         ->json_is('/type', 'multiple_choice')
@@ -146,7 +146,7 @@ db_transaction {
         ->json_has('/text')
         ->json_has('/type')
         ->json_has('/extra_quick_replies')
-		->json_has('/multiple_choices')
+        ->json_has('/multiple_choices')
         ->json_is('/code', 'A1')
         ->json_is('/text', 'Foobar?')
         ->json_is('/type', 'multiple_choice')
@@ -178,7 +178,7 @@ db_transaction {
         ->json_has('/text')
         ->json_has('/type')
         ->json_has('/extra_quick_replies')
-		->json_has('/multiple_choices')
+        ->json_has('/multiple_choices')
         ->json_is('/code', 'C4')
         ->json_is('/text', 'barbaz?')
         ->json_is('/type', 'multiple_choice')
@@ -186,7 +186,6 @@ db_transaction {
         ->json_is('/multiple_choices/2', 'Nunca')
         ->json_is('/multiple_choices/3', 'Regularmente');
 
-        use DDP ; p $t->tx->res->json;
     };
 
     # TODO testar quando houver atualização no fluxo

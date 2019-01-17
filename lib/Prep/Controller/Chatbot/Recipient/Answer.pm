@@ -4,7 +4,7 @@ use Mojo::Base 'Prep::Controller';
 sub post {
     my $c = shift;
 
-	my $recipient = $c->stash('recipient');
+    my $recipient = $c->stash('recipient');
 
     my $answer = $recipient->answers->execute(
         $c,

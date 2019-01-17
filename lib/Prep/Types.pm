@@ -6,6 +6,7 @@ use MooseX::Types -declare => [
 ];
 
 use Data::Validate::URI qw(is_uri);
+use MooseX::Types::Moose qw(Str Int ArrayRef ScalarRef Num);
 
 subtype URI, as Str, where {
     my $uri = $_;

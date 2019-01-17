@@ -28,13 +28,13 @@ sub startup {
         }
     );
 
-	# Helpers.
-	$self->helper(schema => sub { state $schema = Prep::SchemaConnected->get_schema(@_) });
+    # Helpers.
+    $self->helper(schema => sub { state $schema = Prep::SchemaConnected->get_schema(@_) });
 
-	# Overwrite default helpers.
-	$self->controller_class('Prep::Controller');
-	$self->helper('reply.exception' => sub { Prep::Controller::reply_exception(@_) });
-	$self->helper('reply.not_found' => sub { Prep::Controller::reply_not_found(@_) });
+    # Overwrite default helpers.
+    $self->controller_class('Prep::Controller');
+    $self->helper('reply.exception' => sub { Prep::Controller::reply_exception(@_) });
+    $self->helper('reply.not_found' => sub { Prep::Controller::reply_not_found(@_) });
 
     # Router.
     Prep::Routes::register($self->routes);

@@ -247,7 +247,7 @@ sub get_pending_question {
 
     my @pending_questions = grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
 
-	return $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next;
+    return $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next;
 }
 
 __PACKAGE__->meta->make_immutable;

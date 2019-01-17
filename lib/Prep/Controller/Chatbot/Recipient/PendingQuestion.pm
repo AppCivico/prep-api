@@ -4,7 +4,7 @@ use Mojo::Base 'Prep::Controller';
 sub get {
     my $c = shift;
 
-	my $recipient = $c->stash('recipient');
+    my $recipient = $c->stash('recipient');
 
     my $question = $recipient->get_pending_question;
     $question    = $question->decoded;
