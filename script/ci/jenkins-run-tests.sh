@@ -20,10 +20,10 @@ sed -i "s/prep_api_dev/$DB_NAME/g" sqitch.conf
 export REAL_WORKSPACE="/home/jenkins-data/workspace/$JOB_NAME/"
 
 # como dentro do jenkins, nao temos os comandos, vamos rodar por dentro do docker..
-docker run --rm -i -u app -v $REAL_WORKSPACE:/src appcivico/nutrinet-api /src/script/ci/resetdb.sh $DB_NAME
+docker run --rm -i -u app -v $REAL_WORKSPACE:/src appcivico/prep_api /src/script/ci/resetdb.sh $DB_NAME
 
 # roda os testes
-docker run --rm -i -u app -v $REAL_WORKSPACE:/src -v $REAL_WORKSPACE/tmp-data:/data appcivico/nutrinet-api /src/script/run-tests.sh
+docker run --rm -i -u app -v $REAL_WORKSPACE:/src -v $REAL_WORKSPACE/tmp-data:/data appcivico/prep_api /src/script/run-tests.sh
 
 rm -rf $WORKSPACE/tmp-data
-docker run --rm -i -u app -v $REAL_WORKSPACE:/src appcivico/nutrinet-api /src/script/ci/dropdb.sh $DB_NAME
+docker run --rm -i -u app -v $REAL_WORKSPACE:/src appcivico/prep_api /src/script/ci/dropdb.sh $DB_NAME
