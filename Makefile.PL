@@ -8,14 +8,11 @@ use ExtUtils::MakeMaker;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "PREP API",
-  "AUTHOR" => "Lucas Ansei <lucastakushi\@hotmail.com>",
+  "AUTHOR" => "Lucas Ansei <lucastakushi\@hotmail.com.com>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },
   "DISTNAME" => "prep_api",
-  "EXE_FILES" => [
-    "bin/schema.dump.sh"
-  ],
   "LICENSE" => "open_source",
   "MIN_PERL_VERSION" => "5.014002",
   "NAME" => "prep_api",
@@ -30,7 +27,6 @@ my %WriteMakefileArgs = (
     "DBIx::Class::ResultSet" => 0,
     "DBIx::Class::Schema" => 0,
     "DBIx::Class::TimeStamp" => 0,
-    "DDP" => 0,
     "Data::Diver" => 0,
     "Data::Manager" => 0,
     "Data::Printer" => 0,
@@ -41,8 +37,10 @@ my %WriteMakefileArgs = (
     "Data::Verifier::Results" => 0,
     "Data::Visitor" => 0,
     "Data::Visitor::Callback" => 0,
+    "DateTime" => 0,
     "Exporter" => 0,
     "FindBin" => 0,
+    "JSON::MaybeXS" => 0,
     "Mojo::Base" => 0,
     "Moose" => 0,
     "Moose::Role" => 0,
@@ -59,17 +57,19 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
+    "DDP" => 0,
     "File::Spec" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
     "Mojo::Util" => 0,
     "Test::Mojo" => 0,
     "Test::More" => 0,
+    "blib" => "1.01",
     "lib" => 0
   },
-  "VERSION" => 20190114,
+  "VERSION" => 20190117,
   "test" => {
-    "TESTS" => "t/*.t t/chatbot/*.t"
+    "TESTS" => "t/*.t t/chatbot/*.t t/internal/*.t"
   }
 );
 
@@ -96,11 +96,13 @@ my %FallbackPrereqs = (
   "Data::Verifier::Results" => 0,
   "Data::Visitor" => 0,
   "Data::Visitor::Callback" => 0,
+  "DateTime" => 0,
   "Exporter" => 0,
   "File::Spec" => 0,
   "FindBin" => 0,
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
+  "JSON::MaybeXS" => 0,
   "Mojo::Base" => 0,
   "Mojo::Util" => 0,
   "Moose" => 0,
@@ -112,6 +114,7 @@ my %FallbackPrereqs = (
   "Scalar::Util" => 0,
   "Test::Mojo" => 0,
   "Test::More" => 0,
+  "blib" => "1.01",
   "common::sense" => 0,
   "lib" => 0,
   "namespace::autoclean" => 0,
