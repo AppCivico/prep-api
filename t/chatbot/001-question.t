@@ -185,6 +185,8 @@ db_transaction {
         ->json_is('/multiple_choices/1', 'Sim')
         ->json_is('/multiple_choices/2', 'Nunca')
         ->json_is('/multiple_choices/3', 'Regularmente');
+
+        use DDP ; p $t->tx->res->json;
     };
 
     # TODO testar quando houver atualização no fluxo

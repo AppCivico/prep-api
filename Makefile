@@ -12,7 +12,7 @@
 #   MakeMaker Parameters:
 
 #     ABSTRACT => q[PREP API]
-#     AUTHOR => [q[Lucas Ansei <lucastakushi@hotmail.com.com>]]
+#     AUTHOR => [q[Lucas Ansei <lucastakushi@hotmail.com>]]
 #     BUILD_REQUIRES => {  }
 #     CONFIGURE_REQUIRES => { ExtUtils::MakeMaker=>q[0] }
 #     DISTNAME => q[prep_api]
@@ -30,7 +30,7 @@
 
 # --- MakeMaker const_config section:
 
-# These definitions are from config.sh (via /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/Config.pm).
+# These definitions are from config.sh (via /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/Config.pm).
 # They may have been overridden via Makefile.PL or on the command line.
 AR = ar
 CC = cc
@@ -49,8 +49,8 @@ OBJ_EXT = .o
 OSNAME = linux
 OSVERS = 4.8.0-53-generic
 RANLIB = :
-SITELIBEXP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
-SITEARCHEXP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
+SITELIBEXP = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
+SITEARCHEXP = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
 SO = so
 VENDORARCHEXP = 
 VENDORLIBEXP = 
@@ -75,62 +75,62 @@ INST_BIN = blib/bin
 INST_LIB = blib/lib
 INST_MAN1DIR = blib/man1
 INST_MAN3DIR = blib/man3
-MAN1EXT = 1
-MAN3EXT = 3
+MAN1EXT = 0
+MAN3EXT = 0
 INSTALLDIRS = site
 DESTDIR = 
 PREFIX = $(SITEPREFIX)
-PERLPREFIX = /home/lucas/perl5/perlbrew/perls/perl-5.24.0
-SITEPREFIX = /home/lucas/perl5/perlbrew/perls/perl-5.24.0
+PERLPREFIX = /home/app/perl5/perlbrew/perls/perl-5.24.0
+SITEPREFIX = /home/app/perl5/perlbrew/perls/perl-5.24.0
 VENDORPREFIX = 
-INSTALLPRIVLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
+INSTALLPRIVLIB = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
 DESTINSTALLPRIVLIB = $(DESTDIR)$(INSTALLPRIVLIB)
-INSTALLSITELIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
+INSTALLSITELIB = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
 DESTINSTALLSITELIB = $(DESTDIR)$(INSTALLSITELIB)
 INSTALLVENDORLIB = 
 DESTINSTALLVENDORLIB = $(DESTDIR)$(INSTALLVENDORLIB)
-INSTALLARCHLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
+INSTALLARCHLIB = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
 DESTINSTALLARCHLIB = $(DESTDIR)$(INSTALLARCHLIB)
-INSTALLSITEARCH = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
+INSTALLSITEARCH = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
 DESTINSTALLSITEARCH = $(DESTDIR)$(INSTALLSITEARCH)
 INSTALLVENDORARCH = 
 DESTINSTALLVENDORARCH = $(DESTDIR)$(INSTALLVENDORARCH)
-INSTALLBIN = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLBIN = /home/app/perl5/perlbrew/perls/perl-5.24.0/bin
 DESTINSTALLBIN = $(DESTDIR)$(INSTALLBIN)
-INSTALLSITEBIN = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSITEBIN = /home/app/perl5/perlbrew/perls/perl-5.24.0/bin
 DESTINSTALLSITEBIN = $(DESTDIR)$(INSTALLSITEBIN)
 INSTALLVENDORBIN = 
 DESTINSTALLVENDORBIN = $(DESTDIR)$(INSTALLVENDORBIN)
-INSTALLSCRIPT = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSCRIPT = /home/app/perl5/perlbrew/perls/perl-5.24.0/bin
 DESTINSTALLSCRIPT = $(DESTDIR)$(INSTALLSCRIPT)
-INSTALLSITESCRIPT = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSITESCRIPT = /home/app/perl5/perlbrew/perls/perl-5.24.0/bin
 DESTINSTALLSITESCRIPT = $(DESTDIR)$(INSTALLSITESCRIPT)
 INSTALLVENDORSCRIPT = 
 DESTINSTALLVENDORSCRIPT = $(DESTDIR)$(INSTALLVENDORSCRIPT)
-INSTALLMAN1DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man1
+INSTALLMAN1DIR = none
 DESTINSTALLMAN1DIR = $(DESTDIR)$(INSTALLMAN1DIR)
-INSTALLSITEMAN1DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man1
+INSTALLSITEMAN1DIR = $(INSTALLMAN1DIR)
 DESTINSTALLSITEMAN1DIR = $(DESTDIR)$(INSTALLSITEMAN1DIR)
 INSTALLVENDORMAN1DIR = 
 DESTINSTALLVENDORMAN1DIR = $(DESTDIR)$(INSTALLVENDORMAN1DIR)
-INSTALLMAN3DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man3
+INSTALLMAN3DIR = none
 DESTINSTALLMAN3DIR = $(DESTDIR)$(INSTALLMAN3DIR)
-INSTALLSITEMAN3DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man3
+INSTALLSITEMAN3DIR = $(INSTALLMAN3DIR)
 DESTINSTALLSITEMAN3DIR = $(DESTDIR)$(INSTALLSITEMAN3DIR)
 INSTALLVENDORMAN3DIR = 
 DESTINSTALLVENDORMAN3DIR = $(DESTDIR)$(INSTALLVENDORMAN3DIR)
-PERL_LIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
-PERL_ARCHLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
-PERL_ARCHLIBDEP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
+PERL_LIB = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
+PERL_ARCHLIB = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
+PERL_ARCHLIBDEP = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
 LIBPERL_A = libperl.a
 FIRST_MAKEFILE = Makefile
 MAKEFILE_OLD = Makefile.old
 MAKE_APERL_FILE = Makefile.aperl
 PERLMAINCC = $(CC)
-PERL_INC = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
-PERL_INCDEP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
-PERL = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
-FULLPERL = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
+PERL_INC = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
+PERL_INCDEP = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
+PERL = "/home/app/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
+FULLPERL = "/home/app/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
 ABSPERL = $(PERL)
 PERLRUN = $(PERL)
 FULLPERLRUN = $(FULLPERL)
@@ -143,7 +143,7 @@ PERM_DIR = 755
 PERM_RW = 644
 PERM_RWX = 755
 
-MAKEMAKER   = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/ExtUtils/MakeMaker.pm
+MAKEMAKER   = /home/app/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/ExtUtils/MakeMaker.pm
 MM_VERSION  = 7.1001
 MM_REVISION = 71001
 
@@ -168,13 +168,7 @@ C_FILES  =
 O_FILES  = 
 H_FILES  = 
 MAN1PODS = 
-MAN3PODS = lib/Data/Verifier.pm \
-	lib/Prep/Schema/Result/ChatbotSession.pm \
-	lib/Prep/Schema/Result/Recipient.pm \
-	lib/Prep/Schema/Result/Role.pm \
-	lib/Prep/Schema/Result/User.pm \
-	lib/Prep/Schema/Result/UserRole.pm \
-	lib/Prep/Schema/Result/UserSession.pm
+MAN3PODS = 
 
 # Where is the Config information that we are using/depend on
 CONFIGDEP = $(PERL_ARCHLIBDEP)$(DFSEP)Config.pm $(PERL_INCDEP)$(DFSEP)config.h
@@ -206,6 +200,7 @@ TO_INST_PM = lib/Data/Verifier.pm \
 	lib/Prep/Controller.pm \
 	lib/Prep/Controller/Chatbot.pm \
 	lib/Prep/Controller/Chatbot/Recipient.pm \
+	lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
 	lib/Prep/Data/Manager.pm \
 	lib/Prep/Data/Visitor.pm \
 	lib/Prep/Role/Verification.pm \
@@ -213,13 +208,17 @@ TO_INST_PM = lib/Data/Verifier.pm \
 	lib/Prep/Role/Verification/TransactionalActions/DBIC.pm \
 	lib/Prep/Routes.pm \
 	lib/Prep/Schema.pm \
+	lib/Prep/Schema/Result/Answer.pm \
 	lib/Prep/Schema/Result/ChatbotSession.pm \
+	lib/Prep/Schema/Result/Question.pm \
+	lib/Prep/Schema/Result/QuestionMap.pm \
 	lib/Prep/Schema/Result/Recipient.pm \
 	lib/Prep/Schema/Result/Role.pm \
 	lib/Prep/Schema/Result/User.pm \
 	lib/Prep/Schema/Result/UserRole.pm \
 	lib/Prep/Schema/Result/UserSession.pm \
-	lib/Prep/Schema/Resultset/Recipient.pm \
+	lib/Prep/Schema/ResultSet/QuestionMap.pm \
+	lib/Prep/Schema/ResultSet/Recipient.pm \
 	lib/Prep/SchemaConnected.pm \
 	lib/Prep/Types.pm \
 	lib/Prep/Utils.pm
@@ -242,6 +241,8 @@ PM_TO_BLIB = lib/Data/Verifier.pm \
 	blib/lib/Prep/Controller/Chatbot.pm \
 	lib/Prep/Controller/Chatbot/Recipient.pm \
 	blib/lib/Prep/Controller/Chatbot/Recipient.pm \
+	lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
+	blib/lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
 	lib/Prep/Data/Manager.pm \
 	blib/lib/Prep/Data/Manager.pm \
 	lib/Prep/Data/Visitor.pm \
@@ -256,8 +257,14 @@ PM_TO_BLIB = lib/Data/Verifier.pm \
 	blib/lib/Prep/Routes.pm \
 	lib/Prep/Schema.pm \
 	blib/lib/Prep/Schema.pm \
+	lib/Prep/Schema/Result/Answer.pm \
+	blib/lib/Prep/Schema/Result/Answer.pm \
 	lib/Prep/Schema/Result/ChatbotSession.pm \
 	blib/lib/Prep/Schema/Result/ChatbotSession.pm \
+	lib/Prep/Schema/Result/Question.pm \
+	blib/lib/Prep/Schema/Result/Question.pm \
+	lib/Prep/Schema/Result/QuestionMap.pm \
+	blib/lib/Prep/Schema/Result/QuestionMap.pm \
 	lib/Prep/Schema/Result/Recipient.pm \
 	blib/lib/Prep/Schema/Result/Recipient.pm \
 	lib/Prep/Schema/Result/Role.pm \
@@ -268,8 +275,10 @@ PM_TO_BLIB = lib/Data/Verifier.pm \
 	blib/lib/Prep/Schema/Result/UserRole.pm \
 	lib/Prep/Schema/Result/UserSession.pm \
 	blib/lib/Prep/Schema/Result/UserSession.pm \
-	lib/Prep/Schema/Resultset/Recipient.pm \
-	blib/lib/Prep/Schema/Resultset/Recipient.pm \
+	lib/Prep/Schema/ResultSet/QuestionMap.pm \
+	blib/lib/Prep/Schema/ResultSet/QuestionMap.pm \
+	lib/Prep/Schema/ResultSet/Recipient.pm \
+	blib/lib/Prep/Schema/ResultSet/Recipient.pm \
 	lib/Prep/SchemaConnected.pm \
 	blib/lib/Prep/SchemaConnected.pm \
 	lib/Prep/Types.pm \
@@ -497,22 +506,8 @@ POD2MAN_EXE = $(PERLRUN) "-MExtUtils::Command::MM" -e pod2man "--"
 POD2MAN = $(POD2MAN_EXE)
 
 
-manifypods : pure_all  \
-	lib/Data/Verifier.pm \
-	lib/Prep/Schema/Result/ChatbotSession.pm \
-	lib/Prep/Schema/Result/Recipient.pm \
-	lib/Prep/Schema/Result/Role.pm \
-	lib/Prep/Schema/Result/User.pm \
-	lib/Prep/Schema/Result/UserRole.pm \
-	lib/Prep/Schema/Result/UserSession.pm
-	$(NOECHO) $(POD2MAN) --section=3 --perm_rw=$(PERM_RW) -u \
-	  lib/Data/Verifier.pm $(INST_MAN3DIR)/Data::Verifier.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/ChatbotSession.pm $(INST_MAN3DIR)/Prep::Schema::Result::ChatbotSession.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Recipient.pm $(INST_MAN3DIR)/Prep::Schema::Result::Recipient.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Role.pm $(INST_MAN3DIR)/Prep::Schema::Result::Role.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/User.pm $(INST_MAN3DIR)/Prep::Schema::Result::User.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/UserRole.pm $(INST_MAN3DIR)/Prep::Schema::Result::UserRole.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/UserSession.pm $(INST_MAN3DIR)/Prep::Schema::Result::UserSession.$(MAN3EXT) 
+manifypods : pure_all 
+	$(NOECHO) $(NOOP)
 
 
 
@@ -586,7 +581,7 @@ realclean_subdirs :
 # Delete temporary files (via clean) and also delete dist files
 realclean purge ::  clean realclean_subdirs
 	- $(RM_F) \
-	  $(MAKEFILE_OLD) $(FIRST_MAKEFILE) 
+	  $(FIRST_MAKEFILE) $(MAKEFILE_OLD) 
 	- $(RM_RF) \
 	  $(DISTVNAME) 
 
@@ -597,7 +592,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '---' > META_new.yml
 	$(NOECHO) $(ECHO) 'abstract: '\''PREP API'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'author:' >> META_new.yml
-	$(NOECHO) $(ECHO) '  - '\''Lucas Ansei <lucastakushi@hotmail.com.com>'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  - '\''Lucas Ansei <lucastakushi@hotmail.com>'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'build_requires:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  ExtUtils::MakeMaker: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  File::Spec: '\''0'\''' >> META_new.yml
@@ -666,7 +661,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '{' > META_new.json
 	$(NOECHO) $(ECHO) '   "abstract" : "PREP API",' >> META_new.json
 	$(NOECHO) $(ECHO) '   "author" : [' >> META_new.json
-	$(NOECHO) $(ECHO) '      "Lucas Ansei <lucastakushi@hotmail.com.com>"' >> META_new.json
+	$(NOECHO) $(ECHO) '      "Lucas Ansei <lucastakushi@hotmail.com>"' >> META_new.json
 	$(NOECHO) $(ECHO) '   ],' >> META_new.json
 	$(NOECHO) $(ECHO) '   "dynamic_config" : 1,' >> META_new.json
 	$(NOECHO) $(ECHO) '   "generated_by" : "ExtUtils::MakeMaker version 7.1001, CPAN::Meta::Converter version 2.150005",' >> META_new.json
@@ -1004,7 +999,7 @@ $(FIRST_MAKEFILE) : Makefile.PL $(CONFIGDEP)
 
 # --- MakeMaker makeaperl section ---
 MAP_TARGET    = perl
-FULLPERL      = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
+FULLPERL      = "/home/app/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
 
 $(MAP_TARGET) :: static $(MAKE_APERL_FILE)
 	$(MAKE) $(USEMAKEFILE) $(MAKE_APERL_FILE) $@
@@ -1050,7 +1045,7 @@ testdb_static :: testdb_dynamic
 ppd :
 	$(NOECHO) $(ECHO) '<SOFTPKG NAME="$(DISTNAME)" VERSION="$(VERSION)">' > $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <ABSTRACT>PREP API</ABSTRACT>' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '    <AUTHOR>Lucas Ansei &lt;lucastakushi@hotmail.com.com&gt;</AUTHOR>' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '    <AUTHOR>Lucas Ansei &lt;lucastakushi@hotmail.com&gt;</AUTHOR>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <PERLCORE VERSION="5,014002,0,0" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="App::Sqitch" VERSION="0.9996" />' >> $(DISTNAME).ppd
@@ -1109,6 +1104,7 @@ pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	  lib/Prep/Controller.pm blib/lib/Prep/Controller.pm \
 	  lib/Prep/Controller/Chatbot.pm blib/lib/Prep/Controller/Chatbot.pm \
 	  lib/Prep/Controller/Chatbot/Recipient.pm blib/lib/Prep/Controller/Chatbot/Recipient.pm \
+	  lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm blib/lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
 	  lib/Prep/Data/Manager.pm blib/lib/Prep/Data/Manager.pm \
 	  lib/Prep/Data/Visitor.pm blib/lib/Prep/Data/Visitor.pm \
 	  lib/Prep/Role/Verification.pm blib/lib/Prep/Role/Verification.pm \
@@ -1116,13 +1112,17 @@ pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	  lib/Prep/Role/Verification/TransactionalActions/DBIC.pm blib/lib/Prep/Role/Verification/TransactionalActions/DBIC.pm \
 	  lib/Prep/Routes.pm blib/lib/Prep/Routes.pm \
 	  lib/Prep/Schema.pm blib/lib/Prep/Schema.pm \
+	  lib/Prep/Schema/Result/Answer.pm blib/lib/Prep/Schema/Result/Answer.pm \
 	  lib/Prep/Schema/Result/ChatbotSession.pm blib/lib/Prep/Schema/Result/ChatbotSession.pm \
+	  lib/Prep/Schema/Result/Question.pm blib/lib/Prep/Schema/Result/Question.pm \
+	  lib/Prep/Schema/Result/QuestionMap.pm blib/lib/Prep/Schema/Result/QuestionMap.pm \
 	  lib/Prep/Schema/Result/Recipient.pm blib/lib/Prep/Schema/Result/Recipient.pm \
 	  lib/Prep/Schema/Result/Role.pm blib/lib/Prep/Schema/Result/Role.pm \
 	  lib/Prep/Schema/Result/User.pm blib/lib/Prep/Schema/Result/User.pm \
 	  lib/Prep/Schema/Result/UserRole.pm blib/lib/Prep/Schema/Result/UserRole.pm \
 	  lib/Prep/Schema/Result/UserSession.pm blib/lib/Prep/Schema/Result/UserSession.pm \
-	  lib/Prep/Schema/Resultset/Recipient.pm blib/lib/Prep/Schema/Resultset/Recipient.pm \
+	  lib/Prep/Schema/ResultSet/QuestionMap.pm blib/lib/Prep/Schema/ResultSet/QuestionMap.pm \
+	  lib/Prep/Schema/ResultSet/Recipient.pm blib/lib/Prep/Schema/ResultSet/Recipient.pm \
 	  lib/Prep/SchemaConnected.pm blib/lib/Prep/SchemaConnected.pm \
 	  lib/Prep/Types.pm blib/lib/Prep/Types.pm \
 	  lib/Prep/Utils.pm blib/lib/Prep/Utils.pm 

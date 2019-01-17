@@ -1,7 +1,7 @@
 {
    "abstract" : "PREP API",
    "author" : [
-      "Lucas Ansei <lucastakushi@hotmail.com.com>"
+      "Lucas Ansei <lucastakushi@hotmail.com>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "ExtUtils::MakeMaker version 7.1001, CPAN::Meta::Converter version 2.150005",

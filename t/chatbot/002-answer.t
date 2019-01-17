@@ -156,7 +156,8 @@ db_transaction {
                 answer_value   => '1'
             }
         )
-        ->status_is(201);
+        ->status_is(201)
+        ->json_has('/id');
 
         # Pergunta ja respondida
         $t->post_ok(
