@@ -4,7 +4,7 @@ use lib "$Bin/../lib";
 
 use Prep::Test;
 
-use JSON::MaybeXS;
+use JSON;
 
 my $t      = test_instance;
 my $schema = $t->app->schema;
@@ -23,7 +23,7 @@ db_transaction {
                     text              => 'Foobar?',
                     type              => 'multiple_choice',
                     is_differentiator => 0,
-                    multiple_choices  => encode_json { 1 => 'foo', 2 => 'bar' }
+                    multiple_choices  => encode_json ({ 1 => 'foo', 2 => 'bar' })
                 }
             ),
             'first question'
@@ -48,7 +48,7 @@ db_transaction {
                     text              => 'Você gosta?',
                     type              => 'multiple_choice',
                     is_differentiator => 1,
-                    multiple_choices  => encode_json { 1 => 'Sim', 2 => 'Não' }
+                    multiple_choices  => encode_json ({ 1 => 'Sim', 2 => 'Não' })
                 }
             ),
             'third question'
@@ -61,12 +61,12 @@ db_transaction {
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
                     is_differentiator   => 0,
-                    multiple_choices    => encode_json { 1 => 'Sim', 2 => 'Nunca', 3 => 'Regularmente' },
-                    extra_quick_replies => encode_json {
+                    multiple_choices    => encode_json ({ 1 => 'Sim', 2 => 'Nunca', 3 => 'Regularmente' }),
+                    extra_quick_replies => encode_json ({
                         label   => 'foo',
                         text    => 'bar bar',
                         payload => 'foobar'
-                    }
+                    })
                 }
             ),
             'fourth question'
@@ -75,12 +75,12 @@ db_transaction {
         ok(
             $question_map = $schema->resultset('QuestionMap')->create(
                 {
-                    map => encode_json {
+                    map => encode_json ({
                         1 => 'A1',
                         2 => 'C4',
                         3 => 'B1',
                         4 => 'A3'
-                    }
+                    })
                 }
             ),
             'question map created'

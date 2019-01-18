@@ -21,8 +21,9 @@ rsync -av $WORKSPACE/ $INSIDE_WORKSPACE/src;
 cd $INSIDE_WORKSPACE/src;
 # config do banco
 cp envfile.sh envfile_local.sh
+cat envfile_local.sh;
 sed -i "s/prep_dev/$DB_NAME/g" envfile_local.sh
-
+cat sqitch.conf;
 sed -i "s/prep_dev/$DB_NAME/g" sqitch.conf
 # troca o nome do nutrinet_testing tambem, pois o teste pode ter rodado antes desse script
 sed -i "s/prep_testing/$DB_NAME/g" sqitch.conf
