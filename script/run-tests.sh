@@ -6,8 +6,10 @@ mkdir -p /data/log/;
 cd /src;
 
 if [ -f envfile_local.sh ]; then
+    echo 'foo';
     source envfile_local.sh
 else
+echo 'bar';
     source envfile.sh
 fi
 
