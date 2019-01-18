@@ -6,4 +6,4 @@ export POSTGRESQL_DBNAME="prep_dev"
 export POSTGRESQL_USER="postgres"
 export POSTGRESQL_PASSWORD="trust"
 
-export CHATBOT_SECURITY_TOKEN=""
+export CHATBOT_SECURITY_TOKEN="foo"
