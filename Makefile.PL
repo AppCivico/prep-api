@@ -17,6 +17,7 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.014002",
   "NAME" => "prep_api",
   "PREREQ_PM" => {
+    "App::ForkProve" => 0,
     "App::Sqitch" => "0.9996",
     "Config::General" => 0,
     "Crypt::PRNG" => 0,
@@ -68,7 +69,7 @@ my %WriteMakefileArgs = (
     "blib" => "1.01",
     "lib" => 0
   },
-  "VERSION" => 20190117,
+  "VERSION" => 20190118,
   "test" => {
     "TESTS" => "t/*.t t/chatbot/*.t t/internal/*.t"
   }
@@ -76,6 +77,7 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "App::ForkProve" => 0,
   "App::Sqitch" => "0.9996",
   "Config::General" => 0,
   "Crypt::PRNG" => 0,
