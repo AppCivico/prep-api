@@ -21,11 +21,11 @@ rsync -av $WORKSPACE/ $INSIDE_WORKSPACE/src;
 cd $INSIDE_WORKSPACE/src;
 # config do banco
 cp envfile.sh envfile_local.sh
-sed -i "s/prep_api_dev/$DB_NAME/g" envfile_local.sh
+sed -i "s/prep_dev/$DB_NAME/g" envfile_local.sh
 
-sed -i "s/prep_api_dev/$DB_NAME/g" sqitch.conf
+sed -i "s/prep_dev/$DB_NAME/g" sqitch.conf
 # troca o nome do nutrinet_testing tambem, pois o teste pode ter rodado antes desse script
-sed -i "s/prep_api_testing/$DB_NAME/g" sqitch.conf
+sed -i "s/prep_testing/$DB_NAME/g" sqitch.conf
 
 # como estou rodando o jenkins dentro de um container,
 # é necessário do path no lado do host para executar o mount corretamente
