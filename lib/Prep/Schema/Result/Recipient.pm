@@ -252,7 +252,7 @@ sub action_specs {
     };
 }
 
-sub get_pending_question {
+sub get_pending_question_data {
     my ($self) = @_;
 
     my $question_rs  = $self->result_source->schema->resultset('Question');
@@ -261,8 +261,14 @@ sub get_pending_question {
     my @answered_questions = $self->answers->search( undef, { prefetch => 'question' } )->get_column('question.code')->all();
 
     my @pending_questions = grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
+    use DDP; p \@pending_questions;
 
-    return $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next;
+    my $foo = scalar @pending_questions;
+    p $foo;
+    return {
+        question => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
+        has_more => scalar @pending_questions > 1 ? 1 : 0
+    };
 }
 
 __PACKAGE__->meta->make_immutable;

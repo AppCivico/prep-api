@@ -53,11 +53,11 @@ sub action_specs {
             # question_map_id é sempre o id do mapa mais atual
             $values{question_map_id} = $self->result_source->schema->resultset('QuestionMap')->get_column('id')->max;
 
-            my $recipient_fb_id = delete $values{fb_id};
-            my $question_code   = delete $values{code};
-            my $recipient       = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
-            my $next_question   = $recipient->get_pending_question;
-            $next_question      = $next_question->decoded;
+            my $recipient_fb_id        = delete $values{fb_id};
+            my $question_code          = delete $values{code};
+            my $recipient              = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
+            my $pending_question_data  = $recipient->get_pending_question_data;
+            my $next_question          = $pending_question_data->{question}->decoded;
 
             # Verifico se o código enviado bate
             # com o código da próxima pergunta pendente

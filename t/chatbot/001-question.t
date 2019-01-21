@@ -179,13 +179,14 @@ db_transaction {
         ->json_has('/type')
         ->json_has('/extra_quick_replies')
         ->json_has('/multiple_choices')
+        ->json_has('/has_more')
+        ->json_is('/has_more', 1)
         ->json_is('/code', 'C4')
         ->json_is('/text', 'barbaz?')
         ->json_is('/type', 'multiple_choice')
         ->json_is('/multiple_choices/1', 'Sim')
         ->json_is('/multiple_choices/2', 'Nunca')
         ->json_is('/multiple_choices/3', 'Regularmente');
-
     };
 
     # TODO testar quando houver atualização no fluxo
