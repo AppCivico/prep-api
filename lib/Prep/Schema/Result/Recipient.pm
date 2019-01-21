@@ -89,6 +89,17 @@ __PACKAGE__->table("recipient");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 question_notification_sent_at
+
+  data_type: 'timestamp'
+  is_nullable: 1
+
+=head2 finished_quiz
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -126,6 +137,10 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "question_notification_sent_at",
+  { data_type => "timestamp", is_nullable => 1 },
+  "finished_quiz",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -187,8 +202,8 @@ __PACKAGE__->might_have(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 17:39:11
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:qM6kD1xaVvwcLYVwtJgnfQ
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-21 10:08:00
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:bQZZ/sDK9XQdQEOB21w93w
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

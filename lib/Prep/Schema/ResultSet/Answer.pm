@@ -8,8 +8,6 @@ extends "DBIx::Class::ResultSet";
 with "Prep::Role::Verification";
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
 
-# use Prep::Types qw( URI );
-
 use Data::Verifier;
 use Data::Printer;
 
@@ -89,4 +87,3 @@ sub action_specs {
 }
 
 1;
-
