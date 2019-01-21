@@ -79,9 +79,26 @@ sub action_specs {
                 # nome, cpf e data de nascimento
             }
 
-            my $answer = $self->create(\%values);
+            my ($answer, $finished_quiz);
+            $self->result_source->schema->txn_do( sub {
+                # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
+                if ( $pending_question_data->{has_more} == 0 ) {
+                    my $recipient = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
+                    $recipient->update( { finished_quiz => 1 } );
 
-            return $answer;
+                    $finished_quiz = 1;
+                }
+                else {
+                    $finished_quiz = 0;
+                }
+
+                $answer = $self->create(\%values);
+            });
+
+            return {
+                answer        => $answer,
+                finished_quiz => $finished_quiz
+            };
         }
     };
 }

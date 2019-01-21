@@ -261,10 +261,7 @@ sub get_pending_question_data {
     my @answered_questions = $self->answers->search( undef, { prefetch => 'question' } )->get_column('question.code')->all();
 
     my @pending_questions = grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
-    use DDP; p \@pending_questions;
 
-    my $foo = scalar @pending_questions;
-    p $foo;
     return {
         question => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
         has_more => scalar @pending_questions > 1 ? 1 : 0

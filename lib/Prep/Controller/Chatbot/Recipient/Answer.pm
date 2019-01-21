@@ -14,7 +14,10 @@ sub post {
 
     return $c->render(
         status => 201,
-        json   => { id => $answer->id }
+        json   => {
+            id            => $answer->{answer}->id,
+            finished_quiz => $answer->{finished_quiz}
+        }
     )
 }
 

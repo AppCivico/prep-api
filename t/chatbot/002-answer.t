@@ -77,9 +77,7 @@ db_transaction {
                 {
                     map => encode_json ({
                         1 => 'A1',
-                        2 => 'C4',
-                        3 => 'B1',
-                        4 => 'A3'
+                        2 => 'C4'
                     })
                 }
             ),
@@ -88,7 +86,7 @@ db_transaction {
     };
 
     my $fb_id = '710488549074724';
-    my $recipient_id;
+    my ($recipient_id, $recipient);
     subtest 'Chatbot | Create recipient' => sub {
         $t->post_ok(
             '/api/chatbot/recipient',
@@ -102,6 +100,7 @@ db_transaction {
         ->status_is(201);
 
         $recipient_id = $t->tx->res->json->{id};
+        $recipient    = $schema->resultset('Recipient')->find($recipient_id);
     };
 
     subtest 'Chatbot | Create answer' => sub {
@@ -157,7 +156,9 @@ db_transaction {
             }
         )
         ->status_is(201)
-        ->json_has('/id');
+        ->json_has('/id')
+        ->json_has('/finished_quiz')
+        ->json_is('/finished_quiz', 0);
 
         # Pergunta ja respondida
         $t->post_ok(
@@ -172,6 +173,25 @@ db_transaction {
         ->status_is(400)
         ->json_has('/form_error/code')
         ->json_is('/form_error/code', 'invalid');
+
+        # Essa foi a última pergunta do quiz, logo o boolean na tabela recipient
+        # deve estar preenchido com true
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'C4',
+                answer_value   => '3'
+            }
+        )
+        ->status_is(201)
+        ->json_has('/id')
+        ->json_has('/finished_quiz')
+        ->json_is('/finished_quiz', 1);
+
+        ok( $recipient = $recipient->discard_changes, 'discard changes' );
+        is( $recipient->finished_quiz, 1, 'quiz is answered' );
     };
 };
 
