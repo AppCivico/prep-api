@@ -23,6 +23,8 @@ Prep::Role::Verification::TransactionalActions::DBIC	./lib/Prep/Role/Verificatio
 Prep::Routes	./lib/Prep/Routes.pm	/^package Prep::Routes;$/;"	p
 Prep::Schema	./lib/Prep/Schema.pm	/^package Prep::Schema;$/;"	p
 Prep::Schema::Result::Answer	./lib/Prep/Schema/Result/Answer.pm	/^package Prep::Schema::Result::Answer;$/;"	p
+Prep::Schema::Result::Appointment	./lib/Prep/Schema/Result/Appointment.pm	/^package Prep::Schema::Result::Appointment;$/;"	p
+Prep::Schema::Result::Calendar	./lib/Prep/Schema/Result/Calendar.pm	/^package Prep::Schema::Result::Calendar;$/;"	p
 Prep::Schema::Result::ChatbotSession	./lib/Prep/Schema/Result/ChatbotSession.pm	/^package Prep::Schema::Result::ChatbotSession;$/;"	p
 Prep::Schema::Result::Question	./lib/Prep/Schema/Result/Question.pm	/^package Prep::Schema::Result::Question;$/;"	p
 Prep::Schema::Result::QuestionMap	./lib/Prep/Schema/Result/QuestionMap.pm	/^package Prep::Schema::Result::QuestionMap;$/;"	p
@@ -31,12 +33,15 @@ Prep::Schema::Result::Role	./lib/Prep/Schema/Result/Role.pm	/^package Prep::Sche
 Prep::Schema::Result::User	./lib/Prep/Schema/Result/User.pm	/^package Prep::Schema::Result::User;$/;"	p
 Prep::Schema::Result::UserRole	./lib/Prep/Schema/Result/UserRole.pm	/^package Prep::Schema::Result::UserRole;$/;"	p
 Prep::Schema::Result::UserSession	./lib/Prep/Schema/Result/UserSession.pm	/^package Prep::Schema::Result::UserSession;$/;"	p
+Prep::Schema::Result::ViewRecipientQuiz	./lib/Prep/Schema/Result/ViewRecipientQuiz.pm	/^package Prep::Schema::Result::ViewRecipientQuiz;$/;"	p
 Prep::Schema::ResultSet::Answer	./lib/Prep/Schema/ResultSet/Answer.pm	/^package Prep::Schema::ResultSet::Answer;$/;"	p
 Prep::Schema::ResultSet::QuestionMap	./lib/Prep/Schema/ResultSet/QuestionMap.pm	/^package Prep::Schema::ResultSet::QuestionMap;$/;"	p
 Prep::Schema::ResultSet::Recipient	./lib/Prep/Schema/ResultSet/Recipient.pm	/^package Prep::Schema::ResultSet::Recipient;$/;"	p
 Prep::SchemaConnected	./lib/Prep/SchemaConnected.pm	/^package Prep::SchemaConnected;$/;"	p
 Prep::Types	./lib/Prep/Types.pm	/^package Prep::Types;$/;"	p
 Prep::Utils	./lib/Prep/Utils.pm	/^package Prep::Utils;$/;"	p
+WebService::GoogleCalendar	./lib/WebService/GoogleCalendar.pm	/^package WebService::GoogleCalendar;$/;"	p
+_build_furl	./lib/WebService/GoogleCalendar.pm	/^sub _build_furl { Furl->new() }$/;"	s
 _filter_value	./lib/Data/Verifier.pm	/^sub _filter_value {$/;"	s
 _get_random_string	./lib/Mojolicious/Plugin/Detach.pm	/^sub _get_random_string {$/;"	s
 _wrap_in_transaction	./lib/Prep/Role/Verification/TransactionalActions/DBIC.pm	/^sub _wrap_in_transaction {$/;"	s
@@ -54,7 +59,7 @@ fail_render	./lib/Prep/Authorization.pm	/^sub fail_render {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm	/^sub get {$/;"	s
 get_connect_info	./lib/Prep/SchemaConnected.pm	/^sub get_connect_info {$/;"	s
-get_pending_question	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_pending_question {$/;"	s
+get_pending_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_pending_question_data {$/;"	s
 get_schema	./lib/Prep/SchemaConnected.pm	/^sub get_schema {$/;"	s
 has_priv	./lib/Prep/Authorization.pm	/^sub has_priv {$/;"	s
 is_role	./lib/Prep/Authorization.pm	/^sub is_role    {$/;"	s
