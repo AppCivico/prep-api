@@ -175,7 +175,7 @@ __PACKAGE__->has_many(
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 
-use JSON::MaybeXS;
+use JSON;
 
 sub decoded {
     my ($self) = @_;
@@ -186,8 +186,8 @@ sub decoded {
         type                => $self->type,
         text                => $self->text,
         is_differentiator   => $self->is_differentiator,
-        multiple_choices    => $self->multiple_choices    ? decode_json( $self->multiple_choices )    : undef,
-        extra_quick_replies => $self->extra_quick_replies ? decode_json( $self->extra_quick_replies ) : undef,
+        multiple_choices    => $self->multiple_choices    ? from_json( $self->multiple_choices )    : undef,
+        extra_quick_replies => $self->extra_quick_replies ? from_json( $self->extra_quick_replies ) : undef,
         updated_at          => $self->updated_at,
         created_at          => $self->created_at
     }
