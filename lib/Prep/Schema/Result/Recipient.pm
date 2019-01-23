@@ -210,6 +210,9 @@ __PACKAGE__->might_have(
 
 with 'Prep::Role::Verification';
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
+
+use Prep::Utils qw(is_test);
+
 use Text::CSV;
 use DateTime;
 
@@ -365,6 +368,18 @@ sub verify_question_condition {
             -and => @conditions
         },
     );
+}
+
+sub is_prep {
+    my ($self) = @_;
+
+    if (is_test) {
+        return 1;
+    }
+
+    my $answer = $self->answers->search( { code => 'AC5' } )->next;
+
+    return $answer->answer_value eq '1' ? 1 : 0;
 }
 
 

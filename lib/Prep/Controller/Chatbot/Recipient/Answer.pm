@@ -16,7 +16,8 @@ sub post {
         status => 201,
         json   => {
             id            => $answer->{answer}->id,
-            finished_quiz => $answer->{finished_quiz}
+            finished_quiz => $answer->{finished_quiz},
+            ( $answer->{is_prep} ? ( is_prep => $answer->{is_prep} ) : () )
         }
     )
 }
