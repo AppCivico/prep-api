@@ -13,6 +13,7 @@ use Data::Printer;
 
 use Business::BR::CPF;
 use Regexp::Common qw(time);
+use Regexp::Common::time;
 
 sub verifiers_specs {
     my $self = shift;
