@@ -263,7 +263,7 @@ sub get_pending_question_data {
 
     my @answered_questions = $self->answers->search( undef, { prefetch => 'question' } )->get_column('question.code')->all();
 
-    my @pending_questions = grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
+    my @pending_questions = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
 
     # Tratando perguntas condicionais
     # Isto é, só devem serem vistas por quem
