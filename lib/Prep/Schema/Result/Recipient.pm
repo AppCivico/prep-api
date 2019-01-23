@@ -365,9 +365,8 @@ sub verify_question_condition {
         die \['code', 'invalid'];
     }
 
-    return $self->result_source->schema->resultset('Answer')->search(
+    return $self->answers->search(
         {
-            recipient_id => $self->id,
             -and => \@conditions
         },
     )->count;
