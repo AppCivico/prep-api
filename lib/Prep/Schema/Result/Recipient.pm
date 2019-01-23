@@ -265,14 +265,17 @@ sub get_pending_question_data {
 
     my @pending_questions = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
 
+    use DDP;
     # Tratando perguntas condicionais
     # Isto é, só devem serem vistas por quem
     # alcançar certas condições
     my $ret;
-    if ( my $next_question_code = $question_map->{ $pending_questions[0] } =~ /^(AC5|A[1-4])$/gm ) {
+    my $next_question_code = $question_map->{ $pending_questions[0] };
+
+    if ( $next_question_code =~ /^(AC5|A[1-4])$/gm ) {
         my $conditions_satisfied = $self->verify_question_condition($next_question_code);
 
-        if ( $conditions_satisfied == 1 ) {
+        if ( $conditions_satisfied > 0 ) {
             $ret = {
                 question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
                 has_more   => scalar @pending_questions > 1 ? 1 : 0,
@@ -324,14 +327,14 @@ sub verify_question_condition {
         for my $question ( qw( B3 C1 C2 C3 C4 ) ) {
 
             my $value;
-            if ( $question =~ /^(B3|C1|C4)$/gm ) {
+            if ( $question =~ /^(B3|C1|C4)$/ ) {
                 $value = '1';
             }
             elsif ( $question eq 'C2' ) {
-                $value = [2, 3];
+                $value = '2';
             }
             elsif ( $question eq 'C3' ) {
-                $value = [ 1, 2, 3 ];
+                $value = '1';
             }
 
             $condition = $self->answers->search(
@@ -362,12 +365,12 @@ sub verify_question_condition {
         die \['code', 'invalid'];
     }
 
-
-    return $self->answers->search(
+    return $self->result_source->schema->resultset('Answer')->search(
         {
-            -and => @conditions
+            recipient_id => $self->id,
+            -and => \@conditions
         },
-    );
+    )->count;
 }
 
 sub is_prep {
