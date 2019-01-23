@@ -379,7 +379,7 @@ sub is_prep {
         return 1;
     }
 
-    my $answer = $self->answers->search( { code => 'AC5' } )->next;
+    my $answer = $self->answers->search( { 'question.code' => 'AC5' }, { prefetch => 'question' } )->next;
 
     return $answer->answer_value eq '1' ? 1 : 0;
 }
