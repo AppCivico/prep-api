@@ -7,3 +7,4 @@ export POSTGRESQL_USER="postgres"
 export POSTGRESQL_PASSWORD="trust"
 
 export CHATBOT_SECURITY_TOKEN="foo"
+export INTERNAL_SECURITY_TOKEN="foo"

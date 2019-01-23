@@ -26,6 +26,12 @@ sub register {
     # Recipient::Answer
     my $answer = $recipient->route('/answer');
     $answer->post('/')->to('chatbot-recipient-answer#post');
+
+    # Internal
+    my $internal = $api->route('/internal')->under->to('internal#validade_security_token');
+
+    # Internal::DeleteAnswer
+    $internal->route('/delete-answers')->post('/')->to('internal-delete_answer#post');
 }
 
 1;
