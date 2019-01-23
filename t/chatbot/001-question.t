@@ -19,7 +19,7 @@ db_transaction {
         ok(
             $first_question = $question_rs->create(
                 {
-                    code              => 'AC1',
+                    code              => 'Z1',
                     text              => 'Foobar?',
                     type              => 'multiple_choice',
                     is_differentiator => 0,
@@ -32,7 +32,7 @@ db_transaction {
         ok(
             $second_question = $question_rs->create(
                 {
-                    code              => 'AC3',
+                    code              => 'Y5',
                     text              => 'open_text?',
                     type              => 'open_text',
                     is_differentiator => 0
@@ -44,7 +44,7 @@ db_transaction {
         ok(
             $third_question = $question_rs->create(
                 {
-                    code              => 'AC5',
+                    code              => 'B1',
                     text              => 'Você gosta?',
                     type              => 'multiple_choice',
                     is_differentiator => 1,
@@ -57,7 +57,7 @@ db_transaction {
         ok(
             $fourth_question = $question_rs->create(
                 {
-                    code                => 'C4',
+                    code                => 'U4',
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
                     is_differentiator   => 0,
@@ -76,10 +76,9 @@ db_transaction {
             $question_map = $schema->resultset('QuestionMap')->create(
                 {
                     map => to_json({
-                        1 => 'AC1',
-                        2 => 'C4',
-                        3 => 'AC5',
-                        4 => 'AC3'
+                        1 => 'Z1',
+                        2 => 'U4',
+                        3 => 'Y5',
                     })
                 }
             ),
@@ -127,7 +126,7 @@ db_transaction {
         ->json_has('/type')
         ->json_has('/extra_quick_replies')
         ->json_has('/multiple_choices')
-        ->json_is('/code', 'AC1')
+        ->json_is('/code', 'Z1')
         ->json_is('/text', 'Foobar?')
         ->json_is('/type', 'multiple_choice')
         ->json_is('/multiple_choices/1', 'foo')
@@ -147,7 +146,7 @@ db_transaction {
         ->json_has('/type')
         ->json_has('/extra_quick_replies')
         ->json_has('/multiple_choices')
-        ->json_is('/code', 'AC1')
+        ->json_is('/code', 'Z1')
         ->json_is('/text', 'Foobar?')
         ->json_is('/type', 'multiple_choice')
         ->json_is('/multiple_choices/1', 'foo')
@@ -159,13 +158,13 @@ db_transaction {
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'AC1',
+                code           => 'Z1',
                 answer_value   => '1'
             }
         )
         ->status_is(201);
 
-        # A pergunta esperada agora é a C4
+        # A pergunta esperada agora é a U4
         $t->get_ok(
             '/api/chatbot/recipient/pending-question',
             form => {
@@ -180,13 +179,70 @@ db_transaction {
         ->json_has('/extra_quick_replies')
         ->json_has('/multiple_choices')
         ->json_has('/has_more')
+        ->json_has('/count_more')
         ->json_is('/has_more', 1)
-        ->json_is('/code', 'C4')
+        ->json_is('/count_more', 2)
+        ->json_is('/code', 'U4')
         ->json_is('/text', 'barbaz?')
         ->json_is('/type', 'multiple_choice')
         ->json_is('/multiple_choices/1', 'Sim')
         ->json_is('/multiple_choices/2', 'Nunca')
         ->json_is('/multiple_choices/3', 'Regularmente');
+
+        # Respondendo a segunda pergunta
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'U4',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201);
+
+        # A pergunta esperada agora é a última Y5
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'Y5');
+
+        # Respondendo a última pergunta
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'Y5',
+                answer_value   => 'FOObar'
+            }
+        )
+        ->status_is(201);
+
+        # Não deve vir nenhuma pergunta e o has_more deve ser 0
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
+        ->json_has('/code')
+        ->json_has('/text')
+        ->json_has('/type')
+        ->json_has('/extra_quick_replies')
+        ->json_has('/multiple_choices')
+        ->json_has('/has_more')
+        ->json_is('/has_more', 0)
+        ->json_is('/code', undef)
+        ->json_is('/text', undef)
+        ->json_is('/type', undef);
     };
 
     # TODO testar quando houver atualização no fluxo
@@ -217,17 +273,17 @@ db_transaction{
         }
 
         # A única pergunta que fazemos que importa é a AC5
-		ok(
-			$question_rs->create(
-				{
-					code              => 'AC5',
-					text              => 'Deseja participar?',
-					type              => 'multiple_choice',
-					is_differentiator => 0,
-					multiple_choices  => to_json({ 1 => 'sim', 2 => 'não' })
-				}
-			)
-		);
+        ok(
+            $question_rs->create(
+                {
+                    code              => 'AC5',
+                    text              => 'Deseja participar?',
+                    type              => 'multiple_choice',
+                    is_differentiator => 0,
+                    multiple_choices  => to_json({ 1 => 'sim', 2 => 'não' })
+                }
+            )
+        );
 
         # Perguntas da parte B
         subtest 'Creating B section questions' => sub {
@@ -294,68 +350,68 @@ db_transaction{
                         type              => 'multiple_choice',
                         is_differentiator => 1,
                         multiple_choices  => to_json(
-							{
-								1 => "Sim",
+                            {
+                                1 => "Sim",
                                 2 => "Não"
-							}
+                            }
                         )
                     }
                 )
             );
 
-			ok(
-				$question_rs->create(
-					{
-						code              => 'C2',
-						text              => 'Você sabe o resultado do teste de HIV de seu parceiro fixo?',
-						type              => 'multiple_choice',
-						is_differentiator => 1,
-						multiple_choices  => to_json(
-							{
-								1 => "Sim, é negativo",
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'C2',
+                        text              => 'Você sabe o resultado do teste de HIV de seu parceiro fixo?',
+                        type              => 'multiple_choice',
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Sim, é negativo",
                                 2 => "Sim, é positivo",
                                 3 => "Não sei"
-							}
-						)
-					}
-				)
-			);
+                            }
+                        )
+                    }
+                )
+            );
 
-			ok(
-				$question_rs->create(
-					{
-						code              => 'C3',
-						text              => 'Nos últimos seis meses, quantos parceiros casuais você teve?',
-						type              => 'multiple_choice',
-						is_differentiator => 1,
-						multiple_choices  => to_json(
-							{
-								1 => "De 1 a 5",
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'C3',
+                        text              => 'Nos últimos seis meses, quantos parceiros casuais você teve?',
+                        type              => 'multiple_choice',
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "De 1 a 5",
                                 2 => "Entre 5 e 10",
                                 3 => "Mais de 10",
                                 4 => "Nenhum"
-							}
-						)
-					}
-				)
-			);
+                            }
+                        )
+                    }
+                )
+            );
 
-			ok(
-				$question_rs->create(
-					{
-						code              => 'C4',
-						text              => 'Nos últimos seis meses, você fez sexo anal sem camisinha com algum(ns) de seus parceiros casuais?',
-						type              => 'multiple_choice',
-						is_differentiator => 1,
-						multiple_choices  => to_json(
-							{
-								1 => "Sim",
-								2 => "Não"
-							}
-						)
-					}
-				)
-			);
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'C4',
+                        text              => 'Nos últimos seis meses, você fez sexo anal sem camisinha com algum(ns) de seus parceiros casuais?',
+                        type              => 'multiple_choice',
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Sim",
+                                2 => "Não"
+                            }
+                        )
+                    }
+                )
+            );
         };
 
         # Perguntas da parte A
@@ -371,47 +427,47 @@ db_transaction{
                 )
             );
 
-			ok(
-				$question_rs->create(
-					{
-						code              => 'A2',
-						text              => 'Qual a sua data de nascimento?',
-						type              => 'open_text',
-						is_differentiator => 1
-					}
-				)
-			);
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'A2',
+                        text              => 'Qual a sua data de nascimento?',
+                        type              => 'open_text',
+                        is_differentiator => 1
+                    }
+                )
+            );
 
-			ok(
-				$question_rs->create(
-					{
-						code              => 'A3',
-						text              => 'Qual é o seu CPF?',
-						type              => 'open_text',
-						is_differentiator => 1
-					}
-				)
-			);
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'A3',
+                        text              => 'Qual é o seu CPF?',
+                        type              => 'open_text',
+                        is_differentiator => 1
+                    }
+                )
+            );
 
-			ok(
-				$question_rs->create(
-					{
-						code              => 'A4',
-						text              => 'Como você define sua cor?',
-						type              => 'multiple_choice',
-						is_differentiator => 1,
-						multiple_choices  => to_json(
-							{
-								1 => "Branca",
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'A4',
+                        text              => 'Como você define sua cor?',
+                        type              => 'multiple_choice',
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Branca",
                                 2 => "Preta",
                                 3 => "Amarela",
                                 4 => "Parda",
                                 5 => "Indígena"
-							}
-						)
-					}
-				)
-			);
+                            }
+                        )
+                    }
+                )
+            );
         };
 
         ok(

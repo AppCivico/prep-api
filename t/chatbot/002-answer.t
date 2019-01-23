@@ -19,7 +19,7 @@ db_transaction {
         ok(
             $first_question = $question_rs->create(
                 {
-                    code              => 'A1',
+                    code              => 'Q1',
                     text              => 'Foobar?',
                     type              => 'multiple_choice',
                     is_differentiator => 0,
@@ -32,7 +32,7 @@ db_transaction {
         ok(
             $second_question = $question_rs->create(
                 {
-                    code              => 'A3',
+                    code              => 'Q3',
                     text              => 'open_text?',
                     type              => 'open_text',
                     is_differentiator => 0
@@ -44,7 +44,7 @@ db_transaction {
         ok(
             $third_question = $question_rs->create(
                 {
-                    code              => 'B1',
+                    code              => 'W1',
                     text              => 'Você gosta?',
                     type              => 'multiple_choice',
                     is_differentiator => 1,
@@ -57,7 +57,7 @@ db_transaction {
         ok(
             $fourth_question = $question_rs->create(
                 {
-                    code                => 'C4',
+                    code                => 'E4',
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
                     is_differentiator   => 0,
@@ -76,8 +76,8 @@ db_transaction {
             $question_map = $schema->resultset('QuestionMap')->create(
                 {
                     map => encode_json ({
-                        1 => 'A1',
-                        2 => 'C4'
+                        1 => 'Q1',
+                        2 => 'E4'
                     })
                 }
             ),
@@ -124,7 +124,7 @@ db_transaction {
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'A1',
+                code           => 'Q1',
                 answer_value   => 'foobar'
             }
         )
@@ -138,7 +138,7 @@ db_transaction {
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'A1',
+                code           => 'Q1',
                 answer_value   => '10'
             }
         )
@@ -151,7 +151,7 @@ db_transaction {
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'A1',
+                code           => 'Q1',
                 answer_value   => '1'
             }
         )
@@ -166,7 +166,7 @@ db_transaction {
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'A1',
+                code           => 'Q1',
                 answer_value   => '1'
             }
         )
@@ -181,7 +181,7 @@ db_transaction {
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'C4',
+                code           => 'E4',
                 answer_value   => '3'
             }
         )

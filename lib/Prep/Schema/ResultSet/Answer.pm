@@ -11,6 +11,9 @@ with 'Prep::Role::Verification::TransactionalActions::DBIC';
 use Data::Verifier;
 use Data::Printer;
 
+use Business::BR::CPF;
+use Regexp::Common qw(time);
+
 sub verifiers_specs {
     my $self = shift;
 
@@ -57,7 +60,11 @@ sub action_specs {
             my $question_code          = delete $values{code};
             my $recipient              = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
             my $pending_question_data  = $recipient->get_pending_question_data;
-            my $next_question          = $pending_question_data->{question}->decoded;
+            my $next_question          = $pending_question_data->{question} ? $pending_question_data->{question}->decoded : undef;
+
+            # Caso não tenha uma próxima pergunta
+            # não posso aceitar respostas
+            die \['fb_id', 'invalid'] unless $next_question;
 
             # Verifico se o código enviado bate
             # com o código da próxima pergunta pendente
@@ -76,7 +83,15 @@ sub action_specs {
                 # open_text
 
                 # Perguntas de texto aberto podem ser:
-                # nome, cpf e data de nascimento
+                # nome (A1), cpf (A3) e data de nascimento (A2)
+                if ( $next_question->{code} eq 'A3' ) {
+                    die \['answer_value', 'invalid'] unless test_cpf($values{answer_value});
+
+                    $values{answer_value} =~ s/[^\w]//g;
+                }
+                elsif ( $next_question->{code} eq 'A2' ) {
+                    die \['answer_value', 'invalid'] unless $values{answer_value} =~ m/^$RE{time}{iso}\z/;
+                }
             }
 
             my ($answer, $finished_quiz);

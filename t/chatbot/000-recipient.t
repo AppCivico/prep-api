@@ -173,7 +173,7 @@ db_transaction {
         ->json_is('/fb_id',   '710488549074724')
         ->json_is('/page_id', '1573221416102831')
         ->json_is('/name',    'foobar')
-		->json_is('/finished_quiz', 0)
+        ->json_is('/finished_quiz', 0)
         ->json_is('/opt_in',  1);
     };
 

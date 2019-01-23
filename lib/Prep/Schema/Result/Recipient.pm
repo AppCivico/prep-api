@@ -265,35 +265,50 @@ sub get_pending_question_data {
     # Tratando perguntas condicionais
     # Isto é, só devem serem vistas por quem
     # alcançar certas condições
-	my $next_question_code = $question_map->{ $pending_questions[0] };
-
     my $ret;
-    if ( $next_question_code =~ /^(AC5|A[1-4])$/gm ) {
+    if ( my $next_question_code = $question_map->{ $pending_questions[0] } =~ /^(AC5|A[1-4])$/gm ) {
         my $conditions_satisfied = $self->verify_question_condition($next_question_code);
-        use DDP; p $conditions_satisfied;
+
         if ( $conditions_satisfied == 1 ) {
             $ret = {
-                question => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
-                has_more => scalar @pending_questions > 1 ? 1 : 0
+                question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
+                has_more   => scalar @pending_questions > 1 ? 1 : 0,
+                count_more => scalar @pending_questions
             };
         }
         else {
+            # Caso as condições não tenham sido satisfeitas
+            # o quiz acaba.
             $ret = {
-                question => undef,
-                has_more => undef
+                question   => undef,
+                has_more   => 0,
+                count_more => scalar @pending_questions
             };
 
             $self->update( { finished_quiz => 1 } );
         }
     }
-    else {
+    elsif ( scalar @pending_questions == 0 ) {
+        # Caso não tenha mais perguntas pendentes acaba o quiz.
         $ret = {
-            question => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
-            has_more => scalar @pending_questions > 1 ? 1 : 0
+            question   => undef,
+            has_more   => 0,
+            count_more => scalar @pending_questions
+        };
+
+        $self->update( { finished_quiz => 1 } );
+    }
+    else {
+
+        # Caso para quando a pergunta não for condicional
+        $ret = {
+            question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
+            has_more   => scalar @pending_questions > 1 ? 1 : 0,
+            count_more => scalar @pending_questions
         };
     }
 
-	return $ret;
+    return $ret;
 }
 
 sub verify_question_condition {
@@ -301,7 +316,6 @@ sub verify_question_condition {
 
     my (@conditions, $condition);
     if ( $next_question_code eq 'AC5' ) {
-        use DDP; p 'ta aqui';
         # Deve ter respondido as seguintes perguntas com as respectivas respostas:
         # B3 => 1, C1 => 1, C2 => 2 ou 3, C3 => 1, 2 ou 3, C4 => 1
         for my $question ( qw( B3 C1 C2 C3 C4 ) ) {
@@ -331,25 +345,25 @@ sub verify_question_condition {
     }
     elsif ( $next_question_code =~ /^A[1-4]$/gm ) {
         # Deve ter concordado participar da pesquisa
-		my $first_condition = $self->answers->search(
-			{
-				'question.code' => 'AC5',
-				answer_value    => '1'
-			},
-			{ join => 'question'}
-		)->as_query;
+        my $first_condition = $self->answers->search(
+            {
+                'question.code' => 'AC5',
+                answer_value    => '1'
+            },
+            { join => 'question'}
+        )->as_query;
 
-		push @conditions, { -exists => $first_condition };
+        push @conditions, { -exists => $first_condition };
     }
     else {
         die \['code', 'invalid'];
     }
 
 
-	return $self->answers->search(
-		{
-			-and => @conditions
-		},
+    return $self->answers->search(
+        {
+            -and => @conditions
+        },
     );
 }
 
