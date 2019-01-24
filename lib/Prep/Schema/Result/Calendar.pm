@@ -221,7 +221,7 @@ sub available_dates {
 
                         +{
                             quota => $_,
-                            time  => $start_time->add($seconds_per_quota * $_)->hms,
+                            time  => $start_time->add($seconds_per_quota * $_)->hms . ' - ' . $start_time->add($seconds_per_quota * ( $_ + 1 ))->hms,
                         }
                     } @quotas
                 ]
