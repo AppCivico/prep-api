@@ -4,3 +4,4 @@
 0000-appschema 2019-01-10T17:35:18Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating schema
 0001-add-question-answers [0000-appschema] 2019-01-15T12:00:44Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding tables needed for the questionnaire: 'question', 'question_map' and 'answer'
 0002-update-recipient [0001-add-question-answers] 2019-01-21T12:54:08Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the 'recipient' table. Adding the following columns: 'question_notification_sent_at' and 'finished_quiz'
+0003-add-calendar [0002-update-recipient] 2019-01-24T19:26:04Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding calendar table
