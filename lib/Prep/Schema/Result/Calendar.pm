@@ -214,6 +214,7 @@ sub available_dates {
             my $seconds_per_quota = int( $delta / $_->quotas );
 
             +{
+                appointment_window_id => $appointment_window_id,
                 ymd   => DateTime->now->ymd,
                 hours => [
                     map {
