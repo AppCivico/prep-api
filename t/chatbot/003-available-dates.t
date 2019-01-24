@@ -96,7 +96,7 @@ db_transaction {
         )
         ->status_is(200)
         ->json_is('/dates/0/hours/0/quota', 2)
-        ->json_is('/dates/0/hours/0/time', '11:00:00 - 11:30:00');
+        ->json_is('/dates/0/hours/0/time', '10:30:00 - 11:00:00');
 
     };
 
