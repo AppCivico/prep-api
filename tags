@@ -12,9 +12,13 @@ Prep::Authentication	./lib/Prep/Authentication.pm	/^package Prep::Authentication
 Prep::Authorization	./lib/Prep/Authorization.pm	/^package Prep::Authorization;$/;"	p
 Prep::Controller	./lib/Prep/Controller.pm	/^package Prep::Controller;$/;"	p
 Prep::Controller::Chatbot	./lib/Prep/Controller/Chatbot.pm	/^package Prep::Controller::Chatbot;$/;"	p
+Prep::Controller::Chatbot::Appointment	./lib/Prep/Controller/Chatbot/Appointment.pm	/^package Prep::Controller::Chatbot::Appointment;$/;"	p
+Prep::Controller::Chatbot::Appointment::AvailableDates	./lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm	/^package Prep::Controller::Chatbot::Appointment::AvailableDates;$/;"	p
 Prep::Controller::Chatbot::Recipient	./lib/Prep/Controller/Chatbot/Recipient.pm	/^package Prep::Controller::Chatbot::Recipient;$/;"	p
 Prep::Controller::Chatbot::Recipient::Answer	./lib/Prep/Controller/Chatbot/Recipient/Answer.pm	/^package Prep::Controller::Chatbot::Recipient::Answer;$/;"	p
 Prep::Controller::Chatbot::Recipient::PendingQuestion	./lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm	/^package Prep::Controller::Chatbot::Recipient::PendingQuestion;$/;"	p
+Prep::Controller::Internal	./lib/Prep/Controller/Internal.pm	/^package Prep::Controller::Internal;$/;"	p
+Prep::Controller::Internal::DeleteAnswer	./lib/Prep/Controller/Internal/DeleteAnswer.pm	/^package Prep::Controller::Internal::DeleteAnswer;$/;"	p
 Prep::Data::Manager	./lib/Prep/Data/Manager.pm	/^package Prep::Data::Manager;$/;"	p
 Prep::Data::Visitor	./lib/Prep/Data/Visitor.pm	/^package Prep::Data::Visitor;$/;"	p
 Prep::Role::Verification	./lib/Prep/Role/Verification.pm	/^package Prep::Role::Verification;$/;"	p
@@ -24,6 +28,7 @@ Prep::Routes	./lib/Prep/Routes.pm	/^package Prep::Routes;$/;"	p
 Prep::Schema	./lib/Prep/Schema.pm	/^package Prep::Schema;$/;"	p
 Prep::Schema::Result::Answer	./lib/Prep/Schema/Result/Answer.pm	/^package Prep::Schema::Result::Answer;$/;"	p
 Prep::Schema::Result::Appointment	./lib/Prep/Schema/Result/Appointment.pm	/^package Prep::Schema::Result::Appointment;$/;"	p
+Prep::Schema::Result::AppointmentWindow	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^package Prep::Schema::Result::AppointmentWindow;$/;"	p
 Prep::Schema::Result::Calendar	./lib/Prep/Schema/Result/Calendar.pm	/^package Prep::Schema::Result::Calendar;$/;"	p
 Prep::Schema::Result::ChatbotSession	./lib/Prep/Schema/Result/ChatbotSession.pm	/^package Prep::Schema::Result::ChatbotSession;$/;"	p
 Prep::Schema::Result::Question	./lib/Prep/Schema/Result/Question.pm	/^package Prep::Schema::Result::Question;$/;"	p
@@ -49,6 +54,7 @@ action_specs	./lib/Prep/Schema/Result/Recipient.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/Answer.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/Recipient.pm	/^sub action_specs {$/;"	s
 apply	./lib/Prep/Data/Manager.pm	/^sub apply {$/;"	s
+available_dates	./lib/Prep/Schema/Result/Calendar.pm	/^sub available_dates {$/;"	s
 check	./lib/Prep/Role/Verification.pm	/^sub check {$/;"	s
 coercion	./lib/Data/Verifier.pm	/^sub coercion {$/;"	s
 decoded	./lib/Prep/Schema/Result/Question.pm	/^sub decoded {$/;"	s
@@ -56,12 +62,16 @@ env	./lib/Prep/Utils.pm	/^sub env { return $ENV{${\\shift}} }$/;"	s
 errors	./lib/Prep/Data/Manager.pm	/^sub errors {$/;"	s
 execute	./lib/Prep/Role/Verification.pm	/^sub execute {$/;"	s
 fail_render	./lib/Prep/Authorization.pm	/^sub fail_render {$/;"	s
+generate_token	./lib/WebService/GoogleCalendar.pm	/^sub generate_token {$/;"	s
+get	./lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm	/^sub get {$/;"	s
+get_calendar_events	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_events {$/;"	s
 get_connect_info	./lib/Prep/SchemaConnected.pm	/^sub get_connect_info {$/;"	s
 get_pending_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_pending_question_data {$/;"	s
 get_schema	./lib/Prep/SchemaConnected.pm	/^sub get_schema {$/;"	s
 has_priv	./lib/Prep/Authorization.pm	/^sub has_priv {$/;"	s
+is_prep	./lib/Prep/Schema/Result/Recipient.pm	/^sub is_prep {$/;"	s
 is_role	./lib/Prep/Authorization.pm	/^sub is_role    {$/;"	s
 is_test	./lib/Prep/Utils.pm	/^sub is_test {$/;"	s
 load_user	./lib/Prep/Authentication.pm	/^sub load_user {$/;"	s
@@ -69,6 +79,7 @@ parsed	./lib/Prep/Schema/Result/QuestionMap.pm	/^sub parsed {$/;"	s
 parsed	./lib/Prep/Schema/ResultSet/QuestionMap.pm	/^sub parsed {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/Answer.pm	/^sub post {$/;"	s
+post	./lib/Prep/Controller/Internal/DeleteAnswer.pm	/^sub post {$/;"	s
 put	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub put {$/;"	s
 register	./lib/Mojolicious/Plugin/Detach.pm	/^sub register {$/;"	s
 register	./lib/Mojolicious/Plugin/SimpleAuthentication.pm	/^sub register {$/;"	s
@@ -81,10 +92,12 @@ stasher	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub stasher {$/;"	s
 user_privs	./lib/Prep/Authorization.pm	/^sub user_privs {$/;"	s
 user_role	./lib/Prep/Authorization.pm	/^sub user_role  { ... }$/;"	s
 validade_security_token	./lib/Prep/Controller/Chatbot.pm	/^sub validade_security_token {$/;"	s
+validade_security_token	./lib/Prep/Controller/Internal.pm	/^sub validade_security_token {$/;"	s
 validate_request_params	./lib/Prep/Controller.pm	/^sub validate_request_params {$/;"	s
 validate_user	./lib/Prep/Authentication.pm	/^sub validate_user {$/;"	s
 verifiers_specs	./lib/Prep/Schema/Result/Recipient.pm	/^sub verifiers_specs {$/;"	s
 verifiers_specs	./lib/Prep/Schema/ResultSet/Answer.pm	/^sub verifiers_specs {$/;"	s
 verifiers_specs	./lib/Prep/Schema/ResultSet/Recipient.pm	/^sub verifiers_specs {$/;"	s
 verify	./lib/Data/Verifier.pm	/^sub verify {$/;"	s
+verify_question_condition	./lib/Prep/Schema/Result/Recipient.pm	/^sub verify_question_condition {$/;"	s
 visit_hash	./lib/Prep/Data/Visitor.pm	/^sub visit_hash {$/;"	s
