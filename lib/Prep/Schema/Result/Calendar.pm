@@ -225,7 +225,7 @@ sub available_dates {
                             # No primeiro caso o começo não deve ser somado
                             time  => $_ == 1 ?
                                 ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
-                                ( $start_time->add($seconds_per_quota * $_)->hms . ' - ' . $start_time->add($seconds_per_quota * ( $_ + 1 ))->hms ),
+                                ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
                         }
                     } @quotas
                 ]
