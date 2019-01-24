@@ -186,6 +186,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 appointments
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Appointment>
+
+=cut
+
+__PACKAGE__->has_many(
+  "appointments",
+  "Prep::Schema::Result::Appointment",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 chatbot_session
 
 Type: might_have
@@ -202,8 +217,8 @@ __PACKAGE__->might_have(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-21 14:45:07
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:F+KWvbfDkttfJ4iwihf4TQ
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-24 15:05:54
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IrIxHGZG9jhaUBLDJcPaCQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

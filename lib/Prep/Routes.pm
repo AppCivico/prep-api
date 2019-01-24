@@ -27,6 +27,12 @@ sub register {
     my $answer = $recipient->route('/answer');
     $answer->post('/')->to('chatbot-recipient-answer#post');
 
+    # Appointment
+	my $appointment = $chatbot->route('/appointment');
+
+    # Appointment::AvailableDates
+	$appointment->route('/available-dates')->get('/')->to('chatbot-appointment-available_dates#get');
+
     # Internal
     my $internal = $api->route('/internal')->under->to('internal#validade_security_token');
 

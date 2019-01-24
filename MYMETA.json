@@ -1,7 +1,7 @@
 {
    "abstract" : "PREP API",
    "author" : [
-      "Lucas Ansei <lucastakushi@hotmail.com>"
+      "Lucas Ansei <lucastakushi@hotmail.com.com>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "ExtUtils::MakeMaker version 7.1001, CPAN::Meta::Converter version 2.150005",
@@ -39,7 +39,9 @@
       },
       "runtime" : {
          "requires" : {
+            "App::ForkProve" : "0",
             "App::Sqitch" : "0.9996",
+            "Business::BR::CPF" : "0",
             "Config::General" : "0",
             "Crypt::PRNG" : "0",
             "DBD::Pg" : "0",
@@ -49,7 +51,6 @@
             "DBIx::Class::ResultSet" : "0",
             "DBIx::Class::Schema" : "0",
             "DBIx::Class::TimeStamp" : "0",
-            "DDP" : "0",
             "Data::Diver" : "0",
             "Data::Manager" : "0",
             "Data::Printer" : "0",
@@ -60,16 +61,25 @@
             "Data::Verifier::Results" : "0",
             "Data::Visitor" : "0",
             "Data::Visitor::Callback" : "0",
+            "DateTime" : "0",
             "Exporter" : "0",
             "FindBin" : "0",
+            "JSON" : "0",
+            "JSON::MaybeXS" : "0",
             "Mojo::Base" : "0",
+            "Mojolicious::Plugin::Authorization" : "0",
             "Moose" : "0",
             "Moose::Role" : "0",
             "Moose::Util::TypeConstraints" : "0",
             "MooseX::MarkAsMethods" : "0",
             "MooseX::NonMoose" : "0",
             "MooseX::Types" : "0",
+            "MooseX::Types::Moose" : "0",
+            "Regexp::Common" : "0",
+            "Regexp::Common::time" : "0",
             "Scalar::Util" : "0",
+            "Text::CSV" : "0",
+            "base" : "0",
             "common::sense" : "0",
             "namespace::autoclean" : "0",
             "perl" : "5.014002",
@@ -81,6 +91,6 @@
       }
    },
    "release_status" : "stable",
-   "version" : "20190114",
+   "version" : "20190123",
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

@@ -6,6 +6,9 @@ use Data::Printer;
 
 use Mojo::Util qw(monkey_patch);
 
+our $calendar_event_get;
+our $calendar_event_post;
+
 monkey_patch 'Test::Mojo', or_die => sub {
     my $t = shift;
 
@@ -86,6 +89,89 @@ sub api_auth_as {
     }
 
     return $user_session;
+}
+
+sub setup_calendar_event_get {
+    $calendar_event_get = {
+        "kind" => "calendar#events",
+        "etag" => "\"p3349f9cgu63e00g\"",
+        "summary" => "prep_dev",
+        "description" => "Agenda de dev do prep",
+        "updated" => "2019-01-24T16 =>54 =>57.709Z",
+        "timeZone" => "America/Sao_Paulo",
+        "accessRole" => "owner",
+        "defaultReminders" => [],
+        "nextSyncToken" => "CMiXpZDxhuACEMiXpZDxhuACGAU=",
+        "items" => [
+            {
+            "kind" => "calendar#event",
+            "etag" => "\"3096697795418000\"",
+            "id" => "fakeevent2",
+            "status" => "confirmed",
+            "htmlLink" => "https =>//www.google.com/calendar/event?eid=ZmFrZWV2ZW50MiBlb2tvZS5jb21fbzEzZTZjNDZoYXRtZ2VkODBvdm5zOGxlNmNAZw",
+            "created" => "2019-01-24T16 =>54 =>57.000Z",
+            "updated" => "2019-01-24T16 =>54 =>57.709Z",
+            "description" => "foobar",
+            "creator" => {
+                "email" => "lucas.ansei@appcivico.com",
+                "displayName" => "Lucas Ansei"
+            },
+            "organizer" => {
+                "email" => "eokoe.com_o13e6c46hatmged80ovns8le6c@group.calendar.google.com",
+                "displayName" => "prep_dev",
+                "self" => true
+            },
+            "start" => {
+                "dateTime" => "2019-01-25T14 =>00 =>00-02 =>00",
+                "timeZone" => "America/Sao_Paulo"
+            },
+            "end" => {
+                "dateTime" => "2019-01-25T15 =>00 =>00-02 =>00",
+                "timeZone" => "America/Sao_Paulo"
+            },
+            "iCalUID" => "fakeevent2@google.com",
+            "sequence" => 0,
+            "reminders" => {
+                "useDefault" => true
+            }
+            }
+        ]
+    }
+}
+
+sub setup_calendar_event_post {
+    $calendar_event_post = {
+        "kind" => "calendar#event",
+        "etag" => "\"3096697795418000\"",
+        "id" => "fakeevent2",
+        "status" => "confirmed",
+        "htmlLink" => "https =>//www.google.com/calendar/event?eid=ZmFrZWV2ZW50MiBlb2tvZS5jb21fbzEzZTZjNDZoYXRtZ2VkODBvdm5zOGxlNmNAZw",
+        "created" => "2019-01-24T16 =>54 =>57.000Z",
+        "updated" => "2019-01-24T16 =>54 =>57.709Z",
+        "description" => "foobar",
+        "creator" => {
+            "email" => "lucas.ansei@appcivico.com",
+            "displayName" => "Lucas Ansei"
+        },
+        "organizer" => {
+            "email" => "eokoe.com_o13e6c46hatmged80ovns8le6c@group.calendar.google.com",
+            "displayName" => "prep_dev",
+            "self" => true
+        },
+        "start" => {
+            "dateTime" => "2019-01-25T14 =>00 =>00-02 =>00",
+            "timeZone" => "America/Sao_Paulo"
+        },
+        "end" => {
+            "dateTime" => "2019-01-25T15 =>00 =>00-02 =>00",
+            "timeZone" => "America/Sao_Paulo"
+        },
+        "iCalUID" => "fakeevent2@google.com",
+        "sequence" => 0,
+        "reminders" => {
+            "useDefault" => true
+        }
+    }
 }
 
 1;
