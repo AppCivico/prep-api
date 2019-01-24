@@ -211,7 +211,7 @@ sub available_dates {
 
             # Pego a diferença entre os dois em segundos e divido pelo numero de cotas
             my $delta = ( $end_time - $start_time );
-            my $seconds_per_quota = int( $delta / $_->quotas );
+            my $seconds_per_quota = ( $delta / $_->quotas );
 
             +{
                 appointment_window_id => $appointment_window_id,
@@ -221,7 +221,11 @@ sub available_dates {
 
                         +{
                             quota => $_,
-                            time  => $start_time->add($seconds_per_quota * $_)->hms . ' - ' . $start_time->add($seconds_per_quota * ( $_ + 1 ))->hms,
+                            # Tratando o primeiro caso
+                            # No primeiro caso o começo não deve ser somado
+                            time  => $_ == 1 ?
+                                ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
+                                ( $start_time->add($seconds_per_quota * $_)->hms . ' - ' . $start_time->add($seconds_per_quota * ( $_ + 1 ))->hms ),
                         }
                     } @quotas
                 ]

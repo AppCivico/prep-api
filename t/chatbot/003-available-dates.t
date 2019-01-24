@@ -73,7 +73,7 @@ db_transaction {
         ->json_has('/dates/0/hours/0/quota')
         ->json_has('/dates/0/hours/0/time')
         ->json_is('/dates/0/hours/0/quota', 1)
-        ->json_is('/dates/0/hours/0/time', '10:30:00 - 11:00:00');
+        ->json_is('/dates/0/hours/0/time', '10:00:00 - 10:30:00');
 
         $t->post_ok(
             '/api/chatbot/recipient/appointment',
