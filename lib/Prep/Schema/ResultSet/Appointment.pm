@@ -11,6 +11,8 @@ with 'Prep::Role::Verification::TransactionalActions::DBIC';
 use Data::Verifier;
 use Data::Printer;
 
+use WebService::GoogleCalendar;
+
 sub verifiers_specs {
     my $self = shift;
 
@@ -37,7 +39,7 @@ sub verifiers_specs {
 						my $count = $self->result_source->schema->resultset('Appointment')->search(
                             {
                                 quota_number          => $quota_number,
-                                created_at            => { '>=' => \'now()::date', '<=' => \"now()::date + interval '1 day'" },
+                                created_at            => { '>=' => \'now()::date', '<=' => \"now()::date + interval '10 days'" },
                                 appointment_window_id => $appointment_window_id
                             }
                         )->count;
@@ -64,6 +66,21 @@ sub action_specs {
 
             # TODO verificar pelo WS do GCalendar para ver se o horario está
             # disponivel ainda
+            my $ws = WebService::GoogleCalendar->instance();
+
+            my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
+            my $calendar           = $appointment_window->calendar;
+            my $quota_map          = $appointment_window->quota_map;
+
+            my $quota = $quota_map->{$values{quota_number}};
+            use DDP; p $quota;
+
+            #$ws->create_event(
+            #    calendar    => $calendar,
+            #    calendar_id => $calendar->id,
+            #    start_datetime => $quota
+            #)
+
             my $appointment = $self->create(\%values);
 
             return $appointment;

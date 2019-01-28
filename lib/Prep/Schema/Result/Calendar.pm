@@ -198,7 +198,7 @@ sub available_dates {
 			my @taken_quotas = $appointment_rs->search(
 				{
 					appointment_window_id => $appointment_window_id,
-                    created_at            => { '>=' => \'now()::date', '<=' => \"now()::date + interval '1 day'" },
+                    created_at            => { '>=' => \'now()::date', '<=' => \"now()::date + interval '10 days'" },
 				}
 			)->get_column('quota_number')->all();
 

@@ -82,6 +82,11 @@ __PACKAGE__->table("appointment_window");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 custom_quota_time
+
+  data_type: 'time'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -109,6 +114,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "custom_quota_time",
+  { data_type => "time", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -156,10 +163,65 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-24 15:05:54
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:cqwPbElBTUAFdsYobWL0EQ
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 00:43:50
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1pQEfO0X0vtrstXSEv7jfA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
+
+use DateTime;
+use Time::Piece;
+
+sub get_quota_info {
+    my ($self) = @_;
+
+    # Parseio o começo e o fim da janela de atendimento
+    my $end_time   = Time::Piece->strptime( $self->end_time, '%H:%M:%S' );
+    my $start_time = Time::Piece->strptime( $self->start_time, '%H:%M:%S' );
+
+    # Pego a diferença entre os dois em minutos
+    my $delta = $end_time - $start_time;
+
+    my ($count, $time_in_secs);
+    if ( $self->custom_quota_time ) {
+        $time_in_secs = Time::Piece->strptime( $self->custom_quota_time, '%H:%M:%S' );
+        $time_in_secs = ( $time_in_secs->min * 60 ) + $time_in_secs->sec;
+
+        $count = $delta / $time_in_secs;
+    }
+    else {
+        $count        = $self->quotas;
+        $time_in_secs = $delta / $self->quotas;
+    }
+
+    return {
+        start_time      => $start_time,
+        end_time        => $end_time,
+        time_in_seconds => $time_in_secs,
+        count           => $count
+    };
+}
+
+sub quota_map {
+    my ($self) = @_;
+
+    my $quota_info = $self->get_quota_info;
+
+    my $current_time = $quota_info->{start_time};
+    my ($ret, $next_time);
+
+    for ( 1 .. $quota_info->{count} ) {
+        $next_time = $current_time->add( $quota_info->{time_in_seconds} );
+
+        $ret->{$_} = {
+            text  => $current_time->hms . ' - ' . $next_time->hms,
+            start => $current_time->hms,
+            end   => $next_time->hms
+        }
+    }
+
+    return $ret;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

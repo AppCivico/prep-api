@@ -3,6 +3,7 @@ use common::sense;
 use MooseX::Singleton;
 
 use Furl;
+use Net::Google::OAuth;
 use DateTime;
 
 has 'furl' => ( is => 'rw', lazy => 1, builder => '_build_furl' );
@@ -13,8 +14,15 @@ sub generate_token {
     my ($self, $calendar) = @_;
 
     my $token;
-    if ( $calendar->token_valid_until < DateTime->now() ) {
-        $self->_furl->get()
+    if ( $calendar->token_valid_until <= DateTime->now() ) {
+		my $oauth = Net::Google::OAuth->new(
+			-client_id     => $ENV{GOOGLE_CLIENT_ID},
+			-client_secret => $ENV{GOOGLE_CLIENT_SECRET},
+		);
+
+		$oauth->refreshToken( -refresh_token => $ENV{REFRESH_TOKEN} );
+
+		$token = $oauth->getAccessToken();
     }
     else {
         $token = $calendar->token;
@@ -26,19 +34,96 @@ sub generate_token {
 sub get_calendar_events {
     my ($self, %opts) = @_;
 
+	my @required_opts = qw( calendar calendar_id );
+	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
     my $res;
     if (is_test()) {
-        $res = $Prep::Test::calendar_response;;
+        $res = $Prep::Test::calendar_response;
     }
     else {
-        my $access_token = $self->generate_access_token();
+        my $access_token = $self->generate_access_token($opts{calendar});
+
+        eval {
+            retry {
+				my $tomorrow = DateTime->today->add( days => 1 );
+				$tomorrow    = $tomorrow . 'Z';
+
+				my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar_id} . "/events?timeMin=$tomorrow";
+
+                $res = $self->furl->get(
+                    $url,
+                    [ 'Authorization', 'Bearer ' . $access_token ]
+                );
+
+                die $res->decoded_content unless $res->is_success;
+            }
+            retry_if { shift() < 3 } catch { die $_; };
+        };
+        die $@ if $@;
+
+        $res = decode_json( $res->decoded_content );
+    }
+
+    return $res;
+}
+
+sub get_calendar_event_at_time {
+    my ($self, %opts) = @_;
+
+	my @required_opts = qw( calendar calendar_id );
+	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
+    my $res;
+    if (is_test()) {
+        $res = $Prep::Test::calendar_response;
+    }
+    else {
+        my $access_token = $self->generate_access_token($opts{calendar});
+
+        eval {
+            retry {
+                my $tomorrow = DateTime->today->add( days => 1 );
+                $tomorrow    = $tomorrow . 'Z';
+
+                my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar_id} . "/events?timeMin=$tomorrow";
+
+                $res = $self->furl->get(
+                    $url,
+                    [ 'Authorization', 'Bearer ' . $access_token ]
+                );
+
+                die $res->decoded_content unless $res->is_success;
+            }
+            retry_if { shift() < 3 } catch { die $_; };
+        };
+        die $@ if $@;
+
+        $res = decode_json( $res->decoded_content );
+    }
+
+    return $res;
+}
+
+sub create_event {
+    my ($self, %opts) = @_;
+
+    my @required_opts = qw( calendar calendar_id );
+	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
+    my $res;
+    if (is_test()) {
+        $res = $Prep::Test::calendar_response;
+    }
+    else {
+        my $access_token = $self->generate_access_token($opts{calendar});
 
         eval {
             retry {
                 my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar_id} . '/events';
                 $res = $self->furl->get(
                     $url,
-                    [ 'Authorization', 'Bearer' . $opts{calendar_token} ]
+                    [ 'Authorization', 'Bearer ' . $access_token ]
                 );
 
                 die $res->decoded_content unless $res->is_success;
