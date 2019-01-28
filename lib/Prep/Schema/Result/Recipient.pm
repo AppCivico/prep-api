@@ -401,7 +401,15 @@ sub is_prep {
 
     my $answer = $self->answers->search( { 'question.code' => 'AC5' }, { prefetch => 'question' } )->next;
 
-    return $answer->answer_value eq '1' ? 1 : 0;
+    my $ret;
+    if ( $answer ) {
+        $ret = $answer->answer_value eq '1' ? 1 : 0;
+    }
+    else {
+        $ret = 0;
+    }
+
+    return $ret;
 }
 
 sub is_eligible_for_research {
