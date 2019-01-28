@@ -155,7 +155,7 @@ sub create_event {
                     )
                 );
 
-                print "\n res: " . $res->decoded_content . "\n";
+                print STDERR "\n res: " . $res->decoded_content . "\n";
                 die $res->decoded_content unless $res->is_success;
             }
             retry_if { shift() < 3 } catch { die $_; };
