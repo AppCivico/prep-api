@@ -141,12 +141,12 @@ sub create_event {
                         start => {
                             date     => undef,
                             dateTime => $opts{datetime_start},
-                            timeZone => $opts{calendar}->time_zone
+                            timeZone => undef
                         },
                         end => {
                             date     => undef,
                             dateTime => $opts{datetime_end},
-                            timeZone => $opts{calendar}->time_zone
+                            timeZone => undef
                         },
                         id          => $opts{id},
                         description => 'foo'
