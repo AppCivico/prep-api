@@ -11,6 +11,8 @@ with 'Prep::Role::Verification::TransactionalActions::DBIC';
 use Data::Verifier;
 use Data::Printer;
 
+use Data::Fake qw(fake_int);
+
 use WebService::GoogleCalendar;
 
 sub verifiers_specs {
@@ -84,15 +86,12 @@ sub action_specs {
 
             my $appointment = $self->create(\%values);
 
-            my $id = $appointment->recipient->name;
-            $id =~ s/[^\w]//g;
-
             $ws->create_event(
                calendar       => $calendar,
                calendar_id    => $calendar->id,
                datetime_start => $datetime_start,
                datetime_end   => $datetime_end,
-               id             => $id
+               id             => fake_int(500, 99999)
             );
 
             return $appointment;
