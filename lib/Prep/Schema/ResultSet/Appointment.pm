@@ -91,7 +91,7 @@ sub action_specs {
                calendar_id    => $calendar->id,
                datetime_start => $datetime_start,
                datetime_end   => $datetime_end,
-               id             => fake_int(500, 99999)
+               id             => fake_int(500, 99999)->()
             );
 
             return $appointment;
