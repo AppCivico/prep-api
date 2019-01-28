@@ -30,6 +30,7 @@ Prep::Schema	./lib/Prep/Schema.pm	/^package Prep::Schema;$/;"	p
 Prep::Schema::Result::Answer	./lib/Prep/Schema/Result/Answer.pm	/^package Prep::Schema::Result::Answer;$/;"	p
 Prep::Schema::Result::Appointment	./lib/Prep/Schema/Result/Appointment.pm	/^package Prep::Schema::Result::Appointment;$/;"	p
 Prep::Schema::Result::AppointmentWindow	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^package Prep::Schema::Result::AppointmentWindow;$/;"	p
+Prep::Schema::Result::AppointmentWindowDayOfWeek	./lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm	/^package Prep::Schema::Result::AppointmentWindowDayOfWeek;$/;"	p
 Prep::Schema::Result::Calendar	./lib/Prep/Schema/Result/Calendar.pm	/^package Prep::Schema::Result::Calendar;$/;"	p
 Prep::Schema::Result::ChatbotSession	./lib/Prep/Schema/Result/ChatbotSession.pm	/^package Prep::Schema::Result::ChatbotSession;$/;"	p
 Prep::Schema::Result::Question	./lib/Prep/Schema/Result/Question.pm	/^package Prep::Schema::Result::Question;$/;"	p
@@ -76,6 +77,7 @@ get_connect_info	./lib/Prep/SchemaConnected.pm	/^sub get_connect_info {$/;"	s
 get_pending_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_pending_question_data {$/;"	s
 get_quota_info	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub get_quota_info {$/;"	s
 get_schema	./lib/Prep/SchemaConnected.pm	/^sub get_schema {$/;"	s
+get_ymd_by_day_of_the_week	./lib/Prep/Utils.pm	/^sub get_ymd_by_day_of_the_week {$/;"	s
 has_priv	./lib/Prep/Authorization.pm	/^sub has_priv {$/;"	s
 is_prep	./lib/Prep/Schema/Result/Recipient.pm	/^sub is_prep {$/;"	s
 is_role	./lib/Prep/Authorization.pm	/^sub is_role    {$/;"	s
