@@ -30,7 +30,7 @@ sub generate_token {
         $calendar->update(
             {
                 token => $token,
-                token_valid_until => \"NOW + interval '1 hour'"
+                token_valid_until => \"NOW() + interval '1 hour'"
             }
         );
     }
