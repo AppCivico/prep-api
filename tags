@@ -16,6 +16,7 @@ Prep::Controller::Chatbot::Appointment	./lib/Prep/Controller/Chatbot/Appointment
 Prep::Controller::Chatbot::Appointment::AvailableDates	./lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm	/^package Prep::Controller::Chatbot::Appointment::AvailableDates;$/;"	p
 Prep::Controller::Chatbot::Recipient	./lib/Prep/Controller/Chatbot/Recipient.pm	/^package Prep::Controller::Chatbot::Recipient;$/;"	p
 Prep::Controller::Chatbot::Recipient::Answer	./lib/Prep/Controller/Chatbot/Recipient/Answer.pm	/^package Prep::Controller::Chatbot::Recipient::Answer;$/;"	p
+Prep::Controller::Chatbot::Recipient::Appointment	./lib/Prep/Controller/Chatbot/Recipient/Appointment.pm	/^package Prep::Controller::Chatbot::Recipient::Appointment;$/;"	p
 Prep::Controller::Chatbot::Recipient::PendingQuestion	./lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm	/^package Prep::Controller::Chatbot::Recipient::PendingQuestion;$/;"	p
 Prep::Controller::Internal	./lib/Prep/Controller/Internal.pm	/^package Prep::Controller::Internal;$/;"	p
 Prep::Controller::Internal::DeleteAnswer	./lib/Prep/Controller/Internal/DeleteAnswer.pm	/^package Prep::Controller::Internal::DeleteAnswer;$/;"	p
@@ -40,6 +41,7 @@ Prep::Schema::Result::UserRole	./lib/Prep/Schema/Result/UserRole.pm	/^package Pr
 Prep::Schema::Result::UserSession	./lib/Prep/Schema/Result/UserSession.pm	/^package Prep::Schema::Result::UserSession;$/;"	p
 Prep::Schema::Result::ViewRecipientQuiz	./lib/Prep/Schema/Result/ViewRecipientQuiz.pm	/^package Prep::Schema::Result::ViewRecipientQuiz;$/;"	p
 Prep::Schema::ResultSet::Answer	./lib/Prep/Schema/ResultSet/Answer.pm	/^package Prep::Schema::ResultSet::Answer;$/;"	p
+Prep::Schema::ResultSet::Appointment	./lib/Prep/Schema/ResultSet/Appointment.pm	/^package Prep::Schema::ResultSet::Appointment;$/;"	p
 Prep::Schema::ResultSet::QuestionMap	./lib/Prep/Schema/ResultSet/QuestionMap.pm	/^package Prep::Schema::ResultSet::QuestionMap;$/;"	p
 Prep::Schema::ResultSet::Recipient	./lib/Prep/Schema/ResultSet/Recipient.pm	/^package Prep::Schema::ResultSet::Recipient;$/;"	p
 Prep::SchemaConnected	./lib/Prep/SchemaConnected.pm	/^package Prep::SchemaConnected;$/;"	p
@@ -52,11 +54,13 @@ _get_random_string	./lib/Mojolicious/Plugin/Detach.pm	/^sub _get_random_string {
 _wrap_in_transaction	./lib/Prep/Role/Verification/TransactionalActions/DBIC.pm	/^sub _wrap_in_transaction {$/;"	s
 action_specs	./lib/Prep/Schema/Result/Recipient.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/Answer.pm	/^sub action_specs {$/;"	s
+action_specs	./lib/Prep/Schema/ResultSet/Appointment.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/Recipient.pm	/^sub action_specs {$/;"	s
 apply	./lib/Prep/Data/Manager.pm	/^sub apply {$/;"	s
 available_dates	./lib/Prep/Schema/Result/Calendar.pm	/^sub available_dates {$/;"	s
 check	./lib/Prep/Role/Verification.pm	/^sub check {$/;"	s
 coercion	./lib/Data/Verifier.pm	/^sub coercion {$/;"	s
+create_event	./lib/WebService/GoogleCalendar.pm	/^sub create_event {$/;"	s
 decoded	./lib/Prep/Schema/Result/Question.pm	/^sub decoded {$/;"	s
 env	./lib/Prep/Utils.pm	/^sub env { return $ENV{${\\shift}} }$/;"	s
 errors	./lib/Prep/Data/Manager.pm	/^sub errors {$/;"	s
@@ -66,9 +70,11 @@ generate_token	./lib/WebService/GoogleCalendar.pm	/^sub generate_token {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm	/^sub get {$/;"	s
+get_calendar_event_at_time	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_event_at_time {$/;"	s
 get_calendar_events	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_events {$/;"	s
 get_connect_info	./lib/Prep/SchemaConnected.pm	/^sub get_connect_info {$/;"	s
 get_pending_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_pending_question_data {$/;"	s
+get_quota_info	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub get_quota_info {$/;"	s
 get_schema	./lib/Prep/SchemaConnected.pm	/^sub get_schema {$/;"	s
 has_priv	./lib/Prep/Authorization.pm	/^sub has_priv {$/;"	s
 is_prep	./lib/Prep/Schema/Result/Recipient.pm	/^sub is_prep {$/;"	s
@@ -79,8 +85,10 @@ parsed	./lib/Prep/Schema/Result/QuestionMap.pm	/^sub parsed {$/;"	s
 parsed	./lib/Prep/Schema/ResultSet/QuestionMap.pm	/^sub parsed {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/Answer.pm	/^sub post {$/;"	s
+post	./lib/Prep/Controller/Chatbot/Recipient/Appointment.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Internal/DeleteAnswer.pm	/^sub post {$/;"	s
 put	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub put {$/;"	s
+quota_map	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub quota_map {$/;"	s
 register	./lib/Mojolicious/Plugin/Detach.pm	/^sub register {$/;"	s
 register	./lib/Mojolicious/Plugin/SimpleAuthentication.pm	/^sub register {$/;"	s
 register	./lib/Prep/Routes.pm	/^sub register {$/;"	s
@@ -97,6 +105,7 @@ validate_request_params	./lib/Prep/Controller.pm	/^sub validate_request_params {
 validate_user	./lib/Prep/Authentication.pm	/^sub validate_user {$/;"	s
 verifiers_specs	./lib/Prep/Schema/Result/Recipient.pm	/^sub verifiers_specs {$/;"	s
 verifiers_specs	./lib/Prep/Schema/ResultSet/Answer.pm	/^sub verifiers_specs {$/;"	s
+verifiers_specs	./lib/Prep/Schema/ResultSet/Appointment.pm	/^sub verifiers_specs {$/;"	s
 verifiers_specs	./lib/Prep/Schema/ResultSet/Recipient.pm	/^sub verifiers_specs {$/;"	s
 verify	./lib/Data/Verifier.pm	/^sub verify {$/;"	s
 verify_question_condition	./lib/Prep/Schema/Result/Recipient.pm	/^sub verify_question_condition {$/;"	s

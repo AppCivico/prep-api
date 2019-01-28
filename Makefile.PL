@@ -56,6 +56,7 @@ my %WriteMakefileArgs = (
     "MooseX::Singleton" => 0,
     "MooseX::Types" => 0,
     "MooseX::Types::Moose" => 0,
+    "Net::Google::OAuth" => 0,
     "Regexp::Common" => 0,
     "Regexp::Common::time" => 0,
     "Scalar::Util" => 0,
@@ -79,7 +80,7 @@ my %WriteMakefileArgs = (
     "blib" => "1.01",
     "lib" => 0
   },
-  "VERSION" => 20190124,
+  "VERSION" => 20190128,
   "test" => {
     "TESTS" => "t/*.t t/chatbot/*.t t/internal/*.t"
   }
@@ -130,6 +131,7 @@ my %FallbackPrereqs = (
   "MooseX::Singleton" => 0,
   "MooseX::Types" => 0,
   "MooseX::Types::Moose" => 0,
+  "Net::Google::OAuth" => 0,
   "Regexp::Common" => 0,
   "Regexp::Common::time" => 0,
   "Scalar::Util" => 0,
