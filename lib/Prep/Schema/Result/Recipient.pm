@@ -280,7 +280,6 @@ sub get_pending_question_data {
 
     my @pending_questions = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
 
-    use DDP;
     # Tratando perguntas condicionais
     # Isto é, só devem serem vistas por quem
     # alcançar certas condições
@@ -292,18 +291,22 @@ sub get_pending_question_data {
 
         if ( $conditions_satisfied > 0 ) {
             $ret = {
-                question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
-                has_more   => scalar @pending_questions > 1 ? 1 : 0,
-                count_more => scalar @pending_questions
+                question                 => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
+                has_more                 => scalar @pending_questions > 1 ? 1 : 0,
+                count_more               => scalar @pending_questions,
+                is_eligible_for_research => $self->is_eligible_for_research,
+                is_part_of_research      => $self->is_prep
             };
         }
         else {
             # Caso as condições não tenham sido satisfeitas
             # o quiz acaba.
             $ret = {
-                question   => undef,
-                has_more   => 0,
-                count_more => scalar @pending_questions
+                question                 => undef,
+                has_more                 => 0,
+                count_more               => scalar @pending_questions,
+                is_eligible_for_research => 0,
+                is_part_of_research      => 0
             };
 
             $self->update( { finished_quiz => 1 } );
@@ -314,7 +317,9 @@ sub get_pending_question_data {
         $ret = {
             question   => undef,
             has_more   => 0,
-            count_more => scalar @pending_questions
+            count_more => scalar @pending_questions,
+			is_eligible_for_research => $self->is_eligible_for_research,
+            is_part_of_research      => $self->is_prep
         };
 
         $self->update( { finished_quiz => 1 } );
@@ -325,7 +330,7 @@ sub get_pending_question_data {
         $ret = {
             question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
             has_more   => scalar @pending_questions > 1 ? 1 : 0,
-            count_more => scalar @pending_questions
+            count_more => scalar @pending_questions,
         };
     }
 
@@ -397,6 +402,33 @@ sub is_prep {
     my $answer = $self->answers->search( { 'question.code' => 'AC5' }, { prefetch => 'question' } )->next;
 
     return $answer->answer_value eq '1' ? 1 : 0;
+}
+
+sub is_eligible_for_research {
+    my ($self) = @_;
+
+	if (is_test) {
+		return 1;
+	}
+
+	my $answer = $self->answers->search( { 'question.code' => { 'in' => ['AC5', 'B3', 'C1', 'C2', 'C3', 'C4'] } }, { prefetch => 'question' } );
+
+    my $ret = 1;
+    while ( my $answer = $answer->next() ) {
+        my $code = $answer->question->code;
+
+        if ( $code =~ /^(B3|C1|C3|C4)$/ ) {
+
+            $ret = 0 unless $answer->answer_value eq '1';
+        }
+        elsif ( $code eq 'C2' ) {
+            $ret = 0 unless $answer->answer_value eq '2';
+        }
+
+        next if $ret == 0;
+    }
+
+	return $ret;
 }
 
 

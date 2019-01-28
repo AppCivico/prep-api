@@ -18,7 +18,11 @@ sub get {
             multiple_choices    => $question ? $question->{multiple_choices}    : undef,
             extra_quick_replies => $question ? $question->{extra_quick_replies} : undef,
             has_more            => $pending_question_data->{has_more},
-            count_more          => $pending_question_data->{count_more}
+            count_more          => $pending_question_data->{count_more},
+
+            # Flags condicionais
+            ( exists $pending_question_data->{is_eligible_for_research} ? ( is_eligible_for_research => $pending_question_data->{is_eligible_for_research} ) : () ),
+            ( exists $pending_question_data->{is_part_of_research}      ? ( is_part_of_research => $pending_question_data->{is_part_of_research} ) : () )
         }
     )
 }
