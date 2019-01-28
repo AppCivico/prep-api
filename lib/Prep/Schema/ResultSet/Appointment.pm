@@ -76,17 +76,24 @@ sub action_specs {
             # disponivel ainda
             my $ws = WebService::GoogleCalendar->instance();
 
+			my $datetime_start = delete $values{datetime_start};
+			my $datetime_end   = delete $values{datetime_end};
+
             my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
             my $calendar           = $appointment_window->calendar;
+
+            my $appointment = $self->create(\%values);
+
+            my $id = $appointment->recipient->name;
+            $id =~ s/[^\w]//g;
 
             $ws->create_event(
                calendar       => $calendar,
                calendar_id    => $calendar->id,
-               datetime_start => delete $values{datetime_start},
-               datetime_end   => delete $values{datetime_end}
+               datetime_start => $datetime_start,
+               datetime_end   => $datetime_end,
+               id             => $id
             );
-
-            my $appointment = $self->create(\%values);
 
             return $appointment;
         }
