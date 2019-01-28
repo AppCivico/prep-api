@@ -45,7 +45,7 @@ sub get_calendar_events {
         $res = $Prep::Test::calendar_response;
     }
     else {
-        my $access_token = $self->generate_access_token($opts{calendar});
+        my $access_token = $self->generate_token($opts{calendar});
 
         eval {
             retry {
@@ -82,7 +82,7 @@ sub get_calendar_event_at_time {
         $res = $Prep::Test::calendar_response;
     }
     else {
-        my $access_token = $self->generate_access_token($opts{calendar});
+        my $access_token = $self->generate_token($opts{calendar});
 
         eval {
             retry {
@@ -119,7 +119,7 @@ sub create_event {
         $res = $Prep::Test::calendar_event_post;
     }
     else {
-        my $access_token = $self->generate_access_token($opts{calendar});
+        my $access_token = $self->generate_token($opts{calendar});
 
         eval {
             retry {
