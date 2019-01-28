@@ -130,7 +130,7 @@ sub create_event {
 
         eval {
             retry {
-                my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar}->google_id . '/events';
+                my $url = 'https://www.googleapis.com/calendar/v3/calendars/eokoe.com_o13e6c46hatmged80ovns8le6c@group.calendar.google.com/events';
                 $res = $self->furl->post(
                     $url,
                     [
