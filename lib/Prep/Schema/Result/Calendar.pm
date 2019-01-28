@@ -88,6 +88,24 @@ __PACKAGE__->table("calendar");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 client_id
+
+  data_type: 'text'
+  is_nullable: 0
+  original: {data_type => "varchar"}
+
+=head2 client_secret
+
+  data_type: 'text'
+  is_nullable: 0
+  original: {data_type => "varchar"}
+
+=head2 refresh_token
+
+  data_type: 'text'
+  is_nullable: 0
+  original: {data_type => "varchar"}
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -124,6 +142,24 @@ __PACKAGE__->add_columns(
     default_value => \"current_timestamp",
     is_nullable   => 0,
     original      => { default_value => \"now()" },
+  },
+  "client_id",
+  {
+    data_type   => "text",
+    is_nullable => 0,
+    original    => { data_type => "varchar" },
+  },
+  "client_secret",
+  {
+    data_type   => "text",
+    is_nullable => 0,
+    original    => { data_type => "varchar" },
+  },
+  "refresh_token",
+  {
+    data_type   => "text",
+    is_nullable => 0,
+    original    => { data_type => "varchar" },
   },
 );
 
@@ -171,8 +207,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-24 16:52:01
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1cLzuWc7yQu5I22OMWc2jA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 10:59:20
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:f6s42fJM1kL39Nk9XBOgKg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

@@ -17,15 +17,22 @@ sub generate_token {
     my ($self, $calendar) = @_;
 
     my $token;
-    if ( $calendar->token_valid_until <= DateTime->now() ) {
+    if ( !$calendar->token || $calendar->token_valid_until <= DateTime->now() ) {
 		my $oauth = Net::Google::OAuth->new(
-			-client_id     => $ENV{GOOGLE_CLIENT_ID},
-			-client_secret => $ENV{GOOGLE_CLIENT_SECRET},
+			-client_id     => $calendar->client_id,
+			-client_secret => $calendar->client_secret,
 		);
 
-		$oauth->refreshToken( -refresh_token => $ENV{REFRESH_TOKEN} );
+		$oauth->refreshToken( -refresh_token => $calendar->refresh_token );
 
 		$token = $oauth->getAccessToken();
+
+        $calendar->update(
+            {
+                token => $token,
+                token_valid_until => \"NOW + interval '1 hour'"
+            }
+        );
     }
     else {
         $token = $calendar->token;

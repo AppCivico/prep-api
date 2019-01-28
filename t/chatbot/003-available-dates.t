@@ -17,10 +17,13 @@ db_transaction {
         ok(
             $calendar = $schema->resultset('Calendar')->create(
                 {
-                    name      => 'test_calendar',
-                    google_id => 'prep_test@group.calendar.google.com',
-                    time_zone => 'America/Sao_Paulo',
-                    token     => 'foobar'
+                    name          => 'test_calendar',
+                    google_id     => 'prep_test@group.calendar.google.com',
+                    time_zone     => 'America/Sao_Paulo',
+                    token         => 'foobar',
+                    client_id     => 'foo',
+                    client_secret => 'bar',
+                    refresh_token => 'FOOBAR'
                 }
             )
         );
