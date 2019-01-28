@@ -79,15 +79,12 @@ sub action_specs {
             my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
             my $calendar           = $appointment_window->calendar;
 
-            eval {$ws->create_event(
+            $ws->create_event(
                calendar       => $calendar,
                calendar_id    => $calendar->id,
                datetime_start => delete $values{datetime_start},
                datetime_end   => delete $values{datetime_end}
-            )};
-
-            use DDP;
-            print STDERR  $@ if $@;
+            );
 
             my $appointment = $self->create(\%values);
 

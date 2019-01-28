@@ -131,7 +131,7 @@ sub create_event {
         eval {
             retry {
                 my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar}->google_id . '/events';
-                $res = $self->furl->get(
+                $res = $self->furl->post(
                     $url,
                     [
                         'Content-Type', 'application/json',
@@ -149,13 +149,12 @@ sub create_event {
                                 dateTime => $opts{datetime_end},
                                 timeZone => $opts{calendar}->time_zone
                             },
-                            id          => $opts{datetime_start},
+                            id          => 'foolala',
                             description => 'foo'
                         }
                     )
                 );
 
-                print "\n res: " . $res->decoded_content . "\n";
                 die $res->decoded_content unless $res->is_success;
             }
             retry_if { shift() < 3 } catch { die $_; };
