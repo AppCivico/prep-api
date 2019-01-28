@@ -736,7 +736,10 @@ db_transaction{
             }
         )
         ->status_is(200)
-        ->json_is('/code', 'AC5');
+		->json_has('/is_eligible_for_research')
+		->json_has('/is_part_of_research')
+		->json_is('/is_eligible_for_research', 1)
+		->json_is('/code', 'AC5');
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',

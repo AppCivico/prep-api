@@ -439,6 +439,12 @@ sub is_eligible_for_research {
 	return $ret;
 }
 
+sub upcoming_appointments {
+    my ($self) = @_;
+
+    return $self->appointments->search( { appointment_at => { '>=' => \'NOW()::date' }  } );
+}
+
 
 __PACKAGE__->meta->make_immutable;
 1;

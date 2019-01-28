@@ -113,6 +113,17 @@ db_transaction {
         ->json_is('/dates/0/hours/0/quota', 2)
         ->json_is('/dates/0/hours/0/time', '10:30:00 - 11:00:00');
 
+        $t->get_ok(
+            '/api/chatbot/recipient/appointment',
+            form => {
+                security_token => $security_token,
+                fb_id          => '111111'
+            }
+        )
+        ->status_is(200)
+        ->json_has('/datetime_start')
+        ->json_has('/quota_number')
+        ->json_has('/appointment_window_id');
     };
 
 };

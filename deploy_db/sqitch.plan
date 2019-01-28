@@ -8,3 +8,4 @@
 0004-update-appointment_window [0003-add-calendar] 2019-01-28T09:33:27Z Lucas Ansei,,, <lucas@lucas-G750JX> # Updating the appointment_table window tavle
 0005-adding-columns [0004-update-appointment_window] 2019-01-28T12:29:56Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the 'appointment_window_days_of_week' table
 0006-add-config-on-db [0005-adding-columns] 2019-01-28T13:00:58Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Improving calendar table
+0007-add-ymd [0006-add-config-on-db] 2019-01-28T18:49:59Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the 'ymd' column on the 'appointment' table

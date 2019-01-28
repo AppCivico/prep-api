@@ -78,6 +78,11 @@ __PACKAGE__->table("appointment");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 appointment_at
+
+  data_type: 'timestamp'
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -103,6 +108,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "appointment_at",
+  { data_type => "timestamp", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -150,8 +157,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-24 16:46:04
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Yvi9kgMBX5cYU+apf0x7gA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 16:52:38
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:mKxrkaW2kacPi7+Gl4HZFg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

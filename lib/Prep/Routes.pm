@@ -30,6 +30,7 @@ sub register {
 	# Recipient::Appointment
 	my $recipient_appointment = $recipient->route('/appointment');
 	$recipient_appointment->post('/')->to('chatbot-recipient-appointment#post');
+	$recipient_appointment->get('/')->to('chatbot-recipient-appointment#get');
 
     # Appointment
 	my $appointment = $chatbot->route('/appointment');

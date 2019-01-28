@@ -20,4 +20,23 @@ sub post {
     )
 }
 
+sub get {
+    my $c = shift;
+
+	my $recipient = $c->stash('recipient');
+
+    return $c->render(
+        status => 200,
+        json   => map {
+            my $a = $_;
+
+            +{
+                datetime_start        => $a->appointment_at,
+                quota_number          => $a->quota_number,
+                appointment_window_id => $a->appointment_window_id
+            }
+        } $recipient->upcoming_appointments->all()
+    )
+}
+
 1;
