@@ -130,7 +130,7 @@ sub create_event {
 
         eval {
             retry {
-                my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar_id} . '/events';
+                my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar}->google_id . '/events';
                 $res = $self->furl->get(
                     $url,
                     [
