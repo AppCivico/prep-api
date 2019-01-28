@@ -87,7 +87,7 @@ sub action_specs {
             )};
 
             use DDP;
-            p $@ if $@;
+            print STDERR  $@ if $@;
 
             my $appointment = $self->create(\%values);
 
