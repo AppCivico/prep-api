@@ -11,7 +11,7 @@ with 'Prep::Role::Verification::TransactionalActions::DBIC';
 use Data::Verifier;
 use Data::Printer;
 
-use Data::Fake qw(fake_int);
+use Data::Fake qw(Core);
 
 use WebService::GoogleCalendar;
 
