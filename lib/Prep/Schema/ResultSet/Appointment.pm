@@ -48,6 +48,14 @@ sub verifiers_specs {
 
                         return 1;
                     }
+                },
+                datetime_start => {
+                    required => 1,
+                    type     => 'Str'
+                },
+                datetime_end => {
+                    required => 1,
+                    type     => 'Str'
                 }
             }
         ),
@@ -70,16 +78,13 @@ sub action_specs {
 
             my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
             my $calendar           = $appointment_window->calendar;
-            my $quota_map          = $appointment_window->quota_map;
 
-            my $quota = $quota_map->{$values{quota_number}};
-            use DDP; p $quota;
-
-            #$ws->create_event(
-            #    calendar    => $calendar,
-            #    calendar_id => $calendar->id,
-            #    start_datetime => $quota
-            #)
+            $ws->create_event(
+               calendar       => $calendar,
+               calendar_id    => $calendar->id,
+               datetime_start => delete $values{datetime_start},
+               datetime_end   => delete $values{datetime_end}
+            );
 
             my $appointment = $self->create(\%values);
 

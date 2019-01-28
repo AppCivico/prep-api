@@ -8,3 +8,7 @@ export POSTGRESQL_PASSWORD="trust"
 
 export CHATBOT_SECURITY_TOKEN="foo"
 export INTERNAL_SECURITY_TOKEN="foo"
+
+export GOOGLE_CLIENT_ID=""
+export GOOGLE_CLIENT_SECRET=""
+export REFRESH_TOKEN=""

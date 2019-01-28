@@ -177,6 +177,8 @@ __PACKAGE__->has_many(
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 
+use Prep::Utils qw(get_ymd_by_day_of_the_week);
+
 use Time::Piece;
 use DateTime;
 
@@ -213,23 +215,33 @@ sub available_dates {
             my $delta = ( $end_time - $start_time );
             my $seconds_per_quota = ( $delta / $_->quotas );
 
-            +{
-                appointment_window_id => $appointment_window_id,
-                ymd   => DateTime->now->ymd,
-                hours => [
-                    map {
+            my @days_of_week = $_->appointment_window_days_of_week->get_column('day_of_week')->all();
 
-                        +{
-                            quota => $_,
-                            # Tratando o primeiro caso
-                            # No primeiro caso o começo não deve ser somado
-                            time  => $_ == 1 ?
-                                ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
-                                ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
-                        }
-                    } @quotas
-                ]
-            }
+            map {
+                my $ymd = get_ymd_by_day_of_the_week($_);
+
+                +{
+                    appointment_window_id => $appointment_window_id,
+                    ymd                   => get_ymd_by_day_of_the_week($_),
+                    hours => [
+                        map {
+
+                            +{
+                                quota => $_,
+                                # Tratando o primeiro caso
+                                # No primeiro caso o começo não deve ser somado
+                                time  => $_ == 1 ?
+                                    ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
+                                    ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
+                                datetime_start => $_ == 1 ?
+                                    ( $ymd . 'T' . $start_time->hms . '+00:00' ) :
+                                    ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms . '+00:00' ),
+                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms . '+00:00'
+                            }
+                        } @quotas
+                    ]
+                }
+            } @days_of_week;
         } $self->appointment_windows->all()
     ];
 }

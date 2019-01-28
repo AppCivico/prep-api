@@ -132,6 +132,21 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
+=head2 appointment_window_days_of_week
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::AppointmentWindowDayOfWeek>
+
+=cut
+
+__PACKAGE__->has_many(
+  "appointment_window_days_of_week",
+  "Prep::Schema::Result::AppointmentWindowDayOfWeek",
+  { "foreign.appointment_window_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 appointments
 
 Type: has_many
@@ -163,8 +178,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 00:43:50
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1pQEfO0X0vtrstXSEv7jfA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 09:47:50
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LnsdPwYR7lyvanwrbZgzcQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

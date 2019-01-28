@@ -28,10 +28,14 @@ db_transaction {
         ok(
             $appointment_window = $schema->resultset('AppointmentWindow')->create(
                 {
-                    calendar_id => $calendar->id,
-                    start_time  => '10:00 AM',
-                    end_time    => '12:00 PM',
-                    quotas      => 4
+                    calendar_id                     => $calendar->id,
+                    start_time                      => '10:00 AM',
+                    end_time                        => '12:00 PM',
+                    quotas                          => 4,
+                    appointment_window_days_of_week => [
+                        { day_of_week => 1 },
+						{ day_of_week => 2 }
+                    ]
                 }
             )
         );
@@ -75,6 +79,12 @@ db_transaction {
         ->json_is('/dates/0/hours/0/quota', 1)
         ->json_is('/dates/0/hours/0/time', '10:00:00 - 10:30:00');
 
+        my $res = $t->tx->res->json;
+
+		my $datetime_start = $res->{dates}->[0]->{hours}->[0]->{datetime_start};
+		my $datetime_end   = $res->{dates}->[0]->{hours}->[0]->{datetime_end};
+
+        &setup_calendar_event_post;
         $t->post_ok(
             '/api/chatbot/recipient/appointment',
             form => {
@@ -83,6 +93,8 @@ db_transaction {
                 calendar_id           => $calendar->id,
                 appointment_window_id => $appointment_window->id,
                 quota_number          => 1,
+                datetime_start        => $datetime_start,
+                datetime_end          => $datetime_end
             }
         )
         ->status_is(201)

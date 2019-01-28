@@ -2,7 +2,10 @@ package WebService::GoogleCalendar;
 use common::sense;
 use MooseX::Singleton;
 
+use Prep::Utils qw(is_test);
+
 use Furl;
+use JSON;
 use Net::Google::OAuth;
 use DateTime;
 
@@ -108,12 +111,12 @@ sub get_calendar_event_at_time {
 sub create_event {
     my ($self, %opts) = @_;
 
-    my @required_opts = qw( calendar calendar_id );
+    my @required_opts = qw( calendar calendar_id datetime_start datetime_end );
 	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my $res;
     if (is_test()) {
-        $res = $Prep::Test::calendar_response;
+        $res = $Prep::Test::calendar_event_post;
     }
     else {
         my $access_token = $self->generate_access_token($opts{calendar});
@@ -123,7 +126,26 @@ sub create_event {
                 my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar_id} . '/events';
                 $res = $self->furl->get(
                     $url,
-                    [ 'Authorization', 'Bearer ' . $access_token ]
+                    [
+                        'Content-Type', 'application/json',
+                        'Authorization', 'Bearer ' . $access_token
+                    ],
+                    encode_json(
+                        {
+                            start => {
+                                date     => undef,
+                                dateTime => $opts{datetime_start},
+                                timeZone => $opts{calendar}->time_zone
+                            },
+                            end => {
+                                date     => undef,
+                                dateTime => $opts{datetime_end},
+                                timeZone => $opts{calendar}->time_zone
+                            },
+                            id          => $opts{datetime_start},
+                            description => 'foo'
+                        }
+                    )
                 );
 
                 die $res->decoded_content unless $res->is_success;

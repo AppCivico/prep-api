@@ -6,3 +6,4 @@
 0002-update-recipient [0001-add-question-answers] 2019-01-21T12:54:08Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the 'recipient' table. Adding the following columns: 'question_notification_sent_at' and 'finished_quiz'
 0003-add-calendar [0002-update-recipient] 2019-01-24T19:26:04Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding calendar table
 0004-update-appointment_window [0003-add-calendar] 2019-01-28T09:33:27Z Lucas Ansei,,, <lucas@lucas-G750JX> # Updating the appointment_table window tavle
+0005-adding-columns [0004-update-appointment_window] 2019-01-28T12:29:56Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the 'appointment_window_days_of_week' table
