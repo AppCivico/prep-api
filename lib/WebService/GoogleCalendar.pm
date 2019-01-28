@@ -129,35 +129,32 @@ sub create_event {
         my $access_token = $self->generate_token($opts{calendar});
 
         eval {
-            retry {
-                my $url = 'https://www.googleapis.com/calendar/v3/calendars/eokoe.com_o13e6c46hatmged80ovns8le6c@group.calendar.google.com/events';
-                $res = $self->furl->post(
-                    $url,
-                    [
-                        'Content-Type', 'application/json',
-                        'Authorization', 'Bearer ' . $access_token
-                    ],
-                    encode_json(
-                        {
-                            start => {
-                                date     => undef,
-                                dateTime => $opts{datetime_start},
-                                timeZone => $opts{calendar}->time_zone
-                            },
-                            end => {
-                                date     => undef,
-                                dateTime => $opts{datetime_end},
-                                timeZone => $opts{calendar}->time_zone
-                            },
-                            id          => 'foolala',
-                            description => 'foo'
-                        }
-                    )
-                );
+            my $url = 'https://www.googleapis.com/calendar/v3/calendars/eokoe.com_o13e6c46hatmged80ovns8le6c@group.calendar.google.com/events';
+            $res = $self->furl->post(
+                $url,
+                [
+                    'Content-Type', 'application/json',
+                    'Authorization', 'Bearer ' . $access_token
+                ],
+                encode_json(
+                    {
+                        start => {
+                            date     => undef,
+                            dateTime => $opts{datetime_start},
+                            timeZone => $opts{calendar}->time_zone
+                        },
+                        end => {
+                            date     => undef,
+                            dateTime => $opts{datetime_end},
+                            timeZone => $opts{calendar}->time_zone
+                        },
+                        id          => 'foolalalala',
+                        description => 'foo'
+                    }
+                )
+            );
 
-                die $res->decoded_content unless $res->is_success;
-            }
-            retry_if { shift() < 3 } catch { die $_; };
+            die $res->decoded_content unless $res->is_success;
         };
         die $@ if $@;
 
