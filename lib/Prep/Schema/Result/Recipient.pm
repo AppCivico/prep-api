@@ -311,7 +311,7 @@ sub get_pending_question_data {
             $self->update( { finished_quiz => 1 } );
         }
     }
-    elsif ( scalar @pending_questions == 0  || $self->finished_quiz == 1 ) {
+    elsif ( scalar @pending_questions == 0  ) {
         # Caso não tenha mais perguntas pendentes acaba o quiz.
         $ret = {
             question                 => undef,
