@@ -305,9 +305,7 @@ sub get_pending_question_data {
             $ret = {
                 question                 => undef,
                 has_more                 => 0,
-                count_more               => scalar @pending_questions,
-                is_eligible_for_research => 0,
-                is_part_of_research      => 0
+                count_more               => scalar @pending_questions
             };
 
             $self->update( { finished_quiz => 1 } );
