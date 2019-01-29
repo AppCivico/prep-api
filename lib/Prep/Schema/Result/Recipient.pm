@@ -462,7 +462,7 @@ sub appointment_description {
         $i++;
     }
 
-    return '' unless scalar $answers > 0;
+    return '' unless $answers;
 
     my $json = JSON->new->pretty(1);
     $answers = $json->encode( $answers);

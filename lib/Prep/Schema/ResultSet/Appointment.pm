@@ -37,11 +37,12 @@ sub verifiers_specs {
                     post_check => sub {
 						my $quota_number          = $_[0]->get_value('quota_number');
 						my $appointment_window_id = $_[0]->get_value('appointment_window_id');
+                        my $datetime_start        = $_[0]->get_value('datetime_start');
 
 						my $count = $self->result_source->schema->resultset('Appointment')->search(
                             {
                                 quota_number          => $quota_number,
-                                created_at            => { '>=' => \'now()::date', '<=' => \"now()::date + interval '10 days'" },
+                                appointment_at        => { '>=' => \"'$datetime_start'::date", '<=' => \"'$datetime_start'::date + interval '1 day'" },
                                 appointment_window_id => $appointment_window_id
                             }
                         )->count;

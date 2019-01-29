@@ -231,7 +231,7 @@ sub available_dates {
             my $appointment_window_id = $_->id;
 
             # Pegando cotas disponiveis
-            my @quotas = ( 1 .. $_->quotas );
+            my @base_quotas = ( 1 .. $_->quotas );
 
 			my @taken_quotas = $appointment_rs->search(
 				{
@@ -241,7 +241,7 @@ sub available_dates {
 			)->get_column('quota_number')->all();
 
             my %taken_quotas = map { $_ => 1 } @taken_quotas;
-            @quotas = grep { not $taken_quotas{$_} } @quotas;
+            @base_quotas = grep { not $taken_quotas{$_} } @base_quotas;
 
             # Parseio o começo e o fim da janela de atendimento
 			my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
@@ -274,7 +274,7 @@ sub available_dates {
                                     ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms . '+00:00' ),
                                 datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms . '+00:00'
                             }
-                        } @quotas
+                        } @base_quotas
                     ]
                 }
             } @days_of_week;
