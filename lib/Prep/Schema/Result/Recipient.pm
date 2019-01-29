@@ -275,7 +275,7 @@ sub get_pending_question_data {
     my ($self) = @_;
 
     my $question_rs  = $self->result_source->schema->resultset('Question');
-    my $question_map = $self->result_source->schema->resultset('QuestionMap')->parsed;
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( undef, { order_by => { -desc => 'created_at' } } )->next->parsed;
 
     my @answered_questions = $self->answers->search( undef, { prefetch => 'question' } )->get_column('question.code')->all();
 
