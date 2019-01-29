@@ -274,10 +274,12 @@ sub action_specs {
 sub get_pending_question_data {
     my ($self) = @_;
 
-    my $question_rs  = $self->result_source->schema->resultset('Question');
-    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( undef, { order_by => { -desc => 'created_at' } } )->next->parsed;
+    my $question_rs         = $self->result_source->schema->resultset('Question');
+    my $question_map_result = $self->result_source->schema->resultset('QuestionMap')->search( undef, { order_by => { -desc => 'created_at' } } )->next;
 
-    my @answered_questions = $self->answers->search( undef, { prefetch => 'question' } )->get_column('question.code')->all();
+    my $question_map = $question_map_result->parsed;
+
+    my @answered_questions = $self->answers->search( { 'question.question_map_id' => $question_map_result->id }, { prefetch => 'question' } )->get_column('question.code')->all();
 
     my @pending_questions = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
 
@@ -289,10 +291,14 @@ sub get_pending_question_data {
 
     if ( $next_question_code =~ /^(AC1|AC5|A3|B1)$/gm ) {
         my $conditions_satisfied = $self->verify_question_condition($next_question_code);
-
         if ( $conditions_satisfied > 0 ) {
             $ret = {
-                question                 => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
+                question => $question_rs->search(
+                    {
+                        code            => $question_map->{ $pending_questions[0] },
+                        question_map_id => $question_map_result->id
+                    }
+                )->next,
                 has_more                 => scalar @pending_questions > 1 ? 1 : 0,
                 count_more               => scalar @pending_questions,
                 is_eligible_for_research => $self->is_eligible_for_research,
@@ -327,7 +333,7 @@ sub get_pending_question_data {
 
         # Caso para quando a pergunta não for condicional
         $ret = {
-            question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] } } )->next,
+            question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
             has_more   => scalar @pending_questions > 1 ? 1 : 0,
             count_more => scalar @pending_questions,
         };
