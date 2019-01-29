@@ -439,10 +439,10 @@ sub is_eligible_for_research {
 
 	my $answer = $self->answers->search( { 'question.code' => { 'in' => ['AC5', 'B3', 'C1', 'C2', 'C3', 'C4'] } }, { prefetch => 'question' } );
 
-    my $ret = 1;
+    my $ret = 0;
     while ( my $answer = $answer->next() ) {
         my $code = $answer->question->code;
-
+        $ret = 1;
         if ( $code =~ /^(B3|C1|C3|C4)$/ ) {
 
             $ret = 0 unless $answer->answer_value eq '1';
