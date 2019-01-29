@@ -57,7 +57,9 @@ action_specs	./lib/Prep/Schema/Result/Recipient.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/Answer.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/Appointment.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/Recipient.pm	/^sub action_specs {$/;"	s
+answer_by_choice_value	./lib/Prep/Schema/Result/Question.pm	/^sub answer_by_choice_value {$/;"	s
 apply	./lib/Prep/Data/Manager.pm	/^sub apply {$/;"	s
+appointment_description	./lib/Prep/Schema/Result/Recipient.pm	/^sub appointment_description {$/;"	s
 available_dates	./lib/Prep/Schema/Result/Calendar.pm	/^sub available_dates {$/;"	s
 check	./lib/Prep/Role/Verification.pm	/^sub check {$/;"	s
 coercion	./lib/Data/Verifier.pm	/^sub coercion {$/;"	s
@@ -70,6 +72,7 @@ fail_render	./lib/Prep/Authorization.pm	/^sub fail_render {$/;"	s
 generate_token	./lib/WebService/GoogleCalendar.pm	/^sub generate_token {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub get {$/;"	s
+get	./lib/Prep/Controller/Chatbot/Recipient/Appointment.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm	/^sub get {$/;"	s
 get_calendar_event_at_time	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_event_at_time {$/;"	s
 get_calendar_events	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_events {$/;"	s
@@ -79,6 +82,7 @@ get_quota_info	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub get_quota_inf
 get_schema	./lib/Prep/SchemaConnected.pm	/^sub get_schema {$/;"	s
 get_ymd_by_day_of_the_week	./lib/Prep/Utils.pm	/^sub get_ymd_by_day_of_the_week {$/;"	s
 has_priv	./lib/Prep/Authorization.pm	/^sub has_priv {$/;"	s
+is_eligible_for_research	./lib/Prep/Schema/Result/Recipient.pm	/^sub is_eligible_for_research {$/;"	s
 is_prep	./lib/Prep/Schema/Result/Recipient.pm	/^sub is_prep {$/;"	s
 is_role	./lib/Prep/Authorization.pm	/^sub is_role    {$/;"	s
 is_test	./lib/Prep/Utils.pm	/^sub is_test {$/;"	s
@@ -99,6 +103,7 @@ reply_forbidden	./lib/Prep/Controller.pm	/^sub reply_forbidden {$/;"	s
 reply_not_found	./lib/Prep/Controller.pm	/^sub reply_not_found {$/;"	s
 startup	./lib/Prep.pm	/^sub startup {$/;"	s
 stasher	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub stasher {$/;"	s
+upcoming_appointments	./lib/Prep/Schema/Result/Recipient.pm	/^sub upcoming_appointments {$/;"	s
 user_privs	./lib/Prep/Authorization.pm	/^sub user_privs {$/;"	s
 user_role	./lib/Prep/Authorization.pm	/^sub user_role  { ... }$/;"	s
 validade_security_token	./lib/Prep/Controller/Chatbot.pm	/^sub validade_security_token {$/;"	s
