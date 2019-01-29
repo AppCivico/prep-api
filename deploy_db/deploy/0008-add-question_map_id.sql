@@ -6,5 +6,6 @@ BEGIN;
 ALTER TABLE question ADD COLUMN question_map_id INTEGER REFERENCES question_map(id);
 UPDATE question SET question_map_id = 1;
 ALTER TABLE question ALTER COLUMN question_map_id SET NOT NULL;
+ALTER TABLE question DROP CONSTRAINT question_code_key;
 
 COMMIT;
