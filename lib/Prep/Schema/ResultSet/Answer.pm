@@ -95,7 +95,7 @@ sub action_specs {
                 }
             }
 
-            my ($answer, $finished_quiz, $is_prep);
+            my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research);
             $self->result_source->schema->txn_do( sub {
                 # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
                 if ( $pending_question_data->{has_more} == 0 ) {
@@ -103,6 +103,7 @@ sub action_specs {
                     $recipient->update( { finished_quiz => 1 } );
 
                     $is_prep = $recipient->is_prep;
+                    $is_eligible_for_research = $recipient->is_eligible_for_research;
 
                     $finished_quiz = 1;
                 }
@@ -116,7 +117,8 @@ sub action_specs {
             return {
                 answer        => $answer,
                 finished_quiz => $finished_quiz,
-                ( defined $is_prep ? ( is_prep => $is_prep ) : () )
+                ( defined $is_prep ? ( is_prep => $is_prep ) : () ),
+                ( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () )
             };
         }
     };

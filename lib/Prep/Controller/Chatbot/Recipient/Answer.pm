@@ -17,7 +17,8 @@ sub post {
         json   => {
             id            => $answer->{answer}->id,
             finished_quiz => $answer->{finished_quiz},
-            ( $answer->{is_prep} ? ( is_prep => $answer->{is_prep} ) : () )
+            ( $answer->{is_prep} ? ( is_prep => $answer->{is_prep} ) : () ),
+            ( $answer->{is_eligible_for_research} ? ( is_eligible_for_research => $answer->{is_eligible_for_research} ) : () )
         }
     )
 }
