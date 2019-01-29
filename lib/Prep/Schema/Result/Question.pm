@@ -145,20 +145,6 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
-=head1 UNIQUE CONSTRAINTS
-
-=head2 C<question_code_key>
-
-=over 4
-
-=item * L</code>
-
-=back
-
-=cut
-
-__PACKAGE__->add_unique_constraint("question_code_key", ["code"]);
-
 =head1 RELATIONS
 
 =head2 answers
@@ -192,8 +178,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-29 16:23:25
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:CxBSZtM6ObgAkMAPY6TKRQ
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-29 16:34:21
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:cDwrSJDmEcvR7ifVjao8MA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
