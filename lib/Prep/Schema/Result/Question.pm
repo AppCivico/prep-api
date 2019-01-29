@@ -193,5 +193,15 @@ sub decoded {
     }
 }
 
+sub answer_by_choice_value {
+    my ($self, $value) = @_;
+
+    die \['value', 'missing'] unless $value;
+
+    my $multiple_choices = from_json( $self->multiple_choices );
+
+    return $multiple_choices->{$value};
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

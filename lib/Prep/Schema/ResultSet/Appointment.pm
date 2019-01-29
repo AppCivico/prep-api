@@ -88,12 +88,15 @@ sub action_specs {
 
             my $appointment = $self->create(\%values);
 
+            my $recipient = $appointment->recipient;
+
             $ws->create_event(
                calendar       => $calendar,
                calendar_id    => $calendar->id,
                datetime_start => $datetime_start,
                datetime_end   => $datetime_end,
-               id             => fake_int(500, 99999)->()
+               summary        => 'Consulta: ' . $recipient->name,
+               description    => $recipient->appointment_description
             );
 
             return $appointment;

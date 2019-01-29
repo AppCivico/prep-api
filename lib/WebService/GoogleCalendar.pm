@@ -118,7 +118,7 @@ sub get_calendar_event_at_time {
 sub create_event {
     my ($self, %opts) = @_;
 
-    my @required_opts = qw( calendar calendar_id datetime_start datetime_end id );
+    my @required_opts = qw( calendar calendar_id datetime_start datetime_end summary description );
 	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my $res;
@@ -141,15 +141,16 @@ sub create_event {
                         start => {
                             date     => undef,
                             dateTime => $opts{datetime_start},
-                            timeZone => undef
+                            timeZone => 'America/Sao_Paulo'
                         },
                         end => {
                             date     => undef,
                             dateTime => $opts{datetime_end},
-                            timeZone => undef
+                            timeZone => 'America/Sao_Paulo'
                         },
-                        id          => $opts{id},
-                        description => 'foo'
+                        # id          => $opts{id},
+                        summary     => $opts{summary},
+                        description => $opts{description}
                     }
                 )
             );

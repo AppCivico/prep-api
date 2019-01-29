@@ -230,6 +230,7 @@ use Prep::Utils qw(is_test);
 
 use Text::CSV;
 use DateTime;
+use JSON;
 
 sub verifiers_specs {
     my $self = shift;
@@ -443,6 +444,30 @@ sub upcoming_appointments {
     my ($self) = @_;
 
     return $self->appointments->search( { appointment_at => { '>=' => \'NOW()::date' }  } );
+}
+
+sub appointment_description {
+    my ($self) = @_;
+
+	my $answers_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'C4', 'AC5' ] } }, { prefetch => 'question' } );
+
+    my $answers;
+    my $i = 0;
+    while ( my $answer = $answers_rs->next() ) {
+
+        my $question_text = $answer->question->text;
+        $answers->[$i] = {
+            "$question_text" => $answer->question->answer_by_choice_value( $answer->answer_value )
+        };
+        $i++;
+    }
+
+    return '' unless scalar $answers > 0;
+
+    my $json = JSON->new->pretty(1);
+    $answers = $json->encode( $answers);
+
+    return $answers;
 }
 
 
