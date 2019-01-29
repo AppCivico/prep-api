@@ -264,22 +264,23 @@ db_transaction{
             $question_map = $schema->resultset('QuestionMap')->create(
                 {
                     map => to_json({
-                        1  =>  'AC1',
-                        2  =>  'AC2',
-                        3  =>  'AC3',
-                        4  =>  'AC4',
-                        5  =>  'B1',
-                        6  =>  'B2',
-                        7  =>  'B3',
-                        8  =>  'C1',
-                        9  =>  'C2',
-                        10 =>  'C3',
-                        11 =>  'C4',
-                        12 =>  'AC5',
-                        13 =>  'A1',
-                        14 =>  'A2',
-                        15 =>  'A3',
-                        16 =>  'A4'
+                        1  =>  'A1',
+                        2  =>  'AC1',
+                        3  =>  'AC2',
+                        4  =>  'AC3',
+                        5  =>  'AC4',
+                        6  =>  'A2',
+                        7  =>  'A3',
+                        8  =>  'B1',
+                        9  =>  'B1a',
+                        10 =>  'B2',
+                        11 =>  'B2a',
+                        12 =>  'B2b',
+                        13 =>  'B3',
+                        14 =>  'B4',
+                        15 =>  'B5',
+                        16 =>  'B6',
+                        17 =>  'B7'
                     })
                 }
             ),
@@ -323,44 +324,93 @@ db_transaction{
                 $question_rs->create(
                     {
                         code              => 'B1',
-                        text              => 'Quando você fez seu último teste de HIV?',
+                        text              => 'Nos últimos doze meses, você teve relações sexuais com algum parceiro (homem ou mulher transexual ou travesti) que você considera fixo?',
                         type              => 'multiple_choice',
                         question_map_id   => $question_map->id,
                         is_differentiator => 1,
                         multiple_choices  => to_json(
                             {
-                                1 => "Nunca fiz",
-                                2 => "Há menos de 6 meses",
-                                3 => "Há mais de 6 meses"
+                                1 => "Sim",
+                                2 => "Não"
                             }
                         )
                     }
                 )
             );
+
+			ok(
+				$question_rs->create(
+					{
+						code              => 'B1a',
+						text              => 'Você sabe o resultado do teste de HIV desse seu parceiro fixo?',
+						type              => 'multiple_choice',
+						question_map_id   => $question_map->id,
+						is_differentiator => 1,
+						multiple_choices  => to_json(
+							{
+								1 => 'Sim, é negativo',
+                                2 => 'Sim, é positivo',
+                                3 => 'Ele nunca se testou',
+                                4 => 'Não sei'
+							}
+						)
+					}
+				)
+			);
 
             ok(
                 $question_rs->create(
                     {
                         code              => 'B2',
-                        text              => 'Nos últimos seis meses, você teve algum corrimento, ferida, verruga ou bolhas no pênis ou no ânus?',
-                        type              => 'multiple_choice',
+                        text              => 'Considerando só seus parceiros homens: nos últimos doze meses, quantos parceiros casuais você teve?',
+                        type              => 'open_text',
                         question_map_id   => $question_map->id,
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim",
-                                2 => "Não"
-                            }
-                        )
+                        is_differentiator => 1
                     }
                 )
             );
+
+            ok(
+				$question_rs->create(
+					{
+						code              => 'B2a',
+						text              => 'Você sabe o resultado do teste de HIV desse seu parceiro fixo?',
+						type              => 'multiple_choice',
+						question_map_id   => $question_map->id,
+						is_differentiator => 1,
+						multiple_choices  => to_json(
+							{
+								1 => "Sim",
+								2 => "Não"
+							}
+						)
+					}
+				)
+			);
+
+			ok(
+				$question_rs->create(
+					{
+						code              => 'B2b',
+						text              => 'Você sabe o resultado do teste de HIV desse seu parceiro fixo?',
+						type              => 'multiple_choice',
+						question_map_id   => $question_map->id,
+						is_differentiator => 1,
+						multiple_choices  => to_json(
+							{
+								1 => "Sim",
+								2 => "Não"
+							}
+						)
+					}
+				)
+			);
 
             ok(
                 $question_rs->create(
                     {
                         code              => 'B3',
-                        text              => 'Nos últimos seis meses, você usou a PEP - profilaxia pós-exposição sexual ao HIV?',
+                        text              => 'Nos últimos doze meses, alguma vez você recebeu dinheiro, presentes ou favores para fazer sexo?',
                         type              => 'multiple_choice',
                         question_map_id   => $question_map->id,
                         is_differentiator => 1,
@@ -373,85 +423,82 @@ db_transaction{
                     }
                 )
             );
+
+			ok(
+				$question_rs->create(
+					{
+						code              => 'B4',
+						text              => 'Nos últimos doze meses, alguma vez você recebeu dinheiro, presentes ou favores para fazer sexo?',
+						type              => 'multiple_choice',
+						question_map_id   => $question_map->id,
+						is_differentiator => 1,
+						multiple_choices  => to_json(
+							{
+								1 => "Uma vez",
+                                2 => "De 2 a 4 vezes",
+                                3 => "5 vezes ou mais",
+                                4 => "Nenhuma vez"
+							}
+						)
+					}
+				)
+			);
+
+			ok(
+				$question_rs->create(
+					{
+						code              => 'B5',
+						text              => 'Nos últimos doze meses, alguma vez você recebeu dinheiro, presentes ou favores para fazer sexo?',
+						type              => 'multiple_choice',
+						question_map_id   => $question_map->id,
+						is_differentiator => 1,
+						multiple_choices  => to_json(
+							{
+								1 => "Sim",
+								2 => "Não"
+							}
+						)
+					}
+				)
+			);
+
+			ok(
+				$question_rs->create(
+					{
+						code              => 'B6',
+						text              => 'Nos últimos doze meses, alguma vez você recebeu dinheiro, presentes ou favores para fazer sexo?',
+						type              => 'multiple_choice',
+						question_map_id   => $question_map->id,
+						is_differentiator => 1,
+						multiple_choices  => to_json(
+							{
+								1 => "Sim",
+								2 => "Não"
+							}
+						)
+					}
+				)
+			);
+
+			ok(
+				$question_rs->create(
+					{
+						code              => 'B7',
+						text              => 'Nos últimos doze meses, alguma vez você recebeu dinheiro, presentes ou favores para fazer sexo?',
+						type              => 'multiple_choice',
+						question_map_id   => $question_map->id,
+						is_differentiator => 1,
+						multiple_choices  => to_json(
+							{
+								1 => "Sim, já ouvi falar",
+								2 => "Não, nunca ouvi falar"
+							}
+						)
+					}
+				)
+			);
         };
 
-        # Perguntas da parte C
-        subtest 'Creating C section questions' => sub {
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'C1',
-                        text              => 'Nos últimos seis meses, você teve relações sexuais com algum parceiro que você considera fixo?',
-                        type              => 'multiple_choice',
-                        question_map_id   => $question_map->id,
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim",
-                                2 => "Não"
-                            }
-                        )
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'C2',
-                        text              => 'Você sabe o resultado do teste de HIV de seu parceiro fixo?',
-                        type              => 'multiple_choice',
-                        question_map_id   => $question_map->id,
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim, é negativo",
-                                2 => "Sim, é positivo",
-                                3 => "Não sei"
-                            }
-                        )
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'C3',
-                        text              => 'Nos últimos seis meses, quantos parceiros casuais você teve?',
-                        type              => 'multiple_choice',
-                        question_map_id   => $question_map->id,
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "De 1 a 5",
-                                2 => "Entre 5 e 10",
-                                3 => "Mais de 10",
-                                4 => "Nenhum"
-                            }
-                        )
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'C4',
-                        text              => 'Nos últimos seis meses, você fez sexo anal sem camisinha com algum(ns) de seus parceiros casuais?',
-                        type              => 'multiple_choice',
-                        question_map_id   => $question_map->id,
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim",
-                                2 => "Não"
-                            }
-                        )
-                    }
-                )
-            );
-        };
 
         # Perguntas da parte A
         subtest 'Creating A section questions' => sub {
@@ -459,7 +506,7 @@ db_transaction{
                 $question_rs->create(
                     {
                         code              => 'A1',
-                        text              => 'Qual é o seu nome completo?',
+                        text              => 'Qual é a sua idade?',
                         type              => 'open_text',
                         question_map_id   => $question_map->id,
                         is_differentiator => 1,
@@ -471,10 +518,16 @@ db_transaction{
                 $question_rs->create(
                     {
                         code              => 'A2',
-                        text              => 'Qual a sua data de nascimento?',
-                        type              => 'open_text',
+                        text              => 'Nos últimos doze meses, você teve relações sexuais com homens ou com mulheres transexuais ou com travestis?',
+                        type              => 'multiple_choice',
                         question_map_id   => $question_map->id,
-                        is_differentiator => 1
+                        is_differentiator => 1,
+						multiple_choices  => to_json(
+							{
+								1 => "Sim",
+								2 => "Não"
+							}
+						)
                     }
                 )
             );
@@ -483,29 +536,17 @@ db_transaction{
                 $question_rs->create(
                     {
                         code              => 'A3',
-                        text              => 'Qual é o seu CPF?',
+                        text              => 'Você se considera: ',
                         question_map_id   => $question_map->id,
-                        type              => 'open_text',
-                        is_differentiator => 1
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'A4',
-                        text              => 'Como você define sua cor?',
                         type              => 'multiple_choice',
-                        question_map_id   => $question_map->id,
                         is_differentiator => 1,
                         multiple_choices  => to_json(
                             {
-                                1 => "Branca",
-                                2 => "Preta",
-                                3 => "Amarela",
-                                4 => "Parda",
-                                5 => "Indígena"
+                                1 => "Mulher transexual",
+                                2 => "Mulher cisgênero",
+                                3 => "Homem transexual",
+                                4 => "Homem cisgênero",
+                                5 => "Travesti"
                             }
                         )
                     }
@@ -532,6 +573,28 @@ db_transaction{
     };
 
     subtest 'Chatbot | Answers' => sub {
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'A1',
+                answer_value   => '18'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'AC1');
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
@@ -591,6 +654,40 @@ db_transaction{
         ->status_is(201)
         ->json_is('/finished_quiz', 0);
 
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'A2',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'A3');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'A3',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
         $t->get_ok(
             '/api/chatbot/recipient/pending-question',
             form => {
@@ -621,6 +718,28 @@ db_transaction{
             }
         )
         ->status_is(200)
+        ->json_is('/code', 'B1a');
+
+		$t->post_ok(
+			'/api/chatbot/recipient/answer',
+			form => {
+				security_token => $security_token,
+				fb_id          => $fb_id,
+				code           => 'B1a',
+				answer_value   => '1'
+			}
+		)
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
         ->json_is('/code', 'B2');
 
         $t->post_ok(
@@ -629,6 +748,50 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B2',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'B2a');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'B2a',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'B2b');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'B2b',
                 answer_value   => '1'
             }
         )
@@ -665,14 +828,14 @@ db_transaction{
             }
         )
         ->status_is(200)
-        ->json_is('/code', 'C1');
+        ->json_is('/code', 'B4');
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'C1',
+                code           => 'B4',
                 answer_value   => '1'
             }
         )
@@ -687,36 +850,14 @@ db_transaction{
             }
         )
         ->status_is(200)
-        ->json_is('/code', 'C2');
+        ->json_is('/code', 'B5');
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'C2',
-                answer_value   => '2'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'C3');
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'C3',
+                code           => 'B5',
                 answer_value   => '1'
             }
         )
@@ -731,14 +872,14 @@ db_transaction{
             }
         )
         ->status_is(200)
-        ->json_is('/code', 'C4');
+        ->json_is('/code', 'B6');
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'C4',
+                code           => 'B6',
                 answer_value   => '1'
             }
         )
@@ -753,105 +894,14 @@ db_transaction{
             }
         )
         ->status_is(200)
-		->json_has('/is_eligible_for_research')
-		->json_has('/is_part_of_research')
-		->json_is('/is_eligible_for_research', 1)
-		->json_is('/code', 'AC5');
+        ->json_is('/code', 'B7');
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'AC5',
-                answer_value   => '1'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'A1');
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'A1',
-                answer_value   => 'Foobar'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'A2');
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'A2',
-                answer_value   => '1998-05-11'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'A3');
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'A3',
-                answer_value   => '40371892597'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'A4');
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'A4',
+                code           => 'B7',
                 answer_value   => '1'
             }
         )

@@ -287,7 +287,7 @@ sub get_pending_question_data {
     my $ret;
     my $next_question_code = $question_map->{ $pending_questions[0] };
 
-    if ( $next_question_code =~ /^(AC5|A[1-4])$/gm ) {
+    if ( $next_question_code =~ /^(AC1|AC5|A3|B1)$/gm ) {
         my $conditions_satisfied = $self->verify_question_condition($next_question_code);
 
         if ( $conditions_satisfied > 0 ) {
@@ -311,7 +311,7 @@ sub get_pending_question_data {
             $self->update( { finished_quiz => 1 } );
         }
     }
-    elsif ( scalar @pending_questions == 0 ) {
+    elsif ( scalar @pending_questions == 0  || $self->finished_quiz == 1 ) {
         # Caso não tenha mais perguntas pendentes acaba o quiz.
         $ret = {
             question                 => undef,
@@ -321,7 +321,7 @@ sub get_pending_question_data {
             is_part_of_research      => $self->is_prep
         };
 
-        $self->update( { finished_quiz => 1 } );
+        $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
     }
     else {
 
@@ -343,16 +343,13 @@ sub verify_question_condition {
     if ( $next_question_code eq 'AC5' ) {
         # Deve ter respondido as seguintes perguntas com as respectivas respostas:
         # B3 => 1, C1 => 1, C2 => 2 ou 3, C3 => 1, 2 ou 3, C4 => 1
-        for my $question ( qw( B3 C1 C2 C3 C4 ) ) {
+        for my $question ( qw( B1a B1b B2 B2a B2b B3 B4 B5 B6 ) ) {
 
             my $value;
-            if ( $question =~ /^(B3|C1|C4)$/ ) {
-                $value = '1';
+            if ( $question eq 'B2' ) {
+                $value = { '!=' => '0' };
             }
-            elsif ( $question eq 'C2' ) {
-                $value = '2';
-            }
-            elsif ( $question eq 'C3' ) {
+            else {
                 $value = '1';
             }
 
@@ -368,25 +365,47 @@ sub verify_question_condition {
         }
 
     }
-    elsif ( $next_question_code =~ /^A[1-4]$/gm ) {
-        # Deve ter concordado participar da pesquisa
-        my $first_condition = $self->answers->search(
+    elsif ( $next_question_code eq 'AC1' ) {
+        # Deve ter mais de 14 e menos de 20
+        $condition = $self->answers->search(
             {
-                'question.code' => 'AC5',
-                answer_value    => '1'
+                'question.code' => 'A1',
+                answer_value    => { '>' => '14', '<' => '20' }
             },
             { join => 'question'}
         )->as_query;
 
-        push @conditions, { -exists => $first_condition };
+        push @conditions, { -exists => $condition };
     }
+    elsif ( $next_question_code eq 'A3' ) {
+		$condition = $self->answers->search(
+			{
+				'question.code' => 'A2',
+				answer_value    => { '!=' => '2' }
+			},
+			{ join => 'question'}
+		)->as_query;
+
+		push @conditions, { -exists => $condition };
+    }
+	elsif ( $next_question_code eq 'B1' ) {
+		$condition = $self->answers->search(
+			{
+				'question.code' => 'A3',
+				answer_value    => { '!=' => '2', '!=' => '3' }
+			},
+			{ join => 'question'}
+		)->as_query;
+
+		push @conditions, { -exists => $condition };
+	}
     else {
         die \['code', 'invalid'];
     }
 
     return $self->answers->search(
         {
-            -and => \@conditions
+            -or => \@conditions
         },
     )->count;
 }
