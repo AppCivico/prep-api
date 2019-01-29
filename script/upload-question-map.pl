@@ -19,19 +19,18 @@ my $i = 1;
 #########################################
 # ALWAYS UPDATE THIS NUMBER ACCORDINGLY #
 #########################################
-my $version = 2;
+my $version = 1;
 
 open my $fh, "<:encoding(utf8)", "prep.csv" or die "prep.csv: $!";
 while (my $row = $csv->getline($fh)) {
     next if $row->[0] eq 'code';
-    use DDP; p $row;
 
 	my $row = {
 		code              => $row->[0],
 		text              => $row->[1],
 		type              => $row->[2],
         is_differentiator => $row->[5],
-        question_map_id   => $version;
+        question_map_id   => $version,
 
         (
             $row->[2] eq 'multiple_choice' ?
@@ -50,5 +49,5 @@ while (my $row = $csv->getline($fh)) {
 }
 close $fh;
 
-$question_rs->populate(\@rows);
 $question_map_rs->create( { map => to_json($question_map) } );
+$question_rs->populate(\@rows);
