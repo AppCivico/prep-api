@@ -17,11 +17,26 @@ db_transaction {
         my $question_rs = $schema->resultset('Question');
 
         ok(
+            $question_map = $schema->resultset('QuestionMap')->create(
+                {
+                    map => encode_json ({
+                        1 => 'Q1',
+                        2 => 'E4',
+                        3 => 'W1',
+                        4 => 'Q3'
+                    })
+                }
+            ),
+            'question map created'
+        );
+
+        ok(
             $first_question = $question_rs->create(
                 {
                     code              => 'Q1',
                     text              => 'Foobar?',
                     type              => 'multiple_choice',
+                    question_map_id   => $question_map->id,
                     is_differentiator => 0,
                     multiple_choices  => encode_json ({ 1 => 'foo', 2 => 'bar' })
                 }
@@ -35,6 +50,7 @@ db_transaction {
                     code              => 'Q3',
                     text              => 'open_text?',
                     type              => 'open_text',
+                    question_map_id   => $question_map->id,
                     is_differentiator => 0
                 }
             ),
@@ -47,6 +63,7 @@ db_transaction {
                     code              => 'W1',
                     text              => 'Você gosta?',
                     type              => 'multiple_choice',
+                    question_map_id   => $question_map->id,
                     is_differentiator => 1,
                     multiple_choices  => encode_json ({ 1 => 'Sim', 2 => 'Não' })
                 }
@@ -60,6 +77,7 @@ db_transaction {
                     code                => 'E4',
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
+                    question_map_id     => $question_map->id,
                     is_differentiator   => 0,
                     multiple_choices    => encode_json ({ 1 => 'Sim', 2 => 'Nunca', 3 => 'Regularmente' }),
                     extra_quick_replies => encode_json ({
@@ -70,20 +88,6 @@ db_transaction {
                 }
             ),
             'fourth question'
-        );
-
-        ok(
-            $question_map = $schema->resultset('QuestionMap')->create(
-                {
-                    map => encode_json ({
-                        1 => 'Q1',
-                        2 => 'E4',
-                        3 => 'W1',
-                        4 => 'Q3'
-                    })
-                }
-            ),
-            'question map created'
         );
     };
 

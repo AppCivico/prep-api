@@ -92,6 +92,12 @@ __PACKAGE__->table("question");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 question_map_id
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -123,6 +129,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "question_map_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -168,9 +176,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 question_map
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 14:05:33
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZvI2TeBcDECjXKfSAFkDxw
+Type: belongs_to
+
+Related object: L<Prep::Schema::Result::QuestionMap>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "question_map",
+  "Prep::Schema::Result::QuestionMap",
+  { id => "question_map_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-29 16:23:25
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:CxBSZtM6ObgAkMAPY6TKRQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

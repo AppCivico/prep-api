@@ -51,7 +51,7 @@ sub get {
         json   => {
             map {
                 $_ => $recipient->$_
-            } qw( id fb_id name page_id picture opt_in finished_quiz updated_at created_at )
+            } qw( id fb_id name page_id picture opt_in finished_quiz updated_at created_at is_eligible_for_research is_prep )
         }
     )
 }

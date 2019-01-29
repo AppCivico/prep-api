@@ -303,9 +303,9 @@ sub get_pending_question_data {
             # Caso as condições não tenham sido satisfeitas
             # o quiz acaba.
             $ret = {
-                question                 => undef,
-                has_more                 => 0,
-                count_more               => scalar @pending_questions
+                question   => undef,
+                has_more   => 0,
+                count_more => scalar @pending_questions
             };
 
             $self->update( { finished_quiz => 1 } );
@@ -314,10 +314,10 @@ sub get_pending_question_data {
     elsif ( scalar @pending_questions == 0 ) {
         # Caso não tenha mais perguntas pendentes acaba o quiz.
         $ret = {
-            question   => undef,
-            has_more   => 0,
-            count_more => scalar @pending_questions,
-			is_eligible_for_research => $self->is_eligible_for_research,
+            question                 => undef,
+            has_more                 => 0,
+            count_more               => scalar @pending_questions,
+            is_eligible_for_research => $self->is_eligible_for_research,
             is_part_of_research      => $self->is_prep
         };
 

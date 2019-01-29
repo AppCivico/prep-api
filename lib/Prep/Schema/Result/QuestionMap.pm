@@ -111,9 +111,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 questions
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 14:05:33
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:faWhtLUkXpUjG3sJ5R5mxg
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Question>
+
+=cut
+
+__PACKAGE__->has_many(
+  "questions",
+  "Prep::Schema::Result::Question",
+  { "foreign.question_map_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-29 16:23:25
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:232CoFODMy+3PeOIt8g/ug
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

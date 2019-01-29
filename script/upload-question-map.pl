@@ -16,14 +16,23 @@ my @rows;
 my $question_map;
 my $i = 1;
 
+#########################################
+# ALWAYS UPDATE THIS NUMBER ACCORDINGLY #
+#########################################
+my $version = 2;
+
 open my $fh, "<:encoding(utf8)", "prep.csv" or die "prep.csv: $!";
 while (my $row = $csv->getline($fh)) {
+    next if $row->[0] eq 'code';
+    use DDP; p $row;
 
 	my $row = {
-		code                => $row->[0],
-		text                => $row->[1],
-		type                => $row->[2],
-    		is_differentiator   => $row->[5],
+		code              => $row->[0],
+		text              => $row->[1],
+		type              => $row->[2],
+        is_differentiator => $row->[5],
+        question_map_id   => $version;
+
         (
             $row->[2] eq 'multiple_choice' ?
                 ( multiple_choices => $row->[3] ) : ( )

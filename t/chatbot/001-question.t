@@ -17,11 +17,25 @@ db_transaction {
         my $question_rs = $schema->resultset('Question');
 
         ok(
+            $question_map = $schema->resultset('QuestionMap')->create(
+                {
+                    map => to_json({
+                        1 => 'Z1',
+                        2 => 'U4',
+                        3 => 'Y5',
+                    })
+                }
+            ),
+            'question map created'
+        );
+
+        ok(
             $first_question = $question_rs->create(
                 {
                     code              => 'Z1',
                     text              => 'Foobar?',
                     type              => 'multiple_choice',
+                    question_map_id   => $question_map->id,
                     is_differentiator => 0,
                     multiple_choices  => to_json ({ 1 => 'foo', 2 => 'bar' })
                 }
@@ -35,6 +49,7 @@ db_transaction {
                     code              => 'Y5',
                     text              => 'open_text?',
                     type              => 'open_text',
+                    question_map_id   => $question_map->id,
                     is_differentiator => 0
                 }
             ),
@@ -47,6 +62,7 @@ db_transaction {
                     code              => 'B1',
                     text              => 'Você gosta?',
                     type              => 'multiple_choice',
+                    question_map_id   => $question_map->id,
                     is_differentiator => 1,
                     multiple_choices  => to_json ({ 1 => 'Sim', 2 => 'Não' })
                 }
@@ -60,6 +76,7 @@ db_transaction {
                     code                => 'U4',
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
+                    question_map_id     => $question_map->id,
                     is_differentiator   => 0,
                     multiple_choices    => to_json ({ 1 => 'Sim', 2 => 'Nunca', 3 => 'Regularmente' }),
                     extra_quick_replies => to_json ({
@@ -70,19 +87,6 @@ db_transaction {
                 }
             ),
             'fourth question'
-        );
-
-        ok(
-            $question_map = $schema->resultset('QuestionMap')->create(
-                {
-                    map => to_json({
-                        1 => 'Z1',
-                        2 => 'U4',
-                        3 => 'Y5',
-                    })
-                }
-            ),
-            'question map created'
         );
     };
 
@@ -256,220 +260,6 @@ db_transaction{
     subtest 'Create questions and question map' => sub {
         my $question_rs = $schema->resultset('Question');
 
-        # Criando as perguntas do AppCivico que não são importantes
-        # para o resultado final
-        for ( 1 .. 4 ) {
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'AC' . $_,
-                        text              => 'Foobar?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 0,
-                        multiple_choices  => to_json({ 1 => 'foo', 2 => 'bar' })
-                    }
-                )
-            );
-        }
-
-        # A única pergunta que fazemos que importa é a AC5
-        ok(
-            $question_rs->create(
-                {
-                    code              => 'AC5',
-                    text              => 'Deseja participar?',
-                    type              => 'multiple_choice',
-                    is_differentiator => 0,
-                    multiple_choices  => to_json({ 1 => 'sim', 2 => 'não' })
-                }
-            )
-        );
-
-        # Perguntas da parte B
-        subtest 'Creating B section questions' => sub {
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'B1',
-                        text              => 'Quando você fez seu último teste de HIV?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Nunca fiz",
-                                2 => "Há menos de 6 meses",
-                                3 => "Há mais de 6 meses"
-                            }
-                        )
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'B2',
-                        text              => 'Nos últimos seis meses, você teve algum corrimento, ferida, verruga ou bolhas no pênis ou no ânus?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim",
-                                2 => "Não"
-                            }
-                        )
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'B3',
-                        text              => 'Nos últimos seis meses, você usou a PEP - profilaxia pós-exposição sexual ao HIV?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim",
-                                2 => "Não"
-                            }
-                        )
-                    }
-                )
-            );
-        };
-
-        # Perguntas da parte C
-        subtest 'Creating C section questions' => sub {
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'C1',
-                        text              => 'Nos últimos seis meses, você teve relações sexuais com algum parceiro que você considera fixo?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim",
-                                2 => "Não"
-                            }
-                        )
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'C2',
-                        text              => 'Você sabe o resultado do teste de HIV de seu parceiro fixo?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim, é negativo",
-                                2 => "Sim, é positivo",
-                                3 => "Não sei"
-                            }
-                        )
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'C3',
-                        text              => 'Nos últimos seis meses, quantos parceiros casuais você teve?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "De 1 a 5",
-                                2 => "Entre 5 e 10",
-                                3 => "Mais de 10",
-                                4 => "Nenhum"
-                            }
-                        )
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'C4',
-                        text              => 'Nos últimos seis meses, você fez sexo anal sem camisinha com algum(ns) de seus parceiros casuais?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Sim",
-                                2 => "Não"
-                            }
-                        )
-                    }
-                )
-            );
-        };
-
-        # Perguntas da parte A
-        subtest 'Creating A section questions' => sub {
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'A1',
-                        text              => 'Qual é o seu nome completo?',
-                        type              => 'open_text',
-                        is_differentiator => 1,
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'A2',
-                        text              => 'Qual a sua data de nascimento?',
-                        type              => 'open_text',
-                        is_differentiator => 1
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'A3',
-                        text              => 'Qual é o seu CPF?',
-                        type              => 'open_text',
-                        is_differentiator => 1
-                    }
-                )
-            );
-
-            ok(
-                $question_rs->create(
-                    {
-                        code              => 'A4',
-                        text              => 'Como você define sua cor?',
-                        type              => 'multiple_choice',
-                        is_differentiator => 1,
-                        multiple_choices  => to_json(
-                            {
-                                1 => "Branca",
-                                2 => "Preta",
-                                3 => "Amarela",
-                                4 => "Parda",
-                                5 => "Indígena"
-                            }
-                        )
-                    }
-                )
-            );
-        };
-
         ok(
             $question_map = $schema->resultset('QuestionMap')->create(
                 {
@@ -495,6 +285,233 @@ db_transaction{
             ),
             'question map created'
         );
+
+        # Criando as perguntas do AppCivico que não são importantes
+        # para o resultado final
+        for ( 1 .. 4 ) {
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'AC' . $_,
+                        text              => 'Foobar?',
+                        question_map_id   => $question_map->id,
+                        type              => 'multiple_choice',
+                        is_differentiator => 0,
+                        multiple_choices  => to_json({ 1 => 'foo', 2 => 'bar' })
+                    }
+                )
+            );
+        }
+
+        # A única pergunta que fazemos que importa é a AC5
+        ok(
+            $question_rs->create(
+                {
+                    code              => 'AC5',
+                    question_map_id   => $question_map->id,
+                    text              => 'Deseja participar?',
+                    type              => 'multiple_choice',
+                    is_differentiator => 0,
+                    multiple_choices  => to_json({ 1 => 'sim', 2 => 'não' })
+                }
+            )
+        );
+
+        # Perguntas da parte B
+        subtest 'Creating B section questions' => sub {
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'B1',
+                        text              => 'Quando você fez seu último teste de HIV?',
+                        type              => 'multiple_choice',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Nunca fiz",
+                                2 => "Há menos de 6 meses",
+                                3 => "Há mais de 6 meses"
+                            }
+                        )
+                    }
+                )
+            );
+
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'B2',
+                        text              => 'Nos últimos seis meses, você teve algum corrimento, ferida, verruga ou bolhas no pênis ou no ânus?',
+                        type              => 'multiple_choice',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Sim",
+                                2 => "Não"
+                            }
+                        )
+                    }
+                )
+            );
+
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'B3',
+                        text              => 'Nos últimos seis meses, você usou a PEP - profilaxia pós-exposição sexual ao HIV?',
+                        type              => 'multiple_choice',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Sim",
+                                2 => "Não"
+                            }
+                        )
+                    }
+                )
+            );
+        };
+
+        # Perguntas da parte C
+        subtest 'Creating C section questions' => sub {
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'C1',
+                        text              => 'Nos últimos seis meses, você teve relações sexuais com algum parceiro que você considera fixo?',
+                        type              => 'multiple_choice',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Sim",
+                                2 => "Não"
+                            }
+                        )
+                    }
+                )
+            );
+
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'C2',
+                        text              => 'Você sabe o resultado do teste de HIV de seu parceiro fixo?',
+                        type              => 'multiple_choice',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Sim, é negativo",
+                                2 => "Sim, é positivo",
+                                3 => "Não sei"
+                            }
+                        )
+                    }
+                )
+            );
+
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'C3',
+                        text              => 'Nos últimos seis meses, quantos parceiros casuais você teve?',
+                        type              => 'multiple_choice',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "De 1 a 5",
+                                2 => "Entre 5 e 10",
+                                3 => "Mais de 10",
+                                4 => "Nenhum"
+                            }
+                        )
+                    }
+                )
+            );
+
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'C4',
+                        text              => 'Nos últimos seis meses, você fez sexo anal sem camisinha com algum(ns) de seus parceiros casuais?',
+                        type              => 'multiple_choice',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Sim",
+                                2 => "Não"
+                            }
+                        )
+                    }
+                )
+            );
+        };
+
+        # Perguntas da parte A
+        subtest 'Creating A section questions' => sub {
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'A1',
+                        text              => 'Qual é o seu nome completo?',
+                        type              => 'open_text',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                    }
+                )
+            );
+
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'A2',
+                        text              => 'Qual a sua data de nascimento?',
+                        type              => 'open_text',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1
+                    }
+                )
+            );
+
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'A3',
+                        text              => 'Qual é o seu CPF?',
+                        question_map_id   => $question_map->id,
+                        type              => 'open_text',
+                        is_differentiator => 1
+                    }
+                )
+            );
+
+            ok(
+                $question_rs->create(
+                    {
+                        code              => 'A4',
+                        text              => 'Como você define sua cor?',
+                        type              => 'multiple_choice',
+                        question_map_id   => $question_map->id,
+                        is_differentiator => 1,
+                        multiple_choices  => to_json(
+                            {
+                                1 => "Branca",
+                                2 => "Preta",
+                                3 => "Amarela",
+                                4 => "Parda",
+                                5 => "Indígena"
+                            }
+                        )
+                    }
+                )
+            );
+        };
     };
 
     my $fb_id = '710488549074724';
