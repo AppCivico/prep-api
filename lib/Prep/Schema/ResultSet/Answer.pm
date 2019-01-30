@@ -102,7 +102,7 @@ sub action_specs {
                     my $recipient = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
                     $recipient->update( { finished_quiz => 1 } );
 
-                    $is_prep = $recipient->is_prep;
+                    $is_prep = 1;
                     $is_eligible_for_research = $recipient->is_eligible_for_research;
 
                     $finished_quiz = 1;
@@ -117,7 +117,7 @@ sub action_specs {
             return {
                 answer        => $answer,
                 finished_quiz => $finished_quiz,
-                ( defined $is_prep ? ( is_prep => $is_prep ) : () ),
+                ( defined $is_prep ? ( is_part_of_research => $is_prep ) : () ),
                 ( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () )
             };
         }
