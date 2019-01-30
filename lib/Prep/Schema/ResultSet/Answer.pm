@@ -98,11 +98,12 @@ sub action_specs {
             my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research);
             $self->result_source->schema->txn_do( sub {
                 # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
+                $answer = $self->create(\%values);
                 if ( $pending_question_data->{has_more} == 0 ) {
                     my $recipient = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
                     $recipient->update( { finished_quiz => 1 } );
 
-                    $is_prep = 1;
+                    $is_prep = $recipient->is_prep;
                     $is_eligible_for_research = $recipient->is_eligible_for_research;
 
                     $finished_quiz = 1;
@@ -111,7 +112,6 @@ sub action_specs {
                     $finished_quiz = 0;
                 }
 
-                $answer = $self->create(\%values);
             });
 
             return {
