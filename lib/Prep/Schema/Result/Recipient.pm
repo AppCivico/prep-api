@@ -480,7 +480,7 @@ sub appointment_description {
 
         my $question_text = $answer->question->text;
         $answers->[$i] = {
-            "$question_text" => $answer->question->answer_by_choice_value( $answer->answer_value )
+            "$question_text" =>  $answer->question->type eq 'multiple_choice' ? $answer->question->answer_by_choice_value( $answer->answer_value ) : $answer->answer_value
         };
         $i++;
     }
@@ -489,6 +489,8 @@ sub appointment_description {
 
     my $json = JSON->new->pretty(1);
     $answers = $json->encode( $answers);
+
+    $answers =~ s/(\[)?(\])?(\})?(\{)?(\h{2,})?//gm;
 
     return $answers;
 }
