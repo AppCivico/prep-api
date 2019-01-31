@@ -233,16 +233,6 @@ sub available_dates {
             # Pegando cotas disponiveis
             my @base_quotas = ( 1 .. $_->quotas );
 
-			my @taken_quotas = $appointment_rs->search(
-				{
-					appointment_window_id => $appointment_window_id,
-                    created_at            => { '>=' => \'now()::date', '<=' => \"now()::date + interval '10 days'" },
-				}
-			)->get_column('quota_number')->all();
-
-            my %taken_quotas = map { $_ => 1 } @taken_quotas;
-            @base_quotas = grep { not $taken_quotas{$_} } @base_quotas;
-
             # Parseio o começo e o fim da janela de atendimento
 			my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
 			my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
@@ -256,9 +246,20 @@ sub available_dates {
             map {
                 my $ymd = get_ymd_by_day_of_the_week($_);
 
+				my @taken_quotas = $appointment_rs->search(
+					{
+						appointment_window_id  => $appointment_window_id,
+                        appointment_at         => { '>=' => \"'$ymd'::date", '<' => \"'$ymd'::date + interval '1 day'"},
+					}
+				)->get_column('quota_number')->all();
+
+                my %taken_quotas = map { $_ => 1 } @taken_quotas;
+
+                my @available_quotas = grep { not $taken_quotas{$_} } @base_quotas;
+
                 +{
                     appointment_window_id => $appointment_window_id,
-                    ymd                   => get_ymd_by_day_of_the_week($_),
+                    ymd                   => $ymd,
                     hours => [
                         map {
 
@@ -274,7 +275,7 @@ sub available_dates {
                                     ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms . '-02:00' ),
                                 datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms . '-02:00'
                             }
-                        } @base_quotas
+                        } @available_quotas
                     ]
                 }
             } @days_of_week;
