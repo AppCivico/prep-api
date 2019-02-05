@@ -48,7 +48,7 @@ while ( my $recipient = $rs->next() ) {
 				{
 					content_type => 'text',
 					title        => "Terminar quiz",
-					payload      => 'quiz'
+					payload      => 'beginQuiz'
 				},
 			]
 		}
