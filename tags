@@ -33,6 +33,11 @@ Prep::Schema::Result::AppointmentWindow	./lib/Prep/Schema/Result/AppointmentWind
 Prep::Schema::Result::AppointmentWindowDayOfWeek	./lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm	/^package Prep::Schema::Result::AppointmentWindowDayOfWeek;$/;"	p
 Prep::Schema::Result::Calendar	./lib/Prep/Schema/Result/Calendar.pm	/^package Prep::Schema::Result::Calendar;$/;"	p
 Prep::Schema::Result::ChatbotSession	./lib/Prep/Schema/Result/ChatbotSession.pm	/^package Prep::Schema::Result::ChatbotSession;$/;"	p
+Prep::Schema::Result::Config	./lib/Prep/Schema/Result/Config.pm	/^package Prep::Schema::Result::Config;$/;"	p
+Prep::Schema::Result::MinionJob	./lib/Prep/Schema/Result/MinionJob.pm	/^package Prep::Schema::Result::MinionJob;$/;"	p
+Prep::Schema::Result::MinionLock	./lib/Prep/Schema/Result/MinionLock.pm	/^package Prep::Schema::Result::MinionLock;$/;"	p
+Prep::Schema::Result::MinionWorker	./lib/Prep/Schema/Result/MinionWorker.pm	/^package Prep::Schema::Result::MinionWorker;$/;"	p
+Prep::Schema::Result::MojoMigration	./lib/Prep/Schema/Result/MojoMigration.pm	/^package Prep::Schema::Result::MojoMigration;$/;"	p
 Prep::Schema::Result::Question	./lib/Prep/Schema/Result/Question.pm	/^package Prep::Schema::Result::Question;$/;"	p
 Prep::Schema::Result::QuestionMap	./lib/Prep/Schema/Result/QuestionMap.pm	/^package Prep::Schema::Result::QuestionMap;$/;"	p
 Prep::Schema::Result::Recipient	./lib/Prep/Schema/Result/Recipient.pm	/^package Prep::Schema::Result::Recipient;$/;"	p
@@ -46,10 +51,14 @@ Prep::Schema::ResultSet::Appointment	./lib/Prep/Schema/ResultSet/Appointment.pm	
 Prep::Schema::ResultSet::QuestionMap	./lib/Prep/Schema/ResultSet/QuestionMap.pm	/^package Prep::Schema::ResultSet::QuestionMap;$/;"	p
 Prep::Schema::ResultSet::Recipient	./lib/Prep/Schema/ResultSet/Recipient.pm	/^package Prep::Schema::ResultSet::Recipient;$/;"	p
 Prep::SchemaConnected	./lib/Prep/SchemaConnected.pm	/^package Prep::SchemaConnected;$/;"	p
+Prep::Task::SendMessage	./lib/Prep/Task/SendMessage.pm	/^package Prep::Task::SendMessage;$/;"	p
 Prep::Types	./lib/Prep/Types.pm	/^package Prep::Types;$/;"	p
 Prep::Utils	./lib/Prep/Utils.pm	/^package Prep::Utils;$/;"	p
+WebService::Facebook	./lib/WebService/Facebook.pm	/^package WebService::Facebook;$/;"	p
 WebService::GoogleCalendar	./lib/WebService/GoogleCalendar.pm	/^package WebService::GoogleCalendar;$/;"	p
+_build__facebook	./lib/Prep/Task/SendMessage.pm	/^sub _build__facebook { WebService::Facebook->instance }$/;"	s
 _build_furl	./lib/WebService/GoogleCalendar.pm	/^sub _build_furl { Furl->new() }$/;"	s
+_build_ua	./lib/WebService/Facebook.pm	/^sub _build_ua { LWP::UserAgent->new() }$/;"	s
 _filter_value	./lib/Data/Verifier.pm	/^sub _filter_value {$/;"	s
 _get_random_string	./lib/Mojolicious/Plugin/Detach.pm	/^sub _get_random_string {$/;"	s
 _wrap_in_transaction	./lib/Prep/Role/Verification/TransactionalActions/DBIC.pm	/^sub _wrap_in_transaction {$/;"	s
@@ -64,7 +73,9 @@ available_dates	./lib/Prep/Schema/Result/Calendar.pm	/^sub available_dates {$/;"
 check	./lib/Prep/Role/Verification.pm	/^sub check {$/;"	s
 coercion	./lib/Data/Verifier.pm	/^sub coercion {$/;"	s
 create_event	./lib/WebService/GoogleCalendar.pm	/^sub create_event {$/;"	s
+create_persona	./lib/WebService/Facebook.pm	/^sub create_persona {$/;"	s
 decoded	./lib/Prep/Schema/Result/Question.pm	/^sub decoded {$/;"	s
+delete_persona	./lib/WebService/Facebook.pm	/^sub delete_persona {$/;"	s
 env	./lib/Prep/Utils.pm	/^sub env { return $ENV{${\\shift}} }$/;"	s
 errors	./lib/Prep/Data/Manager.pm	/^sub errors {$/;"	s
 execute	./lib/Prep/Role/Verification.pm	/^sub execute {$/;"	s
@@ -78,6 +89,7 @@ get_calendar_event_at_time	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar
 get_calendar_events	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_events {$/;"	s
 get_connect_info	./lib/Prep/SchemaConnected.pm	/^sub get_connect_info {$/;"	s
 get_pending_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_pending_question_data {$/;"	s
+get_persona	./lib/WebService/Facebook.pm	/^sub get_persona {$/;"	s
 get_quota_info	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub get_quota_info {$/;"	s
 get_schema	./lib/Prep/SchemaConnected.pm	/^sub get_schema {$/;"	s
 get_ymd_by_day_of_the_week	./lib/Prep/Utils.pm	/^sub get_ymd_by_day_of_the_week {$/;"	s
@@ -98,9 +110,12 @@ quota_map	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub quota_map {$/;"	s
 register	./lib/Mojolicious/Plugin/Detach.pm	/^sub register {$/;"	s
 register	./lib/Mojolicious/Plugin/SimpleAuthentication.pm	/^sub register {$/;"	s
 register	./lib/Prep/Routes.pm	/^sub register {$/;"	s
+register	./lib/Prep/Task/SendMessage.pm	/^sub register {$/;"	s
 reply_exception	./lib/Prep/Controller.pm	/^sub reply_exception {$/;"	s
 reply_forbidden	./lib/Prep/Controller.pm	/^sub reply_forbidden {$/;"	s
 reply_not_found	./lib/Prep/Controller.pm	/^sub reply_not_found {$/;"	s
+save_asset	./lib/WebService/Facebook.pm	/^sub save_asset {$/;"	s
+send_message	./lib/WebService/Facebook.pm	/^sub send_message {$/;"	s
 startup	./lib/Prep.pm	/^sub startup {$/;"	s
 stasher	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub stasher {$/;"	s
 upcoming_appointments	./lib/Prep/Schema/Result/Recipient.pm	/^sub upcoming_appointments {$/;"	s
