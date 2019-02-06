@@ -70,7 +70,7 @@ db_transaction {
             }
         )
         ->status_is(200)
-		->json_has('/calendars/')
+		->json_has('/calendars')
         ->json_has('/calendars/0/id')
         ->json_has('/calendars/0/name')
         ->json_has('/calendars/0/city')
@@ -123,6 +123,7 @@ db_transaction {
             '/api/chatbot/appointment/available-dates',
             form => {
                 security_token => $security_token,
+				calendar_id    => $calendar->id
             }
         )
         ->status_is(200)

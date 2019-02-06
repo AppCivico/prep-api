@@ -11,7 +11,7 @@ sub post {
         for  => 'create',
         with => $c->req->params->to_hash
     );
-    # use DDP; p $answer;
+
     return $c->render(
         status => 201,
         json   => {

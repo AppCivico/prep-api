@@ -4,6 +4,9 @@ use Mojo::Base 'Prep::Controller';
 sub get {
     my $c = shift;
 
+    # Usando o primeiro calendario para retrocompatibilidade
+    $c->req->params->to_hash->{calendar_id} = 1 unless defined $c->req->params->to_hash->{calendar_id};
+
 	my $calendar = $c->schema->resultset('Calendar')->find( $c->req->params->to_hash->{calendar_id} );
 
     return $c->render(

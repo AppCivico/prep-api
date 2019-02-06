@@ -18,13 +18,25 @@ SELECT
     r.id,
     r.fb_id,
     r.name,
-    a.appointment_at AS appointment_at
+    a.created_at AS last_answer_at
 FROM
     recipient r
 JOIN
-    appointment a ON ( a.recipient_id  = r.id )
+    answer a ON ( a.recipient_id  = r.id )
+JOIN
+    question q ON ( a.question_id = q.id )
 WHERE
-    a.appointment_at >= (now() + interval '1 day')::date
+    r.question_notification_sent_at IS NULL
+    AND r.finished_quiz = false
+    AND r.opt_in = true
+    AND a.created_at <= NOW() - interval '3 hours'
+GROUP BY
+    r.id,
+    r.fb_id,
+    r.name,
+    a.created_at
+ORDER BY
+    a.created_at DESC
 
 SQL_QUERY
 
