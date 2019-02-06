@@ -106,6 +106,11 @@ __PACKAGE__->table("calendar");
   is_nullable: 0
   original: {data_type => "varchar"}
 
+=head2 city
+
+  data_type: 'text'
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -161,6 +166,8 @@ __PACKAGE__->add_columns(
     is_nullable => 0,
     original    => { data_type => "varchar" },
   },
+  "city",
+  { data_type => "text", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -207,8 +214,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 10:59:20
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:f6s42fJM1kL39Nk9XBOgKg
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-05 18:23:09
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:83mvDWm8fUbeqXMhaArt4Q
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

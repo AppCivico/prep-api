@@ -35,6 +35,9 @@ sub register {
     # Appointment
 	my $appointment = $chatbot->route('/appointment');
 
+	# Appointment::AvailableCalendars
+	$appointment->route('/available-calendars')->get('/')->to('chatbot-appointment-available_calendars#get');
+
     # Appointment::AvailableDates
 	$appointment->route('/available-dates')->get('/')->to('chatbot-appointment-available_dates#get');
 

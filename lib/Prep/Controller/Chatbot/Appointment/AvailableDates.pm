@@ -4,9 +4,7 @@ use Mojo::Base 'Prep::Controller';
 sub get {
     my $c = shift;
 
-    # TODO verificar de onde o recipient é e verificar o calendário
-
-    my $calendar = $c->schema->resultset('Calendar')->search(undef)->next;
+	my $calendar = $c->schema->resultset('Calendar')->find( $c->req->params->to_hash->{calendar_id} );
 
     return $c->render(
         status => 200,

@@ -18,6 +18,7 @@ db_transaction {
             $calendar = $schema->resultset('Calendar')->create(
                 {
                     name          => 'test_calendar',
+                    city          => 'São Paulo',
                     google_id     => 'prep_test@group.calendar.google.com',
                     time_zone     => 'America/Sao_Paulo',
                     token         => 'foobar',
@@ -63,9 +64,24 @@ db_transaction {
 
     subtest 'Chatbot | Get available dates' => sub {
         $t->get_ok(
+            '/api/chatbot/appointment/available-calendars',
+            form => {
+                security_token => $security_token,
+            }
+        )
+        ->status_is(200)
+		->json_has('/calendars/')
+        ->json_has('/calendars/0/id')
+        ->json_has('/calendars/0/name')
+        ->json_has('/calendars/0/city')
+        ->json_has('/calendars/0/time_zone')
+        ->json_has('/calendars/0/google_id');
+
+        $t->get_ok(
             '/api/chatbot/appointment/available-dates',
             form => {
                 security_token => $security_token,
+                calendar_id    => $calendar->id
             }
         )
         ->status_is(200)
