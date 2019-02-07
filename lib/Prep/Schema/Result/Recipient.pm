@@ -476,6 +476,7 @@ sub appointment_description {
 
     my $answers;
     my $i = 0;
+    use DDP; p $self->fb_id;
     while ( my $answer = $answers_rs->next() ) {
 
         my $question_text = $answer->question->text;
@@ -487,8 +488,12 @@ sub appointment_description {
 
     return '' unless $answers;
 
+    # Adicionando flag e fb_id na descrição para identificar no sync
+	$answers->[$i]     = { 'agendamento_chatbot' => 1 };
+	$answers->[$i + 1] = { 'identificador'       => $self->fb_id };
+
     my $json = JSON->new->pretty(1);
-    $answers = $json->encode( $answers);
+    $answers = $json->encode( $answers );
 
     $answers =~ s/(\[)?(\])?(\})?(\{)?(\h{2,})?//gm;
 
