@@ -141,7 +141,8 @@ db_transaction {
         ->status_is(200)
         ->json_has('/appointments/0/datetime_start')
         ->json_has('/appointments/0/quota_number')
-        ->json_has('/appointments/0/appointment_window_id');
+		->json_has('/appointments/0/appointment_window_id')
+		->json_has('/appointments/0/type');
     };
 
 };
