@@ -113,7 +113,8 @@ db_transaction {
                 appointment_window_id => $appointment_window->id,
                 quota_number          => 1,
                 datetime_start        => $datetime_start,
-                datetime_end          => $datetime_end
+                datetime_end          => $datetime_end,
+                type                  => 'recrutamento'
             }
         )
         ->status_is(201)

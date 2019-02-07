@@ -94,6 +94,12 @@ __PACKAGE__->table("appointment");
   data_type: 'timestamp'
   is_nullable: 1
 
+=head2 appointment_type_id
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -125,6 +131,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "notification_sent_at",
   { data_type => "timestamp", is_nullable => 1 },
+  "appointment_type_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -161,6 +169,26 @@ __PACKAGE__->add_unique_constraint(
 );
 
 =head1 RELATIONS
+
+=head2 appointment_type
+
+Type: belongs_to
+
+Related object: L<Prep::Schema::Result::AppointmentType>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "appointment_type",
+  "Prep::Schema::Result::AppointmentType",
+  { id => "appointment_type_id" },
+  {
+    is_deferrable => 0,
+    join_type     => "LEFT",
+    on_delete     => "NO ACTION",
+    on_update     => "NO ACTION",
+  },
+);
 
 =head2 appointment_window
 
@@ -218,8 +246,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 11:34:02
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:MisPGkpxOEkr3OzhNIom2A
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 16:23:49
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:JjgbllrXKsZXlDE4PuWGBw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

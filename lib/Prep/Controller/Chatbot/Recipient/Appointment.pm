@@ -4,6 +4,18 @@ use Mojo::Base 'Prep::Controller';
 sub post {
     my $c = shift;
 
+	$c->validate_request_params(
+		type => {
+			type       => 'Str',
+			required   => 1,
+			post_check => sub {
+				my $type = $c->req->params->to_hash->{type};
+
+				die \['type', 'invalid'] unless $type =~ m/(quiz|screening)/;
+			}
+		},
+	);
+
     my $recipient = $c->stash('recipient');
 
     my $appointment = $recipient->appointments->execute(

@@ -59,6 +59,15 @@ sub verifiers_specs {
                 datetime_end => {
                     required => 1,
                     type     => 'Str'
+                },
+                type => {
+                    required   => 1,
+                    type       => 'Str',
+                    post_check => sub {
+						my $type = $_[0]->get_value('type');
+
+						my $count = $self->result_source->schema->resultset('AppointmentType')->search( { name => $type } )->count or die \['type', 'invalid'];
+                    }
                 }
             }
         ),
@@ -75,6 +84,9 @@ sub action_specs {
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
 
+            my $type = delete $values{type};
+            $type    = $self->result_source->schema->resultset('AppointmentType')->search( { name => $type } )->next;
+
             # TODO verificar pelo WS do GCalendar para ver se o horario está
             # disponivel ainda
             my $ws = WebService::GoogleCalendar->instance();
@@ -85,8 +97,9 @@ sub action_specs {
             my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
             my $calendar           = $appointment_window->calendar;
 
-            $values{calendar_id}    = $calendar->id;
-            $values{appointment_at} = $datetime_start;
+            $values{calendar_id}         = $calendar->id;
+            $values{appointment_at}      = $datetime_start;
+            $values{appointment_type_id} = $type->id;
 
             my $appointment = $self->create(\%values);
 
@@ -97,7 +110,7 @@ sub action_specs {
                calendar_id    => $calendar->id,
                datetime_start => $datetime_start,
                datetime_end   => $datetime_end,
-               summary        => 'Consulta: ' . $recipient->name,
+               summary        => 'Consulta de' . $type->name .  ': ' . $recipient->name,
                description    => $recipient->appointment_description
             );
 
