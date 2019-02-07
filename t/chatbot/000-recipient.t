@@ -169,6 +169,7 @@ db_transaction {
         ->json_has('/updated_at')
         ->json_has('/created_at')
         ->json_has('/opt_in')
+        ->json_has('/integration_token')
         ->json_has('/finished_quiz')
         ->json_is('/fb_id',   '710488549074724')
         ->json_is('/page_id', '1573221416102831')

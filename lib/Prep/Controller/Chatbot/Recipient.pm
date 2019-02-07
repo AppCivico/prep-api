@@ -53,6 +53,7 @@ sub get {
             id                       => $recipient->id,
             fb_id                    => $recipient->fb_id,
             name                     => $recipient->name,
+            integration_token        => $recipient->integration_token,
             page_id                  => $recipient->page_id,
             picture                  => $recipient->picture,
             opt_in                   => $recipient->opt_in,
