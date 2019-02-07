@@ -38,6 +38,15 @@ sub verifiers_specs {
                 answer_value => {
                     required => 1,
                     type     => 'Num|Str'
+                },
+                category => {
+                    required   => 1,
+                    type       => 'Str',
+                    post_check => sub {
+						my $category = $_[0]->get_value('category');
+
+						die \['category', 'invalid'] unless $category =~ m/(quiz|screening)/;
+                    }
                 }
             }
         ),
@@ -57,10 +66,12 @@ sub action_specs {
             # question_map_id é sempre o id do mapa mais atual
             $values{question_map_id} = $self->result_source->schema->resultset('QuestionMap')->get_column('id')->max;
 
-            my $recipient_fb_id        = delete $values{fb_id};
-            my $question_code          = delete $values{code};
+            my $recipient_fb_id = delete $values{fb_id};
+            my $question_code   = delete $values{code};
+            my $category        = delete $values{category};
+
             my $recipient              = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
-            my $pending_question_data  = $recipient->get_pending_question_data;
+            my $pending_question_data  = $recipient->get_pending_question_data($category);
             my $next_question          = $pending_question_data->{question} ? $pending_question_data->{question}->decoded : undef;
 
             # Caso não tenha uma próxima pergunta

@@ -284,12 +284,19 @@ sub action_specs {
 }
 
 sub get_pending_question_data {
-    my ($self) = @_;
+    my ($self, $category) = @_;
 
     my $question_rs         = $self->result_source->schema->resultset('Question');
-    my $question_map_result = $self->result_source->schema->resultset('QuestionMap')->search( undef, { order_by => { -desc => 'created_at' } } )->next;
-
+    my $question_map_result = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => $category },
+        {
+            prefetch => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
     my $question_map = $question_map_result->parsed;
+
+    die \['category', 'invalid'] unless $question_map;
 
     my @answered_questions = $self->answers->search( { 'question.question_map_id' => $question_map_result->id }, { prefetch => 'question' } )->get_column('question.code')->all();
 

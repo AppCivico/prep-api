@@ -61,6 +61,12 @@ __PACKAGE__->table("question_map");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 category_id
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -80,6 +86,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "category_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -111,6 +119,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 category
+
+Type: belongs_to
+
+Related object: L<Prep::Schema::Result::Category>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "category",
+  "Prep::Schema::Result::Category",
+  { id => "category_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+);
+
 =head2 questions
 
 Type: has_many
@@ -127,8 +150,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-29 16:23:25
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:232CoFODMy+3PeOIt8g/ug
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 15:44:53
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Ci30+mLrinZR5Rhmza+4Tg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

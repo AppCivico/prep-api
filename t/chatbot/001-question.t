@@ -23,7 +23,8 @@ db_transaction {
                         1 => 'Z1',
                         2 => 'U4',
                         3 => 'Y5',
-                    })
+                    }),
+                    category_id => 1
                 }
             ),
             'question map created'
@@ -121,7 +122,8 @@ db_transaction {
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -141,7 +143,8 @@ db_transaction {
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+				category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -163,6 +166,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Z1',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -173,7 +177,8 @@ db_transaction {
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -200,6 +205,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'U4',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -210,7 +216,8 @@ db_transaction {
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -223,6 +230,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Y5',
+                category       => 'quiz',
                 answer_value   => 'FOObar'
             }
         )
@@ -233,7 +241,8 @@ db_transaction {
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -281,7 +290,8 @@ db_transaction{
                         15 =>  'B5',
                         16 =>  'B6',
                         17 =>  'B7'
-                    })
+                    }),
+                    category_id => 1
                 }
             ),
             'question map created'
@@ -580,6 +590,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'A1',
+                category       => 'quiz',
                 answer_value   => '18'
             }
         )
@@ -590,7 +601,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -602,6 +614,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'AC1',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -612,7 +625,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -624,6 +638,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'AC2',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -636,6 +651,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'AC3',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -648,6 +664,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'AC4',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -660,6 +677,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'A2',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -670,7 +688,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -682,6 +701,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'A3',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -692,7 +712,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -704,6 +725,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B1',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -714,7 +736,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -726,6 +749,7 @@ db_transaction{
 				security_token => $security_token,
 				fb_id          => $fb_id,
 				code           => 'B1a',
+                category       => 'quiz',
 				answer_value   => '1'
 			}
 		)
@@ -736,7 +760,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -748,6 +773,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B2',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -758,7 +784,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz',
             }
         )
         ->status_is(200)
@@ -770,6 +797,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B2a',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -780,7 +808,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -792,6 +821,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B2b',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -802,7 +832,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -814,6 +845,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B3',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -824,7 +856,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -836,6 +869,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B4',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -846,7 +880,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+                category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -858,6 +893,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B5',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -868,6 +904,7 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
+                category       => 'quiz',
                 fb_id          => $fb_id
             }
         )
@@ -880,6 +917,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B6',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -890,7 +928,8 @@ db_transaction{
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
-                fb_id          => $fb_id
+                fb_id          => $fb_id,
+				category       => 'quiz'
             }
         )
         ->status_is(200)
@@ -902,6 +941,7 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B7',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )

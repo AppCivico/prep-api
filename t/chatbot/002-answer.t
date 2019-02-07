@@ -22,7 +22,8 @@ db_transaction {
                     map => encode_json ({
                         1 => 'Q1',
                         2 => 'E4'
-                    })
+                    }),
+                    category_id => 1
                 }
             ),
             'question map created'
@@ -115,6 +116,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'foobar',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -129,6 +131,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
+				category       => 'quiz',
                 answer_value   => 'foobar'
             }
         )
@@ -143,6 +146,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
+                category       => 'quiz',
                 answer_value   => '10'
             }
         )
@@ -156,6 +160,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -171,6 +176,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -186,6 +192,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'E4',
+                category       => 'quiz',
                 answer_value   => '3'
             }
         )

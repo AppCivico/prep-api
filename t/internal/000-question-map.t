@@ -19,7 +19,8 @@ db_transaction {
                     2 => 'A3',
                     3 => 'B4',
                     4 => 'C5'
-                }
+                },
+                category_id => 1
             }
         ),
         'question map created'
