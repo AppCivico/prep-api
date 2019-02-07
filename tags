@@ -13,6 +13,7 @@ Prep::Authorization	./lib/Prep/Authorization.pm	/^package Prep::Authorization;$/
 Prep::Controller	./lib/Prep/Controller.pm	/^package Prep::Controller;$/;"	p
 Prep::Controller::Chatbot	./lib/Prep/Controller/Chatbot.pm	/^package Prep::Controller::Chatbot;$/;"	p
 Prep::Controller::Chatbot::Appointment	./lib/Prep/Controller/Chatbot/Appointment.pm	/^package Prep::Controller::Chatbot::Appointment;$/;"	p
+Prep::Controller::Chatbot::Appointment::AvailableCalendars	./lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm	/^package Prep::Controller::Chatbot::Appointment::AvailableCalendars;$/;"	p
 Prep::Controller::Chatbot::Appointment::AvailableDates	./lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm	/^package Prep::Controller::Chatbot::Appointment::AvailableDates;$/;"	p
 Prep::Controller::Chatbot::Recipient	./lib/Prep/Controller/Chatbot/Recipient.pm	/^package Prep::Controller::Chatbot::Recipient;$/;"	p
 Prep::Controller::Chatbot::Recipient::Answer	./lib/Prep/Controller/Chatbot/Recipient/Answer.pm	/^package Prep::Controller::Chatbot::Recipient::Answer;$/;"	p
@@ -51,12 +52,11 @@ Prep::Schema::ResultSet::Appointment	./lib/Prep/Schema/ResultSet/Appointment.pm	
 Prep::Schema::ResultSet::QuestionMap	./lib/Prep/Schema/ResultSet/QuestionMap.pm	/^package Prep::Schema::ResultSet::QuestionMap;$/;"	p
 Prep::Schema::ResultSet::Recipient	./lib/Prep/Schema/ResultSet/Recipient.pm	/^package Prep::Schema::ResultSet::Recipient;$/;"	p
 Prep::SchemaConnected	./lib/Prep/SchemaConnected.pm	/^package Prep::SchemaConnected;$/;"	p
-Prep::Task::SendMessage	./lib/Prep/Task/SendMessage.pm	/^package Prep::Task::SendMessage;$/;"	p
 Prep::Types	./lib/Prep/Types.pm	/^package Prep::Types;$/;"	p
 Prep::Utils	./lib/Prep/Utils.pm	/^package Prep::Utils;$/;"	p
 WebService::Facebook	./lib/WebService/Facebook.pm	/^package WebService::Facebook;$/;"	p
 WebService::GoogleCalendar	./lib/WebService/GoogleCalendar.pm	/^package WebService::GoogleCalendar;$/;"	p
-_build__facebook	./lib/Prep/Task/SendMessage.pm	/^sub _build__facebook { WebService::Facebook->instance }$/;"	s
+_build__calendar	./lib/Prep/Schema/Result/Calendar.pm	/^sub _build__calendar { WebService::GoogleCalendar->instance }$/;"	s
 _build_furl	./lib/WebService/GoogleCalendar.pm	/^sub _build_furl { Furl->new() }$/;"	s
 _build_ua	./lib/WebService/Facebook.pm	/^sub _build_ua { LWP::UserAgent->new() }$/;"	s
 _filter_value	./lib/Data/Verifier.pm	/^sub _filter_value {$/;"	s
@@ -81,6 +81,7 @@ errors	./lib/Prep/Data/Manager.pm	/^sub errors {$/;"	s
 execute	./lib/Prep/Role/Verification.pm	/^sub execute {$/;"	s
 fail_render	./lib/Prep/Authorization.pm	/^sub fail_render {$/;"	s
 generate_token	./lib/WebService/GoogleCalendar.pm	/^sub generate_token {$/;"	s
+get	./lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub get {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Recipient/Appointment.pm	/^sub get {$/;"	s
@@ -110,7 +111,6 @@ quota_map	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub quota_map {$/;"	s
 register	./lib/Mojolicious/Plugin/Detach.pm	/^sub register {$/;"	s
 register	./lib/Mojolicious/Plugin/SimpleAuthentication.pm	/^sub register {$/;"	s
 register	./lib/Prep/Routes.pm	/^sub register {$/;"	s
-register	./lib/Prep/Task/SendMessage.pm	/^sub register {$/;"	s
 reply_exception	./lib/Prep/Controller.pm	/^sub reply_exception {$/;"	s
 reply_forbidden	./lib/Prep/Controller.pm	/^sub reply_forbidden {$/;"	s
 reply_not_found	./lib/Prep/Controller.pm	/^sub reply_not_found {$/;"	s
@@ -118,6 +118,7 @@ save_asset	./lib/WebService/Facebook.pm	/^sub save_asset {$/;"	s
 send_message	./lib/WebService/Facebook.pm	/^sub send_message {$/;"	s
 startup	./lib/Prep.pm	/^sub startup {$/;"	s
 stasher	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub stasher {$/;"	s
+sync_appointments	./lib/Prep/Schema/Result/Calendar.pm	/^sub sync_appointments {$/;"	s
 upcoming_appointments	./lib/Prep/Schema/Result/Recipient.pm	/^sub upcoming_appointments {$/;"	s
 user_privs	./lib/Prep/Authorization.pm	/^sub user_privs {$/;"	s
 user_role	./lib/Prep/Authorization.pm	/^sub user_role  { ... }$/;"	s
