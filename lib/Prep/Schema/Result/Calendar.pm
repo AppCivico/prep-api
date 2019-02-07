@@ -318,7 +318,7 @@ sub available_dates {
 sub sync_appointments {
     my ($self) = @_;
 
-	my $res = $self->_calendar->get_calendar_events( calendar => $self, calendar_id => $self->id );
+	my $res = $self->_calendar->get_calendar_events( calendar => $self, google_id => $self->google_id );
 
 	my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
 

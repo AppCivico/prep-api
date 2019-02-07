@@ -44,7 +44,7 @@ sub generate_token {
 sub get_calendar_events {
     my ($self, %opts) = @_;
 
-	my @required_opts = qw( calendar calendar_id );
+	my @required_opts = qw( calendar google_id );
 	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my $res;
@@ -61,7 +61,7 @@ sub get_calendar_events {
 
                 use DDP; p $tomorrow;
 
-				my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar_id} . "/events?timeMin=$tomorrow";
+				my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{google_id} . "/events?timeMin=$tomorrow";
 
                 $res = $self->furl->get(
                     $url,
