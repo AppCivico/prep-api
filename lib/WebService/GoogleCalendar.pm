@@ -58,15 +58,12 @@ sub get_calendar_events {
             my $tomorrow = DateTime->today->add( days => 1 );
             $tomorrow    = $tomorrow . 'Z';
 
-            use DDP; p $tomorrow;
-
             my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{google_id} . "/events?timeMin=$tomorrow";
 
             $res = $self->furl->get(
                 $url,
                 [ 'Authorization', 'Bearer ' . $access_token ]
             );
-            p $res->is_success;
             die $res->decoded_content unless $res->is_success;
         };
         die $@ if $@;

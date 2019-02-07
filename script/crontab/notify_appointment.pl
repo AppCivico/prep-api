@@ -40,21 +40,17 @@ while ( my $calendar = $calendar_rs->next() ) {
 	$calendar->sync_appointments;
 }
 
-use DDP;
-my $v = 'passou';
-p $v;
 my $rs = $schema->resultset('Appointment')->search(
     {
-        appointment_at       => { '>=' => \'now()::date', '<=' => \"(now() + interval '1 day')::date" },
+        appointment_at       => { '>=' => \'now()::date', '<=' => \"(now() + interval '2 day')::date" },
         notification_sent_at => \'IS NULL'
     }
 );
 
 while ( my $appointment = $rs->next() ) {
-
     my $recipient        = $appointment->recipient;
     my $appointment_time = $appointment->appointment_at;
-    p $recipient;
+
     # Build message object
     my $body = encode_json {
 		messaging_type => "UPDATE",
