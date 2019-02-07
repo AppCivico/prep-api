@@ -67,7 +67,7 @@ sub get_calendar_events {
                     $url,
                     [ 'Authorization', 'Bearer ' . $access_token ]
                 );
-
+                p $res->decoded_content;
                 die $res->decoded_content unless $res->is_success;
             }
             retry_if { shift() < 3 } catch { die $_; };
