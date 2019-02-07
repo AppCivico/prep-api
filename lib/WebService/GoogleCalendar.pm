@@ -61,7 +61,7 @@ sub get_calendar_events {
 
                 use DDP; p $tomorrow;
 
-				my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{google_id} . "/events?timeMin=$tomorrow";
+				my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/eokoe.com_o13e6c46hatmged80ovns8le6c@group.calendar.google.com/events?timeMin=2019-02-08T00:00:00Z';
 
                 $res = $self->furl->get(
                     $url,
