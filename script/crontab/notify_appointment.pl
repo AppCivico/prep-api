@@ -40,6 +40,8 @@ while ( my $calendar = $calendar_rs->next() ) {
 	$calendar->sync_appointments;
 }
 
+use DDP; p \@manual_appointments;
+
 my $rs = $schema->resultset('Appointment')->search(
     {
         appointment_at       => { '>=' => \'now()::date', '<=' => \"(now() + interval '1 day')::date" },
