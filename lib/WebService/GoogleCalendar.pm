@@ -55,22 +55,19 @@ sub get_calendar_events {
         my $access_token = $self->generate_token($opts{calendar});
 
         eval {
-            retry {
-				my $tomorrow = DateTime->today->add( days => 1 );
-				$tomorrow    = $tomorrow . 'Z';
+            my $tomorrow = DateTime->today->add( days => 1 );
+            $tomorrow    = $tomorrow . 'Z';
 
-                use DDP; p $tomorrow;
+            use DDP; p $tomorrow;
 
-				my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/eokoe.com_o13e6c46hatmged80ovns8le6c@group.calendar.google.com/events?timeMin=2019-02-08T00:00:00Z';
+            my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{google_id} . "/events?timeMin=$tomorrow";
 
-                $res = $self->furl->get(
-                    $url,
-                    [ 'Authorization', 'Bearer ' . $access_token ]
-                );
-                p $res->decoded_content;
-                die $res->decoded_content unless $res->is_success;
-            }
-            retry_if { shift() < 3 } catch { die $_; };
+            $res = $self->furl->get(
+                $url,
+                [ 'Authorization', 'Bearer ' . $access_token ]
+            );
+            p $res->is_success;
+            die $res->decoded_content unless $res->is_success;
         };
         die $@ if $@;
 
