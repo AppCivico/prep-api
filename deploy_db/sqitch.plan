@@ -12,3 +12,4 @@
 0008-add-question_map_id [0007-add-ymd] 2019-01-29T18:31:57Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # adding question_map_id on question table
 0009-add-config [0008-add-question_map_id] 2019-02-05T17:03:36Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the config table
 0010-add-city [0009-add-config] 2019-02-06T11:28:09Z Lucas Ansei,,, <lucas@lucas-G750JX> # adding the city to the calendar
+0011-appointment [0010-add-city] 2019-02-07T13:44:43Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the appointment and recipient tables

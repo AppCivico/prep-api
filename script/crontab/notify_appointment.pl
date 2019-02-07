@@ -18,24 +18,6 @@ my $recipient_rs   = $schema->resultset('Recipient');
 my $calendar_rs    = $schema->resultset('Calendar');
 my $config         = $schema->resultset('Config')->search( { key => 'ACCESS_TOKEN' } )->next;
 
-# Sync calendar
-my @events;
-while ( my $calendar = $calendar_rs->next() ) {
-    my $res = $google_calendar->get_calendar_events( calendar => $calendar, calendar_id => $calendar->id );
-
-    # Tratando os dados que o Calendar retorna
-    @events = $res->{items};
-    for ( my $i = 0; $i++; $i < scalar @events ) {
-        use DDP;
-
-        my $event = $events[$i];
-        next if $event->{description} =~ /agendamento_chatbot/gm;
-    }
-
-}
-
-my @upcoming_appointments = $schema->resultset('Appointment')->search( { appointment_at =>  } )
-
 my ($host, $port, $user, $password, $dbname) =
     @ENV{qw(POSTGRESQL_HOST POSTGRESQL_PORT POSTGRESQL_USER POSTGRESQL_PASSWORD POSTGRESQL_DBNAME)};
 
@@ -52,36 +34,43 @@ $minion->add_task(
 	}
 );
 
-my $rs           = $schema->resultset('ViewRecipientQuiz');
+# Sync calendar
+my @manual_appointments;
+while ( my $calendar = $calendar_rs->next() ) {
+	$calendar->sync_appointments;
+}
 
-while ( my $recipient = $rs->next() ) {
+my $rs = $schema->resultset('Appointment')->search(
+    {
+        appointment_at       => { '>=' => \'now()::date', '<=' => \"(now() + interval '1 day')::date" },
+        notification_sent_at => \'IS NULL'
+    }
+);
+
+while ( my $appointment = $rs->next() ) {
+
+    my $recipient        = $appointment->recipient;
+    my $appointment_time = $appointment->appointment_at;
 
     # Build message object
     my $body = encode_json {
 		messaging_type => "UPDATE",
 		recipient      => { id => $recipient->fb_id },
 		message        => {
-			text => 'Olá! Termine de responder o quiz!',
+			text => "Olá! Você tem uma consulta em breve! Horário: $appointment_time",
 			quick_replies => [
 				{
 					content_type => 'text',
 					title        => "Voltar para o início",
 					payload      => 'greetings'
-				},
-				{
-					content_type => 'text',
-					title        => "Terminar quiz",
-					payload      => 'beginQuiz'
-				},
+				}
 			]
 		}
     };
 
     $minion->enqueue( send_message => [ $config->value, $body ] );
 
-    my $recipient = $recipient_rs->find($recipient->id);
-
-    $recipient->update( { question_notification_sent_at => \'now()' } );
+    $appointment->update( { notification_sent_at => \'now()' } );
 }
 
 $minion->perform_jobs;

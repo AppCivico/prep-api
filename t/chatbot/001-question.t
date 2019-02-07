@@ -907,7 +907,6 @@ db_transaction{
         )
         ->status_is(201)
         ->json_is('/finished_quiz', 1);
-
     };
 };
 

@@ -59,12 +59,12 @@ __PACKAGE__->table("appointment");
 
   data_type: 'integer'
   is_foreign_key: 1
-  is_nullable: 0
+  is_nullable: 1
 
 =head2 quota_number
 
   data_type: 'integer'
-  is_nullable: 0
+  is_nullable: 1
 
 =head2 updated_at
 
@@ -83,6 +83,17 @@ __PACKAGE__->table("appointment");
   data_type: 'timestamp'
   is_nullable: 0
 
+=head2 calendar_id
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 1
+
+=head2 notification_sent_at
+
+  data_type: 'timestamp'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -96,9 +107,9 @@ __PACKAGE__->add_columns(
   "recipient_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
   "appointment_window_id",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "quota_number",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "updated_at",
   { data_type => "timestamp", is_nullable => 1 },
   "created_at",
@@ -110,6 +121,10 @@ __PACKAGE__->add_columns(
   },
   "appointment_at",
   { data_type => "timestamp", is_nullable => 0 },
+  "calendar_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
+  "notification_sent_at",
+  { data_type => "timestamp", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -123,6 +138,27 @@ __PACKAGE__->add_columns(
 =cut
 
 __PACKAGE__->set_primary_key("id");
+
+=head1 UNIQUE CONSTRAINTS
+
+=head2 C<recipient_calendar_id>
+
+=over 4
+
+=item * L</recipient_id>
+
+=item * L</calendar_id>
+
+=item * L</appointment_at>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint(
+  "recipient_calendar_id",
+  ["recipient_id", "calendar_id", "appointment_at"],
+);
 
 =head1 RELATIONS
 
@@ -138,7 +174,32 @@ __PACKAGE__->belongs_to(
   "appointment_window",
   "Prep::Schema::Result::AppointmentWindow",
   { id => "appointment_window_id" },
-  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
+  {
+    is_deferrable => 0,
+    join_type     => "LEFT",
+    on_delete     => "NO ACTION",
+    on_update     => "NO ACTION",
+  },
+);
+
+=head2 calendar
+
+Type: belongs_to
+
+Related object: L<Prep::Schema::Result::Calendar>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "calendar",
+  "Prep::Schema::Result::Calendar",
+  { id => "calendar_id" },
+  {
+    is_deferrable => 0,
+    join_type     => "LEFT",
+    on_delete     => "NO ACTION",
+    on_update     => "NO ACTION",
+  },
 );
 
 =head2 recipient
@@ -157,8 +218,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 16:52:38
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:mKxrkaW2kacPi7+Gl4HZFg
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 11:34:02
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:MisPGkpxOEkr3OzhNIom2A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

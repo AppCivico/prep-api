@@ -100,6 +100,12 @@ __PACKAGE__->table("recipient");
   default_value: false
   is_nullable: 0
 
+=head2 integration_token
+
+  data_type: 'text'
+  default_value: "substring"(md5((random())::text), 0, 12)
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -141,6 +147,12 @@ __PACKAGE__->add_columns(
   { data_type => "timestamp", is_nullable => 1 },
   "finished_quiz",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "integration_token",
+  {
+    data_type     => "text",
+    default_value => \"\"substring\"(md5((random())::text), 0, 12)",
+    is_nullable   => 0,
+  },
 );
 
 =head1 PRIMARY KEY
@@ -217,8 +229,8 @@ __PACKAGE__->might_have(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-24 15:05:54
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IrIxHGZG9jhaUBLDJcPaCQ
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 10:29:48
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5pJOp9PSV+WoELO9bonoZw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -287,7 +299,7 @@ sub get_pending_question_data {
     # Isto é, só devem serem vistas por quem
     # alcançar certas condições
     my $ret;
-    my $next_question_code = $question_map->{ $pending_questions[0] };
+    my $next_question_code = scalar @pending_questions > 0 ? $question_map->{ $pending_questions[0] } : undef;
 
     if ( $next_question_code =~ /^(AC1|AC5|A3|B1)$/gm ) {
         my $conditions_satisfied = $self->verify_question_condition($next_question_code);
@@ -476,7 +488,7 @@ sub appointment_description {
 
     my $answers;
     my $i = 0;
-    use DDP; p $self->fb_id;
+
     while ( my $answer = $answers_rs->next() ) {
 
         my $question_text = $answer->question->text;
@@ -489,17 +501,16 @@ sub appointment_description {
     return '' unless $answers;
 
     # Adicionando flag e fb_id na descrição para identificar no sync
-	$answers->[$i]     = { 'agendamento_chatbot' => 1 };
-	$answers->[$i + 1] = { 'identificador'       => $self->fb_id };
+	$answers->[$i]     = { agendamento_chatbot => 1 };
+	$answers->[$i + 1] = { identificador       => $self->integration_token };
 
     my $json = JSON->new->pretty(1);
     $answers = $json->encode( $answers );
 
-    $answers =~ s/(\[)?(\])?(\})?(\{)?(\h{2,})?//gm;
+    $answers =~ s/(,)?(\")?(\[)?(\])?(\})?(\}\n)?(\{\n)?(\h{2,})?//gm;
 
     return $answers;
 }
-
 
 __PACKAGE__->meta->make_immutable;
 1;

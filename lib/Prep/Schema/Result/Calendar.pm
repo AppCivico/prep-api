@@ -213,9 +213,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 appointments
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-05 18:23:09
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:83mvDWm8fUbeqXMhaArt4Q
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Appointment>
+
+=cut
+
+__PACKAGE__->has_many(
+  "appointments",
+  "Prep::Schema::Result::Appointment",
+  { "foreign.calendar_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 11:01:11
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5DcrrNw9lQlaSK4HFIgBfA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -224,6 +239,16 @@ use Prep::Utils qw(get_ymd_by_day_of_the_week);
 
 use Time::Piece;
 use DateTime;
+
+use WebService::GoogleCalendar;
+
+has _calendar => (
+	is         => 'ro',
+	isa        => 'WebService::GoogleCalendar',
+	lazy_build => 1,
+);
+
+sub _build__calendar { WebService::GoogleCalendar->instance }
 
 sub available_dates {
     my ($self) = @_;
@@ -288,6 +313,34 @@ sub available_dates {
             } @days_of_week;
         } $self->appointment_windows->all()
     ];
+}
+
+sub sync_appointments {
+    my ($self) = @_;
+
+	my $res = $self->_calendar->get_calendar_events( calendar => $self, calendar_id => $self->id );
+
+	my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+
+    eval {
+        for my $appointment (@manual_appointments) {
+            my %fields = $appointment->{description} =~ /^(identificador)*\s*:\s*(\S+)/gm;
+
+            my $recipient = $self->result_source->schema->resultset('Recipient')->search( { integration_token => $fields{identificador} } )->next;
+            next unless $recipient;
+
+            $recipient->appointments->find_or_create(
+                {
+                    appointment_at => $appointment->{start}->{dateTime},
+                    calendar_id    => $self->id
+                },
+                { key => 'recipient_calendar_id' }
+            );
+        }
+    };
+    die $@ if $@;
+
+    return 1;
 }
 
 __PACKAGE__->meta->make_immutable;

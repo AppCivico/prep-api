@@ -85,6 +85,7 @@ sub action_specs {
             my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
             my $calendar           = $appointment_window->calendar;
 
+            $values{calendar_id}    = $calendar->id;
             $values{appointment_at} = $datetime_start;
 
             my $appointment = $self->create(\%values);

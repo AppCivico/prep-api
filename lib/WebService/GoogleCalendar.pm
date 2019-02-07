@@ -49,7 +49,7 @@ sub get_calendar_events {
 
     my $res;
     if (is_test()) {
-        $res = $Prep::Test::calendar_response;
+        $res = $Prep::Test::calendar_event_get;
     }
     else {
         my $access_token = $self->generate_token($opts{calendar});
