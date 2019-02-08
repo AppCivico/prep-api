@@ -34,7 +34,9 @@ sub get {
 
             # Flags condicionais
             ( exists $pending_question_data->{is_eligible_for_research} ? ( is_eligible_for_research => $pending_question_data->{is_eligible_for_research} ) : () ),
-            ( exists $pending_question_data->{is_part_of_research}      ? ( is_part_of_research => $pending_question_data->{is_part_of_research} ) : () )
+            ( exists $pending_question_data->{is_part_of_research}      ? ( is_part_of_research => $pending_question_data->{is_part_of_research} ) : () ),
+            ( exists $pending_question_data->{emergency_rerouting}      ? ( emergency_rerouting => $pending_question_data->{emergency_rerouting} ) : () ),
+            ( exists $pending_question_data->{suggest_appointment}      ? ( suggest_appointment => $pending_question_data->{suggest_appointment} ) : () )
         }
     )
 }

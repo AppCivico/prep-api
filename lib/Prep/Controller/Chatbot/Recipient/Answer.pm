@@ -29,8 +29,12 @@ sub post {
         json   => {
             id            => $answer->{answer}->id,
             finished_quiz => $answer->{finished_quiz},
-            ( $answer->{is_part_of_research} ? ( is_part_of_research => $answer->{is_part_of_research} ) : () ),
-            ( $answer->{is_eligible_for_research} ? ( is_eligible_for_research => $answer->{is_eligible_for_research} ) : () )
+            ( exists $answer->{is_part_of_research}      ? ( is_part_of_research => $answer->{is_part_of_research} ) : () ),
+            ( exists $answer->{is_eligible_for_research} ? ( is_eligible_for_research => $answer->{is_eligible_for_research} ) : () ),
+            ( exists $answer->{emergency_rerouting}      ? ( emergency_rerouting => $answer->{emergency_rerouting} ) : () ),
+            ( exists $answer->{suggest_appointment}      ? ( suggest_appointment => $answer->{suggest_appointment} ) : () ),
+            ( exists $answer->{go_to_appointment}        ? ( go_to_appointment => $answer->{go_to_appointment} ) : () ),
+            ( exists $answer->{go_to_autotest}        ? ( go_to_autotest => $answer->{go_to_autotest} ) : () )
         }
     )
 }

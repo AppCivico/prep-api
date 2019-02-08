@@ -16,3 +16,4 @@
 0012-question_map-category [0011-appointment] 2019-02-07T17:55:38Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the 'category_id' to the 'question_map' table
 0013-appointment-type [0012-question_map-category] 2019-02-07T18:24:07Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding 'appointment_type_id' on the 'appointment' table
 0014-add-external_integration_token [0013-appointment-type] 2019-02-08T12:10:54Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the 'external_integration_token' table
+0015-drop-constraint [0014-add-external_integration_token] 2019-02-08T17:30:28Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Droping constraint on answers table 

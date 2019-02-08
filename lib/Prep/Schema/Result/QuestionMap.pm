@@ -164,5 +164,122 @@ sub parsed {
     return decode_json( $self->map );
 }
 
+sub build_conditions {
+    my ($self, %opts) = @_;
+    use DDP;
+	my @required_opts = qw( recipient_id next_question_code );
+	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
+	my $next_question_code = $opts{next_question_code};
+	my $recipient_id       = $opts{recipient_id};
+
+    my $answers_rs = $self->result_source->schema->resultset('Answer')->search( { recipient_id => $recipient_id } );
+
+    my (@conditions, $condition);
+    if ( $self->category_id == 1 ) {
+        # Quiz
+
+        if ( $next_question_code eq 'AC5' ) {
+            # Deve ter respondido as seguintes perguntas com as respectivas respostas:
+            # B3 => 1, C1 => 1, C2 => 2 ou 3, C3 => 1, 2 ou 3, C4 => 1
+            for my $question ( qw( B1a B1b B2 B2a B2b B3 B4 B5 B6 ) ) {
+
+                my $value;
+                if ( $question eq 'B2' ) {
+                    $value = { '!=' => '0' };
+                }
+                else {
+                    $value = '1';
+                }
+
+                $condition = $answers_rs->search(
+                    {
+                        'question.code' => $question,
+                        answer_value    => $value
+                    },
+                    { join => 'question'}
+                )->as_query;
+
+                push @conditions, { -exists => $condition };
+            }
+
+        }
+        elsif ( $next_question_code eq 'AC1' ) {
+            # Deve ter mais de 14 e menos de 20
+            $condition = $answers_rs->search(
+                {
+                    'question.code' => 'A1',
+                    answer_value    => { '>' => '14', '<' => '20' }
+                },
+                { join => 'question'}
+            )->as_query;
+
+            push @conditions, { -exists => $condition };
+        }
+        elsif ( $next_question_code eq 'A3' ) {
+            $condition = $answers_rs->search(
+                {
+                    'question.code' => 'A2',
+                    answer_value    => { '!=' => '2' }
+                },
+                { join => 'question'}
+            )->as_query;
+
+            push @conditions, { -exists => $condition };
+        }
+        elsif ( $next_question_code eq 'B1' ) {
+            $condition = $answers_rs->search(
+                {
+                    'question.code' => 'A3',
+                    answer_value    => { '!=' => '2', '!=' => '3' }
+                },
+                { join => 'question'}
+            )->as_query;
+
+            push @conditions, { -exists => $condition };
+        }
+        else {
+            die \['code', 'invalid'];
+        }
+
+    }
+    else {
+        # Screening
+
+        if ( $next_question_code eq 'SC6' ) {
+            for my $question ( qw( SC2 SC3 SC4 SC5 ) ) {
+
+                $condition = $answers_rs->search(
+                    {
+                        'question.code' => $question,
+                        answer_value    => '1'
+                    },
+                    { join => 'question'}
+                )->as_query;
+
+                push @conditions, { -exists => $condition };
+            }
+
+        }
+        elsif ( $next_question_code eq 'SC2' ) {
+
+            for ( 2 .. 4 ) {
+                $condition = $answers_rs->search(
+                    {
+                        'question.code' => 'SC1',
+                        answer_value    => $_
+                    },
+                    { join => 'question'}
+                )->as_query;
+
+                push @conditions, { -exists => $condition };
+
+            }
+        }
+    }
+
+    return @conditions;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

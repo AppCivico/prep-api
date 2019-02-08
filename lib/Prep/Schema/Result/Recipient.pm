@@ -301,7 +301,7 @@ sub get_pending_question_data {
             prefetch => 'category',
             order_by => { -desc => 'created_at' }
         }
-    )->next;
+    )->next or die \['category', 'invalid'];
     my $question_map = $question_map_result->parsed;
 
     die \['category', 'invalid'] unless $question_map;
@@ -316,125 +316,137 @@ sub get_pending_question_data {
     my $ret;
     my $next_question_code = scalar @pending_questions > 0 ? $question_map->{ $pending_questions[0] } : undef;
 
-    if ( $next_question_code =~ /^(AC1|AC5|A3|B1)$/gm ) {
-        my $conditions_satisfied = $self->verify_question_condition($next_question_code);
-        if ( $conditions_satisfied > 0 ) {
+    if ( $question_map_result->category_id == 1 ) {
+        # Quiz.
+
+        if ( $next_question_code =~ /^(AC1|AC5|A3|B1)$/gm ) {
+            my $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+            if ( $conditions_satisfied > 0 ) {
+                $ret = {
+                    question => $question_rs->search(
+                        {
+                            code            => $question_map->{ $pending_questions[0] },
+                            question_map_id => $question_map_result->id
+                        }
+                    )->next,
+                    has_more                 => scalar @pending_questions > 1 ? 1 : 0,
+                    count_more               => scalar @pending_questions,
+                    is_eligible_for_research => $self->is_eligible_for_research,
+                    is_part_of_research      => $self->is_prep
+                };
+            }
+            else {
+                # Caso as condições não tenham sido satisfeitas
+                # o quiz acaba.
+                $ret = {
+                    question   => undef,
+                    has_more   => 0,
+                    count_more => scalar @pending_questions
+                };
+
+                $self->update( { finished_quiz => 1 } );
+            }
+        }
+        elsif ( scalar @pending_questions == 0  ) {
+            # Caso não tenha mais perguntas pendentes acaba o quiz.
             $ret = {
-                question => $question_rs->search(
-                    {
-                        code            => $question_map->{ $pending_questions[0] },
-                        question_map_id => $question_map_result->id
-                    }
-                )->next,
-                has_more                 => scalar @pending_questions > 1 ? 1 : 0,
+                question                 => undef,
+                has_more                 => 0,
                 count_more               => scalar @pending_questions,
                 is_eligible_for_research => $self->is_eligible_for_research,
                 is_part_of_research      => $self->is_prep
             };
+
+            $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
         }
         else {
-            # Caso as condições não tenham sido satisfeitas
-            # o quiz acaba.
+
+            # Caso para quando a pergunta não for condicional
             $ret = {
-                question   => undef,
-                has_more   => 0,
-                count_more => scalar @pending_questions
+                question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
+                has_more   => scalar @pending_questions > 1 ? 1 : 0,
+                count_more => scalar @pending_questions,
             };
-
-            $self->update( { finished_quiz => 1 } );
         }
-    }
-    elsif ( scalar @pending_questions == 0  ) {
-        # Caso não tenha mais perguntas pendentes acaba o quiz.
-        $ret = {
-            question                 => undef,
-            has_more                 => 0,
-            count_more               => scalar @pending_questions,
-            is_eligible_for_research => $self->is_eligible_for_research,
-            is_part_of_research      => $self->is_prep
-        };
 
-        $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
+
     }
     else {
+        # Triagem.
 
-        # Caso para quando a pergunta não for condicional
-        $ret = {
-            question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
-            has_more   => scalar @pending_questions > 1 ? 1 : 0,
-            count_more => scalar @pending_questions,
-        };
+        my @flags;
+        my $conditions_satisfied;
+        if ( $next_question_code eq 'SC2' ) {
+			$conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+            if ( $conditions_satisfied > 0 ) {
+                $ret = {
+                    question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
+                    has_more   => scalar @pending_questions > 1 ? 1 : 0,
+                    count_more => scalar @pending_questions,
+                }
+            }
+            else {
+                $ret = {
+                    question            => undef,
+                    has_more            => 0,
+                    count_more          => 0,
+                    emergency_rerouting => 1
+                }
+            }
+        }
+        elsif ( $next_question_code eq 'SC6' ) {
+            # Verificando se batem as condições para indicar consulta
+            # Isto é: qualquer resposta positiva para SC2 a SC5
+			$conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+            # Caso ele tenha respondigo sim para qualquer uma entre a SC2 e a SC5
+            # Ou tenha respondido não para todas e respondeu 2 ou 3 para a SC1
+            # Devo convidar a marcar uma consulta de recrutamento.
+            my $first_answer_on_screening = $self->screening_first_answer;
+            if ( $conditions_satisfied > 0 ) {
+                $ret = {
+					question            => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
+					has_more            => scalar @pending_questions >= 1 ? 1 : 0,
+					count_more          => scalar @pending_questions,
+					suggest_appointment => 1
+                };
+            }
+            elsif ( $conditions_satisfied == 0 && $first_answer_on_screening->answer_value =~ /(2|3)/ ) {
+                $ret = {
+                    question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
+                    has_more   => scalar @pending_questions > 1 ? 1 : 0,
+                    count_more => scalar @pending_questions,
+                }
+            }
+            # Caso contrário, a triagem acaba e realizamos o fluxo informativo.
+            else {
+                $ret = {
+                    question   => undef,
+                    has_more   => 0,
+                    count_more => 0,
+                }
+            }
+        }
+        else {
+            $ret = {
+                question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
+                has_more   => scalar @pending_questions > 1 ? 1 : 0,
+                count_more => scalar @pending_questions,
+            }
+        }
     }
 
     return $ret;
 }
 
 sub verify_question_condition {
-    my ($self, $next_question_code) = @_;
+    my ($self, %opts) = @_;
 
-    my (@conditions, $condition);
-    if ( $next_question_code eq 'AC5' ) {
-        # Deve ter respondido as seguintes perguntas com as respectivas respostas:
-        # B3 => 1, C1 => 1, C2 => 2 ou 3, C3 => 1, 2 ou 3, C4 => 1
-        for my $question ( qw( B1a B1b B2 B2a B2b B3 B4 B5 B6 ) ) {
+	my @required_opts = qw( question_map next_question_code );
+	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
-            my $value;
-            if ( $question eq 'B2' ) {
-                $value = { '!=' => '0' };
-            }
-            else {
-                $value = '1';
-            }
-
-            $condition = $self->answers->search(
-                {
-                    'question.code' => $question,
-                    answer_value    => $value
-                },
-                { join => 'question'}
-            )->as_query;
-
-            push @conditions, { -exists => $condition };
-        }
-
-    }
-    elsif ( $next_question_code eq 'AC1' ) {
-        # Deve ter mais de 14 e menos de 20
-        $condition = $self->answers->search(
-            {
-                'question.code' => 'A1',
-                answer_value    => { '>' => '14', '<' => '20' }
-            },
-            { join => 'question'}
-        )->as_query;
-
-        push @conditions, { -exists => $condition };
-    }
-    elsif ( $next_question_code eq 'A3' ) {
-		$condition = $self->answers->search(
-			{
-				'question.code' => 'A2',
-				answer_value    => { '!=' => '2' }
-			},
-			{ join => 'question'}
-		)->as_query;
-
-		push @conditions, { -exists => $condition };
-    }
-	elsif ( $next_question_code eq 'B1' ) {
-		$condition = $self->answers->search(
-			{
-				'question.code' => 'A3',
-				answer_value    => { '!=' => '2', '!=' => '3' }
-			},
-			{ join => 'question'}
-		)->as_query;
-
-		push @conditions, { -exists => $condition };
-	}
-    else {
-        die \['code', 'invalid'];
-    }
+    my @conditions = $opts{question_map}->build_conditions( recipient_id => $self->id, next_question_code => $opts{next_question_code} );
 
     return $self->answers->search(
         {
@@ -551,5 +563,30 @@ sub assign_token {
         $token->update( { assigned_at => \'NOW()' } );
     });
 }
+
+sub screening_first_answer {
+    my ($self) = @_;
+
+    return $self->answers->search(
+        { 'question.code' => 'SC1' },
+        { prefetch => 'question' }
+    )->next;
+}
+
+sub most_recent_screening {
+    my ($self) = @_;
+
+    return $self->answers->search(
+        {
+            'question.code' => { 'in' => [ 'SC1', 'SC2', 'SC3', 'SC4', 'SC5', 'SC6' ] }
+        },
+        {
+            prefetch => 'question',
+            group_by => \'created_at::date',
+            order_by => { -desc => 'me.created_at' }
+        }
+    );
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

@@ -64,11 +64,19 @@ sub action_specs {
             not defined $values{$_} and delete $values{$_} for keys %values;
 
             # question_map_id é sempre o id do mapa mais atual
-            $values{question_map_id} = $self->result_source->schema->resultset('QuestionMap')->get_column('id')->max;
 
             my $recipient_fb_id = delete $values{fb_id};
             my $question_code   = delete $values{code};
             my $category        = delete $values{category};
+
+            my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+                { 'category.name' => $category },
+                {
+                    prefetch => 'category',
+                    order_by => { -desc => 'me.created_at' }
+                }
+            )->next or die \['category', 'invalid'];
+			$values{question_map_id} = $question_map->id;
 
             my $recipient              = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
             my $pending_question_data  = $recipient->get_pending_question_data($category);
@@ -106,21 +114,43 @@ sub action_specs {
                 }
             }
 
-            my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research);
+            my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research, $go_to_appointment, $go_to_autotest);
             $self->result_source->schema->txn_do( sub {
                 # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
                 $answer = $self->create(\%values);
-                if ( $pending_question_data->{has_more} == 0 ) {
-                    my $recipient = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
-                    $recipient->update( { finished_quiz => 1 } );
 
-                    $is_prep = $recipient->is_prep;
-                    $is_eligible_for_research = $recipient->is_eligible_for_research;
+                if ( $question_map->category_id == 1 ) {
+                    if ( $pending_question_data->{has_more} == 0 ) {
+                        $recipient->update( { finished_quiz => 1 } );
 
-                    $finished_quiz = 1;
+                        $is_prep = $recipient->is_prep;
+                        $is_eligible_for_research = $recipient->is_eligible_for_research;
+
+                        $finished_quiz = 1;
+                    }
+                    else {
+
+                        $finished_quiz = 0;
+                    }
+
                 }
                 else {
-                    $finished_quiz = 0;
+                    $pending_question_data = $recipient->get_pending_question_data($category);
+
+                    $finished_quiz = $pending_question_data->{has_more} == 0 ? 1 : 0;
+
+                    if ( $question_code eq 'SC6' ) {
+
+                        if ( $answer->answer_value eq '1' ) {
+                            $go_to_appointment = 1
+                        }
+                        else {
+                            $go_to_autotest = 1
+                        }
+                    }
+                    elsif ( $question_code eq 'SC5' ) {
+                        $go_to_autotest = $finished_quiz == 1 ? 1 : 0;
+                    }
                 }
 
             });
@@ -129,7 +159,11 @@ sub action_specs {
                 answer        => $answer,
                 finished_quiz => $finished_quiz,
                 ( defined $is_prep ? ( is_part_of_research => $is_prep ) : () ),
-                ( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () )
+                ( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () ),
+                ( defined $go_to_appointment ? ( go_to_appointment => $go_to_appointment ) : () ),
+                ( defined $go_to_autotest ? ( go_to_autotest => $go_to_autotest ) : () ),
+                ( defined $pending_question_data->{suggest_appointment} ? ( suggest_appointment => $pending_question_data->{suggest_appointment} ) : () ),
+				( defined $pending_question_data->{emergency_rerouting} ? ( emergency_rerouting => $pending_question_data->{emergency_rerouting} ) : () )
             };
         }
     };
