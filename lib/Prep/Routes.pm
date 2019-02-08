@@ -36,6 +36,11 @@ sub register {
     my $recipient_integration_token = $recipient->route('/integration-token');
 	$recipient_integration_token->post('/')->to('chatbot-recipient-integration_token#post');
 
+	# Recipient::CountQuiz
+	my $recipient_count_quiz = $recipient->route('/count-quiz');
+	$recipient_count_quiz->post('/')->to('chatbot-recipient-count_quiz#post');
+	$recipient_count_quiz->get('/')->to('chatbot-recipient-count_quiz#get');
+
     # Appointment
 	my $appointment = $chatbot->route('/appointment');
 

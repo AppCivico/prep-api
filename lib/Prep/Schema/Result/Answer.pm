@@ -118,25 +118,6 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
-=head1 UNIQUE CONSTRAINTS
-
-=head2 C<answer_recipient_id_question_id_key>
-
-=over 4
-
-=item * L</recipient_id>
-
-=item * L</question_id>
-
-=back
-
-=cut
-
-__PACKAGE__->add_unique_constraint(
-  "answer_recipient_id_question_id_key",
-  ["recipient_id", "question_id"],
-);
-
 =head1 RELATIONS
 
 =head2 question
@@ -185,8 +166,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-15 14:05:33
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:nq1aMwE6LM9s9C/qNJ7kfw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 16:16:26
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LaBwvhRj2ejUvKTF5neekw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
