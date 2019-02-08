@@ -118,6 +118,12 @@ __PACKAGE__->table("recipient");
   default_value: 0
   is_nullable: 0
 
+=head2 count_invited_research
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -168,6 +174,8 @@ __PACKAGE__->add_columns(
   "using_external_token",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "count_sent_quiz",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "count_invited_research",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
 );
 
@@ -260,8 +268,8 @@ __PACKAGE__->might_have(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 16:31:52
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:P+HwQYBrO0pEc8+Gncd1mA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 17:27:40
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:SABKSv3n1jbKy4D174Q6ug
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

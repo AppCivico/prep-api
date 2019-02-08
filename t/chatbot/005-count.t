@@ -29,7 +29,7 @@ db_transaction {
         $recipient    = $schema->resultset('Recipient')->find($recipient_id);
     };
 
-    subtest 'Chatbot | Get count' => sub {
+    subtest 'Chatbot | Count quiz' => sub {
         $t->get_ok(
             '/api/chatbot/recipient/count-quiz',
             form => {
@@ -59,6 +59,38 @@ db_transaction {
         )
         ->status_is(200)
         ->json_is('/count_quiz', 1);
+    };
+
+    subtest 'Chatbot | Count invite' => sub {
+        $t->get_ok(
+            '/api/chatbot/recipient/count-research-invite',
+            form => {
+                security_token => $security_token,
+                fb_id          => '111111'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/count_invited_research', 0);
+
+        $t->post_ok(
+            '/api/chatbot/recipient/count-research-invite',
+            form => {
+                security_token => $security_token,
+                fb_id          => '111111'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/count_invited_research', 1);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/count-research-invite',
+            form => {
+                security_token => $security_token,
+                fb_id          => '111111'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/count_invited_research', 1);
     };
 };
 
