@@ -106,6 +106,12 @@ __PACKAGE__->table("recipient");
   default_value: "substring"(md5((random())::text), 0, 12)
   is_nullable: 0
 
+=head2 using_external_token
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -153,6 +159,8 @@ __PACKAGE__->add_columns(
     default_value => \"\"substring\"(md5((random())::text), 0, 12)",
     is_nullable   => 0,
   },
+  "using_external_token",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -229,8 +237,8 @@ __PACKAGE__->might_have(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 10:29:48
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5pJOp9PSV+WoELO9bonoZw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 09:56:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:50ZOVRgEHGxUcR9EFhsnVw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -519,5 +527,29 @@ sub appointment_description {
     return $answers;
 }
 
+sub assign_token {
+    my ($self, $integration_token) = @_;
+
+    $self->result_source->schema->txn_do( sub {
+        my $token_rs = $self->result_source->schema->resultset('ExternalIntegrationToken');
+        my $token    = $token_rs->search(
+            {
+                value       => $integration_token,
+                assigned_at => \'IS NULL'
+            }
+        )->next;
+
+        die \['integration_token', 'invalid'] unless $token;
+
+        $self->update(
+            {
+                integration_token    => $token->value,
+                using_external_token => 1
+            }
+        );
+
+        $token->update( { assigned_at => \'NOW()' } );
+    });
+}
 __PACKAGE__->meta->make_immutable;
 1;

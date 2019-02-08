@@ -32,6 +32,10 @@ sub register {
 	$recipient_appointment->post('/')->to('chatbot-recipient-appointment#post');
 	$recipient_appointment->get('/')->to('chatbot-recipient-appointment#get');
 
+    # Recipient::ExternalIntegrationToken
+    my $recipient_integration_token = $recipient->route('/integration-token');
+	$recipient_integration_token->post('/')->to('chatbot-recipient-integration_token#post');
+
     # Appointment
 	my $appointment = $chatbot->route('/appointment');
 
