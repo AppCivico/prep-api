@@ -542,7 +542,12 @@ sub update_is_eligible_for_research {
         next if $conditions_met == 0;
     }
 
-    $self->recipient_flag->update( { is_eligible_for_research => $conditions_met ? 1 : 0 } )
+    $self->recipient_flag->update(
+        {
+            is_eligible_for_research => $conditions_met ? 1 : 0,
+            updated_at               => \'NOW()'
+        }
+    )
 }
 
 sub upcoming_appointments {
@@ -645,7 +650,12 @@ sub update_is_part_of_research {
         $is_part_of_research = 0;
     }
 
-    $self->recipient_flag->update( { is_part_of_research => $is_part_of_research } );
+    $self->recipient_flag->update(
+        {
+            is_part_of_research => $is_part_of_research,
+			updated_at               => \'NOW()'
+		}
+    );
 }
 
 sub is_part_of_research {
