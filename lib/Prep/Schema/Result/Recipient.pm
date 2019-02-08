@@ -313,7 +313,7 @@ sub action_specs {
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
 
-            if ( $values{is_part_of_research} ) {
+            if ( defined $values{is_part_of_research} ) {
                 my $flag = delete $values{is_part_of_research};
 
                 $self->recipient_flag->update( { is_part_of_research => $flag } );
