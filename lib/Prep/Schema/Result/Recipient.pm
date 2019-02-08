@@ -244,9 +244,24 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 recipient_flag
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 16:16:26
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:gaAQ0OkT6iSYlwrjAnUoQw
+Type: might_have
+
+Related object: L<Prep::Schema::Result::RecipientFlag>
+
+=cut
+
+__PACKAGE__->might_have(
+  "recipient_flag",
+  "Prep::Schema::Result::RecipientFlag",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 16:31:52
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:P+HwQYBrO0pEc8+Gncd1mA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -278,6 +293,10 @@ sub verifiers_specs {
                 opt_in => {
                     required => 0,
                     type     => 'Bool'
+                },
+                is_part_of_research => {
+                    required => 0,
+                    type     => 'Bool'
                 }
             }
         ),
@@ -293,6 +312,12 @@ sub action_specs {
 
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
+
+            if ( $values{is_part_of_research} ) {
+                my $flag = delete $values{is_part_of_research};
+
+                $self->recipient_flag->update( { is_part_of_research => $flag } );
+            }
 
             $self->update(\%values);
         }
@@ -490,24 +515,34 @@ sub is_eligible_for_research {
 		return 1;
 	}
 
-	my $answer = $self->answers->search( { 'question.code' => { 'in' => ['AC5', 'B3', 'C1', 'C2', 'C3', 'C4'] } }, { prefetch => 'question' } );
-
-    my $ret = 0;
-    while ( my $answer = $answer->next() ) {
-        my $code = $answer->question->code;
-        $ret = 1;
-        if ( $code =~ /^(B3|C1|C3|C4)$/ ) {
-
-            $ret = 0 unless $answer->answer_value eq '1';
-        }
-        elsif ( $code eq 'C2' ) {
-            $ret = 0 unless $answer->answer_value eq '2';
-        }
-
-        next if $ret == 0;
+    if ( !$self->recipient_flag->is_eligible_for_research ) {
+		$self->update_is_eligible_for_research()
     }
 
-	return $ret;
+    return $self->recipient_flag->is_eligible_for_research;
+}
+
+sub update_is_eligible_for_research {
+    my ($self) = @_;
+
+    my $answer = $self->answers->search( { 'question.code' => { 'in' => ['AC5', 'B3', 'C1', 'C2', 'C3', 'C4'] } }, { prefetch => 'question' } );
+
+    my $conditions_met = 0;
+    while ( my $answer = $answer->next() ) {
+        my $code = $answer->question->code;
+        $conditions_met = 1;
+        if ( $code =~ /^(B3|C1|C3|C4)$/ ) {
+
+            $conditions_met = 0 unless $answer->answer_value eq '1';
+        }
+        elsif ( $code eq 'C2' ) {
+            $conditions_met = 0 unless $answer->answer_value eq '2';
+        }
+
+        next if $conditions_met == 0;
+    }
+
+    $self->recipient_flag->update( { is_eligible_for_research => $conditions_met ? 1 : 0 } )
 }
 
 sub upcoming_appointments {
@@ -594,6 +629,33 @@ sub most_recent_screening {
             order_by => { -desc => 'me.created_at' }
         }
     );
+}
+
+sub update_is_part_of_research {
+    my ($self) = @_;
+
+    my $is_part_of_research;
+
+    my $answer = $self->answers->search( { 'question.code' => 'AC5' }, { prefetch => 'question' } )->next;
+
+    if ( $answer && $answer->answer_value eq '1' ) {
+        $is_part_of_research = 1;
+    }
+    else {
+        $is_part_of_research = 0;
+    }
+
+    $self->recipient_flag->update( { is_part_of_research => $is_part_of_research } );
+}
+
+sub is_part_of_research {
+    my ($self) = @_;
+
+    if ( !$self->recipient_flag->is_part_of_research ) {
+		$self->update_is_part_of_research()
+    }
+
+    return $self->recipient_flag->is_part_of_research;
 }
 
 __PACKAGE__->meta->make_immutable;

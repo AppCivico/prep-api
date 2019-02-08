@@ -123,7 +123,7 @@ sub action_specs {
                     if ( $pending_question_data->{has_more} == 0 ) {
                         $recipient->update( { finished_quiz => 1 } );
 
-                        $is_prep = $recipient->is_prep;
+                        $is_prep                  = $recipient->is_part_of_research;
                         $is_eligible_for_research = $recipient->is_eligible_for_research;
 
                         $finished_quiz = 1;
