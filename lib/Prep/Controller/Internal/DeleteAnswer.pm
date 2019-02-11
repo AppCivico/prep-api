@@ -21,7 +21,8 @@ sub post {
             {
                 finished_quiz          => 0,
                 count_sent_quiz        => 0,
-                count_invited_research => 0
+                count_invited_research => 0,
+                count_share            => 0
             }
         );
     };

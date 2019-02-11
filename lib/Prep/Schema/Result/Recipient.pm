@@ -124,6 +124,12 @@ __PACKAGE__->table("recipient");
   default_value: 0
   is_nullable: 0
 
+=head2 count_share
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -176,6 +182,8 @@ __PACKAGE__->add_columns(
   "count_sent_quiz",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
   "count_invited_research",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "count_share",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
 );
 
@@ -283,8 +291,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 12:01:59
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:g1Nsi8DSIX4NanYmVwRBgA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 15:55:59
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:J3kGrcFRvpXAFB/83of16A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

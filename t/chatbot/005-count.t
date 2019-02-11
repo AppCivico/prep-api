@@ -92,6 +92,38 @@ db_transaction {
         ->status_is(200)
         ->json_is('/count_invited_research', 1);
     };
+
+    subtest 'Chatbot | Count share' => sub {
+        $t->get_ok(
+            '/api/chatbot/recipient/count-share',
+            form => {
+                security_token => $security_token,
+                fb_id          => '111111'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/count_share', 0);
+
+        $t->post_ok(
+            '/api/chatbot/recipient/count-share',
+            form => {
+                security_token => $security_token,
+                fb_id          => '111111'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/count_share', 1);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/count-share',
+            form => {
+                security_token => $security_token,
+                fb_id          => '111111'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/count_share', 1);
+    };
 };
 
 done_testing();

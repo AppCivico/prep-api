@@ -46,6 +46,11 @@ sub register {
 	$recipient_count_research_invite->post('/')->to('chatbot-recipient-count_research_invite#post');
 	$recipient_count_research_invite->get('/')->to('chatbot-recipient-count_research_invite#get');
 
+	# Recipient::CountShare
+	my $recipient_count_share = $recipient->route('/count-share');
+	$recipient_count_share->post('/')->to('chatbot-recipient-count_share#post');
+	$recipient_count_share->get('/')->to('chatbot-recipient-count_share#get');
+
     # Appointment
 	my $appointment = $chatbot->route('/appointment');
 
