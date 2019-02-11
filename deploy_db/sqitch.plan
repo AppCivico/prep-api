@@ -20,3 +20,4 @@
 0016-add-quiz-count [0015-drop-constraint] 2019-02-08T18:24:00Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding quiz count on recipient table
 0017-add-flag-tabl [0016-add-quiz-count] 2019-02-08T18:58:22Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # creating table for flags
 0018-add-invite-count [0017-add-flag-tabl] 2019-02-08T19:21:54Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding count
+0019-add-logic-jump [0018-add-invite-count] 2019-02-11T16:49:32Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding quiz_stash

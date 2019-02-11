@@ -149,9 +149,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 stashes
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 15:44:53
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Ci30+mLrinZR5Rhmza+4Tg
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Stash>
+
+=cut
+
+__PACKAGE__->has_many(
+  "stashes",
+  "Prep::Schema::Result::Stash",
+  { "foreign.question_map_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 12:01:59
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:hq9+TW34K4412dr/9Rn9kw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -166,7 +181,7 @@ sub parsed {
 
 sub build_conditions {
     my ($self, %opts) = @_;
-    use DDP;
+
 	my @required_opts = qw( recipient_id next_question_code );
 	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
@@ -238,6 +253,39 @@ sub build_conditions {
 
             push @conditions, { -exists => $condition };
         }
+		elsif ( $next_question_code eq 'B1a' ) {
+			$condition = $answers_rs->search(
+				{
+					'question.code' => 'B1',
+					answer_value    => '1'
+				},
+				{ join => 'question'}
+			)->as_query;
+
+			push @conditions, { -exists => $condition };
+		}
+        elsif ( $next_question_code eq 'B2a' ) {
+			$condition = $answers_rs->search(
+				{
+					'question.code' => 'B2',
+					answer_value    => { '!=' => '1' }
+				},
+				{ join => 'question'}
+			)->as_query;
+
+			push @conditions, { -exists => $condition };
+        }
+		elsif ( $next_question_code eq 'B2b' ) {
+			$condition = $answers_rs->search(
+				{
+					'question.code' => 'B2a',
+					answer_value    => '1'
+				},
+				{ join => 'question'}
+			)->as_query;
+
+			push @conditions, { -exists => $condition };
+		}
         else {
             die \['code', 'invalid'];
         }

@@ -267,9 +267,24 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 stashes
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 17:27:40
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:SABKSv3n1jbKy4D174Q6ug
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Stash>
+
+=cut
+
+__PACKAGE__->has_many(
+  "stashes",
+  "Prep::Schema::Result::Stash",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 12:01:59
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:g1Nsi8DSIX4NanYmVwRBgA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -335,148 +350,274 @@ sub action_specs {
 sub get_pending_question_data {
     my ($self, $category) = @_;
 
-    my $question_rs         = $self->result_source->schema->resultset('Question');
-    my $question_map_result = $self->result_source->schema->resultset('QuestionMap')->search(
-        { 'category.name' => $category },
-        {
-            prefetch => 'category',
-            order_by => { -desc => 'created_at' }
-        }
-    )->next or die \['category', 'invalid'];
-    my $question_map = $question_map_result->parsed;
-
-    die \['category', 'invalid'] unless $question_map;
-
-    my @answered_questions = $self->answers->search( { 'question.question_map_id' => $question_map_result->id }, { prefetch => 'question' } )->get_column('question.code')->all();
-
-    my @pending_questions = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
-
-    # Tratando perguntas condicionais
-    # Isto é, só devem serem vistas por quem
-    # alcançar certas condições
     my $ret;
-    my $next_question_code = scalar @pending_questions > 0 ? $question_map->{ $pending_questions[0] } : undef;
+    $self->result_source->schema->txn_do( sub {
 
-    if ( $question_map_result->category_id == 1 ) {
-        # Quiz.
+        my $question_rs         = $self->result_source->schema->resultset('Question');
+        my $question_map_result = $self->result_source->schema->resultset('QuestionMap')->search(
+            { 'category.name' => $category },
+            {
+                prefetch => 'category',
+                order_by => { -desc => 'created_at' }
+            }
+        )->next or die \['category', 'invalid'];
+        my $question_map = $question_map_result->parsed;
 
-        if ( $next_question_code =~ /^(AC1|AC5|A3|B1)$/gm ) {
-            my $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
-            if ( $conditions_satisfied > 0 ) {
-                $ret = {
-                    question => $question_rs->search(
+        die \['category', 'invalid'] unless $question_map;
+
+        my $stash = $self->stashes->find_or_create(
+            { question_map_id => $question_map_result->id },
+            { key => 'stash_recipient_id_question_map_id_key' }
+        );
+
+        $stash->update( { value => $question_map_result->map } ) if $stash->is_empty;
+
+        $question_map = $stash->parsed;
+
+        my @answered_questions = $self->answers->search( { 'question.question_map_id' => $question_map_result->id }, { prefetch => 'question' } )->get_column('question.code')->all();
+
+        my @pending_questions = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
+
+        # Tratando perguntas condicionais
+        # Isto é, só devem serem vistas por quem
+        # alcançar certas condições
+        my ($has_more, $count_more, $question, %flags);
+        my $next_question_code = scalar @pending_questions > 0 ? $question_map->{ $pending_questions[0] } : undef;
+
+        if ( $question_map_result->category_id == 1 ) {
+            # Quiz.
+
+            my $conditions_satisfied;
+            if ( scalar @pending_questions == 0  ) {
+
+                # Caso não tenha mais perguntas pendentes acaba o quiz.
+                $question   = undef;
+                $has_more   = 0;
+                $count_more = 0;
+
+                %flags = (
+                    is_eligible_for_research => $self->is_eligible_for_research,
+                    is_part_of_research      => $self->is_prep
+                );
+
+                $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
+            }
+            elsif ( $next_question_code && $next_question_code =~ /^(AC1|AC5|A3|B1)$/gm ) {
+                $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                if ( $conditions_satisfied > 0 ) {
+
+                    $question = $question_rs->search(
                         {
                             code            => $question_map->{ $pending_questions[0] },
                             question_map_id => $question_map_result->id
                         }
-                    )->next,
-                    has_more                 => scalar @pending_questions > 1 ? 1 : 0,
-                    count_more               => scalar @pending_questions,
-                    is_eligible_for_research => $self->is_eligible_for_research,
-                    is_part_of_research      => $self->is_prep
-                };
+                    )->next;
+                    $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
+
+                    %flags = (
+                        is_eligible_for_research => $self->is_eligible_for_research,
+                        is_part_of_research      => $self->is_prep
+                    );
+                }
+                else {
+                    # Caso as condições não tenham sido satisfeitas
+                    # o quiz acaba.
+                    $question   = undef;
+                    $has_more   = 0;
+                    $count_more = 0;
+
+                    $self->update( { finished_quiz => 1 } );
+                }
+            }
+            elsif ( $next_question_code && $next_question_code eq 'B1a' ) {
+                $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                if ( $conditions_satisfied > 0 ) {
+					$question = $question_rs->search(
+						{
+							code            => $question_map->{ $pending_questions[0] },
+							question_map_id => $question_map_result->id
+						}
+					)->next;
+
+					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
+					$count_more = scalar @pending_questions;
+                }
+                else {
+					my %r_question_map = reverse %{$question_map};
+					my $key             = $r_question_map{$next_question_code};
+
+					delete $question_map->{$key};
+
+					$stash->update( { value => to_json $question_map } );
+
+					$question = $question_rs->search(
+						{
+							code            => $question_map->{ $pending_questions[1] },
+							question_map_id => $question_map_result->id
+						}
+					)->next;
+
+					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
+					$count_more = scalar @pending_questions;
+                }
+            }
+            elsif ( $next_question_code && $next_question_code eq 'B2a' ) {
+                $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                if ( $conditions_satisfied > 0 ) {
+					$question = $question_rs->search(
+						{
+							code            => $question_map->{ $pending_questions[0] },
+							question_map_id => $question_map_result->id
+						}
+					)->next;
+
+					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
+					$count_more = scalar @pending_questions;
+                }
+                else {
+                    # Removendo a pergunta B2a e B2b do question map stacheado
+                    my %r_question_map = reverse %{ $question_map };
+
+					my $first_key  = $r_question_map{'B2a'};
+					my $second_key = $r_question_map{'B2b'};
+
+					delete $question_map->{$first_key};
+					delete $question_map->{$second_key};
+
+                    $stash->update( { value => to_json $question_map } );
+
+                    # Pulando as duas que foram retiradas
+					$question = $question_rs->search(
+						{
+							code            => $question_map->{ $pending_questions[2] },
+							question_map_id => $question_map_result->id
+						}
+					)->next;
+
+					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
+					$count_more = scalar @pending_questions;
+                }
+            }
+            elsif ( $next_question_code && $next_question_code eq 'B2b' ) {
+                $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                if ( $conditions_satisfied > 0 ) {
+					$question = $question_rs->search(
+						{
+							code            => $question_map->{ $pending_questions[0] },
+							question_map_id => $question_map_result->id
+						}
+					)->next;
+
+					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
+					$count_more = scalar @pending_questions;
+                }
+                else {
+                    # Removendo a pergunta B2a e B2b do question map stacheado
+                    my %r_question_map = reverse %{ $question_map };
+
+					my $key  = $r_question_map{$next_question_code};
+
+					delete $question_map->{$key};
+
+                    $stash->update( { value => to_json $question_map } );
+
+                    # Pulando as duas que foram retiradas
+					$question = $question_rs->search(
+						{
+							code            => $question_map->{ $pending_questions[1] },
+							question_map_id => $question_map_result->id
+						}
+					)->next;
+
+					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
+					$count_more = scalar @pending_questions;
+                }
             }
             else {
-                # Caso as condições não tenham sido satisfeitas
-                # o quiz acaba.
-                $ret = {
-                    question   => undef,
-                    has_more   => 0,
-                    count_more => scalar @pending_questions
-                };
 
-                $self->update( { finished_quiz => 1 } );
+                # Caso para quando a pergunta não for condicional
+                $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
+                $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                $count_more = scalar @pending_questions;
             }
-        }
-        elsif ( scalar @pending_questions == 0  ) {
-            # Caso não tenha mais perguntas pendentes acaba o quiz.
-            $ret = {
-                question                 => undef,
-                has_more                 => 0,
-                count_more               => scalar @pending_questions,
-                is_eligible_for_research => $self->is_eligible_for_research,
-                is_part_of_research      => $self->is_prep
-            };
 
-            $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
         }
         else {
+            # Triagem.
 
-            # Caso para quando a pergunta não for condicional
-            $ret = {
-                question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
-                has_more   => scalar @pending_questions > 1 ? 1 : 0,
-                count_more => scalar @pending_questions,
-            };
-        }
+            my $conditions_satisfied;
 
+			if ( scalar @pending_questions == 0  ) {
 
-    }
-    else {
-        # Triagem.
+				# Caso não tenha mais perguntas pendentes acaba o quiz.
+				$question   = undef;
+				$has_more   = 0;
+				$count_more = 0;
+			}
+            elsif ( $next_question_code && $next_question_code eq 'SC2' ) {
+                $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
-        my @flags;
-        my $conditions_satisfied;
-        if ( $next_question_code eq 'SC2' ) {
-			$conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+                if ( $conditions_satisfied > 0 ) {
+                    $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
+                    $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
+                }
+                else {
+                    $question   = undef;
+                    $has_more   = 0;
+                    $count_more = 0;
 
-            if ( $conditions_satisfied > 0 ) {
-                $ret = {
-                    question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
-                    has_more   => scalar @pending_questions > 1 ? 1 : 0,
-                    count_more => scalar @pending_questions,
+                    %flags = ( emergency_rerouting => 1 );
+                }
+            }
+            elsif ( $next_question_code && $next_question_code eq 'SC6' ) {
+                # Verificando se batem as condições para indicar consulta
+                # Isto é: qualquer resposta positiva para SC2 a SC5
+                $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                # Caso ele tenha respondigo sim para qualquer uma entre a SC2 e a SC5
+                # Ou tenha respondido não para todas e respondeu 2 ou 3 para a SC1
+                # Devo convidar a marcar uma consulta de recrutamento.
+                my $first_answer_on_screening = $self->screening_first_answer;
+                if ( $conditions_satisfied > 0 ) {
+                    $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
+                    $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
+
+                    %flags = ( suggest_appointment => 1 );
+                }
+                elsif ( $conditions_satisfied == 0 && $first_answer_on_screening->answer_value =~ /(2|3)/ ) {
+                    $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
+                    $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
+                }
+                # Caso contrário, a triagem acaba e realizamos o fluxo informativo.
+                else {
+                    $question   = undef;
+                    $has_more   = 0;
+                    $count_more = 0;
                 }
             }
             else {
-                $ret = {
-                    question            => undef,
-                    has_more            => 0,
-                    count_more          => 0,
-                    emergency_rerouting => 1
-                }
+                $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
+                $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
+                $count_more = scalar @pending_questions;
             }
         }
-        elsif ( $next_question_code eq 'SC6' ) {
-            # Verificando se batem as condições para indicar consulta
-            # Isto é: qualquer resposta positiva para SC2 a SC5
-			$conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
-            # Caso ele tenha respondigo sim para qualquer uma entre a SC2 e a SC5
-            # Ou tenha respondido não para todas e respondeu 2 ou 3 para a SC1
-            # Devo convidar a marcar uma consulta de recrutamento.
-            my $first_answer_on_screening = $self->screening_first_answer;
-            if ( $conditions_satisfied > 0 ) {
-                $ret = {
-					question            => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
-					has_more            => scalar @pending_questions >= 1 ? 1 : 0,
-					count_more          => scalar @pending_questions,
-					suggest_appointment => 1
-                };
-            }
-            elsif ( $conditions_satisfied == 0 && $first_answer_on_screening->answer_value =~ /(2|3)/ ) {
-                $ret = {
-                    question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
-                    has_more   => scalar @pending_questions > 1 ? 1 : 0,
-                    count_more => scalar @pending_questions,
-                }
-            }
-            # Caso contrário, a triagem acaba e realizamos o fluxo informativo.
-            else {
-                $ret = {
-                    question   => undef,
-                    has_more   => 0,
-                    count_more => 0,
-                }
-            }
-        }
-        else {
-            $ret = {
-                question   => $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next,
-                has_more   => scalar @pending_questions > 1 ? 1 : 0,
-                count_more => scalar @pending_questions,
-            }
-        }
-    }
+        $ret = {
+            question   => $question,
+            has_more   => $has_more,
+            count_more => $count_more,
+
+            %flags
+        };
+    });
 
     return $ret;
 }
