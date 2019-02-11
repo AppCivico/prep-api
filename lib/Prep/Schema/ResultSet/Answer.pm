@@ -104,7 +104,10 @@ sub action_specs {
 
                 # Perguntas de texto aberto podem ser:
                 # nome (A1), cpf (A3) e data de nascimento (A2)
-                if ( $next_question->{code} eq 'A3' ) {
+				if ( $next_question->{code} eq 'A1' ) {
+					die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
+				}
+                elsif ( $next_question->{code} eq 'A3' ) {
                     die \['answer_value', 'invalid'] unless test_cpf($values{answer_value});
 
                     $values{answer_value} =~ s/[^\w]//g;
@@ -114,7 +117,7 @@ sub action_specs {
                 }
             }
 
-            my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research, $go_to_appointment, $go_to_autotest);
+            my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research, $go_to_appointment, $go_to_autotest, $is_target_audience);
             $self->result_source->schema->txn_do( sub {
                 # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
                 $answer = $self->create(\%values);
@@ -125,12 +128,27 @@ sub action_specs {
 
                         $is_prep                  = $recipient->is_part_of_research;
                         $is_eligible_for_research = $recipient->is_eligible_for_research;
-
+                        $is_target_audience       = $recipient->is_target_audience if $next_question->{code} eq 'A1';
                         $finished_quiz = 1;
                     }
                     else {
+                        $is_target_audience = $recipient->is_target_audience if $next_question->{code} eq 'A1';
 
-                        $finished_quiz = 0;
+                        if ( $next_question->{code} eq 'A1' ) {
+                            $is_target_audience = $recipient->is_target_audience;
+
+                            if ($answer->answer_value =~ /^(15|16|17|18|19)$/) {
+                                $finished_quiz = 0;
+                            }
+                            else {
+                                $finished_quiz = 1;
+                            }
+                        }
+                        else {
+                            $finished_quiz = 0;
+
+                        }
+
                     }
 
                 }
@@ -162,6 +180,7 @@ sub action_specs {
                 ( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () ),
                 ( defined $go_to_appointment ? ( go_to_appointment => $go_to_appointment ) : () ),
                 ( defined $go_to_autotest ? ( go_to_autotest => $go_to_autotest ) : () ),
+                ( defined $is_target_audience ? ( is_target_audience => $is_target_audience ) : () ),
                 ( defined $pending_question_data->{suggest_appointment} ? ( suggest_appointment => $pending_question_data->{suggest_appointment} ) : () ),
 				( defined $pending_question_data->{emergency_rerouting} ? ( emergency_rerouting => $pending_question_data->{emergency_rerouting} ) : () )
             };

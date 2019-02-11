@@ -584,6 +584,38 @@ db_transaction{
 
     subtest 'Chatbot | Answers' => sub {
 
+        db_transaction{
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A1',
+                    category       => 'quiz',
+                    answer_value   => '11'
+                }
+            )
+            ->status_is(201)
+            ->json_is('/finished_quiz', 1)
+            ->json_is('/is_target_audience', 0);
+        };
+
+        db_transaction{
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A1',
+                    category       => 'quiz',
+                    answer_value   => '20'
+                }
+            )
+            ->status_is(201)
+            ->json_is('/finished_quiz', 1)
+            ->json_is('/is_target_audience', 0);
+        };
+
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
@@ -595,7 +627,8 @@ db_transaction{
             }
         )
         ->status_is(201)
-        ->json_is('/finished_quiz', 0);
+		->json_is('/finished_quiz', 0)
+		->json_is('/is_target_audience', 1);
 
         $t->get_ok(
             '/api/chatbot/recipient/pending-question',

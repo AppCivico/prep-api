@@ -402,7 +402,7 @@ sub get_pending_question_data {
 
                 $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
             }
-            elsif ( $next_question_code && $next_question_code =~ /^(AC1|AC5|A3|B1)$/gm ) {
+            elsif ( $next_question_code && $next_question_code =~ /^(A2|AC5|A3|B1)$/gm ) {
                 $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
                 if ( $conditions_satisfied > 0 ) {
@@ -815,6 +815,38 @@ sub is_part_of_research {
     }
 
     return $self->recipient_flag->is_part_of_research;
+}
+
+sub update_is_target_audience {
+    my ($self) = @_;
+
+    my $is_target_audience;
+
+    my $answer = $self->answers->search( { 'question.code' => 'A1' }, { prefetch => 'question' } )->next;
+
+    if ( $answer && $answer->answer_value =~ /^(15|16|17|18|19)$/ ) {
+        $is_target_audience = 1;
+    }
+    else {
+        $is_target_audience = 0;
+    }
+
+    $self->recipient_flag->update(
+        {
+            is_target_audience => $is_target_audience,
+			updated_at         => \'NOW()'
+		}
+    );
+}
+
+sub is_target_audience {
+	my ($self) = @_;
+
+	if ( !$self->recipient_flag->is_target_audience ) {
+		$self->update_is_target_audience();
+	}
+
+	return $self->recipient_flag->is_target_audience;
 }
 
 __PACKAGE__->meta->make_immutable;

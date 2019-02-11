@@ -219,7 +219,7 @@ sub build_conditions {
             }
 
         }
-        elsif ( $next_question_code eq 'AC1' ) {
+        elsif ( $next_question_code eq 'A2' ) {
             # Deve ter mais de 14 e menos de 20
             $condition = $answers_rs->search(
                 {
