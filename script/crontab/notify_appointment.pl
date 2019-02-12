@@ -56,7 +56,7 @@ while ( my $appointment = $rs->next() ) {
 		messaging_type => "UPDATE",
 		recipient      => { id => $recipient->fb_id },
 		message        => {
-			text => "Olá! Você tem uma consulta em breve! Horário: $appointment_time",
+			text => "Bafo! Tem uma consulta chegando, olha só: $appointment_time",
 			quick_replies => [
 				{
 					content_type => 'text',

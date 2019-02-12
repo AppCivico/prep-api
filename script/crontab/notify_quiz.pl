@@ -38,7 +38,7 @@ while ( my $recipient = $rs->next() ) {
 		messaging_type => "UPDATE",
 		recipient      => { id => $recipient->fb_id },
 		message        => {
-			text => 'Olá! Termine de responder o quiz!',
+			text => 'Bb, vamos terminar seu QUIZ?',
 			quick_replies => [
 				{
 					content_type => 'text',
