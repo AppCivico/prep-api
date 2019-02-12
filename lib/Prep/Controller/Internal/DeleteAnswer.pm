@@ -32,6 +32,7 @@ sub post {
                 is_prep                  => undef,
 			}
 		);
+        $recipient->appointments->delete;
         $recipient->stashes->delete;
     };
 
