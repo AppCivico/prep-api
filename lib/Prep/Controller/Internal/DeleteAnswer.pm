@@ -25,6 +25,7 @@ sub post {
                 count_share            => 0
             }
         );
+        $recipient->stashes->delete;
     };
 
     return $c->render(
