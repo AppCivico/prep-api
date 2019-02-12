@@ -25,6 +25,13 @@ sub post {
                 count_share            => 0
             }
         );
+		$recipient->recipient_flag->update(
+			{
+				is_eligible_for_research => undef,
+				is_part_of_research      => undef,
+                is_prep                  => undef,
+			}
+		);
         $recipient->stashes->delete;
     };
 
