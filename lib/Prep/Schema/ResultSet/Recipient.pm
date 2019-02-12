@@ -58,7 +58,12 @@ sub action_specs {
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
 
-            my $recipient = $self->create(\%values);
+            my $recipient;
+            $self->result_source->schema->txn_do( sub {
+                $recipient = $self->create(\%values);
+
+                $self->result_source->schema->resultset('RecipientFlag')->create( { recipient_id => $recipient->id } );
+            });
 
             return $recipient;
         }

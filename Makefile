@@ -16,21 +16,20 @@
 #     BUILD_REQUIRES => {  }
 #     CONFIGURE_REQUIRES => { ExtUtils::MakeMaker=>q[0] }
 #     DISTNAME => q[prep_api]
-#     EXE_FILES => [q[bin/schema.dump.sh]]
 #     LICENSE => q[open_source]
 #     MIN_PERL_VERSION => q[5.014002]
 #     NAME => q[prep_api]
-#     PREREQ_PM => { App::Sqitch=>q[0.9996], Config::General=>q[0], Crypt::PRNG=>q[0], DBD::Pg=>q[0], DBIx::Class::Core=>q[0], DBIx::Class::InflateColumn::Serializer=>q[0], DBIx::Class::PassphraseColumn=>q[0], DBIx::Class::ResultSet=>q[0], DBIx::Class::Schema=>q[0], DBIx::Class::TimeStamp=>q[0], DDP=>q[0], Data::Diver=>q[0], Data::Manager=>q[0], Data::Printer=>q[0], Data::Section::Simple=>q[0], Data::Validate::URI=>q[0], Data::Verifier::Field=>q[0], Data::Verifier::Filters=>q[0], Data::Verifier::Results=>q[0], Data::Visitor=>q[0], Data::Visitor::Callback=>q[0], Exporter=>q[0], File::Spec=>q[0], FindBin=>q[0], IO::Handle=>q[0], IPC::Open3=>q[0], Mojo::Base=>q[0], Mojo::Util=>q[0], Moose=>q[0], Moose::Role=>q[0], Moose::Util::TypeConstraints=>q[0], MooseX::MarkAsMethods=>q[0], MooseX::NonMoose=>q[0], MooseX::Types=>q[0], Scalar::Util=>q[0], Test::Mojo=>q[0], Test::More=>q[0], common::sense=>q[0], lib=>q[0], namespace::autoclean=>q[0], strict=>q[0], utf8=>q[0], vars=>q[0], warnings=>q[0] }
+#     PREREQ_PM => { App::ForkProve=>q[0], App::Sqitch=>q[0.9996], Business::BR::CPF=>q[0], Config::General=>q[0], Crypt::PRNG=>q[0], DBD::Pg=>q[0], DBIx::Class::Core=>q[0], DBIx::Class::InflateColumn::Serializer=>q[0], DBIx::Class::PassphraseColumn=>q[0], DBIx::Class::ResultSet=>q[0], DBIx::Class::Schema=>q[0], DBIx::Class::TimeStamp=>q[0], Data::Diver=>q[0], Data::Manager=>q[0], Data::Printer=>q[0], Data::Section::Simple=>q[0], Data::Validate::URI=>q[0], Data::Verifier::Field=>q[0], Data::Verifier::Filters=>q[0], Data::Verifier::Results=>q[0], Data::Visitor=>q[0], Data::Visitor::Callback=>q[0], DateTime=>q[0], Exporter=>q[0], File::Spec=>q[0], FindBin=>q[0], IO::Handle=>q[0], IPC::Open3=>q[0], JSON=>q[0], JSON::MaybeXS=>q[0], Mojo::Base=>q[0], Mojo::Util=>q[0], Mojolicious::Plugin::Authorization=>q[0], Moose=>q[0], Moose::Role=>q[0], Moose::Util::TypeConstraints=>q[0], MooseX::MarkAsMethods=>q[0], MooseX::NonMoose=>q[0], MooseX::Types=>q[0], MooseX::Types::Moose=>q[0], Regexp::Common=>q[0], Regexp::Common::time=>q[0], Scalar::Util=>q[0], Test::Mojo=>q[0], Test::More=>q[0], Text::CSV=>q[0], base=>q[0], common::sense=>q[0], lib=>q[0], namespace::autoclean=>q[0], strict=>q[0], utf8=>q[0], vars=>q[0], warnings=>q[0] }
 #     TEST_REQUIRES => { File::Spec=>q[0], IO::Handle=>q[0], IPC::Open3=>q[0], Mojo::Util=>q[0], Test::Mojo=>q[0], Test::More=>q[0], lib=>q[0] }
-#     VERSION => q[20190114]
-#     test => { TESTS=>q[t/*.t t/chatbot/*.t] }
+#     VERSION => q[20190123]
+#     test => { TESTS=>q[t/*.t t/chatbot/*.t t/internal/*.t] }
 
 # --- MakeMaker post_initialize section:
 
 
 # --- MakeMaker const_config section:
 
-# These definitions are from config.sh (via /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/Config.pm).
+# These definitions are from config.sh (via /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/Config.pm).
 # They may have been overridden via Makefile.PL or on the command line.
 AR = ar
 CC = cc
@@ -49,8 +48,8 @@ OBJ_EXT = .o
 OSNAME = linux
 OSVERS = 4.8.0-53-generic
 RANLIB = :
-SITELIBEXP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
-SITEARCHEXP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
+SITELIBEXP = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
+SITEARCHEXP = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
 SO = so
 VENDORARCHEXP = 
 VENDORLIBEXP = 
@@ -62,11 +61,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = prep_api
 NAME_SYM = prep_api
-VERSION = 20190114
+VERSION = 20190123
 VERSION_MACRO = VERSION
-VERSION_SYM = 20190114
+VERSION_SYM = 20190123
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 20190114
+XS_VERSION = 20190123
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -80,57 +79,57 @@ MAN3EXT = 3
 INSTALLDIRS = site
 DESTDIR = 
 PREFIX = $(SITEPREFIX)
-PERLPREFIX = /home/lucas/perl5/perlbrew/perls/perl-5.24.0
-SITEPREFIX = /home/lucas/perl5/perlbrew/perls/perl-5.24.0
+PERLPREFIX = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0
+SITEPREFIX = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0
 VENDORPREFIX = 
-INSTALLPRIVLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
+INSTALLPRIVLIB = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
 DESTINSTALLPRIVLIB = $(DESTDIR)$(INSTALLPRIVLIB)
-INSTALLSITELIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
+INSTALLSITELIB = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
 DESTINSTALLSITELIB = $(DESTDIR)$(INSTALLSITELIB)
 INSTALLVENDORLIB = 
 DESTINSTALLVENDORLIB = $(DESTDIR)$(INSTALLVENDORLIB)
-INSTALLARCHLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
+INSTALLARCHLIB = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
 DESTINSTALLARCHLIB = $(DESTDIR)$(INSTALLARCHLIB)
-INSTALLSITEARCH = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
+INSTALLSITEARCH = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
 DESTINSTALLSITEARCH = $(DESTDIR)$(INSTALLSITEARCH)
 INSTALLVENDORARCH = 
 DESTINSTALLVENDORARCH = $(DESTDIR)$(INSTALLVENDORARCH)
-INSTALLBIN = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLBIN = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/bin
 DESTINSTALLBIN = $(DESTDIR)$(INSTALLBIN)
-INSTALLSITEBIN = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSITEBIN = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/bin
 DESTINSTALLSITEBIN = $(DESTDIR)$(INSTALLSITEBIN)
 INSTALLVENDORBIN = 
 DESTINSTALLVENDORBIN = $(DESTDIR)$(INSTALLVENDORBIN)
-INSTALLSCRIPT = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSCRIPT = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/bin
 DESTINSTALLSCRIPT = $(DESTDIR)$(INSTALLSCRIPT)
-INSTALLSITESCRIPT = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSITESCRIPT = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/bin
 DESTINSTALLSITESCRIPT = $(DESTDIR)$(INSTALLSITESCRIPT)
 INSTALLVENDORSCRIPT = 
 DESTINSTALLVENDORSCRIPT = $(DESTDIR)$(INSTALLVENDORSCRIPT)
-INSTALLMAN1DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man1
+INSTALLMAN1DIR = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/man/man1
 DESTINSTALLMAN1DIR = $(DESTDIR)$(INSTALLMAN1DIR)
-INSTALLSITEMAN1DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man1
+INSTALLSITEMAN1DIR = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/man/man1
 DESTINSTALLSITEMAN1DIR = $(DESTDIR)$(INSTALLSITEMAN1DIR)
 INSTALLVENDORMAN1DIR = 
 DESTINSTALLVENDORMAN1DIR = $(DESTDIR)$(INSTALLVENDORMAN1DIR)
-INSTALLMAN3DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man3
+INSTALLMAN3DIR = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/man/man3
 DESTINSTALLMAN3DIR = $(DESTDIR)$(INSTALLMAN3DIR)
-INSTALLSITEMAN3DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man3
+INSTALLSITEMAN3DIR = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/man/man3
 DESTINSTALLSITEMAN3DIR = $(DESTDIR)$(INSTALLSITEMAN3DIR)
 INSTALLVENDORMAN3DIR = 
 DESTINSTALLVENDORMAN3DIR = $(DESTDIR)$(INSTALLVENDORMAN3DIR)
-PERL_LIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
-PERL_ARCHLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
-PERL_ARCHLIBDEP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
+PERL_LIB = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
+PERL_ARCHLIB = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
+PERL_ARCHLIBDEP = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
 LIBPERL_A = libperl.a
 FIRST_MAKEFILE = Makefile
 MAKEFILE_OLD = Makefile.old
 MAKE_APERL_FILE = Makefile.aperl
 PERLMAINCC = $(CC)
-PERL_INC = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
-PERL_INCDEP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
-PERL = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
-FULLPERL = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
+PERL_INC = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
+PERL_INCDEP = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
+PERL = "/home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
+FULLPERL = "/home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
 ABSPERL = $(PERL)
 PERLRUN = $(PERL)
 FULLPERLRUN = $(FULLPERL)
@@ -143,7 +142,7 @@ PERM_DIR = 755
 PERM_RW = 644
 PERM_RWX = 755
 
-MAKEMAKER   = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/ExtUtils/MakeMaker.pm
+MAKEMAKER   = /home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/ExtUtils/MakeMaker.pm
 MM_VERSION  = 7.1001
 MM_REVISION = 71001
 
@@ -169,7 +168,10 @@ O_FILES  =
 H_FILES  = 
 MAN1PODS = 
 MAN3PODS = lib/Data/Verifier.pm \
+	lib/Prep/Schema/Result/Answer.pm \
 	lib/Prep/Schema/Result/ChatbotSession.pm \
+	lib/Prep/Schema/Result/Question.pm \
+	lib/Prep/Schema/Result/QuestionMap.pm \
 	lib/Prep/Schema/Result/Recipient.pm \
 	lib/Prep/Schema/Result/Role.pm \
 	lib/Prep/Schema/Result/User.pm \
@@ -206,6 +208,10 @@ TO_INST_PM = lib/Data/Verifier.pm \
 	lib/Prep/Controller.pm \
 	lib/Prep/Controller/Chatbot.pm \
 	lib/Prep/Controller/Chatbot/Recipient.pm \
+	lib/Prep/Controller/Chatbot/Recipient/Answer.pm \
+	lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
+	lib/Prep/Controller/Internal.pm \
+	lib/Prep/Controller/Internal/DeleteAnswer.pm \
 	lib/Prep/Data/Manager.pm \
 	lib/Prep/Data/Visitor.pm \
 	lib/Prep/Role/Verification.pm \
@@ -213,16 +219,23 @@ TO_INST_PM = lib/Data/Verifier.pm \
 	lib/Prep/Role/Verification/TransactionalActions/DBIC.pm \
 	lib/Prep/Routes.pm \
 	lib/Prep/Schema.pm \
+	lib/Prep/Schema/Result/Answer.pm \
 	lib/Prep/Schema/Result/ChatbotSession.pm \
+	lib/Prep/Schema/Result/Question.pm \
+	lib/Prep/Schema/Result/QuestionMap.pm \
 	lib/Prep/Schema/Result/Recipient.pm \
 	lib/Prep/Schema/Result/Role.pm \
 	lib/Prep/Schema/Result/User.pm \
 	lib/Prep/Schema/Result/UserRole.pm \
 	lib/Prep/Schema/Result/UserSession.pm \
-	lib/Prep/Schema/Resultset/Recipient.pm \
+	lib/Prep/Schema/Result/ViewRecipientQuiz.pm \
+	lib/Prep/Schema/ResultSet/Answer.pm \
+	lib/Prep/Schema/ResultSet/QuestionMap.pm \
+	lib/Prep/Schema/ResultSet/Recipient.pm \
 	lib/Prep/SchemaConnected.pm \
 	lib/Prep/Types.pm \
-	lib/Prep/Utils.pm
+	lib/Prep/Utils.pm \
+	lib/WebService/GoogleCalendar.pm
 
 PM_TO_BLIB = lib/Data/Verifier.pm \
 	blib/lib/Data/Verifier.pm \
@@ -242,6 +255,14 @@ PM_TO_BLIB = lib/Data/Verifier.pm \
 	blib/lib/Prep/Controller/Chatbot.pm \
 	lib/Prep/Controller/Chatbot/Recipient.pm \
 	blib/lib/Prep/Controller/Chatbot/Recipient.pm \
+	lib/Prep/Controller/Chatbot/Recipient/Answer.pm \
+	blib/lib/Prep/Controller/Chatbot/Recipient/Answer.pm \
+	lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
+	blib/lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
+	lib/Prep/Controller/Internal.pm \
+	blib/lib/Prep/Controller/Internal.pm \
+	lib/Prep/Controller/Internal/DeleteAnswer.pm \
+	blib/lib/Prep/Controller/Internal/DeleteAnswer.pm \
 	lib/Prep/Data/Manager.pm \
 	blib/lib/Prep/Data/Manager.pm \
 	lib/Prep/Data/Visitor.pm \
@@ -256,8 +277,14 @@ PM_TO_BLIB = lib/Data/Verifier.pm \
 	blib/lib/Prep/Routes.pm \
 	lib/Prep/Schema.pm \
 	blib/lib/Prep/Schema.pm \
+	lib/Prep/Schema/Result/Answer.pm \
+	blib/lib/Prep/Schema/Result/Answer.pm \
 	lib/Prep/Schema/Result/ChatbotSession.pm \
 	blib/lib/Prep/Schema/Result/ChatbotSession.pm \
+	lib/Prep/Schema/Result/Question.pm \
+	blib/lib/Prep/Schema/Result/Question.pm \
+	lib/Prep/Schema/Result/QuestionMap.pm \
+	blib/lib/Prep/Schema/Result/QuestionMap.pm \
 	lib/Prep/Schema/Result/Recipient.pm \
 	blib/lib/Prep/Schema/Result/Recipient.pm \
 	lib/Prep/Schema/Result/Role.pm \
@@ -268,14 +295,22 @@ PM_TO_BLIB = lib/Data/Verifier.pm \
 	blib/lib/Prep/Schema/Result/UserRole.pm \
 	lib/Prep/Schema/Result/UserSession.pm \
 	blib/lib/Prep/Schema/Result/UserSession.pm \
-	lib/Prep/Schema/Resultset/Recipient.pm \
-	blib/lib/Prep/Schema/Resultset/Recipient.pm \
+	lib/Prep/Schema/Result/ViewRecipientQuiz.pm \
+	blib/lib/Prep/Schema/Result/ViewRecipientQuiz.pm \
+	lib/Prep/Schema/ResultSet/Answer.pm \
+	blib/lib/Prep/Schema/ResultSet/Answer.pm \
+	lib/Prep/Schema/ResultSet/QuestionMap.pm \
+	blib/lib/Prep/Schema/ResultSet/QuestionMap.pm \
+	lib/Prep/Schema/ResultSet/Recipient.pm \
+	blib/lib/Prep/Schema/ResultSet/Recipient.pm \
 	lib/Prep/SchemaConnected.pm \
 	blib/lib/Prep/SchemaConnected.pm \
 	lib/Prep/Types.pm \
 	blib/lib/Prep/Types.pm \
 	lib/Prep/Utils.pm \
-	blib/lib/Prep/Utils.pm
+	blib/lib/Prep/Utils.pm \
+	lib/WebService/GoogleCalendar.pm \
+	blib/lib/WebService/GoogleCalendar.pm
 
 
 # --- MakeMaker platform_constants section:
@@ -345,7 +380,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = prep_api
-DISTVNAME = prep_api-20190114
+DISTVNAME = prep_api-20190123
 
 
 # --- MakeMaker macro section:
@@ -499,7 +534,10 @@ POD2MAN = $(POD2MAN_EXE)
 
 manifypods : pure_all  \
 	lib/Data/Verifier.pm \
+	lib/Prep/Schema/Result/Answer.pm \
 	lib/Prep/Schema/Result/ChatbotSession.pm \
+	lib/Prep/Schema/Result/Question.pm \
+	lib/Prep/Schema/Result/QuestionMap.pm \
 	lib/Prep/Schema/Result/Recipient.pm \
 	lib/Prep/Schema/Result/Role.pm \
 	lib/Prep/Schema/Result/User.pm \
@@ -507,7 +545,10 @@ manifypods : pure_all  \
 	lib/Prep/Schema/Result/UserSession.pm
 	$(NOECHO) $(POD2MAN) --section=3 --perm_rw=$(PERM_RW) -u \
 	  lib/Data/Verifier.pm $(INST_MAN3DIR)/Data::Verifier.$(MAN3EXT) \
+	  lib/Prep/Schema/Result/Answer.pm $(INST_MAN3DIR)/Prep::Schema::Result::Answer.$(MAN3EXT) \
 	  lib/Prep/Schema/Result/ChatbotSession.pm $(INST_MAN3DIR)/Prep::Schema::Result::ChatbotSession.$(MAN3EXT) \
+	  lib/Prep/Schema/Result/Question.pm $(INST_MAN3DIR)/Prep::Schema::Result::Question.$(MAN3EXT) \
+	  lib/Prep/Schema/Result/QuestionMap.pm $(INST_MAN3DIR)/Prep::Schema::Result::QuestionMap.$(MAN3EXT) \
 	  lib/Prep/Schema/Result/Recipient.pm $(INST_MAN3DIR)/Prep::Schema::Result::Recipient.$(MAN3EXT) \
 	  lib/Prep/Schema/Result/Role.pm $(INST_MAN3DIR)/Prep::Schema::Result::Role.$(MAN3EXT) \
 	  lib/Prep/Schema/Result/User.pm $(INST_MAN3DIR)/Prep::Schema::Result::User.$(MAN3EXT) \
@@ -521,22 +562,6 @@ manifypods : pure_all  \
 
 
 # --- MakeMaker installbin section:
-
-EXE_FILES = bin/schema.dump.sh
-
-pure_all :: $(INST_SCRIPT)/schema.dump.sh
-	$(NOECHO) $(NOOP)
-
-realclean ::
-	$(RM_F) \
-	  $(INST_SCRIPT)/schema.dump.sh 
-
-$(INST_SCRIPT)/schema.dump.sh : bin/schema.dump.sh $(FIRST_MAKEFILE) $(INST_SCRIPT)$(DFSEP).exists $(INST_BIN)$(DFSEP).exists
-	$(NOECHO) $(RM_F) $(INST_SCRIPT)/schema.dump.sh
-	$(CP) bin/schema.dump.sh $(INST_SCRIPT)/schema.dump.sh
-	$(FIXIN) $(INST_SCRIPT)/schema.dump.sh
-	-$(NOECHO) $(CHMOD) $(PERM_RWX) $(INST_SCRIPT)/schema.dump.sh
-
 
 
 # --- MakeMaker subdirs section:
@@ -621,7 +646,9 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '    - t' >> META_new.yml
 	$(NOECHO) $(ECHO) '    - inc' >> META_new.yml
 	$(NOECHO) $(ECHO) 'requires:' >> META_new.yml
+	$(NOECHO) $(ECHO) '  App::ForkProve: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  App::Sqitch: '\''0.9996'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Business::BR::CPF: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Config::General: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Crypt::PRNG: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  DBD::Pg: '\''0'\''' >> META_new.yml
@@ -631,7 +658,6 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  DBIx::Class::ResultSet: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  DBIx::Class::Schema: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  DBIx::Class::TimeStamp: '\''0'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) '  DDP: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Data::Diver: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Data::Manager: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Data::Printer: '\''0'\''' >> META_new.yml
@@ -642,16 +668,25 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  Data::Verifier::Results: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Data::Visitor: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Data::Visitor::Callback: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  DateTime: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Exporter: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  FindBin: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  JSON: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  JSON::MaybeXS: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mojo::Base: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Mojolicious::Plugin::Authorization: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Moose: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Moose::Role: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Moose::Util::TypeConstraints: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  MooseX::MarkAsMethods: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  MooseX::NonMoose: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  MooseX::Types: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  MooseX::Types::Moose: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Regexp::Common: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Regexp::Common::time: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Scalar::Util: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Text::CSV: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  base: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  common::sense: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  namespace::autoclean: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  perl: '\''5.014002'\''' >> META_new.yml
@@ -659,7 +694,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  utf8: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  vars: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  warnings: '\''0'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version: '\''20190114'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version: '\''20190123'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'x_serialization_backend: '\''CPAN::Meta::YAML version 0.018'\''' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
 	$(NOECHO) $(ECHO) Generating META.json
@@ -704,7 +739,9 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      },' >> META_new.json
 	$(NOECHO) $(ECHO) '      "runtime" : {' >> META_new.json
 	$(NOECHO) $(ECHO) '         "requires" : {' >> META_new.json
+	$(NOECHO) $(ECHO) '            "App::ForkProve" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "App::Sqitch" : "0.9996",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Business::BR::CPF" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Config::General" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Crypt::PRNG" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "DBD::Pg" : "0",' >> META_new.json
@@ -714,7 +751,6 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '            "DBIx::Class::ResultSet" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "DBIx::Class::Schema" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "DBIx::Class::TimeStamp" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "DDP" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Data::Diver" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Data::Manager" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Data::Printer" : "0",' >> META_new.json
@@ -725,16 +761,25 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '            "Data::Verifier::Results" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Data::Visitor" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Data::Visitor::Callback" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "DateTime" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Exporter" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "FindBin" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "JSON" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "JSON::MaybeXS" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Mojo::Base" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Mojolicious::Plugin::Authorization" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Moose" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Moose::Role" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Moose::Util::TypeConstraints" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "MooseX::MarkAsMethods" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "MooseX::NonMoose" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "MooseX::Types" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "MooseX::Types::Moose" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Regexp::Common" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Regexp::Common::time" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Scalar::Util" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Text::CSV" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "base" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "common::sense" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "namespace::autoclean" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "perl" : "5.014002",' >> META_new.json
@@ -746,7 +791,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "version" : "20190114",' >> META_new.json
+	$(NOECHO) $(ECHO) '   "version" : "20190123",' >> META_new.json
 	$(NOECHO) $(ECHO) '   "x_serialization_backend" : "JSON::PP version 2.27300"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
 	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
@@ -1004,7 +1049,7 @@ $(FIRST_MAKEFILE) : Makefile.PL $(CONFIGDEP)
 
 # --- MakeMaker makeaperl section ---
 MAP_TARGET    = perl
-FULLPERL      = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
+FULLPERL      = "/home/lucas-eokoe/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
 
 $(MAP_TARGET) :: static $(MAKE_APERL_FILE)
 	$(MAKE) $(USEMAKEFILE) $(MAKE_APERL_FILE) $@
@@ -1022,7 +1067,7 @@ $(MAKE_APERL_FILE) : $(FIRST_MAKEFILE) pm_to_blib
 TEST_VERBOSE=0
 TEST_TYPE=test_$(LINKTYPE)
 TEST_FILE = test.pl
-TEST_FILES = t/*.t t/chatbot/*.t
+TEST_FILES = t/*.t t/chatbot/*.t t/internal/*.t
 TESTDB_SW = -d
 
 testdb :: testdb_$(LINKTYPE)
@@ -1053,7 +1098,9 @@ ppd :
 	$(NOECHO) $(ECHO) '    <AUTHOR>Lucas Ansei &lt;lucastakushi@hotmail.com.com&gt;</AUTHOR>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <PERLCORE VERSION="5,014002,0,0" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="App::ForkProve" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="App::Sqitch" VERSION="0.9996" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Business::BR::CPF" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Config::General" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Crypt::PRNG" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBD::Pg" />' >> $(DISTNAME).ppd
@@ -1063,7 +1110,6 @@ ppd :
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::ResultSet" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::Schema" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::TimeStamp" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DDP::" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Diver" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Manager" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Printer" />' >> $(DISTNAME).ppd
@@ -1074,16 +1120,25 @@ ppd :
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Verifier::Results" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Visitor" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Visitor::Callback" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DateTime::" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Exporter::" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="FindBin::" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="JSON::" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="JSON::MaybeXS" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojo::Base" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojolicious::Plugin::Authorization" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::Role" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::Util::TypeConstraints" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::MarkAsMethods" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::NonMoose" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::Types" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::Types::Moose" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Regexp::Common" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Regexp::Common::time" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Scalar::Util" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Text::CSV" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="base::" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="common::sense" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="namespace::autoclean" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="strict::" />' >> $(DISTNAME).ppd
@@ -1109,6 +1164,10 @@ pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	  lib/Prep/Controller.pm blib/lib/Prep/Controller.pm \
 	  lib/Prep/Controller/Chatbot.pm blib/lib/Prep/Controller/Chatbot.pm \
 	  lib/Prep/Controller/Chatbot/Recipient.pm blib/lib/Prep/Controller/Chatbot/Recipient.pm \
+	  lib/Prep/Controller/Chatbot/Recipient/Answer.pm blib/lib/Prep/Controller/Chatbot/Recipient/Answer.pm \
+	  lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm blib/lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
+	  lib/Prep/Controller/Internal.pm blib/lib/Prep/Controller/Internal.pm \
+	  lib/Prep/Controller/Internal/DeleteAnswer.pm blib/lib/Prep/Controller/Internal/DeleteAnswer.pm \
 	  lib/Prep/Data/Manager.pm blib/lib/Prep/Data/Manager.pm \
 	  lib/Prep/Data/Visitor.pm blib/lib/Prep/Data/Visitor.pm \
 	  lib/Prep/Role/Verification.pm blib/lib/Prep/Role/Verification.pm \
@@ -1116,16 +1175,24 @@ pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	  lib/Prep/Role/Verification/TransactionalActions/DBIC.pm blib/lib/Prep/Role/Verification/TransactionalActions/DBIC.pm \
 	  lib/Prep/Routes.pm blib/lib/Prep/Routes.pm \
 	  lib/Prep/Schema.pm blib/lib/Prep/Schema.pm \
+	  lib/Prep/Schema/Result/Answer.pm blib/lib/Prep/Schema/Result/Answer.pm \
 	  lib/Prep/Schema/Result/ChatbotSession.pm blib/lib/Prep/Schema/Result/ChatbotSession.pm \
+	  lib/Prep/Schema/Result/Question.pm blib/lib/Prep/Schema/Result/Question.pm \
+	  lib/Prep/Schema/Result/QuestionMap.pm blib/lib/Prep/Schema/Result/QuestionMap.pm \
 	  lib/Prep/Schema/Result/Recipient.pm blib/lib/Prep/Schema/Result/Recipient.pm \
 	  lib/Prep/Schema/Result/Role.pm blib/lib/Prep/Schema/Result/Role.pm \
 	  lib/Prep/Schema/Result/User.pm blib/lib/Prep/Schema/Result/User.pm \
 	  lib/Prep/Schema/Result/UserRole.pm blib/lib/Prep/Schema/Result/UserRole.pm \
 	  lib/Prep/Schema/Result/UserSession.pm blib/lib/Prep/Schema/Result/UserSession.pm \
-	  lib/Prep/Schema/Resultset/Recipient.pm blib/lib/Prep/Schema/Resultset/Recipient.pm \
+	  lib/Prep/Schema/Result/ViewRecipientQuiz.pm blib/lib/Prep/Schema/Result/ViewRecipientQuiz.pm \
+	  lib/Prep/Schema/ResultSet/Answer.pm blib/lib/Prep/Schema/ResultSet/Answer.pm \
+	  lib/Prep/Schema/ResultSet/QuestionMap.pm blib/lib/Prep/Schema/ResultSet/QuestionMap.pm \
+	  lib/Prep/Schema/ResultSet/Recipient.pm blib/lib/Prep/Schema/ResultSet/Recipient.pm \
 	  lib/Prep/SchemaConnected.pm blib/lib/Prep/SchemaConnected.pm \
 	  lib/Prep/Types.pm blib/lib/Prep/Types.pm \
 	  lib/Prep/Utils.pm blib/lib/Prep/Utils.pm 
+	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', q[$(PM_FILTER)], '\''$(PERM_DIR)'\'')' -- \
+	  lib/WebService/GoogleCalendar.pm blib/lib/WebService/GoogleCalendar.pm 
 	$(NOECHO) $(TOUCH) pm_to_blib
 
 

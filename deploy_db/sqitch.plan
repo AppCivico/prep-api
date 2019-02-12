@@ -2,3 +2,24 @@
 %project=prep_api
 
 0000-appschema 2019-01-10T17:35:18Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating schema
+0001-add-question-answers [0000-appschema] 2019-01-15T12:00:44Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding tables needed for the questionnaire: 'question', 'question_map' and 'answer'
+0002-update-recipient [0001-add-question-answers] 2019-01-21T12:54:08Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the 'recipient' table. Adding the following columns: 'question_notification_sent_at' and 'finished_quiz'
+0003-add-calendar [0002-update-recipient] 2019-01-24T19:26:04Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding calendar table
+0004-update-appointment_window [0003-add-calendar] 2019-01-28T09:33:27Z Lucas Ansei,,, <lucas@lucas-G750JX> # Updating the appointment_table window tavle
+0005-adding-columns [0004-update-appointment_window] 2019-01-28T12:29:56Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the 'appointment_window_days_of_week' table
+0006-add-config-on-db [0005-adding-columns] 2019-01-28T13:00:58Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Improving calendar table
+0007-add-ymd [0006-add-config-on-db] 2019-01-28T18:49:59Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the 'ymd' column on the 'appointment' table
+0008-add-question_map_id [0007-add-ymd] 2019-01-29T18:31:57Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # adding question_map_id on question table
+0009-add-config [0008-add-question_map_id] 2019-02-05T17:03:36Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the config table
+0010-add-city [0009-add-config] 2019-02-06T11:28:09Z Lucas Ansei,,, <lucas@lucas-G750JX> # adding the city to the calendar
+0011-appointment [0010-add-city] 2019-02-07T13:44:43Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the appointment and recipient tables
+0012-question_map-category [0011-appointment] 2019-02-07T17:55:38Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the 'category_id' to the 'question_map' table
+0013-appointment-type [0012-question_map-category] 2019-02-07T18:24:07Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding 'appointment_type_id' on the 'appointment' table
+0014-add-external_integration_token [0013-appointment-type] 2019-02-08T12:10:54Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the 'external_integration_token' table
+0015-drop-constraint [0014-add-external_integration_token] 2019-02-08T17:30:28Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Droping constraint on answers table
+0016-add-quiz-count [0015-drop-constraint] 2019-02-08T18:24:00Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding quiz count on recipient table
+0017-add-flag-tabl [0016-add-quiz-count] 2019-02-08T18:58:22Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # creating table for flags
+0018-add-invite-count [0017-add-flag-tabl] 2019-02-08T19:21:54Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding count
+0019-add-logic-jump [0018-add-invite-count] 2019-02-11T16:49:32Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding quiz_stash
+0020-add-flag [0019-add-logic-jump] 2019-02-11T17:47:22Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding one flag to the recipient flag table
+0021-add-count_share [0020-add-flag] 2019-02-11T17:57:07Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding count_share
