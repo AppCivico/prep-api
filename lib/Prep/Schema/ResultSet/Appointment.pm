@@ -110,7 +110,7 @@ sub action_specs {
                calendar_id    => $calendar->id,
                datetime_start => $datetime_start,
                datetime_end   => $datetime_end,
-               summary        => 'Consulta de' . $type->name .  ': ' . $recipient->name,
+               summary        => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
                description    => $recipient->appointment_description
             );
 

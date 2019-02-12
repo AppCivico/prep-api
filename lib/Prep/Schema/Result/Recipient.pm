@@ -410,7 +410,7 @@ sub get_pending_question_data {
 
                 $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
             }
-            elsif ( $next_question_code && $next_question_code =~ /^(A2|AC5|A3|B1)$/gm ) {
+            elsif ( $next_question_code && $next_question_code =~ /^(A5|A2|AC5|A3|B1)$/gm ) {
                 $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
                 if ( $conditions_satisfied > 0 ) {
@@ -544,6 +544,76 @@ sub get_pending_question_data {
 
 					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
 					$count_more = scalar @pending_questions;
+                }
+            }
+            elsif ( $next_question_code && $next_question_code eq 'D4a' ) {
+                $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                if ( $conditions_satisfied > 0 ) {
+					$question = $question_rs->search(
+						{
+							code            => $question_map->{ $pending_questions[0] },
+							question_map_id => $question_map_result->id
+						}
+					)->next;
+
+					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
+					$count_more = scalar @pending_questions;
+
+                    # Removo a D4b do mapa
+					my %r_question_map = reverse %{$question_map};
+					my $key            = $r_question_map{'D4b'};
+					delete $question_map->{$key} if $key;
+
+					$stash->update( { value => to_json $question_map } );
+                }
+                else {
+                    # Verifico se pode ir para a D4b
+                    $next_question_code   = 'D4b';
+                    $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                    if ( $conditions_satisfied > 0 ) {
+
+                        $question = $question_rs->search(
+                            {
+                                code            => $question_map->{ $pending_questions[1] },
+                                question_map_id => $question_map_result->id
+                            }
+                        )->next;
+
+                        $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                        $count_more = scalar @pending_questions;
+
+                        # Removo a D4a do mapa
+                        my %r_question_map = reverse %{$question_map};
+                        my $key            = $r_question_map{'D4a'};
+                        delete $question_map->{$key} if $key;
+
+                        $stash->update( { value => to_json $question_map } );
+                    }
+                    else {
+                        # Removendo a pergunta D4b do question map stacheado
+                        my %r_question_map = reverse %{ $question_map };
+
+						my $first_key  = $r_question_map{'D4a'};
+						my $second_key = $r_question_map{'D4b'};
+
+						delete $question_map->{$first_key}  if $first_key;
+						delete $question_map->{$second_key} if $second_key;
+
+                        $stash->update( { value => to_json $question_map } );
+
+                        $question = $question_rs->search(
+                            {
+                                code            => $question_map->{ $pending_questions[2] },
+                                question_map_id => $question_map_result->id
+                            }
+                        )->next;
+
+                        $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                        $count_more = scalar @pending_questions;
+                    }
+
                 }
             }
             else {
@@ -716,7 +786,15 @@ sub upcoming_appointments {
 sub appointment_description {
     my ($self) = @_;
 
-	my $answers_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'C4', 'AC5' ] } }, { prefetch => 'question' } );
+    my @codes = [
+        'A1', 'A5', 'A2', 'A3',
+        'D4', 'D4a', 'D4b', 'D5',
+        'B1', 'B1a', 'B2', 'B2a',
+        'B2b', 'B3', 'B4', 'B5',
+        'B6', 'B7', 'AC5'
+    ];
+
+	my $answers_rs = $self->answers->search( { 'question.code' => { 'in' => @codes } }, { prefetch => 'question' } );
 
     my $answers;
     my $i = 0;

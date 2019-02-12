@@ -219,7 +219,7 @@ sub build_conditions {
             }
 
         }
-        elsif ( $next_question_code eq 'A2' ) {
+        elsif ( $next_question_code eq 'A5' ) {
             # Deve ter mais de 14 e menos de 20
             $condition = $answers_rs->search(
                 {
@@ -230,6 +230,21 @@ sub build_conditions {
             )->as_query;
 
             push @conditions, { -exists => $condition };
+        }
+        elsif ( $next_question_code eq 'A2' ) {
+            # Só pode ser de SP, BH ou Salvador.
+			for ( 1 .. 3 ) {
+				$condition = $answers_rs->search(
+					{
+						'question.code' => 'A5',
+						answer_value    => $_
+					},
+					{ join => 'question'}
+				)->as_query;
+
+				push @conditions, { -exists => $condition };
+
+			}
         }
         elsif ( $next_question_code eq 'A3' ) {
             $condition = $answers_rs->search(
@@ -280,6 +295,28 @@ sub build_conditions {
 				{
 					'question.code' => 'B2a',
 					answer_value    => '1'
+				},
+				{ join => 'question'}
+			)->as_query;
+
+			push @conditions, { -exists => $condition };
+		}
+		elsif ( $next_question_code eq 'D4a' ) {
+			$condition = $answers_rs->search(
+				{
+					'question.code' => 'D4',
+					answer_value    => '1'
+				},
+				{ join => 'question'}
+			)->as_query;
+
+			push @conditions, { -exists => $condition };
+		}
+		elsif ( $next_question_code eq 'D4b' ) {
+			$condition = $answers_rs->search(
+				{
+					'question.code' => 'D4',
+					answer_value    => '2'
 				},
 				{ join => 'question'}
 			)->as_query;
