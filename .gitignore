@@ -1,0 +1,9 @@
+/.vstags
+/run-container.sh
+.build/*
+/envfile_local.sh
+/docker/Makefile_local.PL
+/script/hypnotoad.pid
+/calendar.pl
+/log/development.log
+/log/production.log
