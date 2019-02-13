@@ -285,9 +285,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 term_signatures
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 09:51:09
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ziHC9zhlPL6HQgxIqWesJQ
+Type: has_many
+
+Related object: L<Prep::Schema::Result::TermSignature>
+
+=cut
+
+__PACKAGE__->has_many(
+  "term_signatures",
+  "Prep::Schema::Result::TermSignature",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 17:07:32
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:DYQe55P5sPxF6cRL4CROLA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

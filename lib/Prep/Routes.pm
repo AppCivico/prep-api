@@ -51,6 +51,10 @@ sub register {
 	$recipient_count_share->post('/')->to('chatbot-recipient-count_share#post');
 	$recipient_count_share->get('/')->to('chatbot-recipient-count_share#get');
 
+	# Recipient::CountShare
+	my $term_signature = $recipient->route('/term-signature');
+	$term_signature->post('/')->to('chatbot-recipient-term_signature#post');
+
     # Appointment
 	my $appointment = $chatbot->route('/appointment');
 
