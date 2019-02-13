@@ -268,7 +268,7 @@ sub info {
         quota_number          => $self->quota_number,
         type                  => $self->appointment_type->name,
         time                  => $quota->{text},
-        datetime_start        => $quota->{appointment_at},
+        datetime_start        => $self->appointment_at,
         datetime_end          => $ymd . 'T' . $quota->{end},
         calendar => {
             id         => $calendar->id,
