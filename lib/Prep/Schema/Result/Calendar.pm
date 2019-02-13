@@ -106,10 +106,45 @@ __PACKAGE__->table("calendar");
   is_nullable: 0
   original: {data_type => "varchar"}
 
-=head2 city
+=head2 address_city
 
   data_type: 'text'
   is_nullable: 0
+
+=head2 address_state
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 address_street
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 address_zipcode
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 address_number
+
+  data_type: 'integer'
+  is_nullable: 0
+
+=head2 address_district
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 address_complement
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 phone
+
+  data_type: 'text'
+  is_nullable: 1
 
 =cut
 
@@ -166,8 +201,22 @@ __PACKAGE__->add_columns(
     is_nullable => 0,
     original    => { data_type => "varchar" },
   },
-  "city",
+  "address_city",
   { data_type => "text", is_nullable => 0 },
+  "address_state",
+  { data_type => "text", is_nullable => 0 },
+  "address_street",
+  { data_type => "text", is_nullable => 0 },
+  "address_zipcode",
+  { data_type => "text", is_nullable => 0 },
+  "address_number",
+  { data_type => "integer", is_nullable => 0 },
+  "address_district",
+  { data_type => "text", is_nullable => 0 },
+  "address_complement",
+  { data_type => "text", is_nullable => 1 },
+  "phone",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -229,8 +278,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 11:01:11
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5DcrrNw9lQlaSK4HFIgBfA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 10:08:18
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:T95CoBCMnmEbPOjn2D+HdQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

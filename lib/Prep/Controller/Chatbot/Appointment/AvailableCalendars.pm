@@ -12,7 +12,7 @@ sub get {
 
 					{
                         id        => $_->id,
-                        city      => $_->city,
+                        city      => $_->address_city,
                         google_id => $_->google_id,
                         name      => $_->name,
                         time_zone => $_->time_zone,

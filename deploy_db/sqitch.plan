@@ -24,3 +24,4 @@
 0020-add-flag [0019-add-logic-jump] 2019-02-11T17:47:22Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding one flag to the recipient flag table
 0021-add-count_share [0020-add-flag] 2019-02-11T17:57:07Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding count_share
 0022-updating-integration_token [0021-add-count_share] 2019-02-13T11:52:39Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the 'integration_token' column
+0023-add-address-data [0022-updating-integration_token] 2019-02-13T12:08:33Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding address data to the calendar
