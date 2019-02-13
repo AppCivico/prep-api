@@ -103,8 +103,7 @@ __PACKAGE__->table("recipient");
 =head2 integration_token
 
   data_type: 'text'
-  default_value: "substring"(md5((random())::text), 0, 12)
-  is_nullable: 0
+  is_nullable: 1
 
 =head2 using_external_token
 
@@ -172,11 +171,7 @@ __PACKAGE__->add_columns(
   "finished_quiz",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "integration_token",
-  {
-    data_type     => "text",
-    default_value => \"\"substring\"(md5((random())::text), 0, 12)",
-    is_nullable   => 0,
-  },
+  { data_type => "text", is_nullable => 1 },
   "using_external_token",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "count_sent_quiz",
@@ -291,8 +286,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 15:55:59
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:J3kGrcFRvpXAFB/83of16A
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 09:51:09
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ziHC9zhlPL6HQgxIqWesJQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -933,6 +928,12 @@ sub is_target_audience {
 	}
 
 	return $self->recipient_flag->is_target_audience;
+}
+
+sub generate_integration_token {
+    my ($self) = @_;
+
+    return $self->update( { integration_token => \'substring( md5(random()::text), 0, 12)' } );
 }
 
 __PACKAGE__->meta->make_immutable;

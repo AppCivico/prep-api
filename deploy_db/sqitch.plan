@@ -23,3 +23,4 @@
 0019-add-logic-jump [0018-add-invite-count] 2019-02-11T16:49:32Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding quiz_stash
 0020-add-flag [0019-add-logic-jump] 2019-02-11T17:47:22Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding one flag to the recipient flag table
 0021-add-count_share [0020-add-flag] 2019-02-11T17:57:07Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding count_share
+0022-updating-integration_token [0021-add-count_share] 2019-02-13T11:52:39Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the 'integration_token' column

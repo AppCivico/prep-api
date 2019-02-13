@@ -130,6 +130,9 @@ sub action_specs {
                         $is_eligible_for_research = $recipient->is_eligible_for_research;
                         $is_target_audience       = $recipient->is_target_audience if $next_question->{code} eq 'A1';
                         $finished_quiz = 1;
+
+                        # Gerando token de integração
+                        $recipient->generate_integration_token;
                     }
                     else {
                         $is_target_audience = $recipient->is_target_audience if $next_question->{code} eq 'A1';

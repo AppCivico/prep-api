@@ -1378,6 +1378,9 @@ db_transaction{
         ->status_is(200)
         ->json_is('/code', 'AC5');
 
+        ok( my $recipient = $schema->resultset('Recipient')->find($recipient_id), 'recipient' );
+        is( $recipient->integration_token, undef, 'integration_token is not defined' );
+
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
@@ -1390,6 +1393,10 @@ db_transaction{
         )
         ->status_is(201)
         ->json_is('/finished_quiz', 1);
+
+		ok( $recipient = $recipient->discard_changes, 'recipient discard changes' );
+		ok( defined $recipient->integration_token, 'integration_token is defined' );
+
     };
 };
 
