@@ -352,9 +352,9 @@ sub available_dates {
                                     ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
                                     ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
                                 datetime_start => $_ == 1 ?
-                                    ( $ymd . 'T' . $start_time->hms . '-02:00' ) :
-                                    ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms . '-02:00' ),
-                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms . '-02:00'
+                                    ( $ymd . 'T' . $start_time->hms ) :
+                                    ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
+                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms
                             }
                         } @available_quotas
                     ]
