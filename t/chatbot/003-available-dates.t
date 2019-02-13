@@ -80,6 +80,14 @@ db_transaction {
         ->json_has('/calendars/0/name')
         ->json_has('/calendars/0/city')
         ->json_has('/calendars/0/time_zone')
+        ->json_has('/calendars/0/state')
+        ->json_has('/calendars/0/city')
+        ->json_has('/calendars/0/street')
+		->json_has('/calendars/0/number')
+		->json_has('/calendars/0/zipcode')
+		->json_has('/calendars/0/complement')
+		->json_has('/calendars/0/district')
+		->json_has('/calendars/0/phone')
         ->json_has('/calendars/0/google_id');
 
         $t->get_ok(
