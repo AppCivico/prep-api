@@ -187,8 +187,6 @@ __PACKAGE__->belongs_to(
 use DateTime;
 use Time::Piece;
 
-use Mojo::Log;
-
 sub get_quota_info {
     my ($self) = @_;
 
@@ -243,8 +241,6 @@ sub quota_map {
 sub assert_quota_number {
     my ($self, %opts) = @_;
 
-    my $log = Mojo::Log->new(path => '/tmp/appointment.log', level => 'warn');
-
 	my @required_opts = qw( quota_number datetime_start datetime_end );
 	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
@@ -258,8 +254,7 @@ sub assert_quota_number {
 
     my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'invalid'];
 
-	$log->debug($selected_quota->{start});
-	$log->debug($start_time->hms);
+	die \['datetime_start', $selected_quota->{start}];
 
 	die \[ 'datetime_start', 'does not matches quota start time' ] unless $selected_quota->{start} eq $start_time->hms;
 	die \[ 'datetime_end',   'does not matches quota end time' ] unless $selected_quota->{end}   eq $end_time->hms;
