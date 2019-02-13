@@ -44,12 +44,7 @@ sub get {
                 map {
 					my $a = $_;
 
-					+{
-						datetime_start        => $a->appointment_at,
-						quota_number          => $a->quota_number,
-						appointment_window_id => $a->appointment_window_id,
-                        type                  => $a->appointment_type->name
-					}
+                    $a->info
                 } $recipient->upcoming_appointments->all(),
             ]
         }

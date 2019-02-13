@@ -175,6 +175,16 @@ db_transaction {
         ->json_has('/appointments/0/datetime_start')
         ->json_has('/appointments/0/quota_number')
 		->json_has('/appointments/0/appointment_window_id')
+		->json_has('/appointments/0/datetime_end')
+		->json_has('/appointments/0/time')
+		->json_has('/appointments/0/calendar/id')
+		->json_has('/appointments/0/calendar/state')
+		->json_has('/appointments/0/calendar/city')
+		->json_has('/appointments/0/calendar/number')
+		->json_has('/appointments/0/calendar/street')
+		->json_has('/appointments/0/calendar/phone')
+		->json_has('/appointments/0/calendar/complement')
+		->json_has('/appointments/0/calendar/district')
 		->json_has('/appointments/0/type');
     };
 

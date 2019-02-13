@@ -251,5 +251,37 @@ __PACKAGE__->belongs_to(
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
+
+sub info {
+    my ($self) = @_;
+
+    my $quota_map = $self->appointment_window->quota_map;
+
+    my $quota = $quota_map->{ $self->quota_number };
+    my $ymd   = $self->appointment_at->ymd;
+
+    my $calendar = $self->appointment_window->calendar;
+
+    return +{
+        id                    => $self->id,
+        appointment_window_id => $self->appointment_window_id,
+        quota_number          => $self->quota_number,
+        type                  => $self->appointment_type->name,
+        time                  => $quota->{text},
+        datetime_start        => $quota->{appointment_at},
+        datetime_end          => $ymd . 'T' . $quota->{end},
+        calendar => {
+            id         => $calendar->id,
+            state      => $calendar->address_state,
+            city       => $calendar->address_city,
+            street     => $calendar->address_street,
+            number     => $calendar->address_number,
+            district   => $calendar->address_district,
+            complement => $calendar->address_complement,
+            phone      => $calendar->phone,
+        }
+    }
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
