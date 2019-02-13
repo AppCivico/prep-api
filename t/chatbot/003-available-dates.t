@@ -118,6 +118,8 @@ db_transaction {
 		my $datetime_start = $res->{dates}->[0]->{hours}->[0]->{datetime_start};
 		my $datetime_end   = $res->{dates}->[0]->{hours}->[0]->{datetime_end};
 
+        is( scalar @{ $res->{dates}->[0]->{hours} }, 4, '4 available hours' );
+
         &setup_calendar_event_post;
         $t->post_ok(
             '/api/chatbot/recipient/appointment',
@@ -145,6 +147,9 @@ db_transaction {
         ->status_is(200)
         ->json_is('/dates/0/hours/0/quota', 2)
         ->json_is('/dates/0/hours/0/time', '10:30:00 - 11:00:00');
+
+        $res = $t->tx->res->json;
+		is( scalar @{ $res->{dates}->[0]->{hours} }, 3, '3 available hours' );
 
         $t->get_ok(
             '/api/chatbot/recipient/appointment',
