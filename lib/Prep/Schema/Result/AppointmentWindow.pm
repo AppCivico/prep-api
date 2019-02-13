@@ -234,7 +234,9 @@ sub quota_map {
             text  => $current_time->hms . ' - ' . $next_time->hms,
             start => $current_time->hms,
             end   => $next_time->hms
-        }
+        };
+
+        $current_time = $next_time;
     }
 
     return $ret;
@@ -247,8 +249,6 @@ sub assert_quota_number {
 	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my $quota_map = $self->quota_map;
-	print STDERR 'AAAAAAAAAAAAAAAAAAAAAAAAA';
-	print STDOUT 'BBBBBBBBBBBBBBBBBBBBBBBBBB';
 
 	my $start_time = Time::Piece->strptime( $opts{datetime_start}, '%Y-%m-%dT%H:%M:%S' );
 	my $end_time   = Time::Piece->strptime( $opts{datetime_end},   '%Y-%m-%dT%H:%M:%S' );
@@ -257,8 +257,6 @@ sub assert_quota_number {
       or die \['datetime_start', 'no appointments on this day of week'];
 
     my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'invalid'];
-
-	die \['datetime_start', $selected_quota->{start}] unless is_test;
 
 	die \[ 'datetime_start', 'does not matches quota start time' ] unless $selected_quota->{start} eq $start_time->hms;
 	die \[ 'datetime_end',   'does not matches quota end time' ] unless $selected_quota->{end}   eq $end_time->hms;

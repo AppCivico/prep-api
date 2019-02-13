@@ -12,7 +12,7 @@ my $schema = $t->app->schema;
 db_transaction {
     my $security_token = $ENV{CHATBOT_SECURITY_TOKEN};
 
-    my ($calendar, $appointment_window);
+    my ($calendar, $appointment_window, $second_calendar, $second_appointment_window);
     subtest 'Internal | Create calendar and event' => sub {
         ok(
             $calendar = $schema->resultset('Calendar')->create(
@@ -44,6 +44,43 @@ db_transaction {
                     appointment_window_days_of_week => [
                         { day_of_week => 1 },
 						{ day_of_week => 2 }
+                    ]
+                }
+            )
+        );
+
+        ok(
+            $second_calendar = $schema->resultset('Calendar')->create(
+                {
+                    name             => 'test_calendar',
+                    address_city     => 'Belo Horizonte',
+                    address_state    => 'MG',
+                    address_street   => 'Rua Libero Badaró',
+                    address_number   => '144',
+                    address_district => 'Anhangabaú',
+                    address_zipcode  => '01008001',
+                    google_id        => 'foo',
+                    time_zone        => 'America/Sao_Paulo',
+                    token            => 'foobar',
+                    client_id        => 'foo',
+                    client_secret    => 'bar',
+                    refresh_token    => 'FOOBAR'
+                }
+            )
+        );
+
+        ok(
+            $second_appointment_window = $schema->resultset('AppointmentWindow')->create(
+                {
+                    calendar_id                     => $second_calendar->id,
+                    start_time                      => '10:00 AM',
+                    end_time                        => '08:00 PM',
+                    quotas                          => 10,
+                    appointment_window_days_of_week => [
+                        { day_of_week => 1 },
+						{ day_of_week => 2 },
+						{ day_of_week => 3 },
+						{ day_of_week => 4 },
                     ]
                 }
             )
@@ -186,6 +223,35 @@ db_transaction {
 		->json_has('/appointments/0/calendar/complement')
 		->json_has('/appointments/0/calendar/district')
 		->json_has('/appointments/0/type');
+
+        $t->get_ok(
+            '/api/chatbot/appointment/available-dates',
+            form => {
+                security_token => $security_token,
+                calendar_id    => $second_calendar->id
+            }
+        )
+        ->status_is(200);
+
+		$res = $t->tx->res->json;
+		$datetime_start = $res->{dates}->[0]->{hours}->[2]->{datetime_start};
+		$datetime_end   = $res->{dates}->[0]->{hours}->[2]->{datetime_end};
+
+        $t->post_ok(
+            '/api/chatbot/recipient/appointment',
+            form => {
+                security_token        => $security_token,
+                fb_id                 => '111111',
+                calendar_id           => $second_calendar->id,
+                appointment_window_id => $second_appointment_window->id,
+                quota_number          => 3,
+                datetime_start        => $datetime_start,
+                datetime_end          => $datetime_end,
+                type                  => 'recrutamento'
+            }
+        )
+        ->status_is(201)
+        ->json_has('/id');
 
     };
 
