@@ -26,3 +26,4 @@
 0022-updating-integration_token [0021-add-count_share] 2019-02-13T11:52:39Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the 'integration_token' column
 0023-add-address-data [0022-updating-integration_token] 2019-02-13T12:08:33Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding address data to the calendar
 0024-add-term_signature [0023-add-address-data] 2019-02-13T19:13:40Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the term signature table
+0025-add-signed_term [0024-add-term_signature] 2019-02-13T19:21:16Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding signed_term bool

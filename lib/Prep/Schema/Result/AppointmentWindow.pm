@@ -253,7 +253,7 @@ sub assert_quota_number {
       or die \['datetime_start', 'no appointments on this day of week'];
 
     my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'invalid'];
-
+    use DDP; p $selected_quota->{start}; p $start_time->hms;
 	die \[ 'datetime_start', 'invalid' ] unless $selected_quota->{start} eq $start_time->hms;
 	die \[ 'datetime_end',   'invalid' ] unless $selected_quota->{end}   eq $end_time->hms;
 }

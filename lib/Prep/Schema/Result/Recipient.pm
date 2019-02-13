@@ -963,5 +963,35 @@ sub generate_integration_token {
     return $self->update( { integration_token => \'substring( md5(random()::text), 0, 12)' } );
 }
 
+sub update_signed_term {
+    my ($self) = @_;
+
+    my $signed_term;
+
+    if ( $self->term_signatures->count > 0 ) {
+        $signed_term = 1;
+    }
+    else {
+        $signed_term = 0;
+    }
+
+    $self->recipient_flag->update(
+        {
+            signed_term => $signed_term,
+			updated_at  => \'NOW()'
+		}
+    );
+}
+
+sub signed_term {
+	my ($self) = @_;
+
+	if ( !$self->recipient_flag->signed_term ) {
+		$self->update_signed_term();
+	}
+
+	return $self->recipient_flag->signed_term;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

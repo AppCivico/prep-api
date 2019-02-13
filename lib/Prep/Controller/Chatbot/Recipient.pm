@@ -61,7 +61,8 @@ sub get {
             updated_at               => $recipient->updated_at,
             created_at               => $recipient->created_at,
             is_eligible_for_research => $recipient->is_eligible_for_research,
-            is_part_of_research      => $recipient->is_part_of_research
+            is_part_of_research      => $recipient->is_part_of_research,
+            signed_term              => $recipient->signed_term,
         }
     )
 }
