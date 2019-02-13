@@ -118,6 +118,21 @@ db_transaction {
 
         is( scalar @{ $res->{dates}->[0]->{hours} }, 4, '4 available hours' );
 
+        $t->post_ok(
+            '/api/chatbot/recipient/appointment',
+            form => {
+                security_token        => $security_token,
+                fb_id                 => '111111',
+                calendar_id           => $calendar->id,
+                appointment_window_id => $appointment_window->id,
+                quota_number          => 1,
+                datetime_start        => $datetime_start,
+                datetime_end          => '2019-02-18T10:31:00',
+                type                  => 'recrutamento'
+            }
+        )
+        ->status_is(400);
+
         &setup_calendar_event_post;
         $t->post_ok(
             '/api/chatbot/recipient/appointment',

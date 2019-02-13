@@ -12,6 +12,7 @@ use Data::Verifier;
 use Data::Printer;
 
 use Data::Fake qw(Core);
+use DateTime;
 
 use WebService::GoogleCalendar;
 
@@ -100,6 +101,13 @@ sub action_specs {
             $values{calendar_id}         = $calendar->id;
             $values{appointment_at}      = $datetime_start;
             $values{appointment_type_id} = $type->id;
+
+            # Verificando se o número da quota bate com o horário
+            $appointment_window->assert_quota_number(
+                quota_number   => $values{quota_number},
+                datetime_start => $datetime_start,
+                datetime_end   => $datetime_end
+            );
 
             my $appointment = $self->create(\%values);
 

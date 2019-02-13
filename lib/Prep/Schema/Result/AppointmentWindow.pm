@@ -238,5 +238,25 @@ sub quota_map {
     return $ret;
 }
 
+sub assert_quota_number {
+    my ($self, %opts) = @_;
+
+	my @required_opts = qw( quota_number datetime_start datetime_end );
+	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
+    my $quota_map = $self->quota_map;
+
+	my $start_time = Time::Piece->strptime( $opts{datetime_start}, '%Y-%m-%dT%H:%M:%S' );
+	my $end_time   = Time::Piece->strptime( $opts{datetime_end},   '%Y-%m-%dT%H:%M:%S' );
+
+    $self->appointment_window_days_of_week->search( { day_of_week => $start_time->day_of_week } )->next
+      or die \['datetime_start', 'no appointments on this day of week'];
+
+    my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'invalid'];
+
+	die \[ 'datetime_start', 'invalid' ] unless $selected_quota->{start} eq $start_time->hms;
+	die \[ 'datetime_end',   'invalid' ] unless $selected_quota->{end}   eq $end_time->hms;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
