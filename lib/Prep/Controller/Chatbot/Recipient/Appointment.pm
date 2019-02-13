@@ -17,7 +17,6 @@ sub post {
 	);
 
     my $recipient = $c->stash('recipient');
-    die \['fb_id', 'recipient is not part of research'] unless $recipient->is_part_of_research == 1;
 
     my $appointment = $recipient->appointments->execute(
         $c,
