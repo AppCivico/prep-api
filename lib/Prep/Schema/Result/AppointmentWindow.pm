@@ -256,8 +256,8 @@ sub assert_quota_number {
     use DDP; p $selected_quota->{start}; p $start_time->hms;
 	print STDERR $selected_quota->{start};
 	print STDERR $start_time->hms;
-	die \[ 'datetime_start', 'invalid' ] unless $selected_quota->{start} eq $start_time->hms;
-	die \[ 'datetime_end',   'invalid' ] unless $selected_quota->{end}   eq $end_time->hms;
+	die \[ 'datetime_start', 'does not matches quota start time' ] unless $selected_quota->{start} eq $start_time->hms;
+	die \[ 'datetime_end',   'does not matches quota end time' ] unless $selected_quota->{end}   eq $end_time->hms;
 }
 
 __PACKAGE__->meta->make_immutable;
