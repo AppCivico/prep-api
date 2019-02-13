@@ -125,7 +125,7 @@ sub create_event {
         my $access_token = $self->generate_token($opts{calendar});
 
         eval {
-            my $url = 'https://www.googleapis.com/calendar/v3/calendars/eokoe.com_o13e6c46hatmged80ovns8le6c@group.calendar.google.com/events';
+            my $url = 'https://www.googleapis.com/calendar/v3/calendars/' . $opts{calendar_id} . '/events';
             $res = $self->furl->post(
                 $url,
                 [

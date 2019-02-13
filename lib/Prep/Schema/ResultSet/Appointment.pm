@@ -107,7 +107,7 @@ sub action_specs {
 
             $ws->create_event(
                calendar       => $calendar,
-               calendar_id    => $calendar->id,
+               calendar_id    => $calendar->google_id,
                datetime_start => $datetime_start,
                datetime_end   => $datetime_end,
                summary        => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
