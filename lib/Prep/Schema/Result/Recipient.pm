@@ -871,7 +871,13 @@ sub update_is_part_of_research {
 
     my $is_part_of_research;
 
-    my $answer = $self->answers->search( { 'question.code' => 'AC5' }, { prefetch => 'question' } )->next;
+    my $answer = $self->answers->search(
+        { 'question.code' => 'AC5' },
+        {
+            prefetch => 'question',
+			order_by => { -desc => 'me.question_map_id' }
+        }
+    )->next;
 
     if ( $answer && $answer->answer_value eq '1' ) {
         $is_part_of_research = 1;
@@ -907,7 +913,7 @@ sub update_is_target_audience {
         { 'question.code' => 'A1' },
         {
             prefetch => 'question',
-            order_by => { -desc => 'me.question_map_id' }
+            order_by => { -desc => 'question.question_map_id' }
         }
     )->next;
 
