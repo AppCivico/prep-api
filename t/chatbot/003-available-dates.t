@@ -187,7 +187,6 @@ db_transaction {
 		->json_has('/appointments/0/calendar/district')
 		->json_has('/appointments/0/type');
 
-        use DDP; p $t->tx->res->json;
     };
 
 };

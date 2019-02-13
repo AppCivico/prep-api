@@ -903,7 +903,13 @@ sub update_is_target_audience {
 
     my $is_target_audience;
 
-    my $answer = $self->answers->search( { 'question.code' => 'A1' }, { prefetch => 'question' } )->next;
+    my $answer = $self->answers->search(
+        { 'question.code' => 'A1' },
+        {
+            prefetch => 'question',
+            order_by => { -desc => 'me.question_map_id' }
+        }
+    )->next;
 
     if ( $answer && $answer->answer_value =~ /^(15|16|17|18|19)$/ ) {
         $is_target_audience = 1;
