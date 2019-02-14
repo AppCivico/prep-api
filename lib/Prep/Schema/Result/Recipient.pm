@@ -899,6 +899,7 @@ sub update_is_part_of_research {
     }
     else {
         $is_part_of_research = 0;
+        return undef;
     }
 
     $self->recipient_flag->update(
