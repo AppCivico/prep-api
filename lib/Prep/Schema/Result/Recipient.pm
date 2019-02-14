@@ -938,6 +938,7 @@ sub update_is_target_audience {
     }
     else {
         $is_target_audience = 0;
+		return undef;
     }
 
     $self->recipient_flag->update(
