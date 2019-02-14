@@ -107,6 +107,9 @@ sub action_specs {
 				if ( $next_question->{code} eq 'A1' ) {
 					die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
 				}
+				elsif ( $next_question->{code} eq 'B2' ) {
+					die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
+				}
                 elsif ( $next_question->{code} eq 'A3' ) {
                     die \['answer_value', 'invalid'] unless test_cpf($values{answer_value});
 
