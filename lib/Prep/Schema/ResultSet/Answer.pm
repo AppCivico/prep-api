@@ -142,9 +142,11 @@ sub action_specs {
 
                             if ($answer->answer_value =~ /^(15|16|17|18|19)$/) {
                                 $finished_quiz = 0;
+                                $is_target_audience = 1;
                             }
                             else {
                                 $finished_quiz = 1;
+								$is_target_audience = 0;
                             }
                         }
                         elsif ( $next_question->{code} eq 'A5' ) {
