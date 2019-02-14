@@ -29,9 +29,12 @@ sub post {
 			{
 				is_eligible_for_research => undef,
 				is_part_of_research      => undef,
-                is_prep                  => undef,
+				is_target_audience       => undef,
+				signed_term              => undef,
+				is_prep                  => undef,
 			}
 		);
+        $recipient->term_signatures->delete;
         $recipient->appointments->delete;
         $recipient->stashes->delete;
     };
