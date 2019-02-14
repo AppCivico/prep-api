@@ -1157,7 +1157,7 @@ db_transaction{
                     fb_id          => $fb_id,
                     code           => 'B2',
                     category       => 'quiz',
-                    answer_value   => '1'
+                    answer_value   => '0'
                 }
             )
             ->status_is(201)

@@ -283,7 +283,7 @@ sub build_conditions {
 			$condition = $answers_rs->search(
 				{
 					'question.code' => 'B2',
-					answer_value    => { '!=' => '1' }
+					answer_value    => { '!=' => '0' }
 				},
 				{ join => 'question'}
 			)->as_query;
