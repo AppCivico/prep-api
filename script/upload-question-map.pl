@@ -19,7 +19,7 @@ my $i = 1;
 #########################################
 # ALWAYS UPDATE THIS NUMBER ACCORDINGLY #
 #########################################
-my $version = 7;
+my $version = 8;
 
 open my $fh, "<:encoding(utf8)", "quiz.csv" or die "quiz.csv: $!";
 while (my $row = $csv->getline($fh)) {
