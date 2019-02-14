@@ -45,7 +45,7 @@ sub verifiers_specs {
                     post_check => sub {
 						my $category = $_[0]->get_value('category');
 
-						die \['category', 'invalid'] unless $category =~ m/(quiz|screening)/;
+						die \['category', 'invalid'] unless $category =~ m/(quiz|screening|fun_questions)/;
                     }
                 }
             }
