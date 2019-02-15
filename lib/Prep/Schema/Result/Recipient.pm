@@ -897,9 +897,11 @@ sub update_is_part_of_research {
     if ( $answer && $answer->answer_value eq '1' ) {
         $is_part_of_research = 1;
     }
+    elsif( !$answer ) {
+        $is_part_of_research = undef;
+    }
     else {
         $is_part_of_research = 0;
-        return undef;
     }
 
     $self->recipient_flag->update(
@@ -936,9 +938,11 @@ sub update_is_target_audience {
     if ( $answer && $answer->answer_value =~ /^(15|16|17|18|19)$/ ) {
         $is_target_audience = 1;
     }
+    elsif ( !$answer ) {
+        $is_target_audience = undef;
+    }
     else {
         $is_target_audience = 0;
-		return undef;
     }
 
     $self->recipient_flag->update(
