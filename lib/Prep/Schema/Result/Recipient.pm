@@ -410,7 +410,7 @@ sub get_pending_question_data {
                     is_part_of_research      => $self->is_prep
                 );
 
-                $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
+                $self->recipient_flag->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
             }
             elsif ( $next_question_code && $next_question_code =~ /^(A5|A2|AC5|A3|B1)$/gm ) {
                 $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
@@ -438,7 +438,7 @@ sub get_pending_question_data {
                     $has_more   = 0;
                     $count_more = 0;
 
-                    $self->update( { finished_quiz => 1 } );
+                    $self->recipient_flag->update( { finished_quiz => 1 } );
                 }
             }
             elsif ( $next_question_code && $next_question_code eq 'B1a' ) {
