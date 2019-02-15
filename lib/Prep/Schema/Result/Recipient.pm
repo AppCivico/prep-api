@@ -94,12 +94,6 @@ __PACKAGE__->table("recipient");
   data_type: 'timestamp'
   is_nullable: 1
 
-=head2 finished_quiz
-
-  data_type: 'boolean'
-  default_value: false
-  is_nullable: 0
-
 =head2 integration_token
 
   data_type: 'text'
@@ -168,8 +162,6 @@ __PACKAGE__->add_columns(
   },
   "question_notification_sent_at",
   { data_type => "timestamp", is_nullable => 1 },
-  "finished_quiz",
-  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "integration_token",
   { data_type => "text", is_nullable => 1 },
   "using_external_token",
@@ -301,8 +293,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 17:07:32
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:DYQe55P5sPxF6cRL4CROLA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-15 16:11:45
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:xybQQs/17Up0b1LwRQ8R2A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -635,7 +627,7 @@ sub get_pending_question_data {
             }
 
         }
-        else {
+        elsif ( $question_map_result->category_id == 2 ) {
             # Triagem.
 
             my $conditions_satisfied;
@@ -696,6 +688,11 @@ sub get_pending_question_data {
                 $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
                 $count_more = scalar @pending_questions;
             }
+        }
+        else {
+            $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
+            $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
+            $count_more = scalar @pending_questions;
         }
 
         $ret = {
@@ -997,6 +994,36 @@ sub signed_term {
 	}
 
 	return $self->recipient_flag->signed_term;
+}
+
+sub update_finished_quiz {
+    my ($self) = @_;
+
+    my $signed_term;
+
+    my $pending_question_data = $self->get_pending_question_data('quiz');
+
+    if ( $pending_question_data->{question} ) {
+        return;
+    }
+    else {
+        return $self->recipient_flag->update(
+            {
+                finished_quiz => 1,
+                updated_at    => \'NOW()'
+            }
+        )
+    }
+}
+
+sub finished_quiz {
+	my ($self) = @_;
+
+	if ( $self->recipient_flag->finished_quiz == 0 ) {
+		$self->update_finished_quiz();
+	}
+
+	return $self->recipient_flag->finished_quiz;
 }
 
 __PACKAGE__->meta->make_immutable;

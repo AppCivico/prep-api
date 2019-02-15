@@ -19,7 +19,6 @@ sub post {
         $recipient->answers->delete;
         $recipient->update(
             {
-                finished_quiz          => 0,
                 count_sent_quiz        => 0,
                 count_invited_research => 0,
                 count_share            => 0
@@ -27,6 +26,7 @@ sub post {
         );
 		$recipient->recipient_flag->update(
 			{
+                finished_quiz            => 0,
 				is_eligible_for_research => undef,
 				is_part_of_research      => undef,
 				is_target_audience       => undef,

@@ -149,7 +149,7 @@ db_transaction {
 
             db_transaction{
                 # Recipient já terminou o questionário
-                $recipient->update( { finished_quiz => 1 } );
+                $recipient->recipient_flag->update( { finished_quiz => 1 } );
                 is( $rs->count, 0 );
             };
 

@@ -127,7 +127,7 @@ sub action_specs {
 
                 if ( $question_map->category_id == 1 ) {
                     if ( $pending_question_data->{has_more} == 0 ) {
-                        $recipient->update( { finished_quiz => 1 } );
+                        $recipient->recipient_flag->update( { finished_quiz => 1 } );
 
                         $is_prep                  = $recipient->is_part_of_research;
                         $is_eligible_for_research = $recipient->is_eligible_for_research;
@@ -169,7 +169,7 @@ sub action_specs {
                     }
 
                 }
-                else {
+                elsif ($question_map->category_id == 2) {
                     $pending_question_data = $recipient->get_pending_question_data($category);
 
                     $finished_quiz = $pending_question_data->{has_more} == 0 ? 1 : 0;
@@ -185,6 +185,11 @@ sub action_specs {
                     }
                     elsif ( $question_code eq 'SC5' ) {
                         $go_to_autotest = $finished_quiz == 1 ? 1 : 0;
+                    }
+                }
+                else {
+                    if ( $question_code eq 'AC4' ) {
+                        $recipient->recipient_flag->update( { finished_quiz => 1 } )
                     }
                 }
 

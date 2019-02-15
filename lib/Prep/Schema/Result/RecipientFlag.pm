@@ -78,6 +78,12 @@ __PACKAGE__->table("recipient_flags");
   data_type: 'boolean'
   is_nullable: 1
 
+=head2 finished_quiz
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -95,6 +101,8 @@ __PACKAGE__->add_columns(
   { data_type => "boolean", is_nullable => 1 },
   "signed_term",
   { data_type => "boolean", is_nullable => 1 },
+  "finished_quiz",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -127,8 +135,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 17:18:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:iTnz67lCUkJBw8QHVdrE7A
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-15 16:11:45
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ynW/TCwanwNP8Gr9OY08Pw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

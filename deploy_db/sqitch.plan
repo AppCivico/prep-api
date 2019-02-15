@@ -27,3 +27,4 @@
 0023-add-address-data [0022-updating-integration_token] 2019-02-13T12:08:33Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding address data to the calendar
 0024-add-term_signature [0023-add-address-data] 2019-02-13T19:13:40Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the term signature table
 0025-add-signed_term [0024-add-term_signature] 2019-02-13T19:21:16Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding signed_term bool
+0026-add-flag [0025-add-signed_term] 2019-02-15T18:26:51Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding boolean to the 'recipient_flags' table
