@@ -262,6 +262,21 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 screenings
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Screening>
+
+=cut
+
+__PACKAGE__->has_many(
+  "screenings",
+  "Prep::Schema::Result::Screening",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 stashes
 
 Type: has_many
@@ -293,8 +308,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-15 16:11:45
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:xybQQs/17Up0b1LwRQ8R2A
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-19 09:59:18
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:pNeUUtXnVB9g1tIQfNBn9g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -1024,6 +1039,54 @@ sub finished_quiz {
 	}
 
 	return $self->recipient_flag->finished_quiz;
+}
+
+sub build_screening_report {
+    my ($self) = @_;
+
+	my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+		{ 'category.name' => 'screening' },
+		{
+			prefetch => 'category',
+			order_by => { -desc => 'created_at' }
+		}
+	)->next;
+
+    my $answers = $self->answers->search( { question_map_id => $question_map->id } );
+
+    my $answers_parsed;
+    my $i = 0;
+    while ( my $answer = $answers->next ) {
+        $answers_parsed->{$i} = {
+            code  => $answer->question->code,
+            value => $answer->answer_value
+        };
+
+        $i++;
+    }
+
+    my $screening = $self->screenings->create(
+        {
+            question_map_id => $question_map->id,
+            answers         => to_json( $answers_parsed )
+        }
+    );
+
+    return $screening
+}
+
+sub reset_screening {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'screening' },
+        {
+            prefetch => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    return $self->answers->search( { question_map_id => $question_map->id } )->delete;
 }
 
 __PACKAGE__->meta->make_immutable;

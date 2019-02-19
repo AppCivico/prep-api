@@ -186,6 +186,10 @@ sub action_specs {
                     elsif ( $question_code eq 'SC5' ) {
                         $go_to_autotest = $finished_quiz == 1 ? 1 : 0;
                     }
+
+                    if ( $finished_quiz ) {
+                        $recipient->build_screening_report;
+                    }
                 }
                 else {
                     if ( $question_code eq 'AC4' ) {

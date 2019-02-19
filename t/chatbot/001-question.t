@@ -1669,17 +1669,7 @@ db_transaction {
             )
             ->status_is(201)
             ->json_is('/finished_quiz', 1)
-            ->json_has('/emergency_rerouting');
-
-            $t->get_ok(
-                '/api/chatbot/recipient/pending-question',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    category       => 'screening'
-                }
-            )
-            ->status_is(200)
+			->json_is('/emergency_rerouting', 1)
             ->json_has('/emergency_rerouting');
         };
 

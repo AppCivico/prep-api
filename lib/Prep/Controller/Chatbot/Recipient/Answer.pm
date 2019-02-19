@@ -24,6 +24,10 @@ sub post {
         with => $c->req->params->to_hash
     );
 
+    if ( $answer->{finished_quiz} == 1 && $c->req->params->to_hash->{category} eq 'screening' ) {
+        $recipient->reset_screening;
+    }
+
     return $c->render(
         status => 201,
         json   => {
