@@ -179,12 +179,9 @@ sub action_specs {
                         if ( $answer->answer_value eq '1' ) {
                             $go_to_appointment = 1
                         }
-                        else {
-                            $go_to_autotest = 1
-                        }
-                    }
-                    elsif ( $question_code eq 'SC5' ) {
-                        $go_to_autotest = $finished_quiz == 1 ? 1 : 0;
+                        #else {
+                        #    $go_to_autotest = 1
+                        #}
                     }
 
                     if ( $finished_quiz ) {
@@ -205,7 +202,7 @@ sub action_specs {
                 ( defined $is_prep ? ( is_part_of_research => $is_prep ) : () ),
                 ( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () ),
                 ( defined $go_to_appointment ? ( go_to_appointment => $go_to_appointment ) : () ),
-                ( defined $go_to_autotest ? ( go_to_autotest => $go_to_autotest ) : () ),
+                ( defined $pending_question_data->{go_to_autotest} ? ( go_to_autotest => $pending_question_data->{go_to_autotest} ) : () ),
                 ( defined $is_target_audience ? ( is_target_audience => $is_target_audience ) : () ),
                 ( defined $pending_question_data->{suggest_appointment} ? ( suggest_appointment => $pending_question_data->{suggest_appointment} ) : () ),
 				( defined $pending_question_data->{emergency_rerouting} ? ( emergency_rerouting => $pending_question_data->{emergency_rerouting} ) : () )

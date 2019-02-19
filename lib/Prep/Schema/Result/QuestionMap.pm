@@ -359,7 +359,6 @@ sub build_conditions {
 
                 push @conditions, { -exists => $condition };
             }
-
         }
         elsif ( $next_question_code eq 'SC2' ) {
 
@@ -376,6 +375,21 @@ sub build_conditions {
 
             }
         }
+		elsif ( $next_question_code eq 'SC6a' ) {
+
+			for my $question ( qw( SC2 SC3 SC4 SC5 ) ) {
+
+                $condition = $answers_rs->search(
+                    {
+                        'question.code' => $question,
+                        answer_value    => '1'
+                    },
+                    { join => 'question'}
+                )->as_query;
+
+                push @conditions, { -exists => $condition };
+            }
+		}
     }
 
     return @conditions;

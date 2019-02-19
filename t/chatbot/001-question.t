@@ -1705,7 +1705,7 @@ db_transaction {
                     fb_id          => $fb_id,
                     code           => 'SC2',
                     category       => 'screening',
-                    answer_value   => '1'
+                    answer_value   => '2'
                 }
             )
             ->status_is(201)
@@ -1748,8 +1748,7 @@ db_transaction {
                 }
             )
             ->status_is(201)
-            ->json_is('/finished_quiz', 0)
-            ->json_has('/suggest_appointment');
+            ->json_is('/finished_quiz', 0);
 
             $t->post_ok(
                 '/api/chatbot/recipient/answer',

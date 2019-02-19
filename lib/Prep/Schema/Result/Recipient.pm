@@ -674,23 +674,32 @@ sub get_pending_question_data {
                 # Verificando se batem as condições para indicar consulta
                 # Isto é: qualquer resposta positiva para SC2 a SC5
                 $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+                my $suggest_appointment_conditions = $self->verify_question_condition( next_question_code => 'SC6a', question_map => $question_map_result );
 
                 # Caso ele tenha respondigo sim para qualquer uma entre a SC2 e a SC5
                 # Ou tenha respondido não para todas e respondeu 2 ou 3 para a SC1
                 # Devo convidar a marcar uma consulta de recrutamento.
                 my $first_answer_on_screening = $self->screening_first_answer;
-                if ( $conditions_satisfied > 0 ) {
+                if ( $conditions_satisfied == 0 && $suggest_appointment_conditions == 0 && $first_answer_on_screening->answer_value =~ /(2|3)/ ) {
                     $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
                     $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
                     $count_more = scalar @pending_questions;
 
+                }
+                elsif ( $conditions_satisfied != 0 && $suggest_appointment_conditions > 0 ) {
+                    $question   = undef;
+                    $has_more   = 0;
+                    $count_more = 0;
+
                     %flags = ( suggest_appointment => 1 );
                 }
-                elsif ( $conditions_satisfied == 0 && $first_answer_on_screening->answer_value =~ /(2|3)/ ) {
-                    $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
-                    $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
-                    $count_more = scalar @pending_questions;
-                }
+				elsif ( $conditions_satisfied == 0 && $suggest_appointment_conditions == 0 && $first_answer_on_screening->answer_value eq '4' ) {
+					$question   = undef;
+					$has_more   = 0;
+					$count_more = 0;
+
+					%flags = ( go_to_autotest => 1 );
+				}
                 # Caso contrário, a triagem acaba e realizamos o fluxo informativo.
                 else {
                     $question   = undef;
