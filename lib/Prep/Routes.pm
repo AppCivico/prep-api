@@ -55,6 +55,10 @@ sub register {
 	my $term_signature = $recipient->route('/term-signature');
 	$term_signature->post('/')->to('chatbot-recipient-term_signature#post');
 
+	# Recipient::ResetScreening
+	my $reset_screening = $recipient->route('/reset-screening');
+	$reset_screening->post('/')->to('chatbot-recipient-reset_screening#post');
+
     # Appointment
 	my $appointment = $chatbot->route('/appointment');
 

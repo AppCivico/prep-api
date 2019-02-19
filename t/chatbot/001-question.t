@@ -1829,6 +1829,25 @@ db_transaction {
             ->status_is(201)
             ->json_is('/finished_quiz', 0);
 
+            # Resetando screening
+            db_transaction{
+                my $answer_rs = $schema->resultset('Answer')->search( { question_map_id => $question_map->id } );
+
+                is( $answer_rs->count, 4, '4 rows' );
+
+                $t->post_ok(
+                    '/api/chatbot/recipient/reset-screening',
+                    form => {
+						security_token => $security_token,
+                        fb_id          => $fb_id,
+                    }
+                )
+                ->status_is(200)
+                ->json_is('/success', 1);
+
+				is( $answer_rs->count, 0, '0 rows' );
+            };
+
             $t->post_ok(
                 '/api/chatbot/recipient/answer',
                 form => {
