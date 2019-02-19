@@ -69,10 +69,22 @@ sub register {
 	$appointment->route('/available-dates')->get('/')->to('chatbot-appointment-available_dates#get');
 
     # Internal
-    my $internal = $api->route('/internal')->under->to('internal#validade_security_token');
+    my $internal = $api->route('/internal');
 
     # Internal::DeleteAnswer
-    $internal->route('/delete-answers')->post('/')->to('internal-delete_answer#post');
+    my $delete_answer = $internal->route('/delete-answers')->under->to('internal#validade_security_token');
+    $delete_answer->post('/')->to('internal-delete_answer#post');
+
+	# Internal::Integration
+	my $internal_integration = $internal->route('/integration')->under->to('internal-integration#validate_header_and_pass');
+
+	# Internal::Integration::Recipient
+	my $integration_recipient = $internal_integration->route('/recipient')->under->to('internal-integration-recipient#stasher');
+    $integration_recipient->get('/')->to('internal-integration-recipient#get');
+
+    # Internal::Integration::Recipient::Sync
+    my $sync = $integration_recipient->route('/sync');
+    $sync->post('/')->to('internal-integration-recipient-sync#post');
 }
 
 1;

@@ -345,6 +345,10 @@ sub verifiers_specs {
                 is_part_of_research => {
                     required => 0,
                     type     => 'Bool'
+                },
+                is_prep => {
+                    required => 0,
+                    type     => 'Bool'
                 }
             }
         ),
@@ -361,10 +365,12 @@ sub action_specs {
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
 
-            if ( defined $values{is_part_of_research} ) {
-                my $flag = delete $values{is_part_of_research};
+            my @updatable_flags = qw( is_part_of_research is_prep );
+            for my $flag ( @updatable_flags ) {
+                next unless defined $values{$flag};
 
-                $self->recipient_flag->update( { is_part_of_research => $flag } );
+				$self->recipient_flag->update( { $flag => $values{$flag} } );
+                delete $values{$flag};
             }
 
             $self->update(\%values);
