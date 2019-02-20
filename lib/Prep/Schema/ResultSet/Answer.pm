@@ -79,7 +79,7 @@ sub action_specs {
 			$values{question_map_id} = $question_map->id;
 
             my $recipient              = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
-            my $pending_question_data  = $recipient->get_pending_question_data($category);
+            my $pending_question_data  = $recipient->get_next_question_data($category);
             my $next_question          = $pending_question_data->{question} ? $pending_question_data->{question}->decoded : undef;
 
             # Caso não tenha uma próxima pergunta
@@ -120,12 +120,19 @@ sub action_specs {
                 }
             }
 
-            my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research, $go_to_appointment, $go_to_autotest, $is_target_audience);
+            my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research, $go_to_appointment, $go_to_autotest, $is_target_audience, %flags);
             $self->result_source->schema->txn_do( sub {
                 # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
                 $answer = $self->create(\%values);
+                $answer->update_stash;
 
                 if ( $question_map->category_id == 1 ) {
+                    my $foo = $recipient->get_next_question_data($category);
+
+                    if ( !defined $foo->{question} ) {
+                        %flags = $answer->flags;
+                    }
+
                     if ( $pending_question_data->{has_more} == 0 ) {
                         $recipient->recipient_flag->update( { finished_quiz => 1 } );
 
@@ -199,8 +206,9 @@ sub action_specs {
             return {
                 answer        => $answer,
                 finished_quiz => $finished_quiz,
-                ( defined $is_prep ? ( is_part_of_research => $is_prep ) : () ),
-                ( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () ),
+                %flags,
+                #( defined $is_prep ? ( is_part_of_research => $is_prep ) : () ),
+                #( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () ),
                 ( defined $go_to_appointment ? ( go_to_appointment => $go_to_appointment ) : () ),
                 ( defined $pending_question_data->{go_to_autotest} ? ( go_to_autotest => $pending_question_data->{go_to_autotest} ) : () ),
                 ( defined $is_target_audience ? ( is_target_audience => $is_target_audience ) : () ),
@@ -209,6 +217,12 @@ sub action_specs {
             };
         }
     };
+}
+
+sub question_code_by_map_id {
+    my ($self, $question_map_id) = @_;
+
+    return $self->search( { 'question.question_map_id' => $question_map_id }, { prefetch => 'question' } )
 }
 
 1;

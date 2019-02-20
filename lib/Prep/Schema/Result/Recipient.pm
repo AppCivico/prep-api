@@ -378,6 +378,27 @@ sub action_specs {
     };
 }
 
+sub get_next_question_data {
+    my ($self, $category) = @_;
+
+	my $question_map_result = $self->result_source->schema->resultset('QuestionMap')->search(
+		{ 'category.name' => $category },
+		{
+			prefetch => 'category',
+			order_by => { -desc => 'created_at' }
+		}
+	)->next or die \['category', 'invalid'];
+
+    my $stash = $self->stashes->find_or_create(
+        { question_map_id => $question_map_result->id },
+        { key => 'stash_recipient_id_question_map_id_key' }
+    );
+    $stash->initiate if $stash->is_empty;
+
+    #use DDP; p $stash->next_question;
+    return $stash->next_question;
+}
+
 sub get_pending_question_data {
     my ($self, $category) = @_;
 
@@ -401,11 +422,11 @@ sub get_pending_question_data {
             { key => 'stash_recipient_id_question_map_id_key' }
         );
 
-        $stash->update( { value => $question_map_result->map } ) if $stash->is_empty;
+        $stash->initiate if $stash->is_empty;
 
         $question_map = $stash->parsed;
 
-        my @answered_questions = $self->answers->search( { 'question.question_map_id' => $question_map_result->id }, { prefetch => 'question' } )->get_column('question.code')->all();
+        my @answered_questions = $self->answers->question_code_by_map_id( $question_map_result->id )->get_column('question.code')->all();
 
         my @pending_questions = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
 
@@ -775,10 +796,6 @@ sub is_prep {
 sub is_eligible_for_research {
     my ($self) = @_;
 
-	if (is_test) {
-		return 1;
-	}
-
     if ( !$self->recipient_flag->is_eligible_for_research ) {
 		$self->update_is_eligible_for_research()
     }
@@ -788,6 +805,15 @@ sub is_eligible_for_research {
 
 sub update_is_eligible_for_research {
     my ($self) = @_;
+
+    if ( !$self->is_target_audience ) {
+		return $self->recipient_flag->update(
+            {
+                is_eligible_for_research => 0,
+                updated_at               => \'NOW()'
+            }
+        )
+    }
 
     my $answer = $self->answers->search( { 'question.code' => { 'in' => ['AC5', 'B3', 'C1', 'C2', 'C3', 'C4'] } }, { prefetch => 'question' } );
 
@@ -934,7 +960,7 @@ sub update_is_part_of_research {
     $self->recipient_flag->update(
         {
             is_part_of_research => $is_part_of_research,
-			updated_at               => \'NOW()'
+			updated_at          => \'NOW()'
 		}
     );
 }
@@ -952,24 +978,50 @@ sub is_part_of_research {
 sub update_is_target_audience {
     my ($self) = @_;
 
-    my $is_target_audience;
+    my $is_target_audience = 1;
 
-    my $answer = $self->answers->search(
-        { 'question.code' => 'A1' },
+	my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+		{ 'category.name' => 'quiz' },
+		{
+			join => 'category',
+			order_by => { -desc => 'created_at' }
+		}
+	)->next;
+
+    my $answer_rs = $self->answers->search(
+        {
+            'question.code'      => { -in => ['A1', 'A2', 'A3'] },
+            'me.question_map_id' => $question_map->id
+        },
         {
             prefetch => 'question',
             order_by => { -desc => 'question.question_map_id' }
         }
-    )->next;
+    );
 
-    if ( $answer && $answer->answer_value =~ /^(15|16|17|18|19)$/ ) {
-        $is_target_audience = 1;
+    if ( $answer_rs->count == 0 ) {
+		$self->recipient_flag->update(
+			{
+				is_target_audience => undef,
+				updated_at         => \'NOW()'
+			}
+		);
     }
-    elsif ( !$answer ) {
-        $is_target_audience = undef;
-    }
-    else {
-        $is_target_audience = 0;
+
+    while ( my $answer = $answer_rs->next ) {
+        my $code = $answer->question->code;
+
+        if ( $code eq 'A1' ) {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
+        }
+        elsif ( $code eq 'A2' ) {
+			$is_target_audience = 0 unless $answer->answer_value eq '1';
+        }
+        else {
+			$is_target_audience = 0 unless $answer->answer_value eq '1';
+        }
+
+        last if $is_target_audience == 0;
     }
 
     $self->recipient_flag->update(
@@ -1031,19 +1083,27 @@ sub update_finished_quiz {
 
     my $signed_term;
 
-    my $pending_question_data = $self->get_pending_question_data('quiz');
+    my $stash = $self->stash_by_category('quiz');
 
-    if ( $pending_question_data->{question} ) {
-        return;
+    my $finished_quiz;
+
+    if ( !$stash || ( $stash && !$stash->finished ) ) {
+        $finished_quiz = 0;
+
+        if ( $stash ) {
+            return if $self->recipient_flag->finished_quiz == $finished_quiz;
+        }
     }
     else {
-        return $self->recipient_flag->update(
-            {
-                finished_quiz => 1,
-                updated_at    => \'NOW()'
-            }
-        )
+        $finished_quiz = 1;
     }
+
+    return $self->recipient_flag->update(
+        {
+            finished_quiz => $finished_quiz,
+            updated_at    => \'NOW()'
+        }
+    )
 }
 
 sub finished_quiz {
@@ -1102,6 +1162,29 @@ sub reset_screening {
     )->next;
 
     return $self->answers->search( { question_map_id => $question_map->id } )->delete;
+}
+
+sub stash_by_category {
+    my ($self, $category) = @_;
+
+    die \['category', 'missing'] unless $category;
+
+    return $self->stashes->search(
+        { 'category.name' => $category },
+        { prefetch => { 'question_map' => 'category' } }
+    )->next
+}
+
+sub all_flags {
+    my ($self) = @_;
+
+    my @flags = qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz );
+
+    return
+        map {
+            $_ => $self->$_
+        } @flags
+
 }
 
 __PACKAGE__->meta->make_immutable;

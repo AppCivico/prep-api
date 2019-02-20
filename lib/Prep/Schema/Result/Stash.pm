@@ -79,6 +79,12 @@ __PACKAGE__->table("stash");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 finished
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -104,6 +110,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "finished",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -170,8 +178,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 13:16:58
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:sovjGa/ySPVEUZqEAKGA8Q
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-17 22:17:16
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZFuzH1uxv82JCJT3tFLpuQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -188,6 +196,84 @@ sub parsed {
     my ($self) = @_;
 
     return from_json( $self->value );
+}
+
+sub initiate {
+    my ($self) = @_;
+
+    return $self->update( { value => $self->question_map->map } );
+}
+
+sub answered_questions {
+    my ($self) = @_;
+
+    return $self->recipient->answers->question_code_by_map_id( $self->question_map_id )->get_column('question.code')->all();
+}
+
+sub next_question {
+    my ($self) = @_;
+
+    my $ret;
+    if ( $self->finished ) {
+        # Caso não tenha uma próxima pergunta
+        # Devo mostrar flags
+        my %flags = $self->recipient->all_flags;
+
+        $ret = {
+            question   => undef,
+            has_more   => 0,
+			count_more => 0,
+
+            %flags
+        }
+    }
+    else {
+        my $question_map       = $self->parsed;
+        my @answered_questions = $self->answered_questions;
+        my @pending_questions  = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
+
+        my $next_question_code = scalar @pending_questions > 0 ? $question_map->{ $pending_questions[0] } : undef;
+        return $next_question_code unless defined $next_question_code;
+
+        my $question_rs   = $self->result_source->schema->resultset('Question');
+        my $next_question = $question_rs->search( { code => $next_question_code, question_map_id => $self->question_map_id } )->next;
+
+        $ret = {
+			question   => $next_question,
+			has_more   => scalar @pending_questions > 1 ? 1 : 0,
+			count_more => scalar @pending_questions - 1,
+        }
+    }
+
+    return $ret;
+}
+
+sub remove_question {
+    my ($self, $code) = @_;
+
+    die \['code', 'missing'] unless $code;
+
+    my $map = $self->parsed;
+
+	my %r_map = reverse %{$map};
+	my $key   = $r_map{$code};
+	die \['code', 'invalid'] unless $key;
+
+    delete $map->{$key};
+
+    # Deletando qualquer pergunta atrelada por salto de lógica
+    my $question       = $self->result_source->schema->resultset('Question')->search( { code => $code } )->next;
+    my $question_rules = $question->rules_parsed;
+
+    if ( $question_rules && scalar @{ $question_rules->{logic_jumps} } > 0 ) {
+        for my $logic_jump ( @{ $question_rules->{logic_jumps} } ) {
+
+            $key = $r_map{ $logic_jump->{code} };
+            delete $map->{$key} if $key;
+        }
+    }
+
+    return $self->update( { value => to_json( $map ) } );
 }
 
 __PACKAGE__->meta->make_immutable;
