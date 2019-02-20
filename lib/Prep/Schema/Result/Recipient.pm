@@ -395,7 +395,6 @@ sub get_next_question_data {
     );
     $stash->initiate if $stash->is_empty;
 
-    #use DDP; p $stash->next_question;
     return $stash->next_question;
 }
 
@@ -978,8 +977,6 @@ sub is_part_of_research {
 sub update_is_target_audience {
     my ($self) = @_;
 
-    my $is_target_audience = 1;
-
 	my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
 		{ 'category.name' => 'quiz' },
 		{
@@ -990,13 +987,10 @@ sub update_is_target_audience {
 
     my $answer_rs = $self->answers->search(
         {
-            'question.code'      => { -in => ['A1', 'A2', 'A3'] },
+            'question.code'      => { -in => ['A2', 'A1', 'A5', 'A3'] },
             'me.question_map_id' => $question_map->id
         },
-        {
-            prefetch => 'question',
-            order_by => { -desc => 'question.question_map_id' }
-        }
+        { join => 'question' }
     );
 
     if ( $answer_rs->count == 0 ) {
@@ -1008,6 +1002,7 @@ sub update_is_target_audience {
 		);
     }
 
+    my $is_target_audience = 1;
     while ( my $answer = $answer_rs->next ) {
         my $code = $answer->question->code;
 
@@ -1017,8 +1012,11 @@ sub update_is_target_audience {
         elsif ( $code eq 'A2' ) {
 			$is_target_audience = 0 unless $answer->answer_value eq '1';
         }
+        elsif ( $code eq 'A3' ) {
+            $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
+        }
         else {
-			$is_target_audience = 0 unless $answer->answer_value eq '1';
+			$is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
         }
 
         last if $is_target_audience == 0;
@@ -1035,7 +1033,7 @@ sub update_is_target_audience {
 sub is_target_audience {
 	my ($self) = @_;
 
-	if ( !$self->recipient_flag->is_target_audience ) {
+	if ( !$self->recipient_flag->is_target_audience || $self->recipient_flag->is_target_audience == 1 ) {
 		$self->update_is_target_audience();
 	}
 

@@ -127,24 +127,9 @@ sub action_specs {
                 $answer->update_stash;
 
                 if ( $question_map->category_id == 1 ) {
-                    my $foo = $recipient->get_next_question_data($category);
+                    $pending_question_data = $recipient->get_next_question_data($category);
 
-                    if ( !defined $foo->{question} ) {
-                        %flags = $answer->flags;
-                    }
-
-                    if ( $pending_question_data->{has_more} == 0 ) {
-                        $recipient->recipient_flag->update( { finished_quiz => 1 } );
-
-                        $is_prep                  = $recipient->is_part_of_research;
-                        $is_eligible_for_research = $recipient->is_eligible_for_research;
-                        $is_target_audience       = $recipient->is_target_audience if $next_question->{code} eq 'A1';
-                        $finished_quiz = 1;
-
-                        # Gerando token de integração
-                        $recipient->generate_integration_token;
-                    }
-                    else {
+                    if ( defined $pending_question_data->{question} ) {
                         $is_target_audience = $recipient->is_target_audience if $next_question->{code} eq 'A1';
 
                         if ( $next_question->{code} eq 'A1' ) {
@@ -172,9 +157,19 @@ sub action_specs {
                             $finished_quiz = 0;
 
                         }
-
                     }
+                    else {
+                        $recipient->recipient_flag->update( { finished_quiz => 1 } );
+						$is_prep                  = $recipient->is_part_of_research;
+						$is_eligible_for_research = $recipient->is_eligible_for_research;
+						$is_target_audience       = $recipient->is_target_audience if $next_question->{code} eq 'A1';
+						$finished_quiz = 1;
 
+						# Gerando token de integração
+						$recipient->generate_integration_token;
+
+                        %flags = $answer->flags;
+                    }
                 }
                 elsif ($question_map->category_id == 2) {
                     $pending_question_data = $recipient->get_pending_question_data($category);
@@ -211,7 +206,7 @@ sub action_specs {
                 #( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () ),
                 ( defined $go_to_appointment ? ( go_to_appointment => $go_to_appointment ) : () ),
                 ( defined $pending_question_data->{go_to_autotest} ? ( go_to_autotest => $pending_question_data->{go_to_autotest} ) : () ),
-                ( defined $is_target_audience ? ( is_target_audience => $is_target_audience ) : () ),
+                # ( defined $is_target_audience ? ( is_target_audience => $is_target_audience ) : () ),
                 ( defined $pending_question_data->{suggest_appointment} ? ( suggest_appointment => $pending_question_data->{suggest_appointment} ) : () ),
 				( defined $pending_question_data->{emergency_rerouting} ? ( emergency_rerouting => $pending_question_data->{emergency_rerouting} ) : () )
             };
