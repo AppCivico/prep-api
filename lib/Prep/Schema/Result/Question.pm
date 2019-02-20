@@ -98,6 +98,16 @@ __PACKAGE__->table("question");
   is_foreign_key: 1
   is_nullable: 0
 
+=head2 rules
+
+  data_type: 'json'
+  is_nullable: 1
+
+=head2 send_flags
+
+  data_type: 'text[]'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -131,6 +141,10 @@ __PACKAGE__->add_columns(
   },
   "question_map_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
+  "rules",
+  { data_type => "json", is_nullable => 1 },
+  "send_flags",
+  { data_type => "text[]", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -178,8 +192,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 12:01:59
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:xKL6F/7emNUEM7DnUHJa7A
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-18 13:25:14
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+8msvB3Vp7xIA0OQ/zTDWw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -210,6 +224,21 @@ sub answer_by_choice_value {
     my $multiple_choices = from_json( $self->multiple_choices );
 
     return $multiple_choices->{$value};
+}
+
+sub assert_rules {
+    my ($self) = @_;
+
+    return 0 unless $self->rules;
+
+    my $rules = from_json( $self->rules );
+    use DDP; p $rules;
+}
+
+sub rules_parsed {
+    my ($self) = @_;
+
+    return from_json( $self->rules ) if $self->rules;
 }
 
 __PACKAGE__->meta->make_immutable;
