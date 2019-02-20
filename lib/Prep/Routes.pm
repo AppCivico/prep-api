@@ -85,6 +85,10 @@ sub register {
     # Internal::Integration::Recipient::Sync
     my $sync = $integration_recipient->route('/sync');
     $sync->post('/')->to('internal-integration-recipient-sync#post');
+
+	# Internal::Integration::Recipient::Notification
+	my $notification = $integration_recipient->route('/notification');
+	$notification->post('/')->to('internal-integration-recipient-notification#post');
 }
 
 1;

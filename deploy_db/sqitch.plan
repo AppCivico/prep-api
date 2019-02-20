@@ -30,3 +30,4 @@
 0026-add-flag [0025-add-signed_term] 2019-02-15T18:26:51Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding boolean to the 'recipient_flags' table
 0027-add-screening [0026-add-flag] 2019-02-19T13:20:26Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the screening table
 0028-add-question-rules [0027-add-screening] 2019-02-20T13:06:43Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding rules to the question
+0029-add-notification [0028-add-question-rules] 2019-02-20T18:40:09Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the 'external_notification' table

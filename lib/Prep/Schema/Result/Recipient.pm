@@ -247,6 +247,21 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 external_notifications
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::ExternalNotification>
+
+=cut
+
+__PACKAGE__->has_many(
+  "external_notifications",
+  "Prep::Schema::Result::ExternalNotification",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 recipient_flag
 
 Type: might_have
@@ -308,8 +323,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-19 09:59:18
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:pNeUUtXnVB9g1tIQfNBn9g
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-20 14:51:08
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:xNIajsVdMN7IuhMpX/lvaA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
