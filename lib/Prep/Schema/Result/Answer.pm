@@ -172,6 +172,8 @@ __PACKAGE__->belongs_to(
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 
+use Scalar::Util qw( looks_like_number );
+
 sub update_stash {
     my ($self, $finished) = @_;
 
@@ -194,14 +196,27 @@ sub update_stash {
 
         my $conditions_satisfied;
         if ( $rules->{qualification_conditions} && scalar @{ $rules->{qualification_conditions} } > 0 ) {
-            $conditions_satisfied = grep { $_ eq $answer } @{ $rules->{qualification_conditions} };
+            # Verificando se a condição de qualificação é a multipla escolha
+            # ou uma flag
+            if ( looks_like_number( $rules->{qualification_conditions}->[0] ) ) {
+                $conditions_satisfied = grep { $_ eq $answer } @{ $rules->{qualification_conditions} };
 
-            if ( $conditions_satisfied == 0 ) {
-                # Caso seja do quiz devo desqualificar e atualizar os booleans
-                $recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
-
-                $stash->update( { finished => 1 } );
             }
+            else {
+                # São flags
+                my %recipient_flags = $recipient->all_flags;
+
+                $conditions_satisfied = grep { $recipient_flags{$_} == 1 } @{ $rules->{qualification_conditions} };
+            }
+
+			if ( $conditions_satisfied == 0 ) {
+
+				# Caso seja do quiz devo desqualificar e atualizar os booleans
+				$recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
+
+				$stash->update( { finished => 1 } );
+			}
+
         }
 
         if ( $rules->{logic_jumps} && scalar @{ $rules->{logic_jumps} } > 0 ) {

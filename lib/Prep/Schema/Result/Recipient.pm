@@ -829,21 +829,21 @@ sub update_is_eligible_for_research {
         )
     }
 
-    my $answer = $self->answers->search( { 'question.code' => { 'in' => ['AC5', 'B3', 'C1', 'C2', 'C3', 'C4'] } }, { prefetch => 'question' } );
+    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1a', 'B2a', 'B2b', 'B3', 'B4', 'B5', 'B6' ] } }, { prefetch => 'question' } );
 
     my $conditions_met = 0;
-    while ( my $answer = $answer->next() ) {
+    while ( my $answer = $answer_rs->next() ) {
         my $code = $answer->question->code;
-        $conditions_met = 1;
-        if ( $code =~ /^(B3|C1|C3|C4)$/ ) {
 
-            $conditions_met = 0 unless $answer->answer_value eq '1';
+        if ( $code eq 'B4' ) {
+
+            $conditions_met = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
         }
-        elsif ( $code eq 'C2' ) {
-            $conditions_met = 0 unless $answer->answer_value eq '2';
+        else {
+            $conditions_met = 1 if $answer->answer_value eq '1';
         }
 
-        next if $conditions_met == 0;
+        next if $conditions_met == 1;
     }
 
     $self->recipient_flag->update(
