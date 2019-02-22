@@ -1174,7 +1174,12 @@ sub reset_screening {
         }
     )->next;
 
-    return $self->answers->search( { question_map_id => $question_map->id } )->delete;
+    $self->result_source->schema->txn_do( sub {
+        $self->answers->search( { question_map_id => $question_map->id } )->delete;
+
+        my $stash = $self->stashes->search( { question_map_id => $question_map->id } )->next;
+        $stash->update( { finished => 0 } ) if $stash;
+    });
 }
 
 sub stash_by_category {
