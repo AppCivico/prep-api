@@ -166,7 +166,7 @@ sub action_specs {
 						$finished_quiz = 1;
 
 						# Gerando token de integração
-						$recipient->generate_integration_token;
+						$recipient->generate_integration_token if $is_eligible_for_research == 1;
 
                         %flags = $answer->flags;
                     }
