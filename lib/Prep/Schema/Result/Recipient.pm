@@ -794,7 +794,7 @@ sub is_prep {
         return 1;
     }
 
-   return $self->recipient_flag->is_prep;
+   return $self->recipient_flag->is_prep ? 1 : 0;
 }
 
 sub is_eligible_for_research {
