@@ -253,6 +253,8 @@ db_transaction {
         ->json_has('/finished_quiz')
         ->json_has('/signed_term')
         ->json_has('/is_target_audience')
+        ->json_has('/is_prep')
+        ->json_has('/has_appointments')
         ->json_is('/fb_id',   '710488549074724')
         ->json_is('/page_id', '1573221416102831')
         ->json_is('/name',    'foobar')

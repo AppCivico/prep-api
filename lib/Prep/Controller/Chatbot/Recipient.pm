@@ -65,6 +65,7 @@ sub get {
             is_prep                  => $recipient->is_prep,
             is_target_audience       => $recipient->is_target_audience,
             signed_term              => $recipient->signed_term,
+            has_appointments         => $recipient->has_appointments,
         }
     )
 }

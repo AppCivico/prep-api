@@ -1195,5 +1195,11 @@ sub all_flags {
 
 }
 
+sub has_appointments {
+    my ($self) = @_;
+
+    return $self->appointments->count > 0 ? 1 : 0;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
