@@ -262,13 +262,18 @@ sub remove_question {
     delete $map->{$key};
 
     # Deletando qualquer pergunta atrelada por salto de lógica
-    my $question       = $self->result_source->schema->resultset('Question')->search( { code => $code } )->next;
+    my $question = $self->result_source->schema->resultset('Question')->search(
+        {
+            code            => $code,
+            question_map_id => $self->question_map_id
+        }
+    )->next;
     my $question_rules = $question->rules_parsed;
 
     if ( $question_rules && scalar @{ $question_rules->{logic_jumps} } > 0 ) {
         for my $logic_jump ( @{ $question_rules->{logic_jumps} } ) {
-
             $key = $r_map{ $logic_jump->{code} };
+
             delete $map->{$key} if $key;
         }
     }
