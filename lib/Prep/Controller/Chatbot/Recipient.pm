@@ -62,6 +62,7 @@ sub get {
             created_at               => $recipient->created_at,
             is_eligible_for_research => $recipient->is_eligible_for_research,
             is_part_of_research      => $recipient->is_part_of_research,
+            is_prep                  => $recipient->is_prep,
             is_target_audience       => $recipient->is_target_audience,
             signed_term              => $recipient->signed_term,
         }
