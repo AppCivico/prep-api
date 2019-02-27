@@ -258,8 +258,12 @@ sub assert_quota_number {
 
     my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'invalid'];
 
+    # Verificando hms
 	die \[ 'datetime_start', 'does not matches quota start time' ] unless $selected_quota->{start} eq $start_time->hms;
-	die \[ 'datetime_end',   'does not matches quota end time' ] unless $selected_quota->{end}   eq $end_time->hms;
+	die \[ 'datetime_end',   'does not matches quota end time' ]   unless $selected_quota->{end}   eq $end_time->hms;
+
+    # Verifico se o hms já não está ocupado no ymd
+    $self->appointments->search( { appointment_at => $start_time } )->count and die \['date', 'invalid'];
 }
 
 __PACKAGE__->meta->make_immutable;
