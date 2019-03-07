@@ -292,15 +292,15 @@ use DateTime;
 use WebService::GoogleCalendar;
 
 has _calendar => (
-	is         => 'ro',
-	isa        => 'WebService::GoogleCalendar',
-	lazy_build => 1,
+    is         => 'ro',
+    isa        => 'WebService::GoogleCalendar',
+    lazy_build => 1,
 );
 
 sub _build__calendar { WebService::GoogleCalendar->instance }
 
 sub available_dates {
-    my ($self) = @_;
+    my ($self, $page, $rows) = @_;
 
     my $appointment_rs = $self->result_source->schema->resultset('Appointment');
     my $appointment_windows = $self->appointment_windows;
@@ -315,8 +315,8 @@ sub available_dates {
             my @base_quotas = ( 1 .. $_->quotas );
 
             # Parseio o começo e o fim da janela de atendimento
-			my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
-			my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
+            my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
+            my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
 
             # Pego a diferença entre os dois em segundos e divido pelo numero de cotas
             my $delta = ( $end_time - $start_time );
@@ -327,12 +327,12 @@ sub available_dates {
             map {
                 my $ymd = get_ymd_by_day_of_the_week($_);
 
-				my @taken_quotas = $appointment_rs->search(
-					{
-						appointment_window_id  => $appointment_window_id,
+                my @taken_quotas = $appointment_rs->search(
+                    {
+                        appointment_window_id  => $appointment_window_id,
                         appointment_at         => { '>=' => \"'$ymd'::date", '<' => \"'$ymd'::date + interval '1 day'"},
-					}
-				)->get_column('quota_number')->all();
+                    }
+                )->get_column('quota_number')->all();
 
                 my %taken_quotas = map { $_ => 1 } @taken_quotas;
 
@@ -360,16 +360,16 @@ sub available_dates {
                     ]
                 }
             } @days_of_week;
-        } $self->appointment_windows->all()
+        } $self->appointment_windows->search(undef, { page => $page, rows => $rows } )->all()
     ];
 }
 
 sub sync_appointments {
     my ($self) = @_;
 
-	my $res = $self->_calendar->get_calendar_events( calendar => $self, google_id => $self->google_id );
+    my $res = $self->_calendar->get_calendar_events( calendar => $self, google_id => $self->google_id );
 
-	my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+    my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
 
     eval {
         for my $appointment (@manual_appointments) {
