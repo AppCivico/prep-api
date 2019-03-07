@@ -28,10 +28,10 @@ sub post {
 			{
                 finished_quiz            => 0,
 				is_eligible_for_research => undef,
-				is_part_of_research      => undef,
+				is_part_of_research      => 0,
 				is_target_audience       => undef,
-				signed_term              => undef,
-				is_prep                  => undef,
+				signed_term              => 0,
+				is_prep                  => 0,
 			}
 		);
         $recipient->term_signatures->delete;

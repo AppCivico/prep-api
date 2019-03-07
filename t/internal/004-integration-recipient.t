@@ -76,7 +76,7 @@ db_transaction {
         ->json_has('/is_prep')
         ->json_is('/integration_token', $integration_token)
         ->json_is('/is_part_of_research', 1)
-        ->json_is('/is_prep', undef);
+        ->json_is('/is_prep', 0);
     };
 };
 

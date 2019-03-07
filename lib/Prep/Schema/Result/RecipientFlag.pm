@@ -56,12 +56,14 @@ __PACKAGE__->table("recipient_flags");
 =head2 is_part_of_research
 
   data_type: 'boolean'
-  is_nullable: 1
+  default_value: false
+  is_nullable: 0
 
 =head2 is_prep
 
   data_type: 'boolean'
-  is_nullable: 1
+  default_value: false
+  is_nullable: 0
 
 =head2 updated_at
 
@@ -76,7 +78,8 @@ __PACKAGE__->table("recipient_flags");
 =head2 signed_term
 
   data_type: 'boolean'
-  is_nullable: 1
+  default_value: false
+  is_nullable: 0
 
 =head2 finished_quiz
 
@@ -92,15 +95,15 @@ __PACKAGE__->add_columns(
   "is_eligible_for_research",
   { data_type => "boolean", is_nullable => 1 },
   "is_part_of_research",
-  { data_type => "boolean", is_nullable => 1 },
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "is_prep",
-  { data_type => "boolean", is_nullable => 1 },
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "updated_at",
   { data_type => "timestamp", is_nullable => 1 },
   "is_target_audience",
   { data_type => "boolean", is_nullable => 1 },
   "signed_term",
-  { data_type => "boolean", is_nullable => 1 },
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "finished_quiz",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
 );
@@ -135,8 +138,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-19 09:59:18
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:vG2MRJbRRH9ncfKe69Icmw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-03-07 15:38:34
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Tga5xG3o0TK24J58GoMRbw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

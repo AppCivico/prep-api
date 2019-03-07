@@ -43,9 +43,9 @@ sub verifiers_specs {
                     required   => 1,
                     type       => 'Str',
                     post_check => sub {
-						my $category = $_[0]->get_value('category');
+                        my $category = $_[0]->get_value('category');
 
-						die \['category', 'invalid'] unless $category =~ m/(quiz|screening|fun_questions)/;
+                        die \['category', 'invalid'] unless $category =~ m/(quiz|screening|fun_questions)/;
                     }
                 }
             }
@@ -76,7 +76,7 @@ sub action_specs {
                     order_by => { -desc => 'me.created_at' }
                 }
             )->next or die \['category', 'invalid'];
-			$values{question_map_id} = $question_map->id;
+            $values{question_map_id} = $question_map->id;
 
             my $recipient              = $self->result_source->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next;
             my $pending_question_data  = $recipient->get_next_question_data($category);
@@ -104,12 +104,12 @@ sub action_specs {
 
                 # Perguntas de texto aberto podem ser:
                 # nome (A1), cpf (A3) e data de nascimento (A2)
-				if ( $next_question->{code} eq 'A1' ) {
-					die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
-				}
-				elsif ( $next_question->{code} eq 'B2' ) {
-					die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
-				}
+                if ( $next_question->{code} eq 'A1' ) {
+                    die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
+                }
+                elsif ( $next_question->{code} eq 'B2' ) {
+                    die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
+                }
                 elsif ( $next_question->{code} eq 'A3' ) {
                     die \['answer_value', 'invalid'] unless test_cpf($values{answer_value});
 
@@ -141,7 +141,7 @@ sub action_specs {
                             }
                             else {
                                 $finished_quiz = 1;
-								$is_target_audience = 0;
+                                $is_target_audience = 0;
                             }
                         }
                         elsif ( $next_question->{code} eq 'A5' ) {
@@ -160,13 +160,13 @@ sub action_specs {
                     }
                     else {
                         $recipient->recipient_flag->update( { finished_quiz => 1 } );
-						$is_prep                  = $recipient->is_part_of_research;
-						$is_eligible_for_research = $recipient->is_eligible_for_research;
-						$is_target_audience       = $recipient->is_target_audience if $next_question->{code} eq 'A1';
-						$finished_quiz = 1;
+                        $is_prep                  = $recipient->is_part_of_research;
+                        $is_eligible_for_research = $recipient->is_eligible_for_research;
+                        $is_target_audience       = $recipient->is_target_audience if $next_question->{code} eq 'A1';
+                        $finished_quiz = 1;
 
-						# Gerando token de integração
-						$recipient->generate_integration_token if $is_eligible_for_research == 1;
+                        # Gerando token de integração
+                        $recipient->generate_integration_token if $is_eligible_for_research == 1;
 
                         %flags = $answer->flags;
                     }
@@ -208,7 +208,7 @@ sub action_specs {
                 ( defined $pending_question_data->{go_to_autotest} ? ( go_to_autotest => $pending_question_data->{go_to_autotest} ) : () ),
                 # ( defined $is_target_audience ? ( is_target_audience => $is_target_audience ) : () ),
                 ( defined $pending_question_data->{suggest_appointment} ? ( suggest_appointment => $pending_question_data->{suggest_appointment} ) : () ),
-				( defined $pending_question_data->{emergency_rerouting} ? ( emergency_rerouting => $pending_question_data->{emergency_rerouting} ) : () )
+                ( defined $pending_question_data->{emergency_rerouting} ? ( emergency_rerouting => $pending_question_data->{emergency_rerouting} ) : () )
             };
         }
     };

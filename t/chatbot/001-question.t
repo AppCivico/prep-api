@@ -294,8 +294,7 @@ db_transaction{
                         19 => 'B4',
                         20 => 'B5',
                         21 => 'B6',
-                        22 => 'B7',
-                        23 => 'AC5'
+                        22 => 'B7'
                     }),
                     category_id => 1
                 }
@@ -1830,6 +1829,9 @@ db_transaction{
         ->status_is(200)
         ->json_is('/code', 'B7');
 
+        ok( my $recipient = $schema->resultset('Recipient')->find($recipient_id), 'recipient' );
+        is( $recipient->integration_token, undef, 'integration_token is not defined' );
+
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
@@ -1841,34 +1843,8 @@ db_transaction{
             }
         )
         ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                category       => 'quiz'
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'AC5');
-
-        ok( my $recipient = $schema->resultset('Recipient')->find($recipient_id), 'recipient' );
-        is( $recipient->integration_token, undef, 'integration_token is not defined' );
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'AC5',
-                category       => 'quiz',
-                answer_value   => '1'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 1);
+        ->json_is('/finished_quiz', 1)
+        ->json_is('/is_eligible_for_research', 1);
 
         ok( $recipient = $recipient->discard_changes, 'recipient discard changes' );
         ok( defined $recipient->integration_token, 'integration_token is defined' );
