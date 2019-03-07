@@ -19,16 +19,16 @@ my $i = 1;
 #########################################
 # ALWAYS UPDATE THIS NUMBER ACCORDINGLY #
 #########################################
-my $version = 10;
+my $version = 11;
 
 open my $fh, "<:encoding(utf8)", "quiz.csv" or die "quiz.csv: $!";
 while (my $row = $csv->getline($fh)) {
     next if $row->[0] eq 'code';
 
-	my $row = {
-		code              => $row->[0],
-		text              => $row->[1],
-		type              => $row->[2],
+    my $row = {
+        code              => $row->[0],
+        text              => $row->[1],
+        type              => $row->[2],
         is_differentiator => $row->[5],
         question_map_id   => $version,
 
@@ -45,9 +45,9 @@ while (my $row = $csv->getline($fh)) {
                 ( rules => $row->[6] ) :
                 ( )
         )
-	};
+    };
 
-	push @rows, $row;
+    push @rows, $row;
 
     $question_map->{$i} = $row->{code};
     $i++;
