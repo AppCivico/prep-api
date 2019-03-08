@@ -87,6 +87,11 @@ __PACKAGE__->table("recipient_flags");
   default_value: false
   is_nullable: 0
 
+=head2 prep_since
+
+  data_type: 'timestamp'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -106,6 +111,8 @@ __PACKAGE__->add_columns(
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "finished_quiz",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "prep_since",
+  { data_type => "timestamp", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -138,8 +145,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-03-07 15:38:34
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Tga5xG3o0TK24J58GoMRbw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-03-08 14:41:33
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:yZfA5K511EaAKcvkcxQiqQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
