@@ -322,7 +322,7 @@ sub available_dates {
             my $delta = ( $end_time - $start_time );
             my $seconds_per_quota = ( $delta / $_->quotas );
 
-            my @days_of_week = $_->appointment_window_days_of_week->get_column('day_of_week')->all();
+            my @days_of_week = $_->appointment_window_days_of_week->search( undef, { rows => 8, order_by => { -asc => 'day_of_week' } } )->get_column('day_of_week')->all();
 
             map {
                 my $ymd = get_ymd_by_day_of_the_week($_);
