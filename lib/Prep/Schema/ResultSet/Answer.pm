@@ -172,27 +172,16 @@ sub action_specs {
                     }
                 }
                 elsif ($question_map->category_id == 2) {
-                    $pending_question_data = $recipient->get_pending_question_data($category);
+                    $pending_question_data = $recipient->get_next_question_data($category);
 
-                    $finished_quiz = $pending_question_data->{has_more} == 0 ? 1 : 0;
-
-                    if ( $question_code eq 'SC6' ) {
-
-                        if ( $answer->answer_value eq '1' ) {
-                            $go_to_appointment = 1
-                        }
-                        #else {
-                        #    $go_to_autotest = 1
-                        #}
-                    }
-
-                    if ( $finished_quiz ) {
+                    if ( !$pending_question_data->{question} ) {
                         $recipient->build_screening_report;
+                        %flags = $answer->flags;
+
+                        $finished_quiz = 1;
                     }
-                }
-                else {
-                    if ( $question_code eq 'AC4' ) {
-                        $recipient->recipient_flag->update( { finished_quiz => 1 } )
+                    else {
+						$finished_quiz = 0;
                     }
                 }
 
@@ -202,13 +191,6 @@ sub action_specs {
                 answer        => $answer,
                 finished_quiz => $finished_quiz,
                 %flags,
-                #( defined $is_prep ? ( is_part_of_research => $is_prep ) : () ),
-                #( defined $is_eligible_for_research ? ( is_eligible_for_research => $is_eligible_for_research ) : () ),
-                ( defined $go_to_appointment ? ( go_to_appointment => $go_to_appointment ) : () ),
-                ( defined $pending_question_data->{go_to_autotest} ? ( go_to_autotest => $pending_question_data->{go_to_autotest} ) : () ),
-                # ( defined $is_target_audience ? ( is_target_audience => $is_target_audience ) : () ),
-                ( defined $pending_question_data->{suggest_appointment} ? ( suggest_appointment => $pending_question_data->{suggest_appointment} ) : () ),
-                ( defined $pending_question_data->{emergency_rerouting} ? ( emergency_rerouting => $pending_question_data->{emergency_rerouting} ) : () )
             };
         }
     };

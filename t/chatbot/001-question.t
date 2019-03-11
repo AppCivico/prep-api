@@ -1866,10 +1866,9 @@ db_transaction {
                     map => to_json({
                         1 => 'SC1',
                         2 => 'SC2',
-                        3 => 'SC3',
-                        4 => 'SC4',
-                        5 => 'SC5',
-                        6 => 'SC6'
+                        3 => 'SC2a',
+                        4 => 'SC3',
+                        5 => 'SC4'
                     }),
                     category_id => 2
                 }
@@ -1889,8 +1888,14 @@ db_transaction {
                         {
                             1 => 'foo',
                             2 => 'bar',
-                            3 => 'baz',
-                            4 => 'quxx'
+                            3 => 'baz'
+                        }
+                    ),
+                    rules => to_json(
+                        {
+                            "logic_jumps" => [],
+                            "qualification_conditions" => [ "2", "3" ],
+                            "flags" => [ "emergency_rerouting" ]
                         }
                     )
                 }
@@ -1911,10 +1916,40 @@ db_transaction {
                             1 => 'foo',
                             2 => 'bar'
                         }
+                    ),
+                    rules => to_json(
+                        {
+                            "logic_jumps" => [
+                                {
+                                    "code"   => "SC2a",
+                                    "values" => [ "1" ]
+                                }
+                            ],
+                            "qualification_conditions" => []
+                        }
                     )
                 }
             ),
             'second question'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code              => 'SC2a',
+                    text              => 'Foobar?',
+                    type              => 'multiple_choice',
+                    question_map_id   => $question_map->id,
+                    is_differentiator => 0,
+                    multiple_choices  => to_json (
+                        {
+                            1 => 'foo',
+                            2 => 'bar'
+                        }
+                    ),
+                }
+            ),
+            'third question'
         );
 
         ok(
@@ -1930,10 +1965,17 @@ db_transaction {
                             1 => 'foo',
                             2 => 'bar'
                         }
+                    ),
+                    rules => to_json(
+                        {
+                            "logic_jumps"=> [],
+                            "qualification_conditions"=> [ "2" ],
+                            "flags"=> [ "go_to_appointment" ]
+                        }
                     )
                 }
             ),
-            'third question'
+            'fourth question'
         );
 
         ok(
@@ -1949,48 +1991,17 @@ db_transaction {
                             1 => 'foo',
                             2 => 'bar'
                         }
-                    )
-                }
-            ),
-            'fourth question'
-        );
-
-        ok(
-            $question_rs->create(
-                {
-                    code              => 'SC5',
-                    text              => 'Foobar?',
-                    type              => 'multiple_choice',
-                    question_map_id   => $question_map->id,
-                    is_differentiator => 0,
-                    multiple_choices  => to_json (
+                    ),
+                    rules => to_json(
                         {
-                            1 => 'foo',
-                            2 => 'bar'
+                            "logic_jumps" => [],
+                            "qualification_conditions" => [],
+                            "flags" => [ "go_to_test", "suggest_wait_for_test" ]
                         }
                     )
                 }
             ),
             'fifth question'
-        );
-
-        ok(
-            $question_rs->create(
-                {
-                    code              => 'SC6',
-                    text              => 'Foobar?',
-                    type              => 'multiple_choice',
-                    question_map_id   => $question_map->id,
-                    is_differentiator => 0,
-                    multiple_choices  => to_json (
-                        {
-                            1 => 'foo',
-                            2 => 'bar'
-                        }
-                    )
-                }
-            ),
-            'sixth question'
         );
     };
 
@@ -2029,211 +2040,215 @@ db_transaction {
         ->json_has('/multiple_choices')
         ->json_is('/code', 'SC1');
 
-        db_transaction {
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC1',
-                    category       => 'screening',
-                    answer_value   => '1'
-                }
-            )
+        # a triagem acaba caso a resposta seja 1 e deve vir a flag emergency_rerouting
+        db_transaction{
+			$t->post_ok(
+				'/api/chatbot/recipient/answer',
+				form => {
+					security_token => $security_token,
+					fb_id          => $fb_id,
+					code           => 'SC1',
+					category       => 'screening',
+					answer_value   => '1'
+				}
+			)
             ->status_is(201)
-            ->json_is('/finished_quiz', 1)
             ->json_is('/emergency_rerouting', 1)
-            ->json_has('/emergency_rerouting');
-        };
-
-        db_transaction {
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC1',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->get_ok(
-                '/api/chatbot/recipient/pending-question',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    category       => 'screening'
-                }
-            )
-            ->status_is(200)
-            ->json_is('/code', 'SC2');
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC2',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC3',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC4',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC5',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC6',
-                    category       => 'screening',
-                    answer_value   => '1'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 1)
-            ->json_is('/go_to_appointment', 1);
-        };
-
-        db_transaction {
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC1',
-                    category       => 'screening',
-                    answer_value   => '4'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->get_ok(
-                '/api/chatbot/recipient/pending-question',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    category       => 'screening'
-                }
-            )
-            ->status_is(200)
-            ->json_is('/code', 'SC2');
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC2',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC3',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC4',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            # Resetando screening
-            db_transaction{
-                my $answer_rs = $schema->resultset('Answer')->search( { question_map_id => $question_map->id } );
-
-                is( $answer_rs->count, 4, '4 rows' );
-
-                $t->post_ok(
-                    '/api/chatbot/recipient/reset-screening',
-                    form => {
-                        security_token => $security_token,
-                        fb_id          => $fb_id,
-                    }
-                )
-                ->status_is(200)
-                ->json_is('/success', 1);
-
-                is( $answer_rs->count, 0, '0 rows' );
-            };
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC5',
-                    category       => 'screening',
-                    answer_value   => '2'
-                }
-            )
-            ->status_is(201)
             ->json_is('/finished_quiz', 1);
         };
+
+        $t->post_ok(
+			'/api/chatbot/recipient/answer',
+			form => {
+				security_token => $security_token,
+				fb_id          => $fb_id,
+				code           => 'SC1',
+				category       => 'screening',
+				answer_value   => '3'
+			}
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'screening'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'SC2');
+
+        # Caso a resposta seja 2, deve ir direto para a SC3 e não ver a SC2a
+        db_transaction{
+            $t->post_ok(
+				'/api/chatbot/recipient/answer',
+				form => {
+					security_token => $security_token,
+					fb_id          => $fb_id,
+					code           => 'SC2',
+					category       => 'screening',
+					answer_value   => '2'
+				}
+			)
+            ->status_is(201)
+            ->json_is('/finished_quiz', 0);
+
+            $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => 'screening'
+                }
+            )
+            ->status_is(200)
+            ->json_is('/code', 'SC3');
+        };
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'SC2',
+                category       => 'screening',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'screening'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'SC2a');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'SC2a',
+                category       => 'screening',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'screening'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'SC3');
+
+        # a triagem acaba caso a resposta seja 1 e deve vir a flag go_to_appointment
+        db_transaction{
+			$t->post_ok(
+				'/api/chatbot/recipient/answer',
+				form => {
+					security_token => $security_token,
+					fb_id          => $fb_id,
+					code           => 'SC3',
+					category       => 'screening',
+					answer_value   => '1'
+				}
+			)
+            ->status_is(201)
+            ->json_is('/go_to_appointment', 1)
+            ->json_is('/finished_quiz', 1);
+        };
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'SC3',
+                category       => 'screening',
+                answer_value   => '2'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'screening'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'SC4');
+
+        # Na resposta da SC4, caso a resposta da SC1 tenha sido 2, haverá a flag suggest_wait_for_test
+        db_transaction{
+            my $answer = $schema->resultset('Answer')->search( { 'question.code' => 'SC1' }, { prefetch => 'question' } )->next;
+            ok( $answer->update( { answer_value => '2' } ), 'update answer' );
+
+			$t->post_ok(
+				'/api/chatbot/recipient/answer',
+				form => {
+					security_token => $security_token,
+					fb_id          => $fb_id,
+					code           => 'SC4',
+					category       => 'screening',
+					answer_value   => '1'
+				}
+			)
+            ->status_is(201)
+            ->json_is('/suggest_wait_for_test', 1)
+            ->json_is('/go_to_test', 1)
+            ->json_is('/finished_quiz', 1);
+        };
+
+        db_transaction{
+            $t->post_ok(
+				'/api/chatbot/recipient/answer',
+				form => {
+					security_token => $security_token,
+					fb_id          => $fb_id,
+					code           => 'SC4',
+					category       => 'screening',
+					answer_value   => '1'
+				}
+			)
+            ->status_is(201)
+            ->json_is('/suggest_wait_for_test', 0)
+            ->json_is('/go_to_test', 1)
+            ->json_is('/finished_quiz', 1);
+        };
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'SC4',
+                category       => 'screening',
+                answer_value   => '2'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/suggest_wait_for_test', 0)
+        ->json_is('/go_to_test', 0)
+        ->json_is('/finished_quiz', 1);
     };
 };
 

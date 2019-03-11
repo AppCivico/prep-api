@@ -39,7 +39,9 @@ sub post {
             ( exists $answer->{emergency_rerouting}      ? ( emergency_rerouting => $answer->{emergency_rerouting} ) : () ),
             ( exists $answer->{suggest_appointment}      ? ( suggest_appointment => $answer->{suggest_appointment} ) : () ),
             ( exists $answer->{go_to_appointment}        ? ( go_to_appointment => $answer->{go_to_appointment} ) : () ),
-            ( exists $answer->{go_to_autotest}        ? ( go_to_autotest => $answer->{go_to_autotest} ) : () )
+            ( exists $answer->{go_to_autotest}        ? ( go_to_autotest => $answer->{go_to_autotest} ) : () ),
+            ( exists $answer->{suggest_wait_for_test}        ? ( suggest_wait_for_test => $answer->{suggest_wait_for_test} ) : () ),
+            ( exists $answer->{go_to_test}        ? ( go_to_test => $answer->{go_to_test} ) : () )
         }
     )
 }

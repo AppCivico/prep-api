@@ -217,7 +217,13 @@ sub next_question {
     if ( $self->finished ) {
         # Caso não tenha uma próxima pergunta
         # Devo mostrar flags
-        my %flags = $self->recipient->all_flags;
+        my %flags;
+        if ( $self->category eq 'quiz' ) {
+            %flags = $self->recipient->all_flags;
+        }
+        elsif ( $self->category eq 'screening' ) {
+            %flags = $self->recipient->all_screening_flags;
+        }
 
         $ret = {
             question   => undef,
@@ -230,6 +236,7 @@ sub next_question {
     else {
         my $question_map       = $self->parsed;
         my @answered_questions = $self->answered_questions;
+
         my @pending_questions  = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
 
         my $next_question_code = scalar @pending_questions > 0 ? $question_map->{ $pending_questions[0] } : undef;
@@ -279,6 +286,12 @@ sub remove_question {
     }
 
     return $self->update( { value => to_json( $map ) } );
+}
+
+sub category {
+    my ($self) = @_;
+
+    return $self->question_map->category->name;
 }
 
 __PACKAGE__->meta->make_immutable;

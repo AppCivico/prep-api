@@ -19,9 +19,9 @@ my $i = 1;
 #########################################
 # ALWAYS UPDATE THIS NUMBER ACCORDINGLY #
 #########################################
-my $version = 11;
+my $version = 14;
 
-open my $fh, "<:encoding(utf8)", "quiz.csv" or die "quiz.csv: $!";
+open my $fh, "<:encoding(utf8)", "screening.csv" or die "screening.csv: $!";
 while (my $row = $csv->getline($fh)) {
     next if $row->[0] eq 'code';
 
@@ -57,7 +57,7 @@ close $fh;
 $question_map_rs->create(
     {
         map         => to_json($question_map),
-        category_id => 1
+        category_id => 2
     }
 );
 $question_rs->populate(\@rows);

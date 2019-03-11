@@ -200,7 +200,6 @@ sub update_stash {
             # ou uma flag
             if ( looks_like_number( $rules->{qualification_conditions}->[0] ) ) {
                 $conditions_satisfied = grep { $_ eq $answer } @{ $rules->{qualification_conditions} };
-
             }
             else {
                 # São flags
@@ -210,7 +209,6 @@ sub update_stash {
             }
 
 			if ( $conditions_satisfied == 0 ) {
-
 				# Caso seja do quiz devo desqualificar e atualizar os booleans
 				$recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
 
@@ -281,7 +279,6 @@ sub flags {
 
     if ( $rules ) {
         if ( $rules->{flags} && scalar @{ $rules->{flags} } > 0 ) {
-
             for my $flag ( @{ $rules->{flags} } ) {
 
                 $ret{$flag} = $recipient->$flag;
