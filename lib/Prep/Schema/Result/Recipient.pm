@@ -1175,14 +1175,11 @@ sub all_flags {
 }
 
 sub all_screening_flags {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my @flags = qw( emergency_rerouting go_to_appointment suggest_wait_for_test go_to_test );
+    my @flags = qw( emergency_rerouting go_to_appointment suggest_wait_for_test go_to_test );
 
-	return
-	  map {$_ => $self->$_}
-	  @flags
-
+    return map { $_ => $self->$_ } @flags
 }
 
 sub has_appointments {
@@ -1203,60 +1200,63 @@ sub emergency_rerouting {
         },
         { prefetch => 'question' }
     )->next;
-	return 0 unless $answer;
+    return 0 unless $answer;
 
     return $answer->answer_value eq '1' ? 1 : 0;
 }
 
 sub go_to_appointment {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
 
-	my $answer = $self->answers->search(
-		{
-			'question.code'            => 'SC2a',
-			'question.question_map_id' => $question_map->id
-		},
-		{ prefetch => 'question' }
-	)->next;
+    my $answer = $self->answers->search(
+        {
+            'question.code'            => { -in => ['SC3', 'SC2b', 'SC2a'] },
+            'question.question_map_id' => $question_map->id
+        },
+        {
+            prefetch => 'question',
+            order_by => { -desc => 'me.created_at' }
+        }
+    )->first;
     return 0 unless $answer;
 
-	return $answer->answer_value eq '1' ? 1 : 0;
+    return $answer->answer_value eq '1' ? 1 : 0;
 }
 
 sub suggest_wait_for_test {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
 
-	my $answer = $self->answers->search(
-		{
-			'question.code'            => 'SC1',
-			'question.question_map_id' => $question_map->id
-		},
-		{ prefetch => 'question' }
-	)->next;
-	return 0 unless $answer;
+    my $answer = $self->answers->search(
+        {
+            'question.code'            => 'SC1',
+            'question.question_map_id' => $question_map->id
+        },
+        { prefetch => 'question' }
+    )->next;
+    return 0 unless $answer;
 
-	return $answer->answer_value eq '2' ? 1 : 0;
+    return $answer->answer_value eq '2' ? 1 : 0;
 }
 
 sub go_to_test {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
 
-	my $answer = $self->answers->search(
-		{
-			'question.code'            => 'SC4',
-			'question.question_map_id' => $question_map->id
-		},
-		{ prefetch => 'question' }
-	)->next;
-	return 0 unless $answer;
+    my $answer = $self->answers->search(
+        {
+            'question.code'            => 'SC4',
+            'question.question_map_id' => $question_map->id
+        },
+        { prefetch => 'question' }
+    )->next;
+    return 0 unless $answer;
 
-	return $answer->answer_value eq '1' ? 1 : 0;
+    return $answer->answer_value eq '1' ? 1 : 0;
 }
 
 __PACKAGE__->meta->make_immutable;
