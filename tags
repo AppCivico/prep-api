@@ -23,6 +23,7 @@ Prep::Controller::Chatbot::Recipient::CountResearchInvite	./lib/Prep/Controller/
 Prep::Controller::Chatbot::Recipient::CountShare	./lib/Prep/Controller/Chatbot/Recipient/CountShare.pm	/^package Prep::Controller::Chatbot::Recipient::CountShare;$/;"	p
 Prep::Controller::Chatbot::Recipient::IntegrationToken	./lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm	/^package Prep::Controller::Chatbot::Recipient::IntegrationToken;$/;"	p
 Prep::Controller::Chatbot::Recipient::PendingQuestion	./lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm	/^package Prep::Controller::Chatbot::Recipient::PendingQuestion;$/;"	p
+Prep::Controller::Chatbot::Recipient::Research	./lib/Prep/Controller/Chatbot/Recipient/Research.pm	/^package Prep::Controller::Chatbot::Recipient::Research;$/;"	p
 Prep::Controller::Chatbot::Recipient::ResetScreening	./lib/Prep/Controller/Chatbot/Recipient/ResetScreening.pm	/^package Prep::Controller::Chatbot::Recipient::ResetScreening;$/;"	p
 Prep::Controller::Chatbot::Recipient::TermSignature	./lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm	/^package Prep::Controller::Chatbot::Recipient::TermSignature;$/;"	p
 Prep::Controller::Internal	./lib/Prep/Controller/Internal.pm	/^package Prep::Controller::Internal;$/;"	p
@@ -89,6 +90,7 @@ action_specs	./lib/Prep/Schema/ResultSet/ExternalNotification.pm	/^sub action_sp
 action_specs	./lib/Prep/Schema/ResultSet/Recipient.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/TermSignature.pm	/^sub action_specs {$/;"	s
 all_flags	./lib/Prep/Schema/Result/Recipient.pm	/^sub all_flags {$/;"	s
+all_screening_flags	./lib/Prep/Schema/Result/Recipient.pm	/^sub all_screening_flags {$/;"	s
 answer_by_choice_value	./lib/Prep/Schema/Result/Question.pm	/^sub answer_by_choice_value {$/;"	s
 answered_questions	./lib/Prep/Schema/Result/Stash.pm	/^sub answered_questions {$/;"	s
 apply	./lib/Prep/Data/Manager.pm	/^sub apply {$/;"	s
@@ -99,12 +101,14 @@ assign_token	./lib/Prep/Schema/Result/Recipient.pm	/^sub assign_token {$/;"	s
 available_dates	./lib/Prep/Schema/Result/Calendar.pm	/^sub available_dates {$/;"	s
 build_conditions	./lib/Prep/Schema/Result/QuestionMap.pm	/^sub build_conditions {$/;"	s
 build_screening_report	./lib/Prep/Schema/Result/Recipient.pm	/^sub build_screening_report {$/;"	s
+category	./lib/Prep/Schema/Result/Stash.pm	/^sub category {$/;"	s
 check	./lib/Prep/Role/Verification.pm	/^sub check {$/;"	s
 coercion	./lib/Data/Verifier.pm	/^sub coercion {$/;"	s
 create_event	./lib/WebService/GoogleCalendar.pm	/^sub create_event {$/;"	s
 create_persona	./lib/WebService/Facebook.pm	/^sub create_persona {$/;"	s
 decoded	./lib/Prep/Schema/Result/Question.pm	/^sub decoded {$/;"	s
 delete_persona	./lib/WebService/Facebook.pm	/^sub delete_persona {$/;"	s
+emergency_rerouting	./lib/Prep/Schema/Result/Recipient.pm	/^sub emergency_rerouting {$/;"	s
 env	./lib/Prep/Utils.pm	/^sub env { return $ENV{${\\shift}} }$/;"	s
 errors	./lib/Prep/Data/Manager.pm	/^sub errors {$/;"	s
 execute	./lib/Prep/Role/Verification.pm	/^sub execute {$/;"	s
@@ -131,6 +135,9 @@ get_persona	./lib/WebService/Facebook.pm	/^sub get_persona {$/;"	s
 get_quota_info	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub get_quota_info {$/;"	s
 get_schema	./lib/Prep/SchemaConnected.pm	/^sub get_schema {$/;"	s
 get_ymd_by_day_of_the_week	./lib/Prep/Utils.pm	/^sub get_ymd_by_day_of_the_week {$/;"	s
+go_to_appointment	./lib/Prep/Schema/Result/Recipient.pm	/^sub go_to_appointment {$/;"	s
+go_to_test	./lib/Prep/Schema/Result/Recipient.pm	/^sub go_to_test {$/;"	s
+has_appointments	./lib/Prep/Schema/Result/Recipient.pm	/^sub has_appointments {$/;"	s
 has_priv	./lib/Prep/Authorization.pm	/^sub has_priv {$/;"	s
 info	./lib/Prep/Schema/Result/Appointment.pm	/^sub info {$/;"	s
 initiate	./lib/Prep/Schema/Result/Stash.pm	/^sub initiate {$/;"	s
@@ -154,6 +161,7 @@ post	./lib/Prep/Controller/Chatbot/Recipient/CountQuiz.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/CountResearchInvite.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/CountShare.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm	/^sub post {$/;"	s
+post	./lib/Prep/Controller/Chatbot/Recipient/Research.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/ResetScreening.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Internal/DeleteAnswer.pm	/^sub post {$/;"	s
@@ -179,11 +187,11 @@ startup	./lib/Prep.pm	/^sub startup {$/;"	s
 stash_by_category	./lib/Prep/Schema/Result/Recipient.pm	/^sub stash_by_category {$/;"	s
 stasher	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub stasher {$/;"	s
 stasher	./lib/Prep/Controller/Internal/Integration/Recipient.pm	/^sub stasher {$/;"	s
+suggest_wait_for_test	./lib/Prep/Schema/Result/Recipient.pm	/^sub suggest_wait_for_test {$/;"	s
 sync_appointments	./lib/Prep/Schema/Result/Calendar.pm	/^sub sync_appointments {$/;"	s
 upcoming_appointments	./lib/Prep/Schema/Result/Recipient.pm	/^sub upcoming_appointments {$/;"	s
 update_finished_quiz	./lib/Prep/Schema/Result/Recipient.pm	/^sub update_finished_quiz {$/;"	s
 update_is_eligible_for_research	./lib/Prep/Schema/Result/Recipient.pm	/^sub update_is_eligible_for_research {$/;"	s
-update_is_part_of_research	./lib/Prep/Schema/Result/Recipient.pm	/^sub update_is_part_of_research {$/;"	s
 update_is_target_audience	./lib/Prep/Schema/Result/Recipient.pm	/^sub update_is_target_audience {$/;"	s
 update_signed_term	./lib/Prep/Schema/Result/Recipient.pm	/^sub update_signed_term {$/;"	s
 update_stash	./lib/Prep/Schema/Result/Answer.pm	/^sub update_stash {$/;"	s
