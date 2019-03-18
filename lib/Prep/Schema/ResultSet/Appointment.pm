@@ -27,20 +27,20 @@ sub verifiers_specs {
                     required   => 1,
                     type       => 'Int',
                     post_check => sub {
-						my $appointment_window_id = $_[0]->get_value('appointment_window_id');
+                        my $appointment_window_id = $_[0]->get_value('appointment_window_id');
 
-						$self->result_source->schema->resultset('AppointmentWindow')->search( { id => $appointment_window_id } )->count;
+                        $self->result_source->schema->resultset('AppointmentWindow')->search( { id => $appointment_window_id } )->count;
                     }
                 },
                 quota_number => {
                     required   => 1,
                     type       => 'Int',
                     post_check => sub {
-						my $quota_number          = $_[0]->get_value('quota_number');
-						my $appointment_window_id = $_[0]->get_value('appointment_window_id');
+                        my $quota_number          = $_[0]->get_value('quota_number');
+                        my $appointment_window_id = $_[0]->get_value('appointment_window_id');
                         my $datetime_start        = $_[0]->get_value('datetime_start');
 
-						my $count = $self->result_source->schema->resultset('Appointment')->search(
+                        my $count = $self->result_source->schema->resultset('Appointment')->search(
                             {
                                 quota_number          => $quota_number,
                                 appointment_at        => { '>=' => \"'$datetime_start'::date", '<=' => \"'$datetime_start'::date + interval '1 day'" },
@@ -65,9 +65,9 @@ sub verifiers_specs {
                     required   => 1,
                     type       => 'Str',
                     post_check => sub {
-						my $type = $_[0]->get_value('type');
+                        my $type = $_[0]->get_value('type');
 
-						my $count = $self->result_source->schema->resultset('AppointmentType')->search( { name => $type } )->count or die \['type', 'invalid'];
+                        my $count = $self->result_source->schema->resultset('AppointmentType')->search( { name => $type } )->count or die \['type', 'invalid'];
                     }
                 }
             }
@@ -92,8 +92,8 @@ sub action_specs {
             # disponivel ainda
             my $ws = WebService::GoogleCalendar->instance();
 
-			my $datetime_start = delete $values{datetime_start};
-			my $datetime_end   = delete $values{datetime_end};
+            my $datetime_start = delete $values{datetime_start};
+            my $datetime_end   = delete $values{datetime_end};
 
             my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
             my $calendar           = $appointment_window->calendar;

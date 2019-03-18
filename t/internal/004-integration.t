@@ -10,7 +10,7 @@ my $t      = test_instance;
 my $schema = $t->app->schema;
 
 db_transaction {
-	my $security_token         = $ENV{INTEGRATION_SECURITY_TOKEN};
+    my $security_token         = $ENV{INTEGRATION_SECURITY_TOKEN};
 
     subtest 'Integration headers and security_token' => sub {
         $t->post_ok(
@@ -20,11 +20,11 @@ db_transaction {
             }
         )
         ->status_is(400)
-		->json_has('/error')
-		->json_has('/form_error')
-		->json_has('/form_error/integration_token')
-		->json_is('/error', 'form_error')
-		->json_is('/form_error/integration_token', 'missing', 'missing integration_token');
+        ->json_has('/error')
+        ->json_has('/form_error')
+        ->json_has('/form_error/integration_token')
+        ->json_is('/error', 'form_error')
+        ->json_is('/form_error/integration_token', 'missing', 'missing integration_token');
 
         $t->post_ok(
             '/api/internal/integration/recipient/sync',

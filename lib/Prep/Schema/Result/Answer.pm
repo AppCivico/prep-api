@@ -208,12 +208,12 @@ sub update_stash {
                 $conditions_satisfied = grep { $recipient_flags{$_} == 1 } @{ $rules->{qualification_conditions} };
             }
 
-			if ( $conditions_satisfied == 0 ) {
-				# Caso seja do quiz devo desqualificar e atualizar os booleans
-				$recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
+            if ( $conditions_satisfied == 0 ) {
+                # Caso seja do quiz devo desqualificar e atualizar os booleans
+                $recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
 
-				$stash->update( { finished => 1 } );
-			}
+                $stash->update( { finished => 1 } );
+            }
 
         }
 
@@ -249,7 +249,7 @@ sub update_stash {
                     }
 
                     if ( $conditions_satisfied == 0 ) {
-						$stash->remove_question($logic_jump->{code});
+                        $stash->remove_question($logic_jump->{code});
                     }
 
                 }
@@ -272,9 +272,9 @@ sub flags {
     # Mesmo várias perguntas interferirem no resultado da flag
     # a API só envia a flag na resposta de algumas perguntas
 
-	my $recipient     = $self->recipient;
-	my $question      = $self->question;
-	my $rules         = $question->rules_parsed;
+    my $recipient     = $self->recipient;
+    my $question      = $self->question;
+    my $rules         = $question->rules_parsed;
     my $question_code = $self->question->code;
 
     if ( $rules ) {

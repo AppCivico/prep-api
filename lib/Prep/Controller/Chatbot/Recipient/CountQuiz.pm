@@ -20,7 +20,7 @@ sub post {
 sub get {
     my $c = shift;
 
-	my $recipient = $c->stash('recipient');
+    my $recipient = $c->stash('recipient');
 
     return $c->render(
         status => 200,

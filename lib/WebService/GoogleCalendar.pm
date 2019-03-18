@@ -18,14 +18,14 @@ sub generate_token {
 
     my $token;
     if ( !$calendar->token || $calendar->token_valid_until <= DateTime->now() ) {
-		my $oauth = Net::Google::OAuth->new(
-			-client_id     => $calendar->client_id,
-			-client_secret => $calendar->client_secret,
-		);
+        my $oauth = Net::Google::OAuth->new(
+            -client_id     => $calendar->client_id,
+            -client_secret => $calendar->client_secret,
+        );
 
-		$oauth->refreshToken( -refresh_token => $calendar->refresh_token );
+        $oauth->refreshToken( -refresh_token => $calendar->refresh_token );
 
-		$token = $oauth->getAccessToken();
+        $token = $oauth->getAccessToken();
 
         $calendar->update(
             {
@@ -44,8 +44,8 @@ sub generate_token {
 sub get_calendar_events {
     my ($self, %opts) = @_;
 
-	my @required_opts = qw( calendar google_id );
-	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+    my @required_opts = qw( calendar google_id );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my $res;
     if (is_test()) {
@@ -77,8 +77,8 @@ sub get_calendar_events {
 sub get_calendar_event_at_time {
     my ($self, %opts) = @_;
 
-	my @required_opts = qw( calendar calendar_id );
-	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+    my @required_opts = qw( calendar calendar_id );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my $res;
     if (is_test()) {
@@ -115,7 +115,7 @@ sub create_event {
     my ($self, %opts) = @_;
 
     my @required_opts = qw( calendar calendar_id datetime_start datetime_end summary description );
-	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my $res;
     if (is_test()) {

@@ -228,7 +228,7 @@ sub next_question {
         $ret = {
             question   => undef,
             has_more   => 0,
-			count_more => 0,
+            count_more => 0,
 
             %flags
         }
@@ -246,9 +246,9 @@ sub next_question {
         my $next_question = $question_rs->search( { code => $next_question_code, question_map_id => $self->question_map_id } )->next;
 
         $ret = {
-			question   => $next_question,
-			has_more   => scalar @pending_questions > 1 ? 1 : 0,
-			count_more => scalar @pending_questions - 1,
+            question   => $next_question,
+            has_more   => scalar @pending_questions > 1 ? 1 : 0,
+            count_more => scalar @pending_questions - 1,
         }
     }
 
@@ -262,9 +262,9 @@ sub remove_question {
 
     my $map = $self->parsed;
 
-	my %r_map = reverse %{$map};
-	my $key   = $r_map{$code};
-	die \['code', 'invalid'] unless $key;
+    my %r_map = reverse %{$map};
+    my $key   = $r_map{$code};
+    die \['code', 'invalid'] unless $key;
 
     delete $map->{$key};
 

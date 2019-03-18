@@ -117,7 +117,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
-				category       => 'quiz',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )

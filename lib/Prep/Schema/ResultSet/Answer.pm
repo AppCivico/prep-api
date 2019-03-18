@@ -181,7 +181,7 @@ sub action_specs {
                         $finished_quiz = 1;
                     }
                     else {
-						$finished_quiz = 0;
+                        $finished_quiz = 0;
                     }
                 }
 

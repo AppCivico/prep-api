@@ -40,8 +40,8 @@ sub validate_header_and_pass {
     my $pass           = $c->req->params->to_hash->{security_token};
 
     if ( !$pass || $security_token ne $pass ) {
-		$c->reply_forbidden();
-		$c->detach;
+        $c->reply_forbidden();
+        $c->detach;
     }
 
     return $c;

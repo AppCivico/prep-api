@@ -245,13 +245,13 @@ sub quota_map {
 sub assert_quota_number {
     my ($self, %opts) = @_;
 
-	my @required_opts = qw( quota_number datetime_start datetime_end );
-	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+    my @required_opts = qw( quota_number datetime_start datetime_end );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my $quota_map = $self->quota_map;
 
-	my $start_time = Time::Piece->strptime( $opts{datetime_start}, '%Y-%m-%dT%H:%M:%S' );
-	my $end_time   = Time::Piece->strptime( $opts{datetime_end},   '%Y-%m-%dT%H:%M:%S' );
+    my $start_time = Time::Piece->strptime( $opts{datetime_start}, '%Y-%m-%dT%H:%M:%S' );
+    my $end_time   = Time::Piece->strptime( $opts{datetime_end},   '%Y-%m-%dT%H:%M:%S' );
 
     $self->appointment_window_days_of_week->search( { day_of_week => $start_time->day_of_week } )->next
       or die \['datetime_start', 'no appointments on this day of week'];
@@ -259,8 +259,8 @@ sub assert_quota_number {
     my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'invalid'];
 
     # Verificando hms
-	die \[ 'datetime_start', 'does not matches quota start time' ] unless $selected_quota->{start} eq $start_time->hms;
-	die \[ 'datetime_end',   'does not matches quota end time' ]   unless $selected_quota->{end}   eq $end_time->hms;
+    die \[ 'datetime_start', 'does not matches quota start time' ] unless $selected_quota->{start} eq $start_time->hms;
+    die \[ 'datetime_end',   'does not matches quota end time' ]   unless $selected_quota->{end}   eq $end_time->hms;
 
     # Verifico se o hms já não está ocupado no ymd
     $self->appointments->search( { appointment_at => $start_time } )->count and die \['date', 'invalid'];

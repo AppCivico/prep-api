@@ -4,17 +4,17 @@ use Mojo::Base 'Prep::Controller';
 sub post {
     my $c = shift;
 
-	$c->validate_request_params(
-		category => {
-			type       => 'Str',
-			required   => 1,
-			post_check => sub {
-				my $category = $c->req->params->to_hash->{category};
+    $c->validate_request_params(
+        category => {
+            type       => 'Str',
+            required   => 1,
+            post_check => sub {
+                my $category = $c->req->params->to_hash->{category};
 
-				die \['category', 'invalid'] unless $category =~ m/(quiz|screening)/;
-			}
-		},
-	);
+                die \['category', 'invalid'] unless $category =~ m/(quiz|screening)/;
+            }
+        },
+    );
 
     my $recipient = $c->stash('recipient');
 

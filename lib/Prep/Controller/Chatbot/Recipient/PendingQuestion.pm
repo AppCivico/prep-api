@@ -6,19 +6,19 @@ sub get {
 
     my $recipient = $c->stash('recipient');
 
-	$c->validate_request_params(
-		category => {
-			type       => 'Str',
-			required   => 1,
+    $c->validate_request_params(
+        category => {
+            type       => 'Str',
+            required   => 1,
             post_check => sub {
                 my $category = $c->req->params->to_hash->{category};
 
                 die \['category', 'invalid'] unless $category =~ m/(quiz|screening)/;
             }
-		},
-	);
+        },
+    );
 
-	my $pending_question_data = $recipient->get_next_question_data( $c->req->params->to_hash->{category} );
+    my $pending_question_data = $recipient->get_next_question_data( $c->req->params->to_hash->{category} );
     my $question              = $pending_question_data->{question} ? $pending_question_data->{question}->decoded : undef;
    # use DDP; p $pending_question_data;
     return $c->render(

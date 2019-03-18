@@ -43,7 +43,7 @@ db_transaction {
                     quotas                          => 4,
                     appointment_window_days_of_week => [
                         { day_of_week => 1 },
-						{ day_of_week => 2 }
+                        { day_of_week => 2 }
                     ]
                 }
             )
@@ -78,9 +78,9 @@ db_transaction {
                     quotas                          => 10,
                     appointment_window_days_of_week => [
                         { day_of_week => 1 },
-						{ day_of_week => 2 },
-						{ day_of_week => 3 },
-						{ day_of_week => 4 },
+                        { day_of_week => 2 },
+                        { day_of_week => 3 },
+                        { day_of_week => 4 },
                     ]
                 }
             )
@@ -112,7 +112,7 @@ db_transaction {
             }
         )
         ->status_is(200)
-		->json_has('/calendars')
+        ->json_has('/calendars')
         ->json_has('/calendars/0/id')
         ->json_has('/calendars/0/name')
         ->json_has('/calendars/0/city')
@@ -120,11 +120,11 @@ db_transaction {
         ->json_has('/calendars/0/state')
         ->json_has('/calendars/0/city')
         ->json_has('/calendars/0/street')
-		->json_has('/calendars/0/number')
-		->json_has('/calendars/0/zipcode')
-		->json_has('/calendars/0/complement')
-		->json_has('/calendars/0/district')
-		->json_has('/calendars/0/phone')
+        ->json_has('/calendars/0/number')
+        ->json_has('/calendars/0/zipcode')
+        ->json_has('/calendars/0/complement')
+        ->json_has('/calendars/0/district')
+        ->json_has('/calendars/0/phone')
         ->json_has('/calendars/0/google_id');
 
         $t->get_ok(
@@ -150,8 +150,8 @@ db_transaction {
 
         my $res = $t->tx->res->json;
 
-		my $datetime_start = $res->{dates}->[0]->{hours}->[0]->{datetime_start};
-		my $datetime_end   = $res->{dates}->[0]->{hours}->[0]->{datetime_end};
+        my $datetime_start = $res->{dates}->[0]->{hours}->[0]->{datetime_start};
+        my $datetime_end   = $res->{dates}->[0]->{hours}->[0]->{datetime_end};
 
         is( scalar @{ $res->{dates}->[0]->{hours} }, 4, '4 available hours' );
 
@@ -191,7 +191,7 @@ db_transaction {
             '/api/chatbot/appointment/available-dates',
             form => {
                 security_token => $security_token,
-				calendar_id    => $calendar->id
+                calendar_id    => $calendar->id
             }
         )
         ->status_is(200)
@@ -199,7 +199,7 @@ db_transaction {
         ->json_is('/dates/0/hours/0/time', '10:30:00 - 11:00:00');
 
         $res = $t->tx->res->json;
-		is( scalar @{ $res->{dates}->[0]->{hours} }, 3, '3 available hours' );
+        is( scalar @{ $res->{dates}->[0]->{hours} }, 3, '3 available hours' );
 
         $t->get_ok(
             '/api/chatbot/recipient/appointment',
@@ -211,18 +211,18 @@ db_transaction {
         ->status_is(200)
         ->json_has('/appointments/0/datetime_start')
         ->json_has('/appointments/0/quota_number')
-		->json_has('/appointments/0/appointment_window_id')
-		->json_has('/appointments/0/datetime_end')
-		->json_has('/appointments/0/time')
-		->json_has('/appointments/0/calendar/id')
-		->json_has('/appointments/0/calendar/state')
-		->json_has('/appointments/0/calendar/city')
-		->json_has('/appointments/0/calendar/number')
-		->json_has('/appointments/0/calendar/street')
-		->json_has('/appointments/0/calendar/phone')
-		->json_has('/appointments/0/calendar/complement')
-		->json_has('/appointments/0/calendar/district')
-		->json_has('/appointments/0/type');
+        ->json_has('/appointments/0/appointment_window_id')
+        ->json_has('/appointments/0/datetime_end')
+        ->json_has('/appointments/0/time')
+        ->json_has('/appointments/0/calendar/id')
+        ->json_has('/appointments/0/calendar/state')
+        ->json_has('/appointments/0/calendar/city')
+        ->json_has('/appointments/0/calendar/number')
+        ->json_has('/appointments/0/calendar/street')
+        ->json_has('/appointments/0/calendar/phone')
+        ->json_has('/appointments/0/calendar/complement')
+        ->json_has('/appointments/0/calendar/district')
+        ->json_has('/appointments/0/type');
 
         $t->get_ok(
             '/api/chatbot/appointment/available-dates',
@@ -233,9 +233,9 @@ db_transaction {
         )
         ->status_is(200);
 
-		$res = $t->tx->res->json;
-		$datetime_start = $res->{dates}->[0]->{hours}->[2]->{datetime_start};
-		$datetime_end   = $res->{dates}->[0]->{hours}->[2]->{datetime_end};
+        $res = $t->tx->res->json;
+        $datetime_start = $res->{dates}->[0]->{hours}->[2]->{datetime_start};
+        $datetime_end   = $res->{dates}->[0]->{hours}->[2]->{datetime_end};
 
         $t->post_ok(
             '/api/chatbot/recipient/appointment',

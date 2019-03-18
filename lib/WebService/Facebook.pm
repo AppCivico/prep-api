@@ -62,7 +62,7 @@ sub send_message {
     my ($self, %opts) = @_;
 
     my @required_opts = qw( access_token content );
-	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     if (is_test()) {
         return {
@@ -135,8 +135,8 @@ sub create_persona {
 sub delete_persona {
     my ($self, %opts) = @_;
 
-	my @required_opts = qw( access_token persona_id );
-	defined $opts{$_} or die "missing $_" for @required_opts;
+    my @required_opts = qw( access_token persona_id );
+    defined $opts{$_} or die "missing $_" for @required_opts;
 
     if (is_test()) {
         return {
@@ -168,8 +168,8 @@ sub delete_persona {
 sub get_persona {
     my ($self, %opts) = @_;
 
-	my @required_opts = qw( access_token persona_id );
-	defined $opts{$_} or die "missing $_" for @required_opts;
+    my @required_opts = qw( access_token persona_id );
+    defined $opts{$_} or die "missing $_" for @required_opts;
 
     if (is_test()) {
         return {

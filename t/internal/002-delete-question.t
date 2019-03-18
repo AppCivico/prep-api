@@ -25,7 +25,7 @@ db_transaction {
                         3 => 'W1',
                         4 => 'Q3'
                     }),
-					category_id => 1
+                    category_id => 1
                 }
             ),
             'question map created'
@@ -117,7 +117,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
-				category       => 'quiz',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )

@@ -4,14 +4,14 @@ use Mojo::Base 'Prep::Controller';
 sub stasher {
     my $c = shift;
 
-	$c->validate_request_params(
-		integration_token => {
-			required => 1,
-			type     => 'Num'
-		},
-	);
+    $c->validate_request_params(
+        integration_token => {
+            required => 1,
+            type     => 'Num'
+        },
+    );
 
-	$c->stash( collection => $c->schema->resultset('Recipient') );
+    $c->stash( collection => $c->schema->resultset('Recipient') );
 
     my $recipient = $c->schema->resultset('Recipient')->search( { integration_token => $c->req->params->to_hash->{integration_token} } )->next
       or die \['integration_token', 'invalid'];

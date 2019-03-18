@@ -49,27 +49,27 @@ sub action_specs {
                 my $recipient = $external_notification->recipient;
                 my $config    = $self->result_source->schema->resultset('Config')->search( { key => 'ACCESS_TOKEN' } )->next;
 
-				my $content = encode_json {
-					messaging_type => "UPDATE",
-					recipient      => { id => $recipient->fb_id },
-					message        => {
-						text => 'Você tem um novo formulário para preencher! Vamos lá? ' . $external_notification->url,
-						quick_replies => [
-							{
-								content_type => 'text',
-								title        => "Voltar para o início",
-								payload      => 'greetings'
-							},
-						]
-					}
-				};
+                my $content = encode_json {
+                    messaging_type => "UPDATE",
+                    recipient      => { id => $recipient->fb_id },
+                    message        => {
+                        text => 'Você tem um novo formulário para preencher! Vamos lá? ' . $external_notification->url,
+                        quick_replies => [
+                            {
+                                content_type => 'text',
+                                title        => "Voltar para o início",
+                                payload      => 'greetings'
+                            },
+                        ]
+                    }
+                };
 
                 my $facebook = WebService::Facebook->instance;
-				eval {
+                eval {
                     $facebook->send_message(
-					    access_token => $config->value,
-					    content      => $content
-				    );
+                        access_token => $config->value,
+                        content      => $content
+                    );
                 };
                 die \['notification', 'failed on facebook send'] if $@;
 

@@ -10,8 +10,8 @@ my $t      = test_instance;
 my $schema = $t->app->schema;
 
 db_transaction {
-	my $chatbot_security_token = $ENV{CHATBOT_SECURITY_TOKEN};
-	my $security_token         = $ENV{INTEGRATION_SECURITY_TOKEN};
+    my $chatbot_security_token = $ENV{CHATBOT_SECURITY_TOKEN};
+    my $security_token         = $ENV{INTEGRATION_SECURITY_TOKEN};
 
     my ($recipient_id, $recipient);
     subtest 'Chatbot | Create recipient' => sub {
@@ -30,20 +30,20 @@ db_transaction {
         $recipient    = $schema->resultset('Recipient')->find($recipient_id);
 
         # Gerando um integration_token
-		ok(
+        ok(
             $recipient->update( { integration_token => '1573221416102831' } ),
             'generating integration_token'
         );
 
         # No fluxo real o integration_token só é gerado quando a pessoa concorda em participar da pesquisa
         ok(
-			$recipient->recipient_flag->update(
-				{
-					finished_quiz       => 1,
-					is_target_audience  => 1,
-					is_part_of_research => 1,
-				}
-			),
+            $recipient->recipient_flag->update(
+                {
+                    finished_quiz       => 1,
+                    is_target_audience  => 1,
+                    is_part_of_research => 1,
+                }
+            ),
             'updating flags'
         );
 
