@@ -65,6 +65,7 @@ Prep::Schema::Result::TermSignature	./lib/Prep/Schema/Result/TermSignature.pm	/^
 Prep::Schema::Result::User	./lib/Prep/Schema/Result/User.pm	/^package Prep::Schema::Result::User;$/;"	p
 Prep::Schema::Result::UserRole	./lib/Prep/Schema/Result/UserRole.pm	/^package Prep::Schema::Result::UserRole;$/;"	p
 Prep::Schema::Result::UserSession	./lib/Prep/Schema/Result/UserSession.pm	/^package Prep::Schema::Result::UserSession;$/;"	p
+Prep::Schema::Result::ViewQuizReset	./lib/Prep/Schema/Result/ViewQuizReset.pm	/^package Prep::Schema::Result::ViewQuizReset;$/;"	p
 Prep::Schema::Result::ViewRecipientQuiz	./lib/Prep/Schema/Result/ViewRecipientQuiz.pm	/^package Prep::Schema::Result::ViewRecipientQuiz;$/;"	p
 Prep::Schema::ResultSet::Answer	./lib/Prep/Schema/ResultSet/Answer.pm	/^package Prep::Schema::ResultSet::Answer;$/;"	p
 Prep::Schema::ResultSet::Appointment	./lib/Prep/Schema/ResultSet/Appointment.pm	/^package Prep::Schema::ResultSet::Appointment;$/;"	p
