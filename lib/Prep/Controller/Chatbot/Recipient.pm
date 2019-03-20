@@ -61,7 +61,12 @@ sub get {
             updated_at               => $recipient->updated_at,
             created_at               => $recipient->created_at,
             is_eligible_for_research => $recipient->is_eligible_for_research,
-            is_part_of_research      => $recipient->is_part_of_research
+            is_part_of_research      => $recipient->is_part_of_research,
+            is_prep                  => $recipient->is_prep,
+            is_target_audience       => $recipient->is_target_audience,
+            signed_term              => $recipient->signed_term,
+            has_appointments         => $recipient->has_appointments,
+            prep_since               => $recipient->recipient_flag->prep_since
         }
     )
 }

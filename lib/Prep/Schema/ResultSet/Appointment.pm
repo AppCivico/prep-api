@@ -12,6 +12,7 @@ use Data::Verifier;
 use Data::Printer;
 
 use Data::Fake qw(Core);
+use DateTime;
 
 use WebService::GoogleCalendar;
 
@@ -26,20 +27,20 @@ sub verifiers_specs {
                     required   => 1,
                     type       => 'Int',
                     post_check => sub {
-						my $appointment_window_id = $_[0]->get_value('appointment_window_id');
+                        my $appointment_window_id = $_[0]->get_value('appointment_window_id');
 
-						$self->result_source->schema->resultset('AppointmentWindow')->search( { id => $appointment_window_id } )->count;
+                        $self->result_source->schema->resultset('AppointmentWindow')->search( { id => $appointment_window_id } )->count;
                     }
                 },
                 quota_number => {
                     required   => 1,
                     type       => 'Int',
                     post_check => sub {
-						my $quota_number          = $_[0]->get_value('quota_number');
-						my $appointment_window_id = $_[0]->get_value('appointment_window_id');
+                        my $quota_number          = $_[0]->get_value('quota_number');
+                        my $appointment_window_id = $_[0]->get_value('appointment_window_id');
                         my $datetime_start        = $_[0]->get_value('datetime_start');
 
-						my $count = $self->result_source->schema->resultset('Appointment')->search(
+                        my $count = $self->result_source->schema->resultset('Appointment')->search(
                             {
                                 quota_number          => $quota_number,
                                 appointment_at        => { '>=' => \"'$datetime_start'::date", '<=' => \"'$datetime_start'::date + interval '1 day'" },
@@ -64,9 +65,9 @@ sub verifiers_specs {
                     required   => 1,
                     type       => 'Str',
                     post_check => sub {
-						my $type = $_[0]->get_value('type');
+                        my $type = $_[0]->get_value('type');
 
-						my $count = $self->result_source->schema->resultset('AppointmentType')->search( { name => $type } )->count or die \['type', 'invalid'];
+                        my $count = $self->result_source->schema->resultset('AppointmentType')->search( { name => $type } )->count or die \['type', 'invalid'];
                     }
                 }
             }
@@ -91,8 +92,8 @@ sub action_specs {
             # disponivel ainda
             my $ws = WebService::GoogleCalendar->instance();
 
-			my $datetime_start = delete $values{datetime_start};
-			my $datetime_end   = delete $values{datetime_end};
+            my $datetime_start = delete $values{datetime_start};
+            my $datetime_end   = delete $values{datetime_end};
 
             my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
             my $calendar           = $appointment_window->calendar;
@@ -101,16 +102,23 @@ sub action_specs {
             $values{appointment_at}      = $datetime_start;
             $values{appointment_type_id} = $type->id;
 
+            # Verificando se o número da quota bate com o horário
+            $appointment_window->assert_quota_number(
+                quota_number   => $values{quota_number},
+                datetime_start => $datetime_start,
+                datetime_end   => $datetime_end
+            );
+
             my $appointment = $self->create(\%values);
 
             my $recipient = $appointment->recipient;
 
             $ws->create_event(
                calendar       => $calendar,
-               calendar_id    => $calendar->id,
+               calendar_id    => $calendar->google_id,
                datetime_start => $datetime_start,
                datetime_end   => $datetime_end,
-               summary        => 'Consulta de' . $type->name .  ': ' . $recipient->name,
+               summary        => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
                description    => $recipient->appointment_description
             );
 

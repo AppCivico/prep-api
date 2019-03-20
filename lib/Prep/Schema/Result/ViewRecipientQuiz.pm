@@ -25,9 +25,11 @@ JOIN
     answer a ON ( a.recipient_id  = r.id )
 JOIN
     question q ON ( a.question_id = q.id )
+JOIN
+    recipient_flags f ON ( r.id = f.recipient_id )
 WHERE
     r.question_notification_sent_at IS NULL
-    AND r.finished_quiz = false
+    AND f.finished_quiz = false
     AND r.opt_in = true
     AND a.created_at <= NOW() - interval '3 hours'
 GROUP BY

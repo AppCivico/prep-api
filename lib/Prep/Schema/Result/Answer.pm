@@ -171,5 +171,123 @@ __PACKAGE__->belongs_to(
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
+
+use Scalar::Util qw( looks_like_number );
+
+sub update_stash {
+    my ($self, $finished) = @_;
+
+    my $recipient = $self->recipient;
+    my $stash     = $recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
+    my $question  = $self->question;
+    my $rules     = $question->rules_parsed;
+
+    $self->result_source->schema->txn_do(sub {
+        if ( !$rules ) {
+            # Caso não tenham rules, verifico se há perguntas pendentes
+            my $next_question = $stash->next_question;
+
+            if ( !defined $next_question->{question} ) {
+                $stash->update( { finished => 1 } )
+            }
+        }
+
+        my $answer = $self->answer_value;
+
+        my $conditions_satisfied;
+        if ( $rules->{qualification_conditions} && scalar @{ $rules->{qualification_conditions} } > 0 ) {
+            # Verificando se a condição de qualificação é a multipla escolha
+            # ou uma flag
+            if ( looks_like_number( $rules->{qualification_conditions}->[0] ) ) {
+                $conditions_satisfied = grep { $_ eq $answer } @{ $rules->{qualification_conditions} };
+            }
+            else {
+                # São flags
+                my %recipient_flags = $recipient->all_flags;
+
+                $conditions_satisfied = grep { $recipient_flags{$_} == 1 } @{ $rules->{qualification_conditions} };
+            }
+
+            if ( $conditions_satisfied == 0 ) {
+                # Caso seja do quiz devo desqualificar e atualizar os booleans
+                $recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
+
+                $stash->update( { finished => 1 } );
+            }
+
+        }
+
+        if ( $rules->{logic_jumps} && scalar @{ $rules->{logic_jumps} } > 0 ) {
+
+            for my $logic_jump ( @{ $rules->{logic_jumps} } ) {
+                # Ao validar essa resposta devo verificar que há respostas de texto livre
+                # ( no caso números positivos inteiros )
+                # E também respostas de multipla escolha
+                if ( ref $logic_jump->{values} eq 'ARRAY' ) {
+                    $conditions_satisfied = grep { $_ eq $answer } @{ $logic_jump->{values} };
+
+                    if ( $conditions_satisfied == 0 ) {
+                        $stash->remove_question($logic_jump->{code});
+                    }
+                }
+                elsif ( ref $logic_jump->{values} eq 'HASH' ) {
+                    my $operator = $logic_jump->{values}->{operator} or die \['operator', 'missing'];
+                    my $value    = $logic_jump->{values}->{value};
+                    die \['value', 'missing'] unless defined $value;
+
+                    if ( $operator eq '==' ) {
+                        $conditions_satisfied = int( $answer == $value );
+                    }
+                    elsif ( $operator eq '>' ) {
+                        $conditions_satisfied = $answer > $value ? 1 : 0;
+                    }
+                    elsif ( $operator eq '<' ) {
+                        $conditions_satisfied = $answer < $value ? 1 : 0;
+                    }
+                    else {
+                        die \['operator', 'invalid'];
+                    }
+
+                    if ( $conditions_satisfied == 0 ) {
+                        $stash->remove_question($logic_jump->{code});
+                    }
+
+                }
+                else {
+                    die \['logic_jumps', 'invalid'];
+                }
+
+            }
+        }
+
+    });
+
+}
+
+sub flags {
+    my ($self) = @_;
+
+    my %ret;
+
+    # Mesmo várias perguntas interferirem no resultado da flag
+    # a API só envia a flag na resposta de algumas perguntas
+
+    my $recipient     = $self->recipient;
+    my $question      = $self->question;
+    my $rules         = $question->rules_parsed;
+    my $question_code = $self->question->code;
+
+    if ( $rules ) {
+        if ( $rules->{flags} && scalar @{ $rules->{flags} } > 0 ) {
+            for my $flag ( @{ $rules->{flags} } ) {
+
+                $ret{$flag} = $recipient->$flag;
+            }
+        }
+    }
+
+    return %ret;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

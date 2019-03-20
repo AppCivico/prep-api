@@ -94,17 +94,10 @@ __PACKAGE__->table("recipient");
   data_type: 'timestamp'
   is_nullable: 1
 
-=head2 finished_quiz
-
-  data_type: 'boolean'
-  default_value: false
-  is_nullable: 0
-
 =head2 integration_token
 
   data_type: 'text'
-  default_value: "substring"(md5((random())::text), 0, 12)
-  is_nullable: 0
+  is_nullable: 1
 
 =head2 using_external_token
 
@@ -169,14 +162,8 @@ __PACKAGE__->add_columns(
   },
   "question_notification_sent_at",
   { data_type => "timestamp", is_nullable => 1 },
-  "finished_quiz",
-  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "integration_token",
-  {
-    data_type     => "text",
-    default_value => \"\"substring\"(md5((random())::text), 0, 12)",
-    is_nullable   => 0,
-  },
+  { data_type => "text", is_nullable => 1 },
   "using_external_token",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "count_sent_quiz",
@@ -260,6 +247,21 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 external_notifications
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::ExternalNotification>
+
+=cut
+
+__PACKAGE__->has_many(
+  "external_notifications",
+  "Prep::Schema::Result::ExternalNotification",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 recipient_flag
 
 Type: might_have
@@ -271,6 +273,21 @@ Related object: L<Prep::Schema::Result::RecipientFlag>
 __PACKAGE__->might_have(
   "recipient_flag",
   "Prep::Schema::Result::RecipientFlag",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 screenings
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Screening>
+
+=cut
+
+__PACKAGE__->has_many(
+  "screenings",
+  "Prep::Schema::Result::Screening",
   { "foreign.recipient_id" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
@@ -290,9 +307,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 term_signatures
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 15:55:59
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:J3kGrcFRvpXAFB/83of16A
+Type: has_many
+
+Related object: L<Prep::Schema::Result::TermSignature>
+
+=cut
+
+__PACKAGE__->has_many(
+  "term_signatures",
+  "Prep::Schema::Result::TermSignature",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-20 14:51:08
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:xNIajsVdMN7IuhMpX/lvaA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -328,9 +360,22 @@ sub verifiers_specs {
                 is_part_of_research => {
                     required => 0,
                     type     => 'Bool'
+                },
+                is_prep => {
+                    required => 0,
+                    type     => 'Bool'
                 }
             }
         ),
+        research_participation => Data::Verifier->new(
+            filters => [qw(trim)],
+            profile => {
+                is_part_of_research => {
+                    required => 1,
+                    type     => 'Bool'
+                },
+            }
+        )
     };
 }
 
@@ -344,15 +389,51 @@ sub action_specs {
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
 
-            if ( defined $values{is_part_of_research} ) {
-                my $flag = delete $values{is_part_of_research};
+            my @updatable_flags = qw( is_part_of_research is_prep );
+            for my $flag ( @updatable_flags ) {
+                next unless defined $values{$flag};
 
-                $self->recipient_flag->update( { is_part_of_research => $flag } );
+                $self->recipient_flag->update( { $flag => $values{$flag} } );
+                delete $values{$flag};
             }
 
             $self->update(\%values);
+        },
+        research_participation => sub {
+            my $r = shift;
+
+            my %values = $r->valid_values;
+            not defined $values{$_} and delete $values{$_} for keys %values;
+
+            # Caso o bool seja verdadeiro
+            # devo verificar se a pessoa é elegível para a pesquisa
+            if ( $self->is_target_audience == 0 || $self->is_eligible_for_research == 0 ) {
+                die \['is_part_of_research', 'invalid'];
+            }
+
+            return $self->recipient_flag->update( { is_part_of_research => $values{is_part_of_research} } );
         }
     };
+}
+
+sub get_next_question_data {
+    my ($self, $category) = @_;
+
+    my $question_map_result = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => $category },
+        {
+            prefetch => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next or die \['category', 'invalid'];
+
+    my $stash = $self->stashes->find_or_create(
+        { question_map_id => $question_map_result->id },
+        { key => 'stash_recipient_id_question_map_id_key' }
+    );
+    $stash->initiate if $stash->is_empty;
+
+    return $stash->next_question;
 }
 
 sub get_pending_question_data {
@@ -378,11 +459,11 @@ sub get_pending_question_data {
             { key => 'stash_recipient_id_question_map_id_key' }
         );
 
-        $stash->update( { value => $question_map_result->map } ) if $stash->is_empty;
+        $stash->initiate if $stash->is_empty;
 
         $question_map = $stash->parsed;
 
-        my @answered_questions = $self->answers->search( { 'question.question_map_id' => $question_map_result->id }, { prefetch => 'question' } )->get_column('question.code')->all();
+        my @answered_questions = $self->answers->question_code_by_map_id( $question_map_result->id )->get_column('question.code')->all();
 
         my @pending_questions = sort { $a <=> $b } grep { my $k = $_; !grep { $question_map->{$k} eq $_ } @answered_questions } sort keys %{ $question_map };
 
@@ -408,9 +489,9 @@ sub get_pending_question_data {
                     is_part_of_research      => $self->is_prep
                 );
 
-                $self->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
+                $self->recipient_flag->update( { finished_quiz => 1 } ) unless $self->finished_quiz == 1;
             }
-            elsif ( $next_question_code && $next_question_code =~ /^(A2|AC5|A3|B1)$/gm ) {
+            elsif ( $next_question_code && $next_question_code =~ /^(A5|A2|AC5|A3|B1)$/gm ) {
                 $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
                 if ( $conditions_satisfied > 0 ) {
@@ -436,114 +517,184 @@ sub get_pending_question_data {
                     $has_more   = 0;
                     $count_more = 0;
 
-                    $self->update( { finished_quiz => 1 } );
+                    $self->recipient_flag->update( { finished_quiz => 1 } );
                 }
             }
             elsif ( $next_question_code && $next_question_code eq 'B1a' ) {
                 $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
                 if ( $conditions_satisfied > 0 ) {
-					$question = $question_rs->search(
-						{
-							code            => $question_map->{ $pending_questions[0] },
-							question_map_id => $question_map_result->id
-						}
-					)->next;
+                    $question = $question_rs->search(
+                        {
+                            code            => $question_map->{ $pending_questions[0] },
+                            question_map_id => $question_map_result->id
+                        }
+                    )->next;
 
-					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
-					$count_more = scalar @pending_questions;
+                    $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
                 }
                 else {
-					my %r_question_map = reverse %{$question_map};
-					my $key             = $r_question_map{$next_question_code};
+                    my %r_question_map = reverse %{$question_map};
+                    my $key             = $r_question_map{$next_question_code};
 
-					delete $question_map->{$key};
+                    delete $question_map->{$key};
 
-					$stash->update( { value => to_json $question_map } );
+                    $stash->update( { value => to_json $question_map } );
 
-					$question = $question_rs->search(
-						{
-							code            => $question_map->{ $pending_questions[1] },
-							question_map_id => $question_map_result->id
-						}
-					)->next;
+                    $question = $question_rs->search(
+                        {
+                            code            => $question_map->{ $pending_questions[1] },
+                            question_map_id => $question_map_result->id
+                        }
+                    )->next;
 
-					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
-					$count_more = scalar @pending_questions;
+                    $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
                 }
             }
             elsif ( $next_question_code && $next_question_code eq 'B2a' ) {
                 $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
                 if ( $conditions_satisfied > 0 ) {
-					$question = $question_rs->search(
-						{
-							code            => $question_map->{ $pending_questions[0] },
-							question_map_id => $question_map_result->id
-						}
-					)->next;
+                    $question = $question_rs->search(
+                        {
+                            code            => $question_map->{ $pending_questions[0] },
+                            question_map_id => $question_map_result->id
+                        }
+                    )->next;
 
-					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
-					$count_more = scalar @pending_questions;
+                    $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
                 }
                 else {
                     # Removendo a pergunta B2a e B2b do question map stacheado
                     my %r_question_map = reverse %{ $question_map };
 
-					my $first_key  = $r_question_map{'B2a'};
-					my $second_key = $r_question_map{'B2b'};
+                    my $first_key  = $r_question_map{'B2a'};
+                    my $second_key = $r_question_map{'B2b'};
 
-					delete $question_map->{$first_key};
-					delete $question_map->{$second_key};
+                    delete $question_map->{$first_key};
+                    delete $question_map->{$second_key};
 
                     $stash->update( { value => to_json $question_map } );
 
                     # Pulando as duas que foram retiradas
-					$question = $question_rs->search(
-						{
-							code            => $question_map->{ $pending_questions[2] },
-							question_map_id => $question_map_result->id
-						}
-					)->next;
+                    $question = $question_rs->search(
+                        {
+                            code            => $question_map->{ $pending_questions[2] },
+                            question_map_id => $question_map_result->id
+                        }
+                    )->next;
 
-					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
-					$count_more = scalar @pending_questions;
+                    $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
                 }
             }
             elsif ( $next_question_code && $next_question_code eq 'B2b' ) {
                 $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
                 if ( $conditions_satisfied > 0 ) {
-					$question = $question_rs->search(
-						{
-							code            => $question_map->{ $pending_questions[0] },
-							question_map_id => $question_map_result->id
-						}
-					)->next;
+                    $question = $question_rs->search(
+                        {
+                            code            => $question_map->{ $pending_questions[0] },
+                            question_map_id => $question_map_result->id
+                        }
+                    )->next;
 
-					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
-					$count_more = scalar @pending_questions;
+                    $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
                 }
                 else {
                     # Removendo a pergunta B2a e B2b do question map stacheado
                     my %r_question_map = reverse %{ $question_map };
 
-					my $key  = $r_question_map{$next_question_code};
+                    my $key  = $r_question_map{$next_question_code};
 
-					delete $question_map->{$key};
+                    delete $question_map->{$key};
 
                     $stash->update( { value => to_json $question_map } );
 
                     # Pulando as duas que foram retiradas
-					$question = $question_rs->search(
-						{
-							code            => $question_map->{ $pending_questions[1] },
-							question_map_id => $question_map_result->id
-						}
-					)->next;
+                    $question = $question_rs->search(
+                        {
+                            code            => $question_map->{ $pending_questions[1] },
+                            question_map_id => $question_map_result->id
+                        }
+                    )->next;
 
-					$has_more   = scalar @pending_questions > 1 ? 1 : 0;
-					$count_more = scalar @pending_questions;
+                    $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
+                }
+            }
+            elsif ( $next_question_code && $next_question_code eq 'D4a' ) {
+                $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                if ( $conditions_satisfied > 0 ) {
+                    $question = $question_rs->search(
+                        {
+                            code            => $question_map->{ $pending_questions[0] },
+                            question_map_id => $question_map_result->id
+                        }
+                    )->next;
+
+                    $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                    $count_more = scalar @pending_questions;
+
+                    # Removo a D4b do mapa
+                    my %r_question_map = reverse %{$question_map};
+                    my $key            = $r_question_map{'D4b'};
+                    delete $question_map->{$key} if $key;
+
+                    $stash->update( { value => to_json $question_map } );
+                }
+                else {
+                    # Verifico se pode ir para a D4b
+                    $next_question_code   = 'D4b';
+                    $conditions_satisfied =  $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+
+                    if ( $conditions_satisfied > 0 ) {
+
+                        $question = $question_rs->search(
+                            {
+                                code            => $question_map->{ $pending_questions[1] },
+                                question_map_id => $question_map_result->id
+                            }
+                        )->next;
+
+                        $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                        $count_more = scalar @pending_questions;
+
+                        # Removo a D4a do mapa
+                        my %r_question_map = reverse %{$question_map};
+                        my $key            = $r_question_map{'D4a'};
+                        delete $question_map->{$key} if $key;
+
+                        $stash->update( { value => to_json $question_map } );
+                    }
+                    else {
+                        # Removendo a pergunta D4b do question map stacheado
+                        my %r_question_map = reverse %{ $question_map };
+
+                        my $first_key  = $r_question_map{'D4a'};
+                        my $second_key = $r_question_map{'D4b'};
+
+                        delete $question_map->{$first_key}  if $first_key;
+                        delete $question_map->{$second_key} if $second_key;
+
+                        $stash->update( { value => to_json $question_map } );
+
+                        $question = $question_rs->search(
+                            {
+                                code            => $question_map->{ $pending_questions[2] },
+                                question_map_id => $question_map_result->id
+                            }
+                        )->next;
+
+                        $has_more   = scalar @pending_questions > 1 ? 1 : 0;
+                        $count_more = scalar @pending_questions;
+                    }
+
                 }
             }
             else {
@@ -555,18 +706,18 @@ sub get_pending_question_data {
             }
 
         }
-        else {
+        elsif ( $question_map_result->category_id == 2 ) {
             # Triagem.
 
             my $conditions_satisfied;
 
-			if ( scalar @pending_questions == 0  ) {
+            if ( scalar @pending_questions == 0  ) {
 
-				# Caso não tenha mais perguntas pendentes acaba o quiz.
-				$question   = undef;
-				$has_more   = 0;
-				$count_more = 0;
-			}
+                # Caso não tenha mais perguntas pendentes acaba o quiz.
+                $question   = undef;
+                $has_more   = 0;
+                $count_more = 0;
+            }
             elsif ( $next_question_code && $next_question_code eq 'SC2' ) {
                 $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
 
@@ -587,22 +738,31 @@ sub get_pending_question_data {
                 # Verificando se batem as condições para indicar consulta
                 # Isto é: qualquer resposta positiva para SC2 a SC5
                 $conditions_satisfied = $self->verify_question_condition( next_question_code => $next_question_code, question_map => $question_map_result );
+                my $suggest_appointment_conditions = $self->verify_question_condition( next_question_code => 'SC6a', question_map => $question_map_result );
 
                 # Caso ele tenha respondigo sim para qualquer uma entre a SC2 e a SC5
                 # Ou tenha respondido não para todas e respondeu 2 ou 3 para a SC1
                 # Devo convidar a marcar uma consulta de recrutamento.
                 my $first_answer_on_screening = $self->screening_first_answer;
-                if ( $conditions_satisfied > 0 ) {
+                if ( $conditions_satisfied == 0 && $suggest_appointment_conditions == 0 && $first_answer_on_screening->answer_value =~ /(2|3)/ ) {
                     $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
                     $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
                     $count_more = scalar @pending_questions;
 
+                }
+                elsif ( $conditions_satisfied != 0 && $suggest_appointment_conditions > 0 ) {
+                    $question   = undef;
+                    $has_more   = 0;
+                    $count_more = 0;
+
                     %flags = ( suggest_appointment => 1 );
                 }
-                elsif ( $conditions_satisfied == 0 && $first_answer_on_screening->answer_value =~ /(2|3)/ ) {
-                    $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
-                    $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
-                    $count_more = scalar @pending_questions;
+                elsif ( $conditions_satisfied == 0 && $suggest_appointment_conditions == 0 && $first_answer_on_screening->answer_value eq '4' ) {
+                    $question   = undef;
+                    $has_more   = 0;
+                    $count_more = 0;
+
+                    %flags = ( go_to_autotest => 1 );
                 }
                 # Caso contrário, a triagem acaba e realizamos o fluxo informativo.
                 else {
@@ -616,6 +776,11 @@ sub get_pending_question_data {
                 $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
                 $count_more = scalar @pending_questions;
             }
+        }
+        else {
+            $question   = $question_rs->search( { code => $question_map->{ $pending_questions[0] }, question_map_id => $question_map_result->id } )->next;
+            $has_more   = scalar @pending_questions >= 1 ? 1 : 0;
+            $count_more = scalar @pending_questions;
         }
 
         $ret = {
@@ -633,8 +798,8 @@ sub get_pending_question_data {
 sub verify_question_condition {
     my ($self, %opts) = @_;
 
-	my @required_opts = qw( question_map next_question_code );
-	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+    my @required_opts = qw( question_map next_question_code );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     my @conditions = $opts{question_map}->build_conditions( recipient_id => $self->id, next_question_code => $opts{next_question_code} );
 
@@ -652,28 +817,14 @@ sub is_prep {
         return 1;
     }
 
-    my $answer = $self->answers->search( { 'question.code' => 'AC5' }, { prefetch => 'question' } )->next;
-
-    my $ret;
-    if ( $answer ) {
-        $ret = $answer->answer_value eq '1' ? 1 : 0;
-    }
-    else {
-        $ret = 0;
-    }
-
-    return $ret;
+   return $self->recipient_flag->is_prep ? 1 : 0;
 }
 
 sub is_eligible_for_research {
     my ($self) = @_;
 
-	if (is_test) {
-		return 1;
-	}
-
     if ( !$self->recipient_flag->is_eligible_for_research ) {
-		$self->update_is_eligible_for_research()
+        $self->update_is_eligible_for_research()
     }
 
     return $self->recipient_flag->is_eligible_for_research;
@@ -682,21 +833,30 @@ sub is_eligible_for_research {
 sub update_is_eligible_for_research {
     my ($self) = @_;
 
-    my $answer = $self->answers->search( { 'question.code' => { 'in' => ['AC5', 'B3', 'C1', 'C2', 'C3', 'C4'] } }, { prefetch => 'question' } );
+    if ( !$self->is_target_audience ) {
+        return $self->recipient_flag->update(
+            {
+                is_eligible_for_research => 0,
+                updated_at               => \'NOW()'
+            }
+        )
+    }
+
+    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1a', 'B2a', 'B2b', 'B3', 'B4', 'B5', 'B6' ] } }, { prefetch => 'question' } );
 
     my $conditions_met = 0;
-    while ( my $answer = $answer->next() ) {
+    while ( my $answer = $answer_rs->next() ) {
         my $code = $answer->question->code;
-        $conditions_met = 1;
-        if ( $code =~ /^(B3|C1|C3|C4)$/ ) {
 
-            $conditions_met = 0 unless $answer->answer_value eq '1';
+        if ( $code eq 'B4' ) {
+
+            $conditions_met = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
         }
-        elsif ( $code eq 'C2' ) {
-            $conditions_met = 0 unless $answer->answer_value eq '2';
+        else {
+            $conditions_met = 1 if $answer->answer_value eq '1';
         }
 
-        next if $conditions_met == 0;
+        next if $conditions_met == 1;
     }
 
     $self->recipient_flag->update(
@@ -716,7 +876,15 @@ sub upcoming_appointments {
 sub appointment_description {
     my ($self) = @_;
 
-	my $answers_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'C4', 'AC5' ] } }, { prefetch => 'question' } );
+    my @codes = [
+        'A1', 'A5', 'A2', 'A3',
+        'D4', 'D4a', 'D4b', 'D5',
+        'B1', 'B1a', 'B2', 'B2a',
+        'B2b', 'B3', 'B4', 'B5',
+        'B6', 'B7', 'AC5'
+    ];
+
+    my $answers_rs = $self->answers->search( { 'question.code' => { 'in' => @codes } }, { prefetch => 'question' } );
 
     my $answers;
     my $i = 0;
@@ -733,8 +901,8 @@ sub appointment_description {
     return '' unless $answers;
 
     # Adicionando flag e fb_id na descrição para identificar no sync
-	$answers->[$i]     = { agendamento_chatbot => 1 };
-	$answers->[$i + 1] = { identificador       => $self->integration_token };
+    $answers->[$i]     = { agendamento_chatbot => 1 };
+    $answers->[$i + 1] = { identificador       => $self->integration_token };
 
     my $json = JSON->new->pretty(1);
     $answers = $json->encode( $answers );
@@ -793,34 +961,8 @@ sub most_recent_screening {
     );
 }
 
-sub update_is_part_of_research {
-    my ($self) = @_;
-
-    my $is_part_of_research;
-
-    my $answer = $self->answers->search( { 'question.code' => 'AC5' }, { prefetch => 'question' } )->next;
-
-    if ( $answer && $answer->answer_value eq '1' ) {
-        $is_part_of_research = 1;
-    }
-    else {
-        $is_part_of_research = 0;
-    }
-
-    $self->recipient_flag->update(
-        {
-            is_part_of_research => $is_part_of_research,
-			updated_at               => \'NOW()'
-		}
-    );
-}
-
 sub is_part_of_research {
     my ($self) = @_;
-
-    if ( !$self->recipient_flag->is_part_of_research ) {
-		$self->update_is_part_of_research()
-    }
 
     return $self->recipient_flag->is_part_of_research;
 }
@@ -828,33 +970,293 @@ sub is_part_of_research {
 sub update_is_target_audience {
     my ($self) = @_;
 
-    my $is_target_audience;
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'quiz' },
+        {
+            join => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
 
-    my $answer = $self->answers->search( { 'question.code' => 'A1' }, { prefetch => 'question' } )->next;
+    my $answer_rs = $self->answers->search(
+        {
+            'question.code'      => { -in => ['A2', 'A1', 'A5', 'A3'] },
+            'me.question_map_id' => $question_map->id
+        },
+        { join => 'question' }
+    );
 
-    if ( $answer && $answer->answer_value =~ /^(15|16|17|18|19)$/ ) {
-        $is_target_audience = 1;
-    }
-    else {
-        $is_target_audience = 0;
+    my $is_target_audience = 1;
+    while ( my $answer = $answer_rs->next ) {
+        my $code = $answer->question->code;
+
+        if ( $code eq 'A1' ) {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
+        }
+        elsif ( $code eq 'A2' ) {
+            $is_target_audience = 0 unless $answer->answer_value eq '1';
+        }
+        elsif ( $code eq 'A3' ) {
+            $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
+        }
+        else {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
+        }
+
+        last if $is_target_audience == 0;
     }
 
     $self->recipient_flag->update(
         {
             is_target_audience => $is_target_audience,
-			updated_at         => \'NOW()'
-		}
+            updated_at         => \'NOW()'
+        }
     );
 }
 
 sub is_target_audience {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	if ( !$self->recipient_flag->is_target_audience ) {
-		$self->update_is_target_audience();
-	}
+    if ( !$self->recipient_flag->is_target_audience || $self->recipient_flag->is_target_audience == 1 ) {
+        $self->update_is_target_audience();
+    }
 
-	return $self->recipient_flag->is_target_audience;
+    return $self->recipient_flag->is_target_audience;
+}
+
+sub generate_integration_token {
+    my ($self) = @_;
+
+    return $self->update( { integration_token => \'substring( md5(random()::text), 0, 12)' } );
+}
+
+sub update_signed_term {
+    my ($self) = @_;
+
+    my $signed_term;
+
+    if ( $self->term_signatures->count > 0 ) {
+        $signed_term = 1;
+    }
+    else {
+        $signed_term = 0;
+    }
+
+    $self->recipient_flag->update(
+        {
+            signed_term => $signed_term,
+            updated_at  => \'NOW()'
+        }
+    );
+}
+
+sub signed_term {
+    my ($self) = @_;
+
+    if ( !$self->recipient_flag->signed_term ) {
+        $self->update_signed_term();
+    }
+
+    return $self->recipient_flag->signed_term;
+}
+
+sub update_finished_quiz {
+    my ($self) = @_;
+
+    my $signed_term;
+
+    my $stash = $self->stash_by_category('quiz');
+
+    my $finished_quiz;
+
+    if ( !$stash || ( $stash && !$stash->finished ) ) {
+        $finished_quiz = 0;
+
+        if ( $stash ) {
+            return if $self->recipient_flag->finished_quiz == $finished_quiz;
+        }
+    }
+    else {
+        $finished_quiz = 1;
+    }
+
+    return $self->recipient_flag->update(
+        {
+            finished_quiz => $finished_quiz,
+            updated_at    => \'NOW()'
+        }
+    )
+}
+
+sub finished_quiz {
+    my ($self) = @_;
+
+    if ( $self->recipient_flag->finished_quiz == 0 ) {
+        $self->update_finished_quiz();
+    }
+
+    return $self->recipient_flag->finished_quiz;
+}
+
+sub build_screening_report {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'screening' },
+        {
+            prefetch => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    my $answers = $self->answers->search( { question_map_id => $question_map->id } );
+
+    my $answers_parsed;
+    my $i = 0;
+    while ( my $answer = $answers->next ) {
+        $answers_parsed->{$i} = {
+            code  => $answer->question->code,
+            value => $answer->answer_value
+        };
+
+        $i++;
+    }
+
+    my $screening = $self->screenings->create(
+        {
+            question_map_id => $question_map->id,
+            answers         => to_json( $answers_parsed )
+        }
+    );
+
+    return $screening
+}
+
+sub reset_screening {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'screening' },
+        {
+            prefetch => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    $self->result_source->schema->txn_do( sub {
+        $self->answers->search( { question_map_id => $question_map->id } )->delete;
+
+        my $stash = $self->stashes->search( { question_map_id => $question_map->id } )->next;
+        $stash->update( { finished => 0 } ) if $stash;
+    });
+}
+
+sub stash_by_category {
+    my ($self, $category) = @_;
+
+    die \['category', 'missing'] unless $category;
+
+    return $self->stashes->search(
+        { 'category.name' => $category },
+        { prefetch => { 'question_map' => 'category' } }
+    )->next
+}
+
+sub all_flags {
+    my ($self) = @_;
+
+    my @flags = qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz );
+
+    return
+        map {
+            $_ => $self->$_
+        } @flags
+
+}
+
+sub all_screening_flags {
+    my ($self) = @_;
+
+    my @flags = qw( emergency_rerouting go_to_appointment suggest_wait_for_test go_to_test );
+
+    return map { $_ => $self->$_ } @flags
+}
+
+sub has_appointments {
+    my ($self) = @_;
+
+    return $self->appointments->count > 0 ? 1 : 0;
+}
+
+sub emergency_rerouting {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
+
+    my $answer = $self->answers->search(
+        {
+            'question.code'            => 'SC1',
+            'question.question_map_id' => $question_map->id
+        },
+        { prefetch => 'question' }
+    )->next;
+    return 0 unless $answer;
+
+    return $answer->answer_value eq '1' ? 1 : 0;
+}
+
+sub go_to_appointment {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
+
+    my $answer = $self->answers->search(
+        {
+            'question.code'            => { -in => ['SC3', 'SC2b', 'SC2a'] },
+            'question.question_map_id' => $question_map->id
+        },
+        {
+            prefetch => 'question',
+            order_by => { -desc => 'me.created_at' }
+        }
+    )->first;
+    return 0 unless $answer;
+
+    return $answer->answer_value eq '1' ? 1 : 0;
+}
+
+sub suggest_wait_for_test {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
+
+    my $answer = $self->answers->search(
+        {
+            'question.code'            => 'SC1',
+            'question.question_map_id' => $question_map->id
+        },
+        { prefetch => 'question' }
+    )->next;
+    return 0 unless $answer;
+
+    return $answer->answer_value eq '2' ? 1 : 0;
+}
+
+sub go_to_test {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search( { category_id => 2 }, { order_by => { -desc => 'created_at' } } )->next;
+
+    my $answer = $self->answers->search(
+        {
+            'question.code'            => 'SC4',
+            'question.question_map_id' => $question_map->id
+        },
+        { prefetch => 'question' }
+    )->next;
+    return 0 unless $answer;
+
+    return $answer->answer_value eq '1' ? 1 : 0;
 }
 
 __PACKAGE__->meta->make_immutable;

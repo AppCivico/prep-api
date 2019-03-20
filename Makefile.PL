@@ -29,6 +29,7 @@ my %WriteMakefileArgs = (
     "DBIx::Class::ResultSet" => 0,
     "DBIx::Class::Schema" => 0,
     "DBIx::Class::TimeStamp" => 0,
+    "DDP" => 0,
     "Data::Diver" => 0,
     "Data::Fake" => 0,
     "Data::Manager" => 0,
@@ -84,7 +85,7 @@ my %WriteMakefileArgs = (
     "blib" => "1.01",
     "lib" => 0
   },
-  "VERSION" => 20190207,
+  "VERSION" => 20190318,
   "test" => {
     "TESTS" => "t/*.t t/chatbot/*.t t/internal/*.t"
   }
@@ -104,6 +105,7 @@ my %FallbackPrereqs = (
   "DBIx::Class::ResultSet" => 0,
   "DBIx::Class::Schema" => 0,
   "DBIx::Class::TimeStamp" => 0,
+  "DDP" => 0,
   "Data::Diver" => 0,
   "Data::Fake" => 0,
   "Data::Manager" => 0,

@@ -22,13 +22,13 @@ sub is_test {
 sub get_ymd_by_day_of_the_week {
     my ($day_of_the_week) = @_;
 
-	my $now = DateTime->now;
+    my $now = DateTime->now;
 
-	while ( $now->day_of_week != $day_of_the_week ) {
-		$now->add( days => 1 );
-	}
+    while ( $now->day_of_week != $day_of_the_week ) {
+        $now->add( days => 1 );
+    }
 
-	return $now->ymd;
+    return $now->ymd;
 }
 
 sub env { return $ENV{${\shift}} }

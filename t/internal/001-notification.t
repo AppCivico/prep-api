@@ -117,7 +117,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
-				category       => 'quiz',
+                category       => 'quiz',
                 answer_value   => '1'
             }
         )
@@ -149,7 +149,7 @@ db_transaction {
 
             db_transaction{
                 # Recipient já terminou o questionário
-                $recipient->update( { finished_quiz => 1 } );
+                $recipient->recipient_flag->update( { finished_quiz => 1 } );
                 is( $rs->count, 0 );
             };
 

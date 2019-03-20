@@ -23,3 +23,13 @@
 0019-add-logic-jump [0018-add-invite-count] 2019-02-11T16:49:32Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding quiz_stash
 0020-add-flag [0019-add-logic-jump] 2019-02-11T17:47:22Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding one flag to the recipient flag table
 0021-add-count_share [0020-add-flag] 2019-02-11T17:57:07Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding count_share
+0022-updating-integration_token [0021-add-count_share] 2019-02-13T11:52:39Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the 'integration_token' column
+0023-add-address-data [0022-updating-integration_token] 2019-02-13T12:08:33Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding address data to the calendar
+0024-add-term_signature [0023-add-address-data] 2019-02-13T19:13:40Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the term signature table
+0025-add-signed_term [0024-add-term_signature] 2019-02-13T19:21:16Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding signed_term bool
+0026-add-flag [0025-add-signed_term] 2019-02-15T18:26:51Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding boolean to the 'recipient_flags' table
+0027-add-screening [0026-add-flag] 2019-02-19T13:20:26Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the screening table
+0028-add-question-rules [0027-add-screening] 2019-02-20T13:06:43Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding rules to the question
+0029-add-notification [0028-add-question-rules] 2019-02-20T18:40:09Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the 'external_notification' table
+0030-add-default-flag [0029-add-notification] 2019-03-07T18:34:13Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding default 'false' value for the 'is_part_of_research' flag
+0031-add-prep_since [0030-add-default-flag] 2019-03-08T17:41:37Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding 'prep_since' on recipient_flags

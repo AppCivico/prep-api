@@ -27,44 +27,72 @@ sub register {
     my $answer = $recipient->route('/answer');
     $answer->post('/')->to('chatbot-recipient-answer#post');
 
-	# Recipient::Appointment
-	my $recipient_appointment = $recipient->route('/appointment');
-	$recipient_appointment->post('/')->to('chatbot-recipient-appointment#post');
-	$recipient_appointment->get('/')->to('chatbot-recipient-appointment#get');
+    # Recipient::Appointment
+    my $recipient_appointment = $recipient->route('/appointment');
+    $recipient_appointment->post('/')->to('chatbot-recipient-appointment#post');
+    $recipient_appointment->get('/')->to('chatbot-recipient-appointment#get');
 
     # Recipient::ExternalIntegrationToken
     my $recipient_integration_token = $recipient->route('/integration-token');
-	$recipient_integration_token->post('/')->to('chatbot-recipient-integration_token#post');
+    $recipient_integration_token->post('/')->to('chatbot-recipient-integration_token#post');
 
-	# Recipient::CountQuiz
-	my $recipient_count_quiz = $recipient->route('/count-quiz');
-	$recipient_count_quiz->post('/')->to('chatbot-recipient-count_quiz#post');
-	$recipient_count_quiz->get('/')->to('chatbot-recipient-count_quiz#get');
+    # Recipient::CountQuiz
+    my $recipient_count_quiz = $recipient->route('/count-quiz');
+    $recipient_count_quiz->post('/')->to('chatbot-recipient-count_quiz#post');
+    $recipient_count_quiz->get('/')->to('chatbot-recipient-count_quiz#get');
 
-	# Recipient::CountResearchInvite
-	my $recipient_count_research_invite = $recipient->route('/count-research-invite');
-	$recipient_count_research_invite->post('/')->to('chatbot-recipient-count_research_invite#post');
-	$recipient_count_research_invite->get('/')->to('chatbot-recipient-count_research_invite#get');
+    # Recipient::CountResearchInvite
+    my $recipient_count_research_invite = $recipient->route('/count-research-invite');
+    $recipient_count_research_invite->post('/')->to('chatbot-recipient-count_research_invite#post');
+    $recipient_count_research_invite->get('/')->to('chatbot-recipient-count_research_invite#get');
 
-	# Recipient::CountShare
-	my $recipient_count_share = $recipient->route('/count-share');
-	$recipient_count_share->post('/')->to('chatbot-recipient-count_share#post');
-	$recipient_count_share->get('/')->to('chatbot-recipient-count_share#get');
+    # Recipient::CountShare
+    my $recipient_count_share = $recipient->route('/count-share');
+    $recipient_count_share->post('/')->to('chatbot-recipient-count_share#post');
+    $recipient_count_share->get('/')->to('chatbot-recipient-count_share#get');
+
+    # Recipient::CountShare
+    my $term_signature = $recipient->route('/term-signature');
+    $term_signature->post('/')->to('chatbot-recipient-term_signature#post');
+
+    # Recipient::ResetScreening
+    my $reset_screening = $recipient->route('/reset-screening');
+    $reset_screening->post('/')->to('chatbot-recipient-reset_screening#post');
+
+    # Recipient::Research
+    my $research = $recipient->route('/research-participation');
+    $research->post('/')->to('chatbot-recipient-research#post');
 
     # Appointment
-	my $appointment = $chatbot->route('/appointment');
+    my $appointment = $chatbot->route('/appointment');
 
-	# Appointment::AvailableCalendars
-	$appointment->route('/available-calendars')->get('/')->to('chatbot-appointment-available_calendars#get');
+    # Appointment::AvailableCalendars
+    $appointment->route('/available-calendars')->get('/')->to('chatbot-appointment-available_calendars#get');
 
     # Appointment::AvailableDates
-	$appointment->route('/available-dates')->get('/')->to('chatbot-appointment-available_dates#get');
+    $appointment->route('/available-dates')->get('/')->to('chatbot-appointment-available_dates#get');
 
     # Internal
-    my $internal = $api->route('/internal')->under->to('internal#validade_security_token');
+    my $internal = $api->route('/internal');
 
     # Internal::DeleteAnswer
-    $internal->route('/delete-answers')->post('/')->to('internal-delete_answer#post');
+    my $delete_answer = $internal->route('/delete-answers')->under->to('internal#validade_security_token');
+    $delete_answer->post('/')->to('internal-delete_answer#post');
+
+    # Internal::Integration
+    my $internal_integration = $internal->route('/integration')->under->to('internal-integration#validate_header_and_pass');
+
+    # Internal::Integration::Recipient
+    my $integration_recipient = $internal_integration->route('/recipient')->under->to('internal-integration-recipient#stasher');
+    $integration_recipient->get('/')->to('internal-integration-recipient#get');
+
+    # Internal::Integration::Recipient::Sync
+    my $sync = $integration_recipient->route('/sync');
+    $sync->post('/')->to('internal-integration-recipient-sync#post');
+
+    # Internal::Integration::Recipient::Notification
+    my $notification = $integration_recipient->route('/notification');
+    $notification->post('/')->to('internal-integration-recipient-notification#post');
 }
 
 1;
