@@ -1146,8 +1146,7 @@ sub reset_screening {
     $self->result_source->schema->txn_do( sub {
         $self->answers->search( { question_map_id => $question_map->id } )->delete;
 
-        my $stash = $self->stashes->search( { question_map_id => $question_map->id } )->next;
-        $stash->update( { finished => 0 } ) if $stash;
+        my $stash = $self->stashes->search( { question_map_id => $question_map->id } )->delete;
     });
 }
 
