@@ -177,6 +177,7 @@ sub action_specs {
                     if ( !$pending_question_data->{question} ) {
                         $recipient->build_screening_report;
                         %flags = $answer->flags;
+                        $recipient->reset_screening;
 
                         $finished_quiz = 1;
                     }
