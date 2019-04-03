@@ -123,6 +123,11 @@ __PACKAGE__->table("recipient");
   default_value: 0
   is_nullable: 0
 
+=head2 city
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -172,6 +177,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", default_value => 0, is_nullable => 0 },
   "count_share",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "city",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -323,8 +330,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-20 14:51:08
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:xNIajsVdMN7IuhMpX/lvaA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-04-03 16:11:49
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IPRb2gU+2jAqA3tXFJOubw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
