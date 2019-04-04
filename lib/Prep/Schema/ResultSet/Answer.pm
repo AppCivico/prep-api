@@ -130,9 +130,7 @@ sub action_specs {
 					# Caso a resposta seja da pergunta 'A5' devo atualizar a coluna 'city' do recipient
 					# com o conteúdo da resposta
 					if ( $answer->question->code eq 'A5' ) {
-                        my $answer_text = $pending_question_data->{question}->decoded->{multiple_choices}->{$answer->answer_value};
-
-						$recipient->update( { city => $answer_text } );
+						$recipient->update( { city => $answer->answer_value } );
 					}
 
                     $pending_question_data = $recipient->get_next_question_data($category);
