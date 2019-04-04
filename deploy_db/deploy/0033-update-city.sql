@@ -3,8 +3,8 @@
 
 BEGIN;
 
-UPDATE recipient SET city = '1' WHERE id IN (45,14,76,48,22,70,53,67,72,1,4,15,18,23,20,79,30);
-UPDATE recipient SET city = '2' WHERE id IN (10, 47, 39, 9, 60, 44);
-UPDATE recipient SET city = '3' WHERE id IN (56, 59, 51, 71, 77, 81);
+UPDATE recipient SET city = '1' WHERE city = 'São Paulo e Gde SP';
+UPDATE recipient SET city = '2' WHERE city = 'Belo Horizonte - MG';
+UPDATE recipient SET city = '3' WHERE city = 'Salvador - BA';
 
 COMMIT;
