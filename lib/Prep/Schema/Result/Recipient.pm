@@ -414,7 +414,7 @@ sub action_specs {
 
             # Caso o bool seja verdadeiro
             # devo verificar se a pessoa é elegível para a pesquisa
-            if ( $self->is_target_audience == 0 || $self->is_eligible_for_research == 0 ) {
+            if ( ($self->is_target_audience && $self->is_target_audience == 0) || $self->is_eligible_for_research == 0 ) {
                 die \['is_part_of_research', 'invalid'];
             }
 
