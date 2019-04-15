@@ -993,24 +993,27 @@ sub update_is_target_audience {
         { join => 'question' }
     );
 
-    my $is_target_audience = 1;
-    while ( my $answer = $answer_rs->next ) {
-        my $code = $answer->question->code;
+    my $is_target_audience;
+    if ( $answer_rs->count > 0 ) {
+        $is_target_audience = 1;
+        while ( my $answer = $answer_rs->next ) {
+            my $code = $answer->question->code;
 
-        if ( $code eq 'A1' ) {
-            $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
-        }
-        elsif ( $code eq 'A2' ) {
-            $is_target_audience = 0 unless $answer->answer_value eq '1';
-        }
-        elsif ( $code eq 'A3' ) {
-            $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
-        }
-        else {
-            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
-        }
+            if ( $code eq 'A1' ) {
+                $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
+            }
+            elsif ( $code eq 'A2' ) {
+                $is_target_audience = 0 unless $answer->answer_value eq '1';
+            }
+            elsif ( $code eq 'A3' ) {
+                $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
+            }
+            else {
+                $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
+            }
 
-        last if $is_target_audience == 0;
+            last if $is_target_audience == 0;
+        }
     }
 
     $self->recipient_flag->update(
@@ -1263,6 +1266,18 @@ sub go_to_test {
     return 0 unless $answer;
 
     return $answer->answer_value eq '1' ? 1 : 0;
+}
+
+sub system_labels {
+    my ($self) = @_;
+
+    return [
+        map {
+            my $f = $self->$_;
+
+            $f ? ( { name => $_ } ) : ( )
+        } qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz is_prep )
+    ]
 }
 
 __PACKAGE__->meta->make_immutable;

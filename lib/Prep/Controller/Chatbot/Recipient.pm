@@ -67,7 +67,8 @@ sub get {
             signed_term              => $recipient->signed_term,
             has_appointments         => $recipient->has_appointments,
             prep_since               => $recipient->recipient_flag->prep_since,
-            city                     => $recipient->city
+            city                     => $recipient->city,
+            system_labels            => $recipient->system_labels
         }
     )
 }
