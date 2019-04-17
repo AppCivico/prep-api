@@ -12,6 +12,7 @@ sub startup {
 
     # Plugins.
     $self->plugin('Detach');
+	$self->plugin('ParamLogger', filter => [qw(password)]);
 
     $self->plugin('SimpleAuthentication', {
         load_user     => sub { Prep::Authentication::load_user(@_)     },
