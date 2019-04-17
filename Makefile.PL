@@ -52,6 +52,7 @@ my %WriteMakefileArgs = (
     "Mojo::Pg" => 0,
     "Mojolicious::Plugin::Authorization" => 0,
     "Mojolicious::Plugin::Minion" => 0,
+    "Mojolicious::Plugin::ParamLogger" => 0,
     "Moose" => 0,
     "Moose::Role" => 0,
     "Moose::Util::TypeConstraints" => 0,
@@ -85,7 +86,7 @@ my %WriteMakefileArgs = (
     "blib" => "1.01",
     "lib" => 0
   },
-  "VERSION" => 20190319,
+  "VERSION" => 20190417,
   "test" => {
     "TESTS" => "t/*.t t/chatbot/*.t t/internal/*.t"
   }
@@ -132,6 +133,7 @@ my %FallbackPrereqs = (
   "Mojo::Util" => 0,
   "Mojolicious::Plugin::Authorization" => 0,
   "Mojolicious::Plugin::Minion" => 0,
+  "Mojolicious::Plugin::ParamLogger" => 0,
   "Moose" => 0,
   "Moose::Role" => 0,
   "Moose::Util::TypeConstraints" => 0,
