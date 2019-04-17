@@ -7,8 +7,12 @@ use Prep::Authorization;
 use Prep::Controller;
 use Prep::SchemaConnected;
 
+use Mojo::Log;
+
+
 sub startup {
     my $self = shift;
+
 
     # Plugins.
     $self->plugin('Detach');
@@ -37,6 +41,10 @@ sub startup {
     $self->helper('reply.exception' => sub { Prep::Controller::reply_exception(@_) });
     $self->helper('reply.not_found' => sub { Prep::Controller::reply_not_found(@_) });
 
+	my $log = Mojo::Log->new;
+
+	# Customize log file location and minimum log level
+	my $log = Mojo::Log->new(path => 'log/test.log', level => 'debug');
     # Router.
     Prep::Routes::register($self->routes);
 }
