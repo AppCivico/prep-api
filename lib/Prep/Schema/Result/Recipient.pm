@@ -414,7 +414,7 @@ sub action_specs {
 
             # Caso o bool seja verdadeiro
             # devo verificar se a pessoa é elegível para a pesquisa
-            if ( ($self->is_target_audience && $self->is_target_audience == 0) || $self->is_eligible_for_research == 0 ) {
+            if ( ( defined $self->is_target_audience && $self->is_target_audience == 0 ) || $self->is_eligible_for_research == 0 ) {
                 die \['is_part_of_research', 'invalid'];
             }
 
@@ -993,27 +993,24 @@ sub update_is_target_audience {
         { join => 'question' }
     );
 
-    my $is_target_audience;
-    if ( $answer_rs->count > 0 ) {
-        $is_target_audience = 1;
-        while ( my $answer = $answer_rs->next ) {
-            my $code = $answer->question->code;
+    my $is_target_audience = 1;
+    while ( my $answer = $answer_rs->next ) {
+        my $code = $answer->question->code;
 
-            if ( $code eq 'A1' ) {
-                $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
-            }
-            elsif ( $code eq 'A2' ) {
-                $is_target_audience = 0 unless $answer->answer_value eq '1';
-            }
-            elsif ( $code eq 'A3' ) {
-                $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
-            }
-            else {
-                $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
-            }
-
-            last if $is_target_audience == 0;
+        if ( $code eq 'A1' ) {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
         }
+        elsif ( $code eq 'A2' ) {
+            $is_target_audience = 0 unless $answer->answer_value eq '1';
+        }
+        elsif ( $code eq 'A3' ) {
+            $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
+        }
+        else {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
+        }
+
+        last if $is_target_audience == 0;
     }
 
     $self->recipient_flag->update(
