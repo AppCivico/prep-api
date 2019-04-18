@@ -993,8 +993,10 @@ sub update_is_target_audience {
         { join => 'question' }
     );
 
-    my $is_target_audience = 1;
+    my $is_target_audience;
     while ( my $answer = $answer_rs->next ) {
+        $is_target_audience = 1;
+
         my $code = $answer->question->code;
 
         if ( $code eq 'A1' ) {

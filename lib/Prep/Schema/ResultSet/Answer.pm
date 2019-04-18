@@ -191,6 +191,16 @@ sub action_specs {
                         $finished_quiz = 0;
                     }
                 }
+                else {
+                    $pending_question_data = $recipient->get_next_question_data($category);
+
+                    if ( defined $pending_question_data->{question} ) {
+                        $finished_quiz = 0;
+                    }
+                    else {
+                        $finished_quiz = 1;
+                    }
+                }
 
             });
 
