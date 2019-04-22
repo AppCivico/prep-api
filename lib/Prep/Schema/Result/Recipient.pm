@@ -1008,6 +1008,9 @@ sub update_is_target_audience {
         elsif ( $code eq 'A3' ) {
             $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
         }
+		elsif ( $code eq 'A5' ) {
+			$is_target_audience = 0 unless $answer->answer_value !~ /^(1|2|3)$/;
+		}
         else {
             $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
         }
