@@ -19,7 +19,7 @@ my $i = 1;
 #########################################
 # ALWAYS UPDATE THIS NUMBER ACCORDINGLY #
 #########################################
-my $version = 1;
+my $version = 21;
 
 open my $fh, "<:encoding(utf8)", "quiz.csv" or die "screening.csv: $!";
 while (my $row = $csv->getline($fh)) {
@@ -41,8 +41,8 @@ while (my $row = $csv->getline($fh)) {
                 ( extra_quick_replies => $row->[4] ) : ( )
         ),
         (
-            $row->[6] ?
-                ( rules => $row->[6] ) :
+            $row->[5] ?
+                ( rules => $row->[5] ) :
                 ( )
         )
     };
