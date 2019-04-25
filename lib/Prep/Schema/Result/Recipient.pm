@@ -1300,16 +1300,63 @@ sub answers_for_integration {
         }
     )->next;
 
-    my $answers = $self->answers->search( { question_map_id => $question_map->id } );
+    my @fun_questions = qw(AC1 AC2 AC3 AC4);
 
-    return [map {
-        my $a = $_;
+	my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
+	my $answers   = $answer_rs->search(
+        { 'question.code' => { -not_in => \@fun_questions } },
+        { join => 'question' }
+    );
 
-        +{
-            question_code => $a->question->code,
-            value         => $a->answer_value
-        }
-    } $answers->all()]
+    my @yes_no_questions = qw( A6 B1 B4 B5 B6 B8 B9 B10 );
+    $answers = [
+        map {
+            my $a = $_;
+
+            my $question_code = $a->question->code;
+            my $answer        = $a->answer_value;
+
+            # Caso seja a A4 devo verificar qual a resposta e remover todas relacionadas
+            if ( $question_code eq 'A4' ) {
+                # Caso seja 1, devo verificar a resposta da A4a
+                if ( $answer eq '1' ) {
+
+                }
+                elsif ( $answer eq '2' ) {
+                    # Devo verificar a resposta da A4b
+
+                }
+                elsif ( $answer eq '3' ) {
+                    # Devo preencher com o valor 13
+
+                }
+                else {
+                    die 'error at Result::Recipient::answers_for_integration';
+                }
+            }
+
+            # Questões de sim/não devem ser enviadas como boolean
+            if ( grep { $question_code eq $_ } @yes_no_questions ) {
+                +{
+                    question_code => $question_code,
+                    value         => $answer eq '1' ? \1 : \0
+                }
+            }
+            elsif ( $ ) {
+
+            }
+            else {
+                +{
+                    question_code => $question_code,
+                    value         => $answer
+                }
+            }
+        } $answers->all()
+    ];
+
+    # Removendo perguntas adicionadas por nós
+    use DDP; p $answers;
+    return $answers
 }
 
 sub register_simprep {
