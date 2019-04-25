@@ -339,11 +339,21 @@ __PACKAGE__->has_many(
 with 'Prep::Role::Verification';
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
 
+use WebService::Simprep;
+
+has _simprep => (
+    is         => 'ro',
+    isa        => 'WebService::Simprep',
+    lazy_build => 1,
+);
+
 use Prep::Utils qw(is_test);
 
 use Text::CSV;
 use DateTime;
 use JSON;
+
+sub _build__simprep { WebService::Simprep->instance }
 
 sub verifiers_specs {
     my $self = shift;
@@ -849,13 +859,13 @@ sub update_is_eligible_for_research {
         )
     }
 
-    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1a', 'B2a', 'B2b', 'B3', 'B4', 'B5', 'B6' ] } }, { prefetch => 'question' } );
+    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9' ] } }, { prefetch => 'question' } );
 
     my $conditions_met = 0;
     while ( my $answer = $answer_rs->next() ) {
         my $code = $answer->question->code;
 
-        if ( $code eq 'B4' ) {
+        if ( $code eq 'B7' ) {
 
             $conditions_met = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
         }
@@ -987,7 +997,7 @@ sub update_is_target_audience {
 
     my $answer_rs = $self->answers->search(
         {
-            'question.code'      => { -in => ['A2', 'A1', 'A5', 'A3'] },
+            'question.code'      => { -in => ['A2', 'A6', 'A1', 'A3'] },
             'me.question_map_id' => $question_map->id
         },
         { join => 'question' }
@@ -999,21 +1009,18 @@ sub update_is_target_audience {
 
         my $code = $answer->question->code;
 
-        if ( $code eq 'A1' ) {
+        if ( $code eq 'A2' ) {
             $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
         }
-        elsif ( $code eq 'A2' ) {
+        elsif ( $code eq 'A6' ) {
             $is_target_audience = 0 unless $answer->answer_value eq '1';
         }
         elsif ( $code eq 'A3' ) {
             $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
         }
-		elsif ( $code eq 'A5' ) {
+		elsif ( $code eq 'A1' ) {
 			$is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
 		}
-        else {
-            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
-        }
 
         last if $is_target_audience == 0;
     }
@@ -1280,6 +1287,38 @@ sub system_labels {
             $f ? ( { name => $_ } ) : ( )
         } qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz is_prep )
     ]
+}
+
+sub answers_for_integration {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'quiz' },
+        {
+            join     => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    my $answers = $self->answers->search( { question_map_id => $question_map->id } );
+
+    return [map {
+        my $a = $_;
+
+        +{
+            question_code => $a->question->code,
+            value         => $a->answer_value
+        }
+    } $answers->all()]
+}
+
+sub register_simprep {
+    my ($self) = @_;
+
+    return $self->_simprep->register_recipient(
+        voucher => $self->integration_token,
+        answers => $self->answers_for_integration
+    );
 }
 
 __PACKAGE__->meta->make_immutable;

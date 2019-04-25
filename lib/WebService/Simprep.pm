@@ -28,7 +28,7 @@ sub register_recipient {
 
         eval {
             retry {
-                my $url = $ENV{SIMPREP_API_URL} . '/register';
+                my $url = $ENV{SIMPREP_API_URL} . '/recrutamento/novo';
 
                 $res = $self->ua->post(
                     $url,

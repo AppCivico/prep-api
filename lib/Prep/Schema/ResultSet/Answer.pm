@@ -102,22 +102,6 @@ sub action_specs {
             else {
                 # open_text
 
-                # Perguntas de texto aberto podem ser:
-                # nome (A1), cpf (A3) e data de nascimento (A2)
-                if ( $next_question->{code} eq 'A1' ) {
-                    die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
-                }
-                elsif ( $next_question->{code} eq 'B2' ) {
-                    die \['answer_value', 'invalid'] unless $values{answer_value} =~ /^\d{1,2}$/gm;
-                }
-                elsif ( $next_question->{code} eq 'A3' ) {
-                    die \['answer_value', 'invalid'] unless test_cpf($values{answer_value});
-
-                    $values{answer_value} =~ s/[^\w]//g;
-                }
-                elsif ( $next_question->{code} eq 'A2' ) {
-                    die \['answer_value', 'invalid'] unless $values{answer_value} =~ m/^$RE{time}{iso}\z/;
-                }
             }
 
             my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research, $go_to_appointment, $go_to_autotest, $is_target_audience, %flags);
@@ -138,7 +122,7 @@ sub action_specs {
                     if ( defined $pending_question_data->{question} ) {
                         $is_target_audience = $recipient->is_target_audience if $next_question->{code} eq 'A1';
 
-                        if ( $next_question->{code} eq 'A1' ) {
+                        if ( $next_question->{code} eq 'A2' ) {
                             $is_target_audience = $recipient->is_target_audience;
 
                             if ($answer->answer_value =~ /^(15|16|17|18|19)$/) {
@@ -171,8 +155,14 @@ sub action_specs {
                         $is_target_audience       = $recipient->is_target_audience if $next_question->{code} eq 'A1';
                         $finished_quiz = 1;
 
-                        # Gerando token de integração
-                        $recipient->generate_integration_token if $is_eligible_for_research == 1;
+                        # Caso a pessoa seja elegível para o estudo
+                        if ( $is_eligible_for_research == 1 ) {
+                            # Gerando token de integração
+                            $recipient->generate_integration_token;
+
+                            # Fazendo o cadastro
+                            $recipient->register_simprep;
+                        }
 
                         %flags = $answer->flags;
                     }
