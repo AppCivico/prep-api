@@ -1300,11 +1300,11 @@ sub answers_for_integration {
         }
     )->next;
 
-    my @fun_questions = qw(AC1 AC2 AC3 AC4);
+    my @questions_to_skip = qw(AC1 AC2 AC3 AC4 A4a A4b);
 
 	my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
 	my $answers   = $answer_rs->search(
-        { 'question.code' => { -not_in => \@fun_questions } },
+        { 'question.code' => { -not_in => \@questions_to_skip } },
         { join => 'question' }
     );
 
@@ -1318,17 +1318,31 @@ sub answers_for_integration {
 
             # Caso seja a A4 devo verificar qual a resposta e remover todas relacionadas
             if ( $question_code eq 'A4' ) {
-                # Caso seja 1, devo verificar a resposta da A4a
                 if ( $answer eq '1' ) {
+                    # Caso seja 1, devo verificar a resposta da A4a
+                    my $logic_jump_answer = $answer_rs->search( { 'question.code' => 'A4a' }, { join => 'question' } )->next;
 
+                    # Como a A4a é para ensino fundamental, logo são as primeiras opções
+                    # Basta preencher com o número da reposta
+                    $answer = $logic_jump_answer->answer_value;
                 }
                 elsif ( $answer eq '2' ) {
                     # Devo verificar a resposta da A4b
+					my $logic_jump_answer = $answer_rs->search( { 'question.code' => 'A4b' }, { join => 'question' } )->next;
 
+                    if ( $logic_jump_answer->answer_value eq '1' ) {
+                        $answer = '10';
+                    }
+                    elsif ( $logic_jump_answer->answer_value eq '2' ) {
+                        $answer = '11';
+                    }
+                    else {
+                        $answer = '12';
+                    }
                 }
                 elsif ( $answer eq '3' ) {
                     # Devo preencher com o valor 13
-
+                    $answer = '13'
                 }
                 else {
                     die 'error at Result::Recipient::answers_for_integration';
@@ -1342,9 +1356,6 @@ sub answers_for_integration {
                     value         => $answer eq '1' ? \1 : \0
                 }
             }
-            elsif ( $ ) {
-
-            }
             else {
                 +{
                     question_code => $question_code,
@@ -1355,7 +1366,6 @@ sub answers_for_integration {
     ];
 
     # Removendo perguntas adicionadas por nós
-    use DDP; p $answers;
     return $answers
 }
 
