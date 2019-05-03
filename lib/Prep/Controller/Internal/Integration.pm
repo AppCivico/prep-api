@@ -36,10 +36,10 @@ sub validate_header_and_pass {
 
     }
 
+    my $api_key        = $c->req->headers->header('x-api-key');
     my $security_token = env('INTEGRATION_SECURITY_TOKEN');
-    my $pass           = $c->req->params->to_hash->{security_token};
 
-    if ( !$pass || $security_token ne $pass ) {
+    if ( !$api_key || $security_token ne $api_key ) {
         $c->reply_forbidden();
         $c->detach;
     }

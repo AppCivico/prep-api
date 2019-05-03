@@ -10,7 +10,7 @@ my $t      = test_instance;
 my $schema = $t->app->schema;
 
 db_transaction {
-    my $security_token         = $ENV{INTEGRATION_SECURITY_TOKEN};
+    my $security_token = $ENV{INTEGRATION_SECURITY_TOKEN};
 
     subtest 'Integration headers and security_token' => sub {
         $t->post_ok(
