@@ -4,17 +4,13 @@ use Mojo::Base 'Prep::Controller';
 sub stasher {
     my $c = shift;
 
-    $c->validate_request_params(
-        integration_token => {
-            required => 1,
-            type     => 'Num'
-        },
-    );
-
     $c->stash( collection => $c->schema->resultset('Recipient') );
 
-    my $recipient = $c->schema->resultset('Recipient')->search( { integration_token => $c->req->params->to_hash->{integration_token} } )->next
-      or die \['integration_token', 'invalid'];
+    die \['voucher', 'missing'] unless $c->req->json;
+    my $voucher = delete $c->req->json->{voucher};
+
+    my $recipient = $c->stash('collection')->search( { integration_token => $voucher } )->next
+      or die \['voucher', 'invalid'];
 
     $c->stash(
         recipient  => $recipient,
@@ -26,14 +22,14 @@ sub get {
     my $c = shift;
 
     $c->validate_request_params(
-        integration_token => {
+        voucher => {
             required => 1,
             type     => 'Num'
         },
     );
 
-    my $recipient = $c->schema->resultset('Recipient')->search( { integration_token => $c->req->params->to_hash->{integration_token} } )->next
-      or die \['integration_token', 'invalid'];
+    my $recipient = $c->schema->resultset('Recipient')->search( { integration_token => $c->req->params->to_hash->{voucher} } )->next
+      or die \['voucher', 'invalid'];
 
     return $c->render(
         status => 200,

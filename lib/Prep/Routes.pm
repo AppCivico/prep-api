@@ -84,15 +84,10 @@ sub register {
 
     # Internal::Integration::Recipient
     my $integration_recipient = $internal_integration->route('/recipient')->under->to('internal-integration-recipient#stasher');
-    $integration_recipient->get('/')->to('internal-integration-recipient#get');
 
     # Internal::Integration::Recipient::Sync
     my $sync = $integration_recipient->route('/sync');
     $sync->post('/')->to('internal-integration-recipient-sync#post');
-
-    # Internal::Integration::Recipient::Notification
-    my $notification = $integration_recipient->route('/notification');
-    $notification->post('/')->to('internal-integration-recipient-notification#post');
 }
 
 1;

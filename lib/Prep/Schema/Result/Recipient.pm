@@ -392,7 +392,24 @@ sub verifiers_specs {
                     type     => 'Bool'
                 },
             }
-        )
+        ),
+        sync_with_simprep => Data::Verifier->new(
+            filters => [qw(trim)],
+            profile => {
+                is_part_of_research => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                is_prep => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                Appointment => {
+                    required => 0,
+                    type     => 'HashRef'
+                }
+            }
+        ),
     };
 }
 
@@ -429,6 +446,25 @@ sub action_specs {
             }
 
             return $self->recipient_flag->update( { is_part_of_research => $values{is_part_of_research} } );
+        },
+        sync_with_simprep => sub {
+			my $r = shift;
+
+			my %values = $r->valid_values;
+			not defined $values{$_} and delete $values{$_} for keys %values;
+
+            # Tratando consulta
+            my $appointment = delete $values{appointment};
+
+			my @updatable_flags = qw( is_part_of_research is_prep );
+			for my $flag (@updatable_flags) {
+				next unless defined $values{$flag};
+
+				$self->recipient_flag->update( { $flag => $values{$flag} } );
+				delete $values{$flag};
+			}
+
+			return $self->update(\%values);
         }
     };
 }

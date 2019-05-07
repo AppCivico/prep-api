@@ -29,13 +29,13 @@ db_transaction {
         $recipient_id = $t->tx->res->json->{id};
         $recipient    = $schema->resultset('Recipient')->find($recipient_id);
 
-        # Gerando um integration_token
+        # Gerando um voucher
         ok(
             $recipient->update( { integration_token => '1573221416102831' } ),
-            'generating integration_token'
+            'generating voucher'
         );
 
-        # No fluxo real o integration_token só é gerado quando a pessoa concorda em participar da pesquisa
+        # No fluxo real o voucher só é gerado quando a pessoa concorda em participar da pesquisa
         ok(
             $recipient->recipient_flag->update(
                 {
@@ -49,7 +49,7 @@ db_transaction {
 
     };
 
-    my $integration_token = $recipient->integration_token;
+    my $voucher = $recipient->integration_token;
 
     subtest 'Sync' => sub {
         my $flags = $recipient->recipient_flag;
@@ -58,45 +58,28 @@ db_transaction {
         is( $flags->is_prep,             0 );
 
         $t->post_ok(
-            '/api/internal/integration/recipient/sync',
-            form => {
-                security_token    => $security_token,
-                integration_token => 'foobar',
+            '/api/internal/integration/recipient/sync' => { 'x-api-key' => $security_token },
+            json => {
+                voucher => 'foobar',
             }
         )
-        ->status_is(400)
-        ->json_is('/error', 'form_error')
-        ->json_is('/form_error/integration_token', 'invalid');
+        ->status_is(400);
 
         $t->post_ok(
-            '/api/internal/integration/recipient/sync',
-            form => {
-                security_token    => $security_token,
-                integration_token => $integration_token,
+            '/api/internal/integration/recipient/sync' => => { 'x-api-key' => $security_token },
+            json => {
+                voucher => $voucher,
+                is_prep => 'string'
             }
         )
         ->status_is(400)
-        ->json_is('/error', 'form_error')
-        ->json_is('/form_error/is_prep', 'missing');
-
-        $t->post_ok(
-            '/api/internal/integration/recipient/sync',
-            form => {
-                security_token    => $security_token,
-                integration_token => $integration_token,
-                is_prep           => 'string'
-            }
-        )
-        ->status_is(400)
-        ->json_is('/error', 'form_error')
         ->json_is('/form_error/is_prep', 'invalid');
 
         $t->post_ok(
-            '/api/internal/integration/recipient/sync',
-            form => {
-                security_token    => $security_token,
-                integration_token => $integration_token,
-                is_prep           => 0
+            '/api/internal/integration/recipient/sync' => => { 'x-api-key' => $security_token },
+            json => {
+                voucher => $voucher,
+                is_prep => 0
             }
         )
         ->status_is(200);
@@ -106,11 +89,10 @@ db_transaction {
         is( $flags->is_prep,             0 );
 
         $t->post_ok(
-            '/api/internal/integration/recipient/sync',
-            form => {
-                security_token    => $security_token,
-                integration_token => $integration_token,
-                is_prep           => 1
+            '/api/internal/integration/recipient/sync' => => { 'x-api-key' => $security_token },
+            json => {
+                voucher => $voucher,
+                is_prep => 1
             }
         )
         ->status_is(200);
