@@ -227,7 +227,8 @@ sub update_stash {
                     $conditions_satisfied = grep { $_ eq $answer } @{ $logic_jump->{values} };
 
                     if ( $conditions_satisfied == 0 ) {
-                        $stash->remove_question($logic_jump->{code});
+                        # Caso seja a pergunta 'AC1' não remover os saltos
+                        $stash->remove_question($logic_jump->{code}) unless $self->question->code eq 'AC1';
                     }
                 }
                 elsif ( ref $logic_jump->{values} eq 'HASH' ) {

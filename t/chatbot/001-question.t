@@ -273,28 +273,32 @@ db_transaction{
             $question_map = $schema->resultset('QuestionMap')->create(
                 {
                     map => to_json({
-                        1  => 'A4',
-                        2  => 'A4a',
-                        3  => 'A4b',
-                        4  => 'A5',
-                        5  => 'A2',
-                        6  => 'A1',
-                        7  => 'A6',
-                        8  => 'A3',
-                        9  => 'AC1',
-                        10  => 'AC3',
-                        11 => 'B1',
-                        12 => 'B2',
-                        13 => 'AC4',
-                        14 => 'B3',
-                        15 => 'B4',
-                        16 => 'B5',
-                        17 => 'AC2',
-                        18 => 'B6',
-                        19 => 'B7',
-                        20 => 'B8',
-                        21 => 'B9',
-                        22 => 'B10'
+                        "1"  => "A1",
+                        "2"  => "A2",
+                        "3"  => "A3",
+                        "4"  => "A4",
+                        "5"  => "A4a",
+                        "6"  => "A4b",
+                        "7"  => "A5",
+                        "8"  => "A6",
+                        "9"  => "AC1",
+                        "10" => "AC2",
+                        "11" => "AC3",
+                        "12" => "AC4",
+                        "13" => "AC5",
+                        "14" => "AC6",
+                        "15" => "AC6",
+                        "16" => "AC7",
+                        "17" => "B1",
+                        "18" => "B2",
+                        "19" => "B3",
+                        "20" => "B4",
+                        "21" => "B5",
+                        "22" => "B6",
+                        "23" => "B7",
+                        "24" => "B8",
+                        "25" => "B9",
+                        "26" => "B10",
                     }),
                     category_id => 1
                 }
@@ -304,7 +308,7 @@ db_transaction{
 
         # Criando as perguntas do AppCivico que não são importantes
         # para o resultado final
-        for ( 1 .. 4 ) {
+        for ( 1 .. 7 ) {
             ok(
                 $question_rs->create(
                     {
@@ -319,27 +323,16 @@ db_transaction{
             );
         }
 
-        # A única pergunta que fazemos que importa é a AC5
-        ok(
-            $question_rs->create(
-                {
-                    code              => 'AC5',
-                    question_map_id   => $question_map->id,
-                    text              => 'Deseja participar?',
-                    type              => 'multiple_choice',
-                    is_differentiator => 0,
-                    multiple_choices  => to_json({ 1 => 'sim', 2 => 'não' }),
-                    rules => to_json(
-                        {
-                            logic_jumps => [],
-                            qualification_conditions => [],
-                            flags => [
-                                'is_part_of_research'
-                            ]
-                        }
-                    )
-                }
-            )
+        # Atualizando as regras da primeira pergunta do AppCivico
+        my $question = $schema->resultset('Question')->search( { 'me.code' => 'AC1' } )->next;
+        ok $question->update(
+            {
+                rules => to_json(
+                    {
+                        "logic_jumps" => [{"code" => "AC2","values" => [1]},{"code" => "AC7","values" => [2]}],"qualification_conditions" => [],"flags" => []
+                    }
+                )
+            }
         );
 
         # Perguntas da parte B
@@ -823,6 +816,45 @@ db_transaction{
     # Testando não elegivel
     subtest 'Chatbot | not eligible' => sub {
         db_transaction{
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A1',
+                    category       => 'quiz',
+                    answer_value   => '1'
+                }
+            )
+            ->status_is(201)
+            ->json_is('/finished_quiz', 0);
+
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A2',
+                    category       => 'quiz',
+                    answer_value   => '18'
+                }
+            )
+            ->status_is(201)
+            ->json_is('/finished_quiz', 0);
+
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A3',
+                    category       => 'quiz',
+                    answer_value   => '1'
+                }
+            )
+            ->status_is(201)
+            ->json_is('/finished_quiz', 0);
+
             $t->get_ok(
                 '/api/chatbot/recipient/pending-question',
                 form => {
@@ -833,7 +865,6 @@ db_transaction{
             )
             ->status_is(200)
             ->json_is('/code', 'A4');
-
 
             $t->post_ok(
                 '/api/chatbot/recipient/answer',
@@ -867,32 +898,6 @@ db_transaction{
                 form => {
                     security_token => $security_token,
                     fb_id          => $fb_id,
-                    code           => 'A2',
-                    category       => 'quiz',
-                    answer_value   => '18'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'A1',
-                    category       => 'quiz',
-                    answer_value   => '1'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
                     code           => 'A6',
                     category       => 'quiz',
                     answer_value   => '1'
@@ -901,44 +906,20 @@ db_transaction{
             ->status_is(201)
             ->json_is('/finished_quiz', 0);
 
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'A3',
-                    category       => 'quiz',
-                    answer_value   => '1'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'AC1',
-                    category       => 'quiz',
-                    answer_value   => '1'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'AC3',
-                    category       => 'quiz',
-                    answer_value   => '1'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
+            for ( 1 .. 7 ) {
+                $t->post_ok(
+                    '/api/chatbot/recipient/answer',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        code           => 'AC' . $_,
+                        category       => 'quiz',
+                        answer_value   => '1'
+                    }
+                )
+                ->status_is(201)
+                ->json_is('/finished_quiz', 0);
+            }
 
             $t->post_ok(
                 '/api/chatbot/recipient/answer',
@@ -958,35 +939,9 @@ db_transaction{
                 form => {
                     security_token => $security_token,
                     fb_id          => $fb_id,
-                    code           => 'AC4',
-                    category       => 'quiz',
-                    answer_value   => '1'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
                     code           => 'B3',
                     category       => 'quiz',
                     answer_value   => '0'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'AC2',
-                    category       => 'quiz',
-                    answer_value   => '1'
                 }
             )
             ->status_is(201)
@@ -1072,6 +1027,126 @@ db_transaction{
     };
 
     subtest 'Chatbot | Answers' => sub {
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'quiz'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'A1');
+
+        db_transaction {
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A1',
+                    category       => 'quiz',
+                    answer_value   => '4'
+                }
+            )
+            ->status_is(201)
+            ->json_is('/finished_quiz', 1)
+            ->json_is('/is_target_audience', 0);
+        };
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'A1',
+                category       => 'quiz',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'quiz'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'A2');
+
+        db_transaction{
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A2',
+                    category       => 'quiz',
+                    answer_value   => '12'
+                }
+            )
+            ->status_is(201)
+            ->json_is('/finished_quiz', 1)
+            ->json_is('/is_target_audience', 0);
+        };
+
+        db_transaction{
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A2',
+                    category       => 'quiz',
+                    answer_value   => '20'
+                }
+            )
+            ->status_is(201)
+            ->json_is('/finished_quiz', 1)
+            ->json_is('/is_target_audience', 0);
+        };
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'A2',
+                category       => 'quiz',
+                answer_value   => '18'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'quiz'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'A3');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'A3',
+                category       => 'quiz',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
         $t->get_ok(
             '/api/chatbot/recipient/pending-question',
             form => {
@@ -1220,105 +1295,6 @@ db_transaction{
         ->status_is(201)
         ->json_is('/finished_quiz', 0);
 
-
-
-        db_transaction{
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'A2',
-                    category       => 'quiz',
-                    answer_value   => '11'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 1)
-            ->json_is('/is_target_audience', 0);
-
-            $t->get_ok(
-                '/api/chatbot/recipient/pending-question',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    category       => 'quiz'
-                }
-            )
-            ->status_is(200)
-            ->json_is('/code', undef)
-            ->json_is('/has_more', 0);
-        };
-
-        db_transaction{
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'A2',
-                    category       => 'quiz',
-                    answer_value   => '20'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 1)
-            ->json_is('/is_target_audience', 0);
-        };
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'A2',
-                category       => 'quiz',
-                answer_value   => '18'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                category       => 'quiz'
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'A1');
-
-        db_transaction {
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'A1',
-                    category       => 'quiz',
-                    answer_value   => '4'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 1)
-            ->json_is('/is_target_audience', 0);
-        };
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'A1',
-                category       => 'quiz',
-                answer_value   => '1'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
         $t->get_ok(
             '/api/chatbot/recipient/pending-question',
             form => {
@@ -1368,14 +1344,14 @@ db_transaction{
             }
         )
         ->status_is(200)
-        ->json_is('/code', 'A3');
+        ->json_is('/code', 'AC1');
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'A3',
+                code           => 'AC1',
                 category       => 'quiz',
                 answer_value   => '1'
             }
@@ -1392,14 +1368,14 @@ db_transaction{
             }
         )
         ->status_is(200)
-        ->json_is('/code', 'AC1');
+        ->json_is('/code', 'AC2');
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'AC1',
+                code           => 'AC2',
                 category       => 'quiz',
                 answer_value   => '1'
             }
@@ -1431,6 +1407,101 @@ db_transaction{
         ->status_is(201)
         ->json_is('/finished_quiz', 0);
 
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'quiz'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'AC4');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'AC4',
+                category       => 'quiz',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'quiz'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'AC5');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'AC5',
+                category       => 'quiz',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'quiz'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'AC6');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'AC6',
+                category       => 'quiz',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
+
+        $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'quiz'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/code', 'AC7');
+
+        $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'AC7',
+                category       => 'quiz',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->json_is('/finished_quiz', 0);
 
         $t->get_ok(
             '/api/chatbot/recipient/pending-question',
@@ -1452,19 +1523,6 @@ db_transaction{
                     code           => 'B1',
                     category       => 'quiz',
                     answer_value   => '2'
-                }
-            )
-            ->status_is(201)
-            ->json_is('/finished_quiz', 0);
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'AC4',
-                    category       => 'quiz',
-                    answer_value   => '1'
                 }
             )
             ->status_is(201)
@@ -1520,19 +1578,6 @@ db_transaction{
         ->status_is(201)
         ->json_is('/finished_quiz', 0);
 
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'AC4',
-                category       => 'quiz',
-                answer_value   => '1'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
         $t->get_ok(
             '/api/chatbot/recipient/pending-question',
             form => {
@@ -1558,26 +1603,6 @@ db_transaction{
             )
             ->status_is(201)
             ->json_is('/finished_quiz', 0);
-
-            $t->get_ok(
-                '/api/chatbot/recipient/pending-question',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    category       => 'quiz'
-                }
-            )->status_is(200)->json_is('/code', 'AC2');
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'AC2',
-                    category       => 'quiz',
-                    answer_value   => '1'
-                }
-            )->status_is(201)->json_is('/finished_quiz', 0);
 
             $t->get_ok(
                 '/api/chatbot/recipient/pending-question',
@@ -1634,26 +1659,6 @@ db_transaction{
                 form => {
                     security_token => $security_token,
                     fb_id          => $fb_id,
-                    category       => 'quiz'
-                }
-            )->status_is(200)->json_is('/code', 'AC2');
-
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'AC2',
-                    category       => 'quiz',
-                    answer_value   => '1'
-                }
-            )->status_is(201)->json_is('/finished_quiz', 0);
-
-            $t->get_ok(
-                '/api/chatbot/recipient/pending-question',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
                     category       => 'quiz',
                 }
             )->status_is(200)
@@ -1691,30 +1696,6 @@ db_transaction{
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'B5',
-                category       => 'quiz',
-                answer_value   => '1'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                category       => 'quiz'
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'AC2');
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'AC2',
                 category       => 'quiz',
                 answer_value   => '1'
             }

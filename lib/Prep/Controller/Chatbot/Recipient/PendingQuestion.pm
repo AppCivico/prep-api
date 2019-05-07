@@ -20,7 +20,7 @@ sub get {
 
     my $pending_question_data = $recipient->get_next_question_data( $c->req->params->to_hash->{category} );
     my $question              = $pending_question_data->{question} ? $pending_question_data->{question}->decoded : undef;
-   # use DDP; p $pending_question_data;
+
     return $c->render(
         status => 200,
         json   => {
