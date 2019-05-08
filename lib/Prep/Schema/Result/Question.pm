@@ -241,5 +241,26 @@ sub rules_parsed {
     return from_json( $self->rules ) if $self->rules;
 }
 
+# Mapa de pontos para as perguntas de diversão
+sub multiple_choices_score_map {
+    my ($self) = @_;
+
+    my $rules = $self->rules_parsed or die \['question', 'does not have any rules'];
+    die \['rules', 'invalid'] unless $rules->{multiple_choice_score_map} && ref $rules->{multiple_choice_score_map} eq 'HASH';
+
+    return $rules->{multiple_choice_score_map};
+}
+
+sub score_for_answer_value {
+    my ($self, $answer_value) = @_;
+
+    my $score_map = $self->multiple_choices_score_map;
+
+    my $score = $score_map->{$answer_value};
+    die \['score_map', 'invalid for answer value'] unless defined $score;
+
+    return $score;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

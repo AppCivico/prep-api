@@ -448,23 +448,23 @@ sub action_specs {
             return $self->recipient_flag->update( { is_part_of_research => $values{is_part_of_research} } );
         },
         sync_with_simprep => sub {
-			my $r = shift;
+            my $r = shift;
 
-			my %values = $r->valid_values;
-			not defined $values{$_} and delete $values{$_} for keys %values;
+            my %values = $r->valid_values;
+            not defined $values{$_} and delete $values{$_} for keys %values;
 
             # Tratando consulta
             my $appointment = delete $values{appointment};
 
-			my @updatable_flags = qw( is_part_of_research is_prep );
-			for my $flag (@updatable_flags) {
-				next unless defined $values{$flag};
+            my @updatable_flags = qw( is_part_of_research is_prep );
+            for my $flag (@updatable_flags) {
+                next unless defined $values{$flag};
 
-				$self->recipient_flag->update( { $flag => $values{$flag} } );
-				delete $values{$flag};
-			}
+                $self->recipient_flag->update( { $flag => $values{$flag} } );
+                delete $values{$flag};
+            }
 
-			return $self->update(\%values);
+            return $self->update(\%values);
         }
     };
 }
@@ -1054,9 +1054,9 @@ sub update_is_target_audience {
         elsif ( $code eq 'A3' ) {
             $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
         }
-		elsif ( $code eq 'A1' ) {
-			$is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
-		}
+        elsif ( $code eq 'A1' ) {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
+        }
 
         last if $is_target_audience == 0;
     }
@@ -1338,8 +1338,8 @@ sub answers_for_integration {
 
     my @questions_to_skip = qw(AC1 AC2 AC3 AC4 A4a A4b);
 
-	my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
-	my $answers   = $answer_rs->search(
+    my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
+    my $answers   = $answer_rs->search(
         { 'question.code' => { -not_in => \@questions_to_skip } },
         { join => 'question' }
     );
@@ -1364,7 +1364,7 @@ sub answers_for_integration {
                 }
                 elsif ( $answer eq '2' ) {
                     # Devo verificar a resposta da A4b
-					my $logic_jump_answer = $answer_rs->search( { 'question.code' => 'A4b' }, { join => 'question' } )->next;
+                    my $logic_jump_answer = $answer_rs->search( { 'question.code' => 'A4b' }, { join => 'question' } )->next;
 
                     if ( $logic_jump_answer->answer_value eq '1' ) {
                         $answer = '10';
@@ -1412,6 +1412,61 @@ sub register_simprep {
         voucher => $self->integration_token,
         answers => $self->answers_for_integration
     );
+}
+
+sub fun_questions_score {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'quiz' },
+        {
+            join => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    my @questions = qw( AC2 AC3 AC4 AC5 AC6 AC7 );
+
+    my $answer_rs = $self->answers->search(
+        {
+            'question.code'      => { 'in' => \@questions },
+            'me.question_map_id' => $question_map->id
+        },
+        { prefetch => 'question' }
+    );
+
+    my $score = 0;
+    while ( my $answer = $answer_rs->next() ) {
+        $score += $answer->question->score_for_answer_value($answer->answer_value);
+    }
+
+    return $score;
+}
+
+sub message_for_fun_questions_score {
+    my ($self) = @_;
+
+    my $ret;
+    my $score = $self->fun_questions_score;
+
+    if ( $score <= 69 ) {
+		$ret = 'VC É A PABLLO VITTAR, YUKEEEÊ???
+Famosissimah nos rolês, mas tá só nas love song que nem a Pablo, nenon? Você parece ser mais de boas quando o assunto é sexo com várias pessoas - ou pelo menos está numa fase de boas, bem romantiquinha. Pode ser que vc não sinta mta necessidady de sarrar, pode ser q esteja namorando fechado e seu tesão se direcione mais para um/uma parceiro/a fixo, pode ser q vc prefira poucos (e bons) doq muitos, pode ser mil coisas - o importante é vc fazer (ou não fazer) oq vc tiver vontade <3';
+    }
+    elsif ( $score >= 70 && $score <= 129 ) {
+		$ret = 'VC É A LINN DA QUEBRADA! #TRA #TRA
+Afinal, pra qq eu kro pica se eu tenho todos esses dedo??? Pelo q eu catei, vc curte transar mas vê o sexo como algo q vai muito além de penetração - tb ama viver outras experiências além da neca no edi: chupação, dedo, linguada, de repente até um brinquedinho, nenon? Amo que a sra é super sensorial e tá aberta a experiências, acho um bapho SYM';
+    }
+    elsif ( $score >= 130 && $score <= 200 ) {
+        $ret = 'VC É A GLORIA GROOVE! LIGADYNHA NO PROCEDER
+Vc é GLORIOSA gatan, toda dona de vc meixxxma! Assim como a Gloria, passa logo o proceder, joga o papo reto, sabe oq tu quer (e quem tu quer, kkkk) e vive suas vontadys livremente - mto empoderada ela. Vc é rainha na pista, e convoca geral pra arrastar e sarrar com autonomia - mas sempre ligadinha na prevenção. Ai que coisa boa!';
+    }
+    else {
+		$ret = 'VC É A MULHER PEPITA! RANNNNNN
+Uma vez piranha, smp piranha, piranha eu sempre hei de ser RANNNN kkk. Kerida, a sra é deshtruidora mesmo 🔥🔥🔥Gosta de sexo sem tabu e sem moralismo, e deve adorar novas experiências, nenon? Deve ter uns sagitário babado nesse mapa astral, aloka. E é isso ai mana, se joga - o segredynho é saber os riscos das suas escolhas e pensar um jeito babado de manter a saúde sexual em dia sem deixar de fazer nada q tu keira.';
+    }
+
+    return $ret;
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -104,34 +104,32 @@ sub action_specs {
 
             }
 
-            my ($answer, $finished_quiz, $is_prep, $is_eligible_for_research, $go_to_appointment, $go_to_autotest, $is_target_audience, %flags);
+            my ($answer, $finished_quiz, %flags, @followup_messages);
             $self->result_source->schema->txn_do( sub {
                 # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
                 $answer = $self->create(\%values);
                 $answer->update_stash;
 
+                @followup_messages = $answer->followup_messages if $answer->has_followup_messages;
+
                 if ( $question_map->category_id == 1 ) {
-					# Caso a resposta seja da pergunta 'A5' devo atualizar a coluna 'city' do recipient
-					# com o conteúdo da resposta
-					if ( $answer->question->code eq 'A5' ) {
-						$recipient->update( { city => $answer->answer_value } );
-					}
+                    # Caso a resposta seja da pergunta 'A5' devo atualizar a coluna 'city' do recipient
+                    # com o conteúdo da resposta
+                    if ( $answer->question->code eq 'A5' ) {
+                        $recipient->update( { city => $answer->answer_value } );
+                    }
 
                     $pending_question_data = $recipient->get_next_question_data($category);
 
                     if ( defined $pending_question_data->{question} ) {
-                        $is_target_audience = $recipient->is_target_audience if $next_question->{code} eq 'A1';
 
                         if ( $next_question->{code} eq 'A2' ) {
-                            $is_target_audience = $recipient->is_target_audience;
 
                             if ($answer->answer_value =~ /^(15|16|17|18|19)$/) {
                                 $finished_quiz = 0;
-                                $is_target_audience = 1;
                             }
                             else {
                                 $finished_quiz = 1;
-                                $is_target_audience = 0;
                             }
                         }
                         elsif ( $next_question->{code} eq 'A5' ) {
@@ -150,10 +148,9 @@ sub action_specs {
                     }
                     else {
                         $recipient->recipient_flag->update( { finished_quiz => 1 } );
-                        $is_prep                  = $recipient->is_part_of_research;
-                        $is_eligible_for_research = $recipient->is_eligible_for_research;
-                        $is_target_audience       = $recipient->is_target_audience if $next_question->{code} eq 'A1';
                         $finished_quiz = 1;
+
+                        my $is_eligible_for_research = $recipient->is_eligible_for_research;
 
                         # Caso a pessoa seja elegível para o estudo
                         if ( $is_eligible_for_research == 1 ) {
@@ -198,6 +195,11 @@ sub action_specs {
                 answer        => $answer,
                 finished_quiz => $finished_quiz,
                 %flags,
+
+                (
+                    scalar @followup_messages > 0 ?
+                    ( followup_messages => [ map { $_ } @followup_messages ] ) : ()
+                )
             };
         }
     };
