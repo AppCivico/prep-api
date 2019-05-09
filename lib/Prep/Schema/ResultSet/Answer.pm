@@ -104,7 +104,7 @@ sub action_specs {
 
             }
 
-            my ($answer, $finished_quiz, %flags, @followup_messages);
+            my ($answer, $finished_quiz, %flags, @followup_messages, $simprep_url);
             $self->result_source->schema->txn_do( sub {
                 # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
                 $answer = $self->create(\%values);
@@ -159,6 +159,7 @@ sub action_specs {
 
                             # Fazendo o cadastro
                             # $recipient->register_simprep;
+                            $simprep_url = 'https://www.facebook.com/amandaselfie.bot/';
                         }
 
                         %flags = $answer->flags;
@@ -199,6 +200,11 @@ sub action_specs {
                 (
                     scalar @followup_messages > 0 ?
                     ( followup_messages => [ map { $_ } @followup_messages ] ) : ()
+                ),
+
+                (
+                    defined $simprep_url ?
+                    ( offline_pre_registration_form => $simprep_url ) : ( )
                 )
             };
         }

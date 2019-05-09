@@ -42,7 +42,8 @@ sub post {
             ( exists $answer->{go_to_autotest}           ? ( go_to_autotest => $answer->{go_to_autotest} ) : () ),
             ( exists $answer->{suggest_wait_for_test}    ? ( suggest_wait_for_test => $answer->{suggest_wait_for_test} ) : () ),
             ( exists $answer->{go_to_test}               ? ( go_to_test => $answer->{go_to_test} ) : () ),
-            ( exists $answer->{followup_messages}        ? ( followup_messages => $answer->{followup_messages} ) : () )
+            ( exists $answer->{followup_messages}        ? ( followup_messages => $answer->{followup_messages} ) : () ),
+            ( exists $answer->{simprep_url}              ? ( simprep_url => $answer->{simprep_url} ) : () )
         }
     )
 }
