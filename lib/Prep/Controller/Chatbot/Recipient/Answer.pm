@@ -33,17 +33,17 @@ sub post {
         json   => {
             id            => $answer->{answer}->id,
             finished_quiz => $answer->{finished_quiz},
-            ( exists $answer->{is_part_of_research}      ? ( is_part_of_research => $answer->{is_part_of_research} ) : () ),
-            ( exists $answer->{is_target_audience}       ? ( is_target_audience => $answer->{is_target_audience} ) : () ),
-            ( exists $answer->{is_eligible_for_research} ? ( is_eligible_for_research => $answer->{is_eligible_for_research} ) : () ),
-            ( exists $answer->{emergency_rerouting}      ? ( emergency_rerouting => $answer->{emergency_rerouting} ) : () ),
-            ( exists $answer->{suggest_appointment}      ? ( suggest_appointment => $answer->{suggest_appointment} ) : () ),
-            ( exists $answer->{go_to_appointment}        ? ( go_to_appointment => $answer->{go_to_appointment} ) : () ),
-            ( exists $answer->{go_to_autotest}           ? ( go_to_autotest => $answer->{go_to_autotest} ) : () ),
-            ( exists $answer->{suggest_wait_for_test}    ? ( suggest_wait_for_test => $answer->{suggest_wait_for_test} ) : () ),
-            ( exists $answer->{go_to_test}               ? ( go_to_test => $answer->{go_to_test} ) : () ),
-            ( exists $answer->{followup_messages}        ? ( followup_messages => $answer->{followup_messages} ) : () ),
-            ( exists $answer->{simprep_url}              ? ( simprep_url => $answer->{simprep_url} ) : () )
+            ( exists $answer->{is_part_of_research}           ? ( is_part_of_research => $answer->{is_part_of_research} ) : () ),
+            ( exists $answer->{is_target_audience}            ? ( is_target_audience => $answer->{is_target_audience} ) : () ),
+            ( exists $answer->{is_eligible_for_research}      ? ( is_eligible_for_research => $answer->{is_eligible_for_research} ) : () ),
+            ( exists $answer->{emergency_rerouting}           ? ( emergency_rerouting => $answer->{emergency_rerouting} ) : () ),
+            ( exists $answer->{suggest_appointment}           ? ( suggest_appointment => $answer->{suggest_appointment} ) : () ),
+            ( exists $answer->{go_to_appointment}             ? ( go_to_appointment => $answer->{go_to_appointment} ) : () ),
+            ( exists $answer->{go_to_autotest}                ? ( go_to_autotest => $answer->{go_to_autotest} ) : () ),
+            ( exists $answer->{suggest_wait_for_test}         ? ( suggest_wait_for_test => $answer->{suggest_wait_for_test} ) : () ),
+            ( exists $answer->{go_to_test}                    ? ( go_to_test => $answer->{go_to_test} ) : () ),
+            ( exists $answer->{followup_messages}             ? ( followup_messages => $answer->{followup_messages} ) : () ),
+            ( exists $answer->{offline_pre_registration_form} ? ( offline_pre_registration_form => $answer->{offline_pre_registration_form} ) : () )
         }
     )
 }
