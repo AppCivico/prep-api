@@ -209,11 +209,11 @@ sub build_conditions {
     if ( $self->category_id == 1 ) {
         # Quiz
 
-        if ( $next_question_code eq 'A5' ) {
+        if ( $next_question_code eq 'A3' ) {
             # Deve ter mais de 14 e menos de 20
             $condition = $answers_rs->search(
                 {
-                    'question.code' => 'A1',
+                    'question.code' => 'A2',
                     answer_value    => { '>' => '14', '<' => '20' }
                 },
                 { join => 'question'}
@@ -226,7 +226,7 @@ sub build_conditions {
             for ( 1 .. 3 ) {
                 $condition = $answers_rs->search(
                     {
-                        'question.code' => 'A5',
+                        'question.code' => 'A1',
                         answer_value    => $_
                     },
                     { join => 'question'}
@@ -235,17 +235,6 @@ sub build_conditions {
                 push @conditions, { -exists => $condition };
 
             }
-        }
-        elsif ( $next_question_code eq 'A3' ) {
-            $condition = $answers_rs->search(
-                {
-                    'question.code' => 'A2',
-                    answer_value    => { '!=' => '2' }
-                },
-                { join => 'question'}
-            )->as_query;
-
-            push @conditions, { -exists => $condition };
         }
         elsif ( $next_question_code eq 'B1' ) {
             $condition = $answers_rs->search(

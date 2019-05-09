@@ -963,9 +963,9 @@ db_transaction{
                     answer_value   => '1'
                 }
             )
-            # ->status_is(201)
+            ->status_is(201)
             ->json_is('/finished_quiz', 0)
-            ->json_has('/followup_messages/0');
+            ->json_has('/followup_messages/0'); use DDP;
 
             $t->post_ok(
                 '/api/chatbot/recipient/answer',
