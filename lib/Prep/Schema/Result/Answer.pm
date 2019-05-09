@@ -228,6 +228,12 @@ sub update_stash {
 
                     if ( $conditions_satisfied == 0 ) {
                         # Caso seja a pergunta 'AC1' não remover os saltos
+                        # a não ser que tenham escolhido a 2
+                        if ( $self->question->code eq 'AC1' && $self->answer_value == 2 ) {
+                            my @questions_to_remove = qw( AC2 AC3 AC4 AC5 AC6 AC7 );
+                            $stash->remove_question($_) for @questions_to_remove;
+                        }
+
                         $stash->remove_question($logic_jump->{code}) unless $self->question->code eq 'AC1';
                     }
                 }
