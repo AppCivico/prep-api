@@ -296,7 +296,7 @@ sub has_followup_messages {
     my $question_map = $self->question_map;
 
     if ( $question_map->category->name eq 'quiz' ) {
-        return 1 if $self->question->code =~ /^(AC8|A6)$/;
+        return 1 if $self->question->code =~ /^(AC7|A6)$/;
     }
     elsif( $question_map->category->name eq 'fun_questions' ) {
         return 1 if $self->question->code eq 'AC7';
@@ -320,8 +320,8 @@ sub followup_messages {
         if ( $question->code eq 'A6' ) {
             push @messages, 'Amando! Só mais algumas vai...';
         }
-        elsif ( $question->code eq 'AC8' ) {
-            # Na resposta da AC8 deve ser enviado o texto respectivo para o score
+        elsif ( $question->code eq 'AC7' ) {
+            # Na resposta da AC7 deve ser enviado o texto respectivo para o score
             push @messages, $self->recipient->message_for_fun_questions_score;
             push @messages, 'Calma! Compartilha ainda não!';
         }

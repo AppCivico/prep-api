@@ -937,7 +937,7 @@ db_transaction{
             ->json_is('/finished_quiz', 0)
             ->json_has('/followup_messages/0');
 
-            for ( 1 .. 7 ) {
+            for ( 1 .. 6 ) {
 
                 $t->post_ok(
                     '/api/chatbot/recipient/answer',
@@ -958,14 +958,27 @@ db_transaction{
                 form => {
                     security_token => $security_token,
                     fb_id          => $fb_id,
+                    code           => 'AC7',
+                    category       => 'quiz',
+                    answer_value   => '1'
+                }
+            )
+            # ->status_is(201)
+            ->json_is('/finished_quiz', 0)
+            ->json_has('/followup_messages/0');
+
+            $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
                     code           => 'AC8',
                     category       => 'quiz',
                     answer_value   => '1'
                 }
             )
             ->status_is(201)
-            ->json_is('/finished_quiz', 0)
-            ->json_has('/followup_messages/0');
+            ->json_is('/finished_quiz', 0);
 
             $t->post_ok(
                 '/api/chatbot/recipient/answer',
