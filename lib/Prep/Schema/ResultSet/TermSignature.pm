@@ -37,9 +37,9 @@ sub action_specs {
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
 
-            if ( $values{url} !~ /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/._]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/ ) {
-                die \['url', 'invalid'];
-            }
+            # if ( $values{url} !~ /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/._]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/ ) {
+            #     die \['url', 'invalid'];
+            # }
 
             my $term_signature = $self->create(\%values);
 
