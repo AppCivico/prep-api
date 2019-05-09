@@ -113,9 +113,9 @@ sub action_specs {
                 @followup_messages = $answer->followup_messages if $answer->has_followup_messages;
 
                 if ( $question_map->category_id == 1 ) {
-                    # Caso a resposta seja da pergunta 'A5' devo atualizar a coluna 'city' do recipient
+                    # Caso a resposta seja da pergunta 'A1' devo atualizar a coluna 'city' do recipient
                     # com o conteúdo da resposta
-                    if ( $answer->question->code eq 'A5' ) {
+                    if ( $answer->question->code eq 'A1' ) {
                         $recipient->update( { city => $answer->answer_value } );
                     }
 
@@ -132,7 +132,7 @@ sub action_specs {
                                 $finished_quiz = 1;
                             }
                         }
-                        elsif ( $next_question->{code} eq 'A5' ) {
+                        elsif ( $next_question->{code} eq 'A1' ) {
 
                             if ($answer->answer_value =~ /^(1|2|3)$/) {
                                 $finished_quiz = 0;
