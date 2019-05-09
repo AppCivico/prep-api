@@ -158,7 +158,7 @@ sub action_specs {
                             $recipient->generate_integration_token;
 
                             # Fazendo o cadastro
-                            $recipient->register_simprep;
+                            # $recipient->register_simprep;
                         }
 
                         %flags = $answer->flags;
