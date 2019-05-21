@@ -1336,6 +1336,7 @@ sub answers_for_integration {
         }
     )->next;
 
+    # Removendo perguntas adicionadas por nós
     my @questions_to_skip = qw(AC1 AC2 AC3 AC4 AC5 AC6 AC7 AC8 A4a A4b);
 
     my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
@@ -1401,16 +1402,18 @@ sub answers_for_integration {
         } $answers->all()
     ];
 
-    # Removendo perguntas adicionadas por nós
+    # Adicionando pergunta B11, ela só existe offline e consiste na pergunta se a pessoa quer participar da pesquisa.
+    push @{$answers}, { question_code => 'B11', value => 1 };
+
     return $answers
 }
 
 sub register_simprep {
     my ($self) = @_;
 
-	my $res = $self->_simprep->register_recipient(
-		answers => $self->answers_for_integration
-	);
+    my $res = $self->_simprep->register_recipient(
+        answers => $self->answers_for_integration
+    );
 
     $self->update( { integration_token => $res->{data}->{voucher} } );
 
@@ -1453,11 +1456,11 @@ sub message_for_fun_questions_score {
     my $score = $self->fun_questions_score;
 
     if ( $score <= 69 ) {
-		$ret = 'VC É A PABLLO VITTAR, YUKEEEÊ???
+        $ret = 'VC É A PABLLO VITTAR, YUKEEEÊ???
 Famosissimah nos rolês, mas tá só nas love song que nem a Pablo, nenon? Você parece ser mais de boas quando o assunto é sexo com várias pessoas - ou pelo menos está numa fase de boas, bem romantiquinha. Pode ser que vc não sinta mta necessidady de sarrar, pode ser q esteja namorando fechado e seu tesão se direcione mais para um/uma parceiro/a fixo, pode ser q vc prefira poucos (e bons) doq muitos, pode ser mil coisas - o importante é vc fazer (ou não fazer) oq vc tiver vontade <3';
     }
     elsif ( $score >= 70 && $score <= 129 ) {
-		$ret = 'VC É A LINN DA QUEBRADA! #TRA #TRA
+        $ret = 'VC É A LINN DA QUEBRADA! #TRA #TRA
 Afinal, pra qq eu kro pica se eu tenho todos esses dedo??? Pelo q eu catei, vc curte transar mas vê o sexo como algo q vai muito além de penetração - tb ama viver outras experiências além da neca no edi: chupação, dedo, linguada, de repente até um brinquedinho, nenon? Amo que a sra é super sensorial e tá aberta a experiências, acho um bapho SYM';
     }
     elsif ( $score >= 130 && $score <= 200 ) {
@@ -1465,7 +1468,7 @@ Afinal, pra qq eu kro pica se eu tenho todos esses dedo??? Pelo q eu catei, vc c
 Vc é GLORIOSA gatan, toda dona de vc meixxxma! Assim como a Gloria, passa logo o proceder, joga o papo reto, sabe oq tu quer (e quem tu quer, kkkk) e vive suas vontadys livremente - mto empoderada ela. Vc é rainha na pista, e convoca geral pra arrastar e sarrar com autonomia - mas sempre ligadinha na prevenção. Ai que coisa boa!';
     }
     else {
-		$ret = 'VC É A MULHER PEPITA! RANNNNNN
+        $ret = 'VC É A MULHER PEPITA! RANNNNNN
 Uma vez piranha, smp piranha, piranha eu sempre hei de ser RANNNN kkk. Kerida, a sra é deshtruidora mesmo 🔥🔥🔥Gosta de sexo sem tabu e sem moralismo, e deve adorar novas experiências, nenon? Deve ter uns sagitário babado nesse mapa astral, aloka. E é isso ai mana, se joga - o segredynho é saber os riscos das suas escolhas e pensar um jeito babado de manter a saúde sexual em dia sem deixar de fazer nada q tu keira.';
     }
 
