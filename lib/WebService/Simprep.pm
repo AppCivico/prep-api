@@ -36,6 +36,7 @@ sub register_recipient {
                 $res = $self->ua->post(
                     $url,
                     Content_Type => 'application/json',
+                    'X-API-KEY'  => $ENV{SIMPREP_TOKEN},
                     Content      => encode_json(
                         {
                             answers => $opts{answers}
