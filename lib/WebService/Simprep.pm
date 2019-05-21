@@ -14,13 +14,16 @@ sub _build_ua { LWP::UserAgent->new() }
 sub register_recipient {
     my ( $self, %opts ) = @_;
 
-	my @required_opts = qw( voucher answers );
-	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+    my @required_opts = qw( answers );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     if (is_test()) {
         return {
-            voucher => $opts{voucher},
-            url     => 'https://www.google.com'
+            status => 'success',
+            data   => {
+                voucher => '00300000002',
+                url     => 'https://www.google.com'
+            }
         };
     }
     else {
@@ -35,7 +38,6 @@ sub register_recipient {
                     Content_Type => 'application/json',
                     Content      => encode_json(
                         {
-                            voucher => $opts{voucher},
                             answers => $opts{answers}
                         }
                     )
@@ -43,7 +45,7 @@ sub register_recipient {
                 die $res->decoded_content unless $res->is_success;
 
                 my $response = decode_json( $res->decoded_content );
-                die \['file', 'invalid response'] unless $response->{attachment_id};
+                die 'invalid responde' unless $response->{status} eq 'success';
 
             }
             retry_if { shift() < 3 } catch { die $_; };

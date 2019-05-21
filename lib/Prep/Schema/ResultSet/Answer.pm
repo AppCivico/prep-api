@@ -154,12 +154,9 @@ sub action_specs {
 
                         # Caso a pessoa seja elegível para o estudo
                         if ( $is_eligible_for_research == 1 ) {
-                            # Gerando token de integração
-                            $recipient->generate_integration_token;
 
                             # Fazendo o cadastro
-                            # $recipient->register_simprep;
-                            $simprep_url = 'https://www.facebook.com/amandaselfie.bot/';
+                            $simprep_url = $recipient->register_simprep;
                         }
 
                         %flags = $answer->flags;

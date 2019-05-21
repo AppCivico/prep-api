@@ -1336,7 +1336,7 @@ sub answers_for_integration {
         }
     )->next;
 
-    my @questions_to_skip = qw(AC1 AC2 AC3 AC4 A4a A4b);
+    my @questions_to_skip = qw(AC1 AC2 AC3 AC4 AC5 AC6 AC7 AC8 A4a A4b);
 
     my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
     my $answers   = $answer_rs->search(
@@ -1344,7 +1344,7 @@ sub answers_for_integration {
         { join => 'question' }
     );
 
-    my @yes_no_questions = qw( A6 B1 B4 B5 B6 B8 B9 B10 );
+    my @yes_no_questions = qw( A6 B4 B5 B6 B8 B9 B10 );
     $answers = [
         map {
             my $a = $_;
@@ -1385,11 +1385,11 @@ sub answers_for_integration {
                 }
             }
 
-            # Questões de sim/não devem ser enviadas como boolean
+            # Questões de sim/não devem ser enviadas como 1 ou 0
             if ( grep { $question_code eq $_ } @yes_no_questions ) {
                 +{
                     question_code => $question_code,
-                    value         => $answer eq '1' ? \1 : \0
+                    value         => $answer eq '1' ? 1 : 0
                 }
             }
             else {
@@ -1408,10 +1408,13 @@ sub answers_for_integration {
 sub register_simprep {
     my ($self) = @_;
 
-    return $self->_simprep->register_recipient(
-        voucher => $self->integration_token,
-        answers => $self->answers_for_integration
-    );
+	my $res = $self->_simprep->register_recipient(
+		answers => $self->answers_for_integration
+	);
+
+    $self->update( { integration_token => $res->{data}->{voucher} } );
+
+    return $res->{data}->{url}
 }
 
 sub fun_questions_score {
