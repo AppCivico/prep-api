@@ -293,7 +293,9 @@ db_transaction {
         )
         ->status_is(200)
         ->json_is('/name',   'foobar_1')
-        ->json_is('/opt_in', 0);
+		->json_is('/opt_in', 0)
+		->json_has('/system_labels')
+        ->json_has('/system_labels/0/name');
     };
 };
 

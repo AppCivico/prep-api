@@ -4,23 +4,14 @@ use Mojo::Base 'Prep::Controller';
 sub post {
     my $c = shift;
 
-    $c->validate_request_params(
-        is_part_of_research => {
-            required => 0,
-            type     => 'Bool'
-        },
-        is_prep => {
-            required => 1,
-            type     => 'Bool'
-        }
-    );
+    my $params = $c->req->json;
 
     my $recipient = $c->stash('recipient');
 
     $recipient = $recipient->execute(
         $c,
-        for  => 'update',
-        with => $c->req->params->to_hash
+        for  => 'sync_with_simprep',
+        with => $params
     );
 
     return $c->render(

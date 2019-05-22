@@ -277,7 +277,7 @@ sub remove_question {
     )->next;
     my $question_rules = $question->rules_parsed;
 
-    if ( $question_rules && scalar @{ $question_rules->{logic_jumps} } > 0 ) {
+    if ( $question_rules && $question_rules->{logic_jumps} && scalar @{ $question_rules->{logic_jumps} } > 0 ) {
         for my $logic_jump ( @{ $question_rules->{logic_jumps} } ) {
             $key = $r_map{ $logic_jump->{code} };
 

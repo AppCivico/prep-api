@@ -27,13 +27,6 @@ sub verifiers_specs {
                 fb_id => {
                     required => 1,
                     type     => 'Num',
-                    post_check => sub {
-                        my $fb_id = $_[0]->get_value('fb_id');
-
-                        $self->search( { fb_id => $fb_id } )->count and die \['fb_id', 'invalid'];
-
-                        return 1;
-                    }
                 },
                 page_id => {
                     required => 1,
@@ -57,6 +50,8 @@ sub action_specs {
 
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
+
+            $self->search( { fb_id => $values{fb_id} } )->count and die \['fb_id', 'invalid'];
 
             my $recipient;
             $self->result_source->schema->txn_do( sub {

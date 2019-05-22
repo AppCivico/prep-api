@@ -227,7 +227,14 @@ sub update_stash {
                     $conditions_satisfied = grep { $_ eq $answer } @{ $logic_jump->{values} };
 
                     if ( $conditions_satisfied == 0 ) {
-                        $stash->remove_question($logic_jump->{code});
+                        # Caso seja a pergunta 'AC1' não remover os saltos
+                        # a não ser que tenham escolhido a 2
+                        if ( $self->question->code eq 'AC1' && $self->answer_value == 2 ) {
+                            my @questions_to_remove = qw( AC2 AC3 AC4 AC5 AC6 AC7 );
+                            $stash->remove_question($_) for @questions_to_remove;
+                        }
+
+                        $stash->remove_question($logic_jump->{code}) unless $self->question->code eq 'AC1';
                     }
                 }
                 elsif ( ref $logic_jump->{values} eq 'HASH' ) {
@@ -287,6 +294,49 @@ sub flags {
     }
 
     return %ret;
+}
+
+sub has_followup_messages {
+    my ($self) = @_;
+
+    my $question_map = $self->question_map;
+
+    if ( $question_map->category->name eq 'quiz' ) {
+        return 1 if $self->question->code =~ /^(AC7|A6)$/;
+    }
+    elsif( $question_map->category->name eq 'fun_questions' ) {
+        return 1 if $self->question->code eq 'AC7';
+    }
+    else {
+        return 0;
+    }
+}
+
+sub followup_messages {
+    my ($self) = @_;
+
+    return undef if $self->has_followup_messages == 0;
+
+    my $question_map = $self->question_map;
+    my $question     = $self->question;
+
+    my @messages;
+    if ( $question_map->category->name eq 'quiz' ) {
+        # Na A6 é enviada uma mensagem de feedback
+        if ( $question->code eq 'A6' ) {
+            push @messages, 'Amando! Só mais algumas vai...';
+        }
+        elsif ( $question->code eq 'AC7' ) {
+            # Na resposta da AC7 deve ser enviado o texto respectivo para o score
+            push @messages, $self->recipient->message_for_fun_questions_score;
+            push @messages, 'Calma! Compartilha ainda não!';
+        }
+    }
+    elsif( $question_map->category->name eq 'fun_questions' ) {
+        push @messages, $self->recipient->message_for_fun_questions_score
+    }
+
+    return @messages;
 }
 
 __PACKAGE__->meta->make_immutable;

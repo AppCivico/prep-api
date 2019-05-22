@@ -8,8 +8,6 @@ extends "DBIx::Class::ResultSet";
 with "Prep::Role::Verification";
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
 
-use Prep::Types qw( URI );
-
 use Data::Verifier;
 use Data::Printer;
 
@@ -22,7 +20,7 @@ sub verifiers_specs {
             profile => {
                 url => {
                     required => 1,
-                    type     => URI
+                    type     => 'Str'
                 }
             }
         ),
@@ -38,6 +36,10 @@ sub action_specs {
 
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
+
+            # if ( $values{url} !~ /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/._]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/ ) {
+            #     die \['url', 'invalid'];
+            # }
 
             my $term_signature = $self->create(\%values);
 

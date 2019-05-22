@@ -123,6 +123,11 @@ __PACKAGE__->table("recipient");
   default_value: 0
   is_nullable: 0
 
+=head2 city
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -172,6 +177,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", default_value => 0, is_nullable => 0 },
   "count_share",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "city",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -323,8 +330,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-20 14:51:08
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:xNIajsVdMN7IuhMpX/lvaA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-04-03 16:11:49
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IPRb2gU+2jAqA3tXFJOubw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -332,11 +339,21 @@ __PACKAGE__->has_many(
 with 'Prep::Role::Verification';
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
 
+use WebService::Simprep;
+
+has _simprep => (
+    is         => 'ro',
+    isa        => 'WebService::Simprep',
+    lazy_build => 1,
+);
+
 use Prep::Utils qw(is_test);
 
 use Text::CSV;
 use DateTime;
 use JSON;
+
+sub _build__simprep { WebService::Simprep->instance }
 
 sub verifiers_specs {
     my $self = shift;
@@ -375,7 +392,24 @@ sub verifiers_specs {
                     type     => 'Bool'
                 },
             }
-        )
+        ),
+        sync_with_simprep => Data::Verifier->new(
+            filters => [qw(trim)],
+            profile => {
+                is_part_of_research => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                is_prep => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                Appointment => {
+                    required => 0,
+                    type     => 'HashRef'
+                }
+            }
+        ),
     };
 }
 
@@ -407,11 +441,30 @@ sub action_specs {
 
             # Caso o bool seja verdadeiro
             # devo verificar se a pessoa é elegível para a pesquisa
-            if ( $self->is_target_audience == 0 || $self->is_eligible_for_research == 0 ) {
+            if ( ( defined $self->is_target_audience && $self->is_target_audience == 0 ) || $self->is_eligible_for_research == 0 ) {
                 die \['is_part_of_research', 'invalid'];
             }
 
             return $self->recipient_flag->update( { is_part_of_research => $values{is_part_of_research} } );
+        },
+        sync_with_simprep => sub {
+            my $r = shift;
+
+            my %values = $r->valid_values;
+            not defined $values{$_} and delete $values{$_} for keys %values;
+
+            # Tratando consulta
+            my $appointment = delete $values{appointment};
+
+            my @updatable_flags = qw( is_part_of_research is_prep );
+            for my $flag (@updatable_flags) {
+                next unless defined $values{$flag};
+
+                $self->recipient_flag->update( { $flag => $values{$flag} } );
+                delete $values{$flag};
+            }
+
+            return $self->update(\%values);
         }
     };
 }
@@ -842,13 +895,13 @@ sub update_is_eligible_for_research {
         )
     }
 
-    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1a', 'B2a', 'B2b', 'B3', 'B4', 'B5', 'B6' ] } }, { prefetch => 'question' } );
+    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9' ] } }, { prefetch => 'question' } );
 
     my $conditions_met = 0;
     while ( my $answer = $answer_rs->next() ) {
         my $code = $answer->question->code;
 
-        if ( $code eq 'B4' ) {
+        if ( $code eq 'B7' ) {
 
             $conditions_met = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
         }
@@ -980,27 +1033,29 @@ sub update_is_target_audience {
 
     my $answer_rs = $self->answers->search(
         {
-            'question.code'      => { -in => ['A2', 'A1', 'A5', 'A3'] },
+            'question.code'      => { -in => ['A2', 'A6', 'A1', 'A3'] },
             'me.question_map_id' => $question_map->id
         },
         { join => 'question' }
     );
 
-    my $is_target_audience = 1;
+    my $is_target_audience;
     while ( my $answer = $answer_rs->next ) {
+        $is_target_audience = 1;
+
         my $code = $answer->question->code;
 
-        if ( $code eq 'A1' ) {
+        if ( $code eq 'A2' ) {
             $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
         }
-        elsif ( $code eq 'A2' ) {
+        elsif ( $code eq 'A6' ) {
             $is_target_audience = 0 unless $answer->answer_value eq '1';
         }
         elsif ( $code eq 'A3' ) {
             $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
         }
-        else {
-            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2)$/;
+        elsif ( $code eq 'A1' ) {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
         }
 
         last if $is_target_audience == 0;
@@ -1256,6 +1311,168 @@ sub go_to_test {
     return 0 unless $answer;
 
     return $answer->answer_value eq '1' ? 1 : 0;
+}
+
+sub system_labels {
+    my ($self) = @_;
+
+    return [
+        map {
+            my $f = $self->$_;
+
+            $f ? ( { name => $_ } ) : ( )
+        } qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz is_prep )
+    ]
+}
+
+sub answers_for_integration {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'quiz' },
+        {
+            join     => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    # Removendo perguntas adicionadas por nós
+    my @questions_to_skip = qw(AC1 AC2 AC3 AC4 AC5 AC6 AC7 AC8 A4a A4b);
+
+    my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
+    my $answers   = $answer_rs->search(
+        { 'question.code' => { -not_in => \@questions_to_skip } },
+        { join => 'question' }
+    );
+
+    my @yes_no_questions = qw( A6 B4 B5 B6 B8 B9 B10 );
+    $answers = [
+        map {
+            my $a = $_;
+
+            my $question_code = $a->question->code;
+            my $answer        = $a->answer_value;
+
+            # Caso seja a A4 devo verificar qual a resposta e remover todas relacionadas
+            if ( $question_code eq 'A4' ) {
+                if ( $answer eq '1' ) {
+                    # Caso seja 1, devo verificar a resposta da A4a
+                    my $logic_jump_answer = $answer_rs->search( { 'question.code' => 'A4a' }, { join => 'question' } )->next;
+
+                    # Como a A4a é para ensino fundamental, logo são as primeiras opções
+                    # Basta preencher com o número da reposta
+                    $answer = $logic_jump_answer->answer_value;
+                }
+                elsif ( $answer eq '2' ) {
+                    # Devo verificar a resposta da A4b
+                    my $logic_jump_answer = $answer_rs->search( { 'question.code' => 'A4b' }, { join => 'question' } )->next;
+
+                    if ( $logic_jump_answer->answer_value eq '1' ) {
+                        $answer = '10';
+                    }
+                    elsif ( $logic_jump_answer->answer_value eq '2' ) {
+                        $answer = '11';
+                    }
+                    else {
+                        $answer = '12';
+                    }
+                }
+                elsif ( $answer eq '3' ) {
+                    # Devo preencher com o valor 13
+                    $answer = '13'
+                }
+                else {
+                    die 'error at Result::Recipient::answers_for_integration';
+                }
+            }
+
+            # Questões de sim/não devem ser enviadas como 1 ou 0
+            if ( grep { $question_code eq $_ } @yes_no_questions ) {
+                +{
+                    question_code => $question_code,
+                    value         => $answer eq '1' ? 1 : 0
+                }
+            }
+            else {
+                +{
+                    question_code => $question_code,
+                    value         => $answer
+                }
+            }
+        } $answers->all()
+    ];
+
+    # Adicionando pergunta B11, ela só existe offline e consiste na pergunta se a pessoa quer participar da pesquisa.
+    push @{$answers}, { question_code => 'B11', value => 1 };
+
+    return $answers
+}
+
+sub register_simprep {
+    my ($self) = @_;
+
+    my $res = $self->_simprep->register_recipient(
+        answers => $self->answers_for_integration
+    );
+
+    $self->update( { integration_token => $res->{data}->{voucher} } );
+
+    return $res->{data}->{url}
+}
+
+sub fun_questions_score {
+    my ($self) = @_;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'quiz' },
+        {
+            join => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    my @questions = qw( AC2 AC3 AC4 AC5 AC6 AC7 );
+
+    my $answer_rs = $self->answers->search(
+        {
+            'question.code'      => { 'in' => \@questions },
+            'me.question_map_id' => $question_map->id
+        },
+        { prefetch => 'question' }
+    );
+
+    my $score = 0;
+    while ( my $answer = $answer_rs->next() ) {
+        $score += $answer->question->score_for_answer_value($answer->answer_value);
+    }
+
+    return $score;
+}
+
+sub message_for_fun_questions_score {
+    my ($self) = @_;
+
+    my $ret;
+    my $score = $self->fun_questions_score;
+
+    if ( $score <= 69 ) {
+        $ret = 'VC É A PABLLO VITTAR, YUKEEEÊ???
+Famosissimah nos rolês, mas tá só nas love song que nem a Pablo, nenon? Você parece ser mais de boas quando o assunto é sexo com várias pessoas - ou pelo menos está numa fase de boas, bem romantiquinha. Pode ser que vc não sinta mta necessidady de sarrar, pode ser q esteja namorando fechado e seu tesão se direcione mais para um/uma parceiro/a fixo, pode ser q vc prefira poucos (e bons) doq muitos, pode ser mil coisas - o importante é vc fazer (ou não fazer) oq vc tiver vontade <3';
+    }
+    elsif ( $score >= 70 && $score <= 129 ) {
+        $ret = 'VC É A LINN DA QUEBRADA! #TRA #TRA
+Afinal, pra qq eu kro pica se eu tenho todos esses dedo??? Pelo q eu catei, vc curte transar mas vê o sexo como algo q vai muito além de penetração - tb ama viver outras experiências além da neca no edi: chupação, dedo, linguada, de repente até um brinquedinho, nenon? Amo que a sra é super sensorial e tá aberta a experiências, acho um bapho SYM';
+    }
+    elsif ( $score >= 130 && $score <= 200 ) {
+        $ret = 'VC É A GLORIA GROOVE! LIGADYNHA NO PROCEDER
+Vc é GLORIOSA gatan, toda dona de vc meixxxma! Assim como a Gloria, passa logo o proceder, joga o papo reto, sabe oq tu quer (e quem tu quer, kkkk) e vive suas vontadys livremente - mto empoderada ela. Vc é rainha na pista, e convoca geral pra arrastar e sarrar com autonomia - mas sempre ligadinha na prevenção. Ai que coisa boa!';
+    }
+    else {
+        $ret = 'VC É A MULHER PEPITA! RANNNNNN
+Uma vez piranha, smp piranha, piranha eu sempre hei de ser RANNNN kkk. Kerida, a sra é deshtruidora mesmo 🔥🔥🔥Gosta de sexo sem tabu e sem moralismo, e deve adorar novas experiências, nenon? Deve ter uns sagitário babado nesse mapa astral, aloka. E é isso ai mana, se joga - o segredynho é saber os riscos das suas escolhas e pensar um jeito babado de manter a saúde sexual em dia sem deixar de fazer nada q tu keira.';
+    }
+
+    return $ret;
 }
 
 __PACKAGE__->meta->make_immutable;

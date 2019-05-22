@@ -78,9 +78,11 @@ Prep::Types	./lib/Prep/Types.pm	/^package Prep::Types;$/;"	p
 Prep::Utils	./lib/Prep/Utils.pm	/^package Prep::Utils;$/;"	p
 WebService::Facebook	./lib/WebService/Facebook.pm	/^package WebService::Facebook;$/;"	p
 WebService::GoogleCalendar	./lib/WebService/GoogleCalendar.pm	/^package WebService::GoogleCalendar;$/;"	p
+WebService::Simprep	./lib/WebService/Simprep.pm	/^package WebService::Simprep;$/;"	p
 _build__calendar	./lib/Prep/Schema/Result/Calendar.pm	/^sub _build__calendar { WebService::GoogleCalendar->instance }$/;"	s
 _build_furl	./lib/WebService/GoogleCalendar.pm	/^sub _build_furl { Furl->new() }$/;"	s
 _build_ua	./lib/WebService/Facebook.pm	/^sub _build_ua { LWP::UserAgent->new() }$/;"	s
+_build_ua	./lib/WebService/Simprep.pm	/^sub _build_ua { LWP::UserAgent->new() }$/;"	s
 _filter_value	./lib/Data/Verifier.pm	/^sub _filter_value {$/;"	s
 _get_random_string	./lib/Mojolicious/Plugin/Detach.pm	/^sub _get_random_string {$/;"	s
 _wrap_in_transaction	./lib/Prep/Role/Verification/TransactionalActions/DBIC.pm	/^sub _wrap_in_transaction {$/;"	s
@@ -130,6 +132,7 @@ get	./lib/Prep/Controller/Internal/Integration/Recipient.pm	/^sub get {$/;"	s
 get_calendar_event_at_time	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_event_at_time {$/;"	s
 get_calendar_events	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_events {$/;"	s
 get_connect_info	./lib/Prep/SchemaConnected.pm	/^sub get_connect_info {$/;"	s
+get_form_for_notification	./lib/WebService/Simprep.pm	/^sub get_form_for_notification {$/;"	s
 get_next_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_next_question_data {$/;"	s
 get_pending_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_pending_question_data {$/;"	s
 get_persona	./lib/WebService/Facebook.pm	/^sub get_persona {$/;"	s
@@ -174,6 +177,7 @@ quota_map	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub quota_map {$/;"	s
 register	./lib/Mojolicious/Plugin/Detach.pm	/^sub register {$/;"	s
 register	./lib/Mojolicious/Plugin/SimpleAuthentication.pm	/^sub register {$/;"	s
 register	./lib/Prep/Routes.pm	/^sub register {$/;"	s
+register_recipient	./lib/WebService/Simprep.pm	/^sub register_recipient {$/;"	s
 remove_question	./lib/Prep/Schema/Result/Stash.pm	/^sub remove_question {$/;"	s
 reply_exception	./lib/Prep/Controller.pm	/^sub reply_exception {$/;"	s
 reply_forbidden	./lib/Prep/Controller.pm	/^sub reply_forbidden {$/;"	s
@@ -190,6 +194,7 @@ stasher	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub stasher {$/;"	s
 stasher	./lib/Prep/Controller/Internal/Integration/Recipient.pm	/^sub stasher {$/;"	s
 suggest_wait_for_test	./lib/Prep/Schema/Result/Recipient.pm	/^sub suggest_wait_for_test {$/;"	s
 sync_appointments	./lib/Prep/Schema/Result/Calendar.pm	/^sub sync_appointments {$/;"	s
+system_labels	./lib/Prep/Schema/Result/Recipient.pm	/^sub system_labels {$/;"	s
 upcoming_appointments	./lib/Prep/Schema/Result/Recipient.pm	/^sub upcoming_appointments {$/;"	s
 update_finished_quiz	./lib/Prep/Schema/Result/Recipient.pm	/^sub update_finished_quiz {$/;"	s
 update_is_eligible_for_research	./lib/Prep/Schema/Result/Recipient.pm	/^sub update_is_eligible_for_research {$/;"	s

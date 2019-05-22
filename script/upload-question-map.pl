@@ -19,9 +19,9 @@ my $i = 1;
 #########################################
 # ALWAYS UPDATE THIS NUMBER ACCORDINGLY #
 #########################################
-my $version = 14;
+my $version = 1;
 
-open my $fh, "<:encoding(utf8)", "screening.csv" or die "screening.csv: $!";
+open my $fh, "<:encoding(utf8)", "quiz.csv" or die "screening.csv: $!";
 while (my $row = $csv->getline($fh)) {
     next if $row->[0] eq 'code';
 
@@ -29,7 +29,7 @@ while (my $row = $csv->getline($fh)) {
         code              => $row->[0],
         text              => $row->[1],
         type              => $row->[2],
-        is_differentiator => $row->[5],
+        is_differentiator => 1,
         question_map_id   => $version,
 
         (
@@ -41,8 +41,8 @@ while (my $row = $csv->getline($fh)) {
                 ( extra_quick_replies => $row->[4] ) : ( )
         ),
         (
-            $row->[6] ?
-                ( rules => $row->[6] ) :
+            $row->[5] ?
+                ( rules => $row->[5] ) :
                 ( )
         )
     };
@@ -57,7 +57,7 @@ close $fh;
 $question_map_rs->create(
     {
         map         => to_json($question_map),
-        category_id => 2
+        category_id => 1
     }
 );
 $question_rs->populate(\@rows);
