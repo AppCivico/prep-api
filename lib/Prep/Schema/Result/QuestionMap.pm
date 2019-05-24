@@ -149,6 +149,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 screenings
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Screening>
+
+=cut
+
+__PACKAGE__->has_many(
+  "screenings",
+  "Prep::Schema::Result::Screening",
+  { "foreign.question_map_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 stashes
 
 Type: has_many
@@ -165,8 +180,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-11 12:01:59
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:hq9+TW34K4412dr/9Rn9kw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-19 09:58:20
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:0pP+GkpggR1VxfWzuncdug
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -182,11 +197,11 @@ sub parsed {
 sub build_conditions {
     my ($self, %opts) = @_;
 
-	my @required_opts = qw( recipient_id next_question_code );
-	defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+    my @required_opts = qw( recipient_id next_question_code );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
-	my $next_question_code = $opts{next_question_code};
-	my $recipient_id       = $opts{recipient_id};
+    my $next_question_code = $opts{next_question_code};
+    my $recipient_id       = $opts{recipient_id};
 
     my $answers_rs = $self->result_source->schema->resultset('Answer')->search( { recipient_id => $recipient_id } );
 
@@ -194,36 +209,11 @@ sub build_conditions {
     if ( $self->category_id == 1 ) {
         # Quiz
 
-        if ( $next_question_code eq 'AC5' ) {
-            # Deve ter respondido as seguintes perguntas com as respectivas respostas:
-            # B3 => 1, C1 => 1, C2 => 2 ou 3, C3 => 1, 2 ou 3, C4 => 1
-            for my $question ( qw( B1a B1b B2 B2a B2b B3 B4 B5 B6 ) ) {
-
-                my $value;
-                if ( $question eq 'B2' ) {
-                    $value = { '!=' => '0' };
-                }
-                else {
-                    $value = '1';
-                }
-
-                $condition = $answers_rs->search(
-                    {
-                        'question.code' => $question,
-                        answer_value    => $value
-                    },
-                    { join => 'question'}
-                )->as_query;
-
-                push @conditions, { -exists => $condition };
-            }
-
-        }
-        elsif ( $next_question_code eq 'A2' ) {
+        if ( $next_question_code eq 'A3' ) {
             # Deve ter mais de 14 e menos de 20
             $condition = $answers_rs->search(
                 {
-                    'question.code' => 'A1',
+                    'question.code' => 'A2',
                     answer_value    => { '>' => '14', '<' => '20' }
                 },
                 { join => 'question'}
@@ -231,16 +221,20 @@ sub build_conditions {
 
             push @conditions, { -exists => $condition };
         }
-        elsif ( $next_question_code eq 'A3' ) {
-            $condition = $answers_rs->search(
-                {
-                    'question.code' => 'A2',
-                    answer_value    => { '!=' => '2' }
-                },
-                { join => 'question'}
-            )->as_query;
+        elsif ( $next_question_code eq 'A2' ) {
+            # Só pode ser de SP, BH ou Salvador.
+            for ( 1 .. 3 ) {
+                $condition = $answers_rs->search(
+                    {
+                        'question.code' => 'A1',
+                        answer_value    => $_
+                    },
+                    { join => 'question'}
+                )->as_query;
 
-            push @conditions, { -exists => $condition };
+                push @conditions, { -exists => $condition };
+
+            }
         }
         elsif ( $next_question_code eq 'B1' ) {
             $condition = $answers_rs->search(
@@ -253,39 +247,61 @@ sub build_conditions {
 
             push @conditions, { -exists => $condition };
         }
-		elsif ( $next_question_code eq 'B1a' ) {
-			$condition = $answers_rs->search(
-				{
-					'question.code' => 'B1',
-					answer_value    => '1'
-				},
-				{ join => 'question'}
-			)->as_query;
+        elsif ( $next_question_code eq 'B1a' ) {
+            $condition = $answers_rs->search(
+                {
+                    'question.code' => 'B1',
+                    answer_value    => '1'
+                },
+                { join => 'question'}
+            )->as_query;
 
-			push @conditions, { -exists => $condition };
-		}
-        elsif ( $next_question_code eq 'B2a' ) {
-			$condition = $answers_rs->search(
-				{
-					'question.code' => 'B2',
-					answer_value    => { '!=' => '1' }
-				},
-				{ join => 'question'}
-			)->as_query;
-
-			push @conditions, { -exists => $condition };
+            push @conditions, { -exists => $condition };
         }
-		elsif ( $next_question_code eq 'B2b' ) {
-			$condition = $answers_rs->search(
-				{
-					'question.code' => 'B2a',
-					answer_value    => '1'
-				},
-				{ join => 'question'}
-			)->as_query;
+        elsif ( $next_question_code eq 'B2a' ) {
+            $condition = $answers_rs->search(
+                {
+                    'question.code' => 'B2',
+                    answer_value    => { '!=' => '0' }
+                },
+                { join => 'question'}
+            )->as_query;
 
-			push @conditions, { -exists => $condition };
-		}
+            push @conditions, { -exists => $condition };
+        }
+        elsif ( $next_question_code eq 'B2b' ) {
+            $condition = $answers_rs->search(
+                {
+                    'question.code' => 'B2a',
+                    answer_value    => '1'
+                },
+                { join => 'question'}
+            )->as_query;
+
+            push @conditions, { -exists => $condition };
+        }
+        elsif ( $next_question_code eq 'D4a' ) {
+            $condition = $answers_rs->search(
+                {
+                    'question.code' => 'D4',
+                    answer_value    => '1'
+                },
+                { join => 'question'}
+            )->as_query;
+
+            push @conditions, { -exists => $condition };
+        }
+        elsif ( $next_question_code eq 'D4b' ) {
+            $condition = $answers_rs->search(
+                {
+                    'question.code' => 'D4',
+                    answer_value    => '2'
+                },
+                { join => 'question'}
+            )->as_query;
+
+            push @conditions, { -exists => $condition };
+        }
         else {
             die \['code', 'invalid'];
         }
@@ -307,7 +323,6 @@ sub build_conditions {
 
                 push @conditions, { -exists => $condition };
             }
-
         }
         elsif ( $next_question_code eq 'SC2' ) {
 
@@ -322,6 +337,21 @@ sub build_conditions {
 
                 push @conditions, { -exists => $condition };
 
+            }
+        }
+        elsif ( $next_question_code eq 'SC6a' ) {
+
+            for my $question ( qw( SC2 SC3 SC4 SC5 ) ) {
+
+                $condition = $answers_rs->search(
+                    {
+                        'question.code' => $question,
+                        answer_value    => '1'
+                    },
+                    { join => 'question'}
+                )->as_query;
+
+                push @conditions, { -exists => $condition };
             }
         }
     }

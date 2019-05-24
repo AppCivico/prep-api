@@ -3,6 +3,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
 use Prep::Test;
+use JSON;
 
 my $t      = test_instance;
 my $schema = $t->app->schema;
@@ -18,6 +19,85 @@ db_transaction {
 
         # Com security token inválido
         $t->post_ok( '/api/chatbot/recipient', form => { security_token => 'FOObar' } )->status_is(403);
+    };
+
+    subtest 'Create questions and question map' => sub {
+        my $question_rs = $schema->resultset('Question');
+        my $question_map;
+
+        ok(
+            $question_map = $schema->resultset('QuestionMap')->create(
+                {
+                    map => to_json({
+                        1 => 'Z1',
+                        2 => 'U4',
+                        3 => 'Y5',
+                    }),
+                    category_id => 1
+                }
+            ),
+            'question map created'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code              => 'Z1',
+                    text              => 'Foobar?',
+                    type              => 'multiple_choice',
+                    question_map_id   => $question_map->id,
+                    is_differentiator => 0,
+                    multiple_choices  => to_json ({ 1 => 'foo', 2 => 'bar' })
+                }
+            ),
+            'first question'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code              => 'Y5',
+                    text              => 'open_text?',
+                    type              => 'open_text',
+                    question_map_id   => $question_map->id,
+                    is_differentiator => 0
+                }
+            ),
+            'second question'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code              => 'U5',
+                    text              => 'Você gosta?',
+                    type              => 'multiple_choice',
+                    question_map_id   => $question_map->id,
+                    is_differentiator => 1,
+                    multiple_choices  => to_json ({ 1 => 'Sim', 2 => 'Não' })
+                }
+            ),
+            'third question'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code                => 'U4',
+                    text                => 'barbaz?',
+                    type                => 'multiple_choice',
+                    question_map_id     => $question_map->id,
+                    is_differentiator   => 0,
+                    multiple_choices    => to_json ({ 1 => 'Sim', 2 => 'Nunca', 3 => 'Regularmente' }),
+                    extra_quick_replies => to_json ({
+                        label   => 'foo',
+                        text    => 'bar bar',
+                        payload => 'foobar'
+                    })
+                }
+            ),
+            'fourth question'
+        );
     };
 
     subtest 'Chatbot | Create recipient' => sub {
@@ -171,6 +251,10 @@ db_transaction {
         ->json_has('/opt_in')
         ->json_has('/integration_token')
         ->json_has('/finished_quiz')
+        ->json_has('/signed_term')
+        ->json_has('/is_target_audience')
+        ->json_has('/is_prep')
+        ->json_has('/has_appointments')
         ->json_is('/fb_id',   '710488549074724')
         ->json_is('/page_id', '1573221416102831')
         ->json_is('/name',    'foobar')
@@ -209,7 +293,9 @@ db_transaction {
         )
         ->status_is(200)
         ->json_is('/name',   'foobar_1')
-        ->json_is('/opt_in', 0);
+		->json_is('/opt_in', 0)
+		->json_has('/system_labels')
+        ->json_has('/system_labels/0/name');
     };
 };
 

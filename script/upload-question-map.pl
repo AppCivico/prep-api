@@ -25,11 +25,11 @@ open my $fh, "<:encoding(utf8)", "screening.csv" or die "screening.csv: $!";
 while (my $row = $csv->getline($fh)) {
     next if $row->[0] eq 'code';
 
-	my $row = {
-		code              => $row->[0],
-		text              => $row->[1],
-		type              => $row->[2],
-        is_differentiator => $row->[5],
+    my $row = {
+        code              => $row->[0],
+        text              => $row->[1],
+        type              => $row->[2],
+        is_differentiator => 1,
         question_map_id   => $version,
 
         (
@@ -40,9 +40,14 @@ while (my $row = $csv->getline($fh)) {
             $row->[4] ?
                 ( extra_quick_replies => $row->[4] ) : ( )
         ),
-	};
+        (
+            $row->[5] ?
+                ( rules => $row->[5] ) :
+                ( )
+        )
+    };
 
-	push @rows, $row;
+    push @rows, $row;
 
     $question_map->{$i} = $row->{code};
     $i++;

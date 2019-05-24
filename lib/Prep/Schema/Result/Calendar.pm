@@ -106,10 +106,45 @@ __PACKAGE__->table("calendar");
   is_nullable: 0
   original: {data_type => "varchar"}
 
-=head2 city
+=head2 address_city
 
   data_type: 'text'
   is_nullable: 0
+
+=head2 address_state
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 address_street
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 address_zipcode
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 address_number
+
+  data_type: 'integer'
+  is_nullable: 0
+
+=head2 address_district
+
+  data_type: 'text'
+  is_nullable: 0
+
+=head2 address_complement
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 phone
+
+  data_type: 'text'
+  is_nullable: 1
 
 =cut
 
@@ -166,8 +201,22 @@ __PACKAGE__->add_columns(
     is_nullable => 0,
     original    => { data_type => "varchar" },
   },
-  "city",
+  "address_city",
   { data_type => "text", is_nullable => 0 },
+  "address_state",
+  { data_type => "text", is_nullable => 0 },
+  "address_street",
+  { data_type => "text", is_nullable => 0 },
+  "address_zipcode",
+  { data_type => "text", is_nullable => 0 },
+  "address_number",
+  { data_type => "integer", is_nullable => 0 },
+  "address_district",
+  { data_type => "text", is_nullable => 0 },
+  "address_complement",
+  { data_type => "text", is_nullable => 1 },
+  "phone",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -229,8 +278,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 11:01:11
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5DcrrNw9lQlaSK4HFIgBfA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 10:08:18
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:T95CoBCMnmEbPOjn2D+HdQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -243,15 +292,15 @@ use DateTime;
 use WebService::GoogleCalendar;
 
 has _calendar => (
-	is         => 'ro',
-	isa        => 'WebService::GoogleCalendar',
-	lazy_build => 1,
+    is         => 'ro',
+    isa        => 'WebService::GoogleCalendar',
+    lazy_build => 1,
 );
 
 sub _build__calendar { WebService::GoogleCalendar->instance }
 
 sub available_dates {
-    my ($self) = @_;
+    my ($self, $page, $rows) = @_;
 
     my $appointment_rs = $self->result_source->schema->resultset('Appointment');
     my $appointment_windows = $self->appointment_windows;
@@ -266,24 +315,24 @@ sub available_dates {
             my @base_quotas = ( 1 .. $_->quotas );
 
             # Parseio o começo e o fim da janela de atendimento
-			my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
-			my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
+            my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
+            my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
 
             # Pego a diferença entre os dois em segundos e divido pelo numero de cotas
             my $delta = ( $end_time - $start_time );
             my $seconds_per_quota = ( $delta / $_->quotas );
 
-            my @days_of_week = $_->appointment_window_days_of_week->get_column('day_of_week')->all();
+            my @days_of_week = $_->appointment_window_days_of_week->search( undef, { rows => 8, order_by => { -asc => 'day_of_week' } } )->get_column('day_of_week')->all();
 
             map {
                 my $ymd = get_ymd_by_day_of_the_week($_);
 
-				my @taken_quotas = $appointment_rs->search(
-					{
-						appointment_window_id  => $appointment_window_id,
+                my @taken_quotas = $appointment_rs->search(
+                    {
+                        appointment_window_id  => $appointment_window_id,
                         appointment_at         => { '>=' => \"'$ymd'::date", '<' => \"'$ymd'::date + interval '1 day'"},
-					}
-				)->get_column('quota_number')->all();
+                    }
+                )->get_column('quota_number')->all();
 
                 my %taken_quotas = map { $_ => 1 } @taken_quotas;
 
@@ -303,24 +352,24 @@ sub available_dates {
                                     ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
                                     ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
                                 datetime_start => $_ == 1 ?
-                                    ( $ymd . 'T' . $start_time->hms . '-02:00' ) :
-                                    ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms . '-02:00' ),
-                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms . '-02:00'
+                                    ( $ymd . 'T' . $start_time->hms ) :
+                                    ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
+                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms
                             }
                         } @available_quotas
                     ]
                 }
             } @days_of_week;
-        } $self->appointment_windows->all()
+        } $self->appointment_windows->search(undef, { page => $page, rows => $rows } )->all()
     ];
 }
 
 sub sync_appointments {
     my ($self) = @_;
 
-	my $res = $self->_calendar->get_calendar_events( calendar => $self, google_id => $self->google_id );
+    my $res = $self->_calendar->get_calendar_events( calendar => $self, google_id => $self->google_id );
 
-	my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+    my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
 
     eval {
         for my $appointment (@manual_appointments) {

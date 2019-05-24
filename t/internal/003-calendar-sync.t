@@ -10,7 +10,7 @@ my $t      = test_instance;
 my $schema = $t->app->schema;
 
 db_transaction {
-	my $security_token = $ENV{CHATBOT_SECURITY_TOKEN};
+    my $security_token = $ENV{CHATBOT_SECURITY_TOKEN};
 
     my ($recipient_id, $recipient);
     subtest 'Chatbot | Create recipient' => sub {
@@ -33,18 +33,23 @@ db_transaction {
 
     my $calendar;
     subtest 'Chatbot | Create calendar' => sub {
-		ok ( $calendar = $schema->resultset('Calendar')->create(
-			{
-				name          => 'test_calendar',
-				city          => 'São Paulo',
-				google_id     => 'prep_test@group.calendar.google.com',
-				time_zone     => 'America/Sao_Paulo',
-				token         => 'foobar',
-				client_id     => 'foo',
-				client_secret => 'bar',
-				refresh_token => 'FOOBAR'
-			}
-		  ), 'calendar'
+        ok ( $calendar = $schema->resultset('Calendar')->create(
+            {
+                name             => 'test_calendar',
+                address_city     => 'São Paulo',
+                address_state    => 'SP',
+                address_street   => 'Rua Libero Badaró',
+                address_number   => '144',
+                address_district => 'Anhangabaú',
+                address_zipcode  => '01008001',
+                google_id        => 'prep_test@group.calendar.google.com',
+                time_zone        => 'America/Sao_Paulo',
+                token            => 'foobar',
+                client_id        => 'foo',
+                client_secret    => 'bar',
+                refresh_token    => 'FOOBAR'
+            }
+          ), 'calendar'
         );
     };
 
@@ -56,7 +61,7 @@ db_transaction {
         &setup_calendar_event_get;
         ok( $calendar->sync_appointments , 'calendar sync' );
 
-		is($appointment_rs->count, 1, 'one appointment synced');
+        is($appointment_rs->count, 1, 'one appointment synced');
     };
 };
 
