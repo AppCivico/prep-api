@@ -1222,7 +1222,28 @@ db_transaction {
         ok( $recipient = $recipient->discard_changes, 'recipient discard changes' );
     };
 
+    db_transaction {
+        subtest 'Chatbot | term signature' => sub {
+            is $recipient->integration_token, undef;
+
+            $t->post_ok(
+                '/api/chatbot/recipient/term-signature',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => '111111',
+                    url            => 'https://www.google.com',
+                    signed         => 0
+                }
+            )
+            ->status_is(201);
+
+            ok $recipient = $recipient->discard_changes;
+            ok defined $recipient->integration_token;
+        }
+    };
+
     subtest 'Chatbot | term signature' => sub {
+        ok $recipient = $recipient->discard_changes;
         is $recipient->integration_token, undef;
 
         $t->post_ok(
@@ -1230,7 +1251,8 @@ db_transaction {
             form => {
                 security_token => $security_token,
                 fb_id          => '111111',
-                url            => 'https://www.google.com'
+                url            => 'https://www.google.com',
+                signed         => 1
             }
         )
         ->status_is(201);

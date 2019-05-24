@@ -4,5 +4,6 @@
 BEGIN;
 
 ALTER TABLE term_signature ALTER COLUMN url DROP NOT NULL;
+ALTER TABLE term_signature ADD COLUMN signed BOOLEAN NOT NULL;
 
 COMMIT;

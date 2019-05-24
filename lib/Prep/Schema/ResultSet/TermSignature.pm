@@ -23,6 +23,11 @@ sub verifiers_specs {
                     type     => 'Int'
                 },
 
+                signed => {
+                    required => 1,
+                    type     => 'Bool'
+                },
+
                 url => {
                     required => 0,
                     type     => 'Str'
