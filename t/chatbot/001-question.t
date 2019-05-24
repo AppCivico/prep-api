@@ -1894,7 +1894,6 @@ db_transaction{
         ->json_is('/code', 'B10');
 
         ok( my $recipient = $schema->resultset('Recipient')->find($recipient_id), 'recipient' );
-        is( $recipient->integration_token, undef, 'integration_token is not defined' );
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
@@ -1911,7 +1910,6 @@ db_transaction{
         ->json_is('/is_eligible_for_research', 1);
 
         ok( $recipient = $recipient->discard_changes, 'recipient discard changes' );
-        ok( defined $recipient->integration_token, 'integration_token is defined' );
 
     };
 };

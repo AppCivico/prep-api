@@ -18,8 +18,13 @@ sub verifiers_specs {
         create => Data::Verifier->new(
             filters => [qw(trim)],
             profile => {
-                url => {
+                recipient_id => {
                     required => 1,
+                    type     => 'Int'
+                },
+
+                url => {
+                    required => 0,
                     type     => 'Str'
                 }
             }
@@ -43,7 +48,13 @@ sub action_specs {
 
             my $term_signature = $self->create(\%values);
 
-            return $term_signature;
+            my $recipient   = $term_signature->recipient;
+            my $simprep_url = $recipient->register_simprep;
+
+            return {
+                term_signature                => $term_signature,
+                offline_pre_registration_form => $simprep_url
+            };
         }
     };
 }
