@@ -152,12 +152,6 @@ sub action_specs {
 
                         my $is_eligible_for_research = $recipient->is_eligible_for_research;
 
-                        # Caso a pessoa seja elegível para o estudo
-                        if ( $is_eligible_for_research == 1 ) {
-
-                            # Fazendo o cadastro
-                            $simprep_url = $recipient->register_simprep;
-                        }
 
                         %flags = $answer->flags;
                     }
