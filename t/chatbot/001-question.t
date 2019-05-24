@@ -1928,12 +1928,11 @@ db_transaction {
             $question_map = $schema->resultset('QuestionMap')->create(
                 {
                     map => to_json({
-                        1 => 'SC1',
-                        2 => 'SC2',
-                        3 => 'SC2a',
-                        4 => 'SC2b',
-                        5 => 'SC3',
-                        6 => 'SC4'
+                        1 => "SC1",
+                        2 => "SC2",
+                        3 => "SC2a",
+                        4 => "SC3",
+                        5 => "SC4",
                     }),
                     category_id => 2
                 }
@@ -2014,12 +2013,7 @@ db_transaction {
                     ),
                     rules => to_json(
                         {
-                            "logic_jumps" => [
-                                {
-                                    "code"   => "SC2b",
-                                    "values" => [ "2" ]
-                                }
-                            ],
+                            "logic_jumps" => [],
                             "qualification_conditions" => [ "2" ],
                             "flags"=> [ "go_to_appointment" ]
                         }
@@ -2028,33 +2022,6 @@ db_transaction {
             ),
             'third question'
         );
-
-        ok(
-            $question_rs->create(
-                {
-                    code              => 'SC2b',
-                    text              => 'Foobar?',
-                    type              => 'multiple_choice',
-                    question_map_id   => $question_map->id,
-                    is_differentiator => 0,
-                    multiple_choices  => to_json (
-                        {
-                            1 => 'foo',
-                            2 => 'bar'
-                        }
-                    ),
-                    rules => to_json(
-                        {
-                            "logic_jumps"  => [],
-                            "qualification_conditions"  => ["2"],
-                            "flags" => [ "go_to_appointment" ]
-                        }
-                    )
-                }
-            ),
-            'third question'
-        );
-
 
         ok(
             $question_rs->create(
@@ -2236,7 +2203,7 @@ db_transaction {
         ->status_is(200)
         ->json_is('/code', 'SC2a');
 
-        # Caso a pessoa responda 2 para a SC2a deve ver a SC2b
+        # Caso a pessoa responda 2 não deve ter a SC2a
         db_transaction{
             $t->post_ok(
                 '/api/chatbot/recipient/answer',
@@ -2259,46 +2226,6 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'SC2a',
-                category       => 'screening',
-                answer_value   => '2'
-            }
-        )
-        ->status_is(201)
-        ->json_is('/finished_quiz', 0);
-
-        $t->get_ok(
-            '/api/chatbot/recipient/pending-question',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                category       => 'screening'
-            }
-        )
-        ->status_is(200)
-        ->json_is('/code', 'SC2b');
-
-        db_transaction{
-            $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'SC2b',
-                    category       => 'screening',
-                    answer_value   => '1'
-                }
-            )
-            ->status_is(201)
-            # ->json_is('/go_to_appointment', 1)
-            ->json_is('/finished_quiz', 1);
-        };
-
-        $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'SC2b',
                 category       => 'screening',
                 answer_value   => '2'
             }
