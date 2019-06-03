@@ -36,3 +36,4 @@
 0032-add-city [0031-add-prep_since] 2019-04-03T19:22:33Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the 'city' column to the 'recipient' table
 0033-update-city [0032-add-city] 2019-04-04T16:47:35Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the city
 0034-signature-url [0033-update-city] 2019-05-24T18:09:03Z Lucas Ansei,,, <lucas@lucas-G750JX> # Removing not null on url for term signature
+0035-add-notification_queue [0034-signature-url] 2019-06-03T14:27:39Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the notification_queue table
