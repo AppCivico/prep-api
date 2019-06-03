@@ -269,6 +269,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 notification_queues
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::NotificationQueue>
+
+=cut
+
+__PACKAGE__->has_many(
+  "notification_queues",
+  "Prep::Schema::Result::NotificationQueue",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 recipient_flag
 
 Type: might_have
@@ -330,8 +345,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-04-03 16:11:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IPRb2gU+2jAqA3tXFJOubw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-03 09:52:37
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:PO0yr5Xt9bogEx+AGJRJMA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

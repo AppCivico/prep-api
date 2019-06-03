@@ -33,3 +33,6 @@ RUN /tmp/install-cpan-extra-modules.sh
 USER root
 RUN mkdir /etc/service/prep
 COPY prep.sh /etc/service/prep/run
+
+RUN mkdir /etc/service/prep-notify
+COPY prep-notify.sh /etc/service/prep-notify/run

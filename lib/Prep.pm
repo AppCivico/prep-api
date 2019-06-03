@@ -6,9 +6,13 @@ use Prep::Authentication;
 use Prep::Authorization;
 use Prep::Controller;
 use Prep::SchemaConnected;
+use Prep::Logger;
 
 sub startup {
     my $self = shift;
+
+	# Logger.
+	$self->log(get_logger());
 
     # Plugins.
     $self->plugin('Detach');
