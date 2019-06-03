@@ -14,7 +14,7 @@ sub _build_ua { LWP::UserAgent->new() }
 sub register_recipient {
     my ( $self, %opts ) = @_;
 
-    my @required_opts = qw( answers );
+    my @required_opts = qw( answers signed );
     defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     if (is_test()) {
@@ -39,7 +39,8 @@ sub register_recipient {
                     'X-API-KEY'  => $ENV{SIMPREP_TOKEN},
                     Content      => encode_json(
                         {
-                            answers => $opts{answers}
+                            answers     => $opts{answers},
+                            signed_TCLE => $opts{signed}
                         }
                     )
                 );

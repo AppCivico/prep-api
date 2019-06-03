@@ -1106,7 +1106,9 @@ sub update_signed_term {
     my $signed_term;
 
     if ( $self->term_signatures->count > 0 ) {
-        $signed_term = 1;
+        my $term_signature = $self->term_signatures->next;
+
+        $signed_term = $term_signature->signed == 1 ? 1 : 0;
     }
     else {
         $signed_term = 0;
@@ -1427,7 +1429,8 @@ sub register_simprep {
     my ($self) = @_;
 
     my $res = $self->_simprep->register_recipient(
-        answers => $self->answers_for_integration
+        answers => $self->answers_for_integration,
+        signed  => $self->signed_term
     );
 
     $self->update( { integration_token => $res->{data}->{voucher} } );

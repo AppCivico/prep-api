@@ -51,7 +51,7 @@ __PACKAGE__->table("term_signature");
 =head2 url
 
   data_type: 'text'
-  is_nullable: 0
+  is_nullable: 1
 
 =head2 signed_at
 
@@ -60,13 +60,18 @@ __PACKAGE__->table("term_signature");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 signed
+
+  data_type: 'boolean'
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
   "recipient_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
   "url",
-  { data_type => "text", is_nullable => 0 },
+  { data_type => "text", is_nullable => 1 },
   "signed_at",
   {
     data_type     => "timestamp",
@@ -74,6 +79,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "signed",
+  { data_type => "boolean", is_nullable => 0 },
 );
 
 =head1 UNIQUE CONSTRAINTS
@@ -113,8 +120,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-03 09:53:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:spxGWxHEUzc12wwelBs9AA
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-05-24 15:20:29
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:r5I/VWPEPlky9bVyw/IUeQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
