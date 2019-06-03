@@ -419,7 +419,7 @@ sub verifiers_specs {
                     required => 0,
                     type     => 'Bool'
                 },
-                Appointment => {
+                appointment => {
                     required => 0,
                     type     => 'HashRef'
                 }
@@ -470,6 +470,31 @@ sub action_specs {
 
             # Tratando consulta
             my $appointment = delete $values{appointment};
+            if ( ref $appointment ) {
+                die \['appointment', 'invalid'] unless defined $appointment->{type_id};
+
+                # Agendando notificação
+                my $type_id = $appointment->{type_id};
+
+                if ($type_id == 1) {
+                    # Notificações de recrutamento
+                    $self->notification_queues->create(
+                        {
+                            type_id      => 3,
+                            recipient_id => $self->id,
+                            wait_until   => \"NOW() + '7 days'::interval"
+                        }
+                    );
+                    $self->notification_queues->create(
+                        {
+                            type_id      => 4,
+                            recipient_id => $self->id,
+                            wait_until   => \"NOW() + '17 days'::interval"
+                        }
+                    );
+
+                }
+            }
 
             my @updatable_flags = qw( is_part_of_research is_prep );
             for my $flag (@updatable_flags) {
