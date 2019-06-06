@@ -23,4 +23,6 @@ CREATE TABLE notification_queue (
     created_at   TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
 );
 
+ALTER TABLE recipient ADD CONSTRAINT voucher_unique UNIQUE (integration_token);
+
 COMMIT;
