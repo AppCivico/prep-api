@@ -304,6 +304,7 @@ sub available_dates {
 
     my $appointment_rs = $self->result_source->schema->resultset('Appointment');
     my $appointment_windows = $self->appointment_windows;
+    my $now = Time::Piece->new();
 
     return [
         map {
@@ -324,8 +325,14 @@ sub available_dates {
 
             my @days_of_week = $_->appointment_window_days_of_week->search( undef, { rows => 8, order_by => { -asc => 'day_of_week' } } )->get_column('day_of_week')->all();
 
+            for ( 1 .. 2 ) {
+                push @days_of_week, @days_of_week;
+            }
+
+            my $week = 0;
             map {
-                my $ymd = get_ymd_by_day_of_the_week($_);
+                my $ymd = get_ymd_by_day_of_the_week(dow => $_, week => $week);
+                $week++;
 
                 my @taken_quotas = $appointment_rs->search(
                     {
@@ -343,15 +350,22 @@ sub available_dates {
                     ymd                   => $ymd,
                     hours => [
                         map {
+                            my $is_first_quota = $_ == 1 ? 1 : 0;
+
+                            my $time     = $start_time->add( $seconds_per_quota * $_);
+                            my $time_hms = $time->hms;
+
+                            my $complete_time = "$ymd $time_hms";
+                            $complete_time    = Time::Piece->strptime( $complete_time, '%Y-%m-%d %H:%M:%S' );
 
                             +{
                                 quota => $_,
                                 # Tratando o primeiro caso
                                 # No primeiro caso o começo não deve ser somado
-                                time  => $_ == 1 ?
+                                time  => $is_first_quota ?
                                     ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
                                     ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
-                                datetime_start => $_ == 1 ?
+                                datetime_start => $is_first_quota ?
                                     ( $ymd . 'T' . $start_time->hms ) :
                                     ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
                                 datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms
