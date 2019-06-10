@@ -68,7 +68,7 @@ db_transaction {
 
         ok my $appointment  = $appointment_rs->next;
         ok my $notification = $notification_rs->next;
-        use DDP; p $appointment;
+
         ok defined $appointment->notification_created_at;
         ok defined $notification->wait_until;
 
