@@ -101,6 +101,7 @@ sub action_specs {
             $values{calendar_id}         = $calendar->id;
             $values{appointment_at}      = $datetime_start;
             $values{appointment_type_id} = $type->id;
+            $values{created_by_chatbot}  = 1;
 
             # Verificando se o número da quota bate com o horário
             $appointment_window->assert_quota_number(
@@ -120,7 +121,6 @@ sub action_specs {
                datetime_end       => $datetime_end,
                summary            => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
                description        => $recipient->appointment_description,
-               created_by_chatbot => 1,
             );
 
             # Criando notificação
