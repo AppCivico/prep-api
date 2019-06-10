@@ -83,6 +83,11 @@ __PACKAGE__->table("notification_queue");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 text
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -110,6 +115,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "text",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -157,8 +164,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-03 09:54:13
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:NbvBtr0vJp/PD340Y86WYw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-10 14:34:55
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:VkVO1MIX2KBig8+QdRVIqQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -186,7 +193,7 @@ sub send {
         messaging_type => "UPDATE",
         recipient      => { id => $recipient->fb_id },
         message        => {
-            text          => $notification_info->{text},
+            text          => $self->text ? $self->text : $notification_info->{text},
             quick_replies => $notification_info->{quick_replies}
         }
     };

@@ -3,6 +3,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
 use Prep::Test;
+use Prep::Worker::Notify;
 
 use JSON;
 
@@ -77,6 +78,18 @@ db_transaction {
         my $notification_time_corrected_time = $notification->wait_until->add_duration( $time_difference );
 
         is $notification_time_corrected_time, $appointment->appointment_at;
+        is $notification->sent_at, undef;
+
+        ok my $worker = Prep::Worker::Notify->new(
+            schema      => $schema,
+            logger      => $t->app->log,
+            max_process => 1,
+        );
+
+        ok $worker->run_once();
+
+        ok $notification = $notification->discard_changes;
+        ok defined $notification->sent_at;
     };
 };
 

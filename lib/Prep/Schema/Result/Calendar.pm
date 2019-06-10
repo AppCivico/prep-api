@@ -394,8 +394,15 @@ sub sync_appointments {
 
             my (@notifications, @appointments_ids);
             while ( my $appointment = $appointment_rs->next() ) {
+                my $appointment_ts = $appointment->appointment_at;
+
+                my $day   = $appointment_ts->day;
+                my $month = $appointment_ts->month;
+                my $hms   = $appointment_ts->hms;
+
                 my $notification = {
                     type_id      => 2,
+                    text         => "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms.",
                     recipient_id => $appointment->recipient_id,
                     wait_until   => $appointment->appointment_at->subtract( days => 10 )
                 };
