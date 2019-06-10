@@ -198,10 +198,20 @@ sub send {
         }
     };
 
-    return $facebook->send_message(
-        access_token => $config->value,
-        content      => $body
-    );
+    eval {
+        $facebook->send_message(
+            access_token => $config->value,
+            content      => $body
+        );
+    };
+
+    if ($@) {
+
+    }
+    else {
+        $self->update( { sent_at => \'NOW()' } );
+    }
+
 }
 
 __PACKAGE__->meta->make_immutable;
