@@ -371,23 +371,42 @@ sub sync_appointments {
 
     my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
 
-    eval {
-        for my $appointment (@manual_appointments) {
-            my %fields = $appointment->{description} =~ /^(identificador)*\s*:\s*(\S+)/gm;
+    $self->result_source->schema->txn_do( sub {
+        eval {
+            for my $appointment (@manual_appointments) {
+                my %fields = $appointment->{description} =~ /^(identificador)*\s*:\s*(\S+)/gm;
 
-            my $recipient = $self->result_source->schema->resultset('Recipient')->search( { integration_token => $fields{identificador} } )->next;
-            next unless $recipient;
+                my $recipient = $self->result_source->schema->resultset('Recipient')->search( { integration_token => $fields{identificador} } )->next;
+                next unless $recipient;
 
-            $recipient->appointments->find_or_create(
-                {
-                    appointment_at => $appointment->{start}->{dateTime},
-                    calendar_id    => $self->id
-                },
-                { key => 'recipient_calendar_id' }
-            );
-        }
-    };
-    die $@ if $@;
+                $recipient->appointments->find_or_create(
+                    {
+                        appointment_at => $appointment->{start}->{dateTime},
+                        calendar_id    => $self->id
+                    },
+                    { key => 'recipient_calendar_id' }
+                );
+
+            }
+
+            # Criando notificações
+            my $appointment_rs = $self->result_source->schema->resultset('Appointment')->search( { notification_created_at => \'IS NULL' } );
+
+            my @notifications;
+            while ( my $appointment = $appointment_rs->next() ) {
+                my $notification = {
+                    type_id      => 2,
+                    recipient_id => $appointment->recipient_id,
+                    wait_until   => $appointment->appointment_at->subtract( days => 10 )
+                };
+
+                push @notifications, $notification;
+            }
+
+            $self->result_source->schema->resultset('NotificationQueue')->populate(\@notifications);
+        };
+        die $@ if $@;
+    });
 
     return 1;
 }

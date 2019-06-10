@@ -3,7 +3,9 @@
 
 BEGIN;
 
-ALTER TABLE appointment ADD COLUMN created_by_chatbot BOOLEAN DEFAULT FALSE;
+ALTER TABLE appointment
+    ADD COLUMN created_by_chatbot BOOLEAN DEFAULT FALSE,
+    ADD COLUMN notification_created_at TIMESTAMP WITHOUT TIME ZONE;
 UPDATE appointment SET created_by_chatbot = TRUE;
 
 COMMIT;
