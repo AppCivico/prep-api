@@ -392,7 +392,7 @@ sub sync_appointments {
             # Criando notificações
             my $appointment_rs = $self->result_source->schema->resultset('Appointment')->search( { notification_created_at => \'IS NULL' } );
 
-            my @notifications;
+            my (@notifications, @appointments_ids);
             while ( my $appointment = $appointment_rs->next() ) {
                 my $notification = {
                     type_id      => 2,
@@ -404,6 +404,7 @@ sub sync_appointments {
             }
 
             $self->result_source->schema->resultset('NotificationQueue')->populate(\@notifications);
+            $appointment_rs->update( { notification_created_at => \'NOW()' } );
         };
         die $@ if $@;
     });
