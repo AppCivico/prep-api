@@ -114,12 +114,13 @@ sub action_specs {
             my $recipient = $appointment->recipient;
 
             $ws->create_event(
-               calendar       => $calendar,
-               calendar_id    => $calendar->google_id,
-               datetime_start => $datetime_start,
-               datetime_end   => $datetime_end,
-               summary        => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
-               description    => $recipient->appointment_description
+               calendar           => $calendar,
+               calendar_id        => $calendar->google_id,
+               datetime_start     => $datetime_start,
+               datetime_end       => $datetime_end,
+               summary            => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
+               description        => $recipient->appointment_description,
+               created_by_chatbot => 1,
             );
 
             return $appointment;

@@ -8,3 +8,4 @@
 /log/development.log
 /log/production.log
 tags
+/lib/WebService/perltidy.ERR
