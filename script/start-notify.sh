@@ -12,4 +12,4 @@ fi
 
 cpanm -nv . --installdeps
 
-perl script/daemon/notify.pl
+perl script/daemon/notification.pl

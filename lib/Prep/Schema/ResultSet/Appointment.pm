@@ -102,6 +102,7 @@ sub action_specs {
             $values{appointment_at}      = $datetime_start;
             $values{appointment_type_id} = $type->id;
             $values{created_by_chatbot}  = 1;
+            $values{notification_created_at} = \'NOW()';
 
             # Verificando se o número da quota bate com o horário
             $appointment_window->assert_quota_number(
