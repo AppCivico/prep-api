@@ -5,11 +5,14 @@ use lib "$Bin/../lib";
 use Prep::Test;
 
 use JSON;
+use DateTime;
 
 my $t      = test_instance;
 my $schema = $t->app->schema;
 
 db_transaction {
+    my $notification_rs = $schema->resultset('NotificationQueue');
+
     my $chatbot_security_token = $ENV{CHATBOT_SECURITY_TOKEN};
     my $security_token         = $ENV{INTEGRATION_SECURITY_TOKEN};
 
@@ -88,11 +91,17 @@ db_transaction {
         is( $flags->is_part_of_research, 1 );
         is( $flags->is_prep,             0 );
 
+        is $notification_rs->count, 0;
+
         $t->post_ok(
             '/api/internal/integration/recipient/sync' => => { 'x-api-key' => $security_token },
             json => {
                 voucher => $voucher,
-                is_prep => 1
+                is_prep => 1,
+                appointment => {
+                    type_id   => 1,
+                    timestamp => DateTime->now->datetime
+                }
             }
         )
         ->status_is(200);
@@ -100,6 +109,8 @@ db_transaction {
         ok( $flags = $flags->discard_changes, 'discard changes' );
         is( $flags->is_part_of_research, 1 );
         is( $flags->is_prep,             1 );
+
+        is $notification_rs->count, 2;
     };
 };
 

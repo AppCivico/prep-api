@@ -101,6 +101,8 @@ sub action_specs {
             $values{calendar_id}         = $calendar->id;
             $values{appointment_at}      = $datetime_start;
             $values{appointment_type_id} = $type->id;
+            $values{created_by_chatbot}  = 1;
+            $values{notification_created_at} = \'NOW()';
 
             # Verificando se o número da quota bate com o horário
             $appointment_window->assert_quota_number(
@@ -114,12 +116,29 @@ sub action_specs {
             my $recipient = $appointment->recipient;
 
             $ws->create_event(
-               calendar       => $calendar,
-               calendar_id    => $calendar->google_id,
-               datetime_start => $datetime_start,
-               datetime_end   => $datetime_end,
-               summary        => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
-               description    => $recipient->appointment_description
+               calendar           => $calendar,
+               calendar_id        => $calendar->google_id,
+               datetime_start     => $datetime_start,
+               datetime_end       => $datetime_end,
+               summary            => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
+               description        => $recipient->appointment_description,
+            );
+
+            # Criando notificação
+            my $notification_rs = $self->result_source->schema->resultset('NotificationQueue');
+            my $appointment_ts  = $appointment->appointment_at;
+
+            my $day   = $appointment_ts->day;
+            my $month = $appointment_ts->month;
+            my $hms   = $appointment_ts->hms;
+
+            my $notification = $notification_rs->create(
+                {
+                    recipient_id => $appointment->recipient_id,
+                    type_id      => 2,
+                    text         => "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms.",
+                    wait_until   => $appointment->appointment_at->subtract( days => 2 )
+                }
             );
 
             return $appointment;

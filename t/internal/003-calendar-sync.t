@@ -3,6 +3,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
 use Prep::Test;
+use Prep::Worker::Notify;
 
 use JSON;
 
@@ -54,14 +55,41 @@ db_transaction {
     };
 
     subtest 'Internal | Sync calendar' => sub {
-        my $appointment_rs = $schema->resultset('Appointment');
+        my $appointment_rs  = $schema->resultset('Appointment');
+        my $notification_rs = $schema->resultset('NotificationQueue');
 
         is($appointment_rs->count, 0, 'no appointments');
+        is($notification_rs->count, 0, 'no notifications');
 
         &setup_calendar_event_get;
         ok( $calendar->sync_appointments , 'calendar sync' );
 
         is($appointment_rs->count, 1, 'one appointment synced');
+        is($notification_rs->count, 1, 'one notification');
+
+        ok my $appointment  = $appointment_rs->next;
+        ok my $notification = $notification_rs->next;
+
+        ok defined $appointment->notification_created_at;
+        ok defined $notification->wait_until;
+
+        # A notificação é enviada 10 dias antes da consulta acontecer
+        my $time_difference = $appointment->appointment_at->subtract_datetime( $notification->wait_until );
+        my $notification_time_corrected_time = $notification->wait_until->add_duration( $time_difference );
+
+        is $notification_time_corrected_time, $appointment->appointment_at;
+        is $notification->sent_at, undef;
+
+        ok my $worker = Prep::Worker::Notify->new(
+            schema      => $schema,
+            logger      => $t->app->log,
+            max_process => 1,
+        );
+
+        ok $worker->run_once();
+
+        ok $notification = $notification->discard_changes;
+        ok defined $notification->sent_at;
     };
 };
 

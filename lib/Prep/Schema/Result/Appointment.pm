@@ -100,6 +100,17 @@ __PACKAGE__->table("appointment");
   is_foreign_key: 1
   is_nullable: 1
 
+=head2 created_by_chatbot
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 1
+
+=head2 notification_created_at
+
+  data_type: 'timestamp'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -133,6 +144,10 @@ __PACKAGE__->add_columns(
   { data_type => "timestamp", is_nullable => 1 },
   "appointment_type_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
+  "created_by_chatbot",
+  { data_type => "boolean", default_value => \"false", is_nullable => 1 },
+  "notification_created_at",
+  { data_type => "timestamp", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -246,8 +261,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-07 16:23:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:JjgbllrXKsZXlDE4PuWGBw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-10 14:34:55
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:e/bckeKs83gZW9jxSHVOXg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

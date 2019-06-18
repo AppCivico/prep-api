@@ -19,6 +19,7 @@ sub post {
         $recipient->answers->delete;
         $recipient->update(
             {
+                integration_token => undef,
                 count_sent_quiz        => 0,
                 count_invited_research => 0,
                 count_share            => 0

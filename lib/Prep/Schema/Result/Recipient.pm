@@ -207,6 +207,18 @@ __PACKAGE__->set_primary_key("id");
 
 __PACKAGE__->add_unique_constraint("recipient_fb_id_key", ["fb_id"]);
 
+=head2 C<voucher_unique>
+
+=over 4
+
+=item * L</integration_token>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint("voucher_unique", ["integration_token"]);
+
 =head1 RELATIONS
 
 =head2 answers
@@ -265,6 +277,21 @@ Related object: L<Prep::Schema::Result::ExternalNotification>
 __PACKAGE__->has_many(
   "external_notifications",
   "Prep::Schema::Result::ExternalNotification",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 notification_queues
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::NotificationQueue>
+
+=cut
+
+__PACKAGE__->has_many(
+  "notification_queues",
+  "Prep::Schema::Result::NotificationQueue",
   { "foreign.recipient_id" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
@@ -330,8 +357,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-04-03 16:11:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IPRb2gU+2jAqA3tXFJOubw
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-06 16:18:52
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:DH9SMw0UnUIFV3R8iUVjAw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -404,7 +431,7 @@ sub verifiers_specs {
                     required => 0,
                     type     => 'Bool'
                 },
-                Appointment => {
+                appointment => {
                     required => 0,
                     type     => 'HashRef'
                 }
@@ -455,6 +482,31 @@ sub action_specs {
 
             # Tratando consulta
             my $appointment = delete $values{appointment};
+            if ( ref $appointment ) {
+                die \['appointment', 'invalid'] unless defined $appointment->{type_id};
+
+                # Agendando notificação
+                my $type_id = $appointment->{type_id};
+
+                if ($type_id == 1) {
+                    # Notificações de recrutamento
+                    $self->notification_queues->create(
+                        {
+                            type_id      => 3,
+                            recipient_id => $self->id,
+                            wait_until   => \"NOW() + '7 days'::interval"
+                        }
+                    );
+                    $self->notification_queues->create(
+                        {
+                            type_id      => 4,
+                            recipient_id => $self->id,
+                            wait_until   => \"NOW() + '17 days'::interval"
+                        }
+                    );
+
+                }
+            }
 
             my @updatable_flags = qw( is_part_of_research is_prep );
             for my $flag (@updatable_flags) {
