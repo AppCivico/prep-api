@@ -1025,12 +1025,27 @@ sub assign_token {
         my $res = $self->_simprep->verify_voucher( voucher => $integration_token );
         die \['integration_token', 'invalid'] unless defined $res;
 
+        my @required_res = qw(is_prep is_part_of_research);
+        defined $res->{data}->{$_} or die \["integration_res{$_}", 'missing'] for @required_res;
+
+        my $data = $res->{data};
+
+        $self->recipient_flag->update(
+            {
+                finished_quiz       => 1,
+                is_target_audience  => 1,
+                is_prep             => $data->{is_prep},
+                is_part_of_research => $data->{is_part_of_research}
+            }
+        );
+
         $self->update(
             {
                 integration_token    => $integration_token,
                 using_external_token => 1
             }
         );
+
     });
 }
 
