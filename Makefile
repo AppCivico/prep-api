@@ -1,7 +1,7 @@
 # This Makefile is for the prep_api extension to perl.
 #
 # It was generated automatically by MakeMaker version
-# 7.1001 (Revision: 71001) from the contents of
+# 7.34 (Revision: 73400) from the contents of
 # Makefile.PL. Don't edit this file, edit Makefile.PL instead.
 #
 #       ANY CHANGES MADE HERE WILL BE LOST!
@@ -19,9 +19,9 @@
 #     LICENSE => q[open_source]
 #     MIN_PERL_VERSION => q[5.014002]
 #     NAME => q[prep_api]
-#     PREREQ_PM => { App::ForkProve=>q[0], App::Sqitch=>q[0.9996], Business::BR::CPF=>q[0], Config::General=>q[0], Crypt::PRNG=>q[0], DBD::Pg=>q[0], DBIx::Class::Core=>q[0], DBIx::Class::InflateColumn::Serializer=>q[0], DBIx::Class::PassphraseColumn=>q[0], DBIx::Class::ResultSet=>q[0], DBIx::Class::Schema=>q[0], DBIx::Class::TimeStamp=>q[0], Data::Diver=>q[0], Data::Fake=>q[0], Data::Manager=>q[0], Data::Printer=>q[0], Data::Section::Simple=>q[0], Data::Validate::URI=>q[0], Data::Verifier::Field=>q[0], Data::Verifier::Filters=>q[0], Data::Verifier::Results=>q[0], Data::Visitor=>q[0], Data::Visitor::Callback=>q[0], DateTime=>q[0], Exporter=>q[0], File::Spec=>q[0], FindBin=>q[0], Furl=>q[0], IO::Handle=>q[0], IPC::Open3=>q[0], JSON=>q[0], JSON::MaybeXS=>q[0], LWP::UserAgent=>q[0], Mojo::Base=>q[0], Mojo::Pg=>q[0], Mojo::Util=>q[0], Mojolicious::Plugin::Authorization=>q[0], Mojolicious::Plugin::Minion=>q[0], Moose=>q[0], Moose::Role=>q[0], Moose::Util::TypeConstraints=>q[0], MooseX::MarkAsMethods=>q[0], MooseX::NonMoose=>q[0], MooseX::Singleton=>q[0], MooseX::Types=>q[0], MooseX::Types::Moose=>q[0], Net::Google::OAuth=>q[0], Regexp::Common=>q[0], Regexp::Common::time=>q[0], Scalar::Util=>q[0], Test::Mojo=>q[0], Test::More=>q[0], Text::CSV=>q[0], Time::Piece=>q[0], Try::Tiny::Retry=>q[0], base=>q[0], blib=>q[1.01], common::sense=>q[0], lib=>q[0], namespace::autoclean=>q[0], strict=>q[0], utf8=>q[0], vars=>q[0], warnings=>q[0] }
+#     PREREQ_PM => { App::ForkProve=>q[0], App::Sqitch=>q[0.9996], Business::BR::CPF=>q[0], Carp=>q[0], Config::General=>q[0], Crypt::PRNG=>q[0], DBD::Pg=>q[0], DBIx::Class::Core=>q[0], DBIx::Class::InflateColumn::Serializer=>q[0], DBIx::Class::PassphraseColumn=>q[0], DBIx::Class::ResultSet=>q[0], DBIx::Class::Schema=>q[0], DBIx::Class::TimeStamp=>q[0], DDP=>q[0], Data::Diver=>q[0], Data::Fake=>q[0], Data::Manager=>q[0], Data::Printer=>q[0], Data::Section::Simple=>q[0], Data::Validate::URI=>q[0], Data::Verifier::Field=>q[0], Data::Verifier::Filters=>q[0], Data::Verifier::Results=>q[0], Data::Visitor=>q[0], Data::Visitor::Callback=>q[0], DateTime=>q[0], Exporter=>q[0], File::Spec=>q[0], FindBin=>q[0], Furl=>q[0], IO::Handle=>q[0], IPC::Open3=>q[0], JSON=>q[0], JSON::MaybeXS=>q[0], LWP::UserAgent=>q[0], Log::Log4perl=>q[0], Mojo::Base=>q[0], Mojo::IOLoop=>q[0], Mojo::Pg=>q[0], Mojo::Promise=>q[0], Mojo::Util=>q[0], Mojolicious::Plugin::Authorization=>q[0], Mojolicious::Plugin::Minion=>q[0], Mojolicious::Plugin::ParamLogger=>q[0], Moose=>q[0], Moose::Role=>q[0], Moose::Util::TypeConstraints=>q[0], MooseX::MarkAsMethods=>q[0], MooseX::NonMoose=>q[0], MooseX::Singleton=>q[0], MooseX::Types=>q[0], MooseX::Types::Moose=>q[0], Net::Google::OAuth=>q[0], Regexp::Common=>q[0], Regexp::Common::time=>q[0], Scalar::Util=>q[0], Test::Mojo=>q[0], Test::More=>q[0], Text::CSV=>q[0], Time::Piece=>q[0], Try::Tiny::Retry=>q[0], base=>q[0], blib=>q[1.01], common::sense=>q[0], lib=>q[0], namespace::autoclean=>q[0], strict=>q[0], utf8=>q[0], vars=>q[0], warnings=>q[0] }
 #     TEST_REQUIRES => { File::Spec=>q[0], IO::Handle=>q[0], IPC::Open3=>q[0], Mojo::Util=>q[0], Test::Mojo=>q[0], Test::More=>q[0], blib=>q[1.01], lib=>q[0] }
-#     VERSION => q[20190207]
+#     VERSION => q[20190618]
 #     test => { TESTS=>q[t/*.t t/chatbot/*.t t/internal/*.t] }
 
 # --- MakeMaker post_initialize section:
@@ -29,7 +29,7 @@
 
 # --- MakeMaker const_config section:
 
-# These definitions are from config.sh (via /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/Config.pm).
+# These definitions are from config.sh (via /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/x86_64-linux/Config.pm).
 # They may have been overridden via Makefile.PL or on the command line.
 AR = ar
 CC = cc
@@ -48,8 +48,8 @@ OBJ_EXT = .o
 OSNAME = linux
 OSVERS = 4.8.0-53-generic
 RANLIB = :
-SITELIBEXP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
-SITEARCHEXP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
+SITELIBEXP = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/site_perl/5.28.0
+SITEARCHEXP = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/site_perl/5.28.0/x86_64-linux
 SO = so
 VENDORARCHEXP = 
 VENDORLIBEXP = 
@@ -61,11 +61,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = prep_api
 NAME_SYM = prep_api
-VERSION = 20190207
+VERSION = 20190618
 VERSION_MACRO = VERSION
-VERSION_SYM = 20190207
+VERSION_SYM = 20190618
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 20190207
+XS_VERSION = 20190618
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -74,62 +74,62 @@ INST_BIN = blib/bin
 INST_LIB = blib/lib
 INST_MAN1DIR = blib/man1
 INST_MAN3DIR = blib/man3
-MAN1EXT = 1
-MAN3EXT = 3
+MAN1EXT = 0
+MAN3EXT = 0
 INSTALLDIRS = site
 DESTDIR = 
 PREFIX = $(SITEPREFIX)
-PERLPREFIX = /home/lucas/perl5/perlbrew/perls/perl-5.24.0
-SITEPREFIX = /home/lucas/perl5/perlbrew/perls/perl-5.24.0
+PERLPREFIX = /home/app/perl5/perlbrew/perls/perl-5.28.0
+SITEPREFIX = /home/app/perl5/perlbrew/perls/perl-5.28.0
 VENDORPREFIX = 
-INSTALLPRIVLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
+INSTALLPRIVLIB = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0
 DESTINSTALLPRIVLIB = $(DESTDIR)$(INSTALLPRIVLIB)
-INSTALLSITELIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0
+INSTALLSITELIB = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/site_perl/5.28.0
 DESTINSTALLSITELIB = $(DESTDIR)$(INSTALLSITELIB)
 INSTALLVENDORLIB = 
 DESTINSTALLVENDORLIB = $(DESTDIR)$(INSTALLVENDORLIB)
-INSTALLARCHLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
+INSTALLARCHLIB = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/x86_64-linux
 DESTINSTALLARCHLIB = $(DESTDIR)$(INSTALLARCHLIB)
-INSTALLSITEARCH = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0/x86_64-linux
+INSTALLSITEARCH = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/site_perl/5.28.0/x86_64-linux
 DESTINSTALLSITEARCH = $(DESTDIR)$(INSTALLSITEARCH)
 INSTALLVENDORARCH = 
 DESTINSTALLVENDORARCH = $(DESTDIR)$(INSTALLVENDORARCH)
-INSTALLBIN = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLBIN = /home/app/perl5/perlbrew/perls/perl-5.28.0/bin
 DESTINSTALLBIN = $(DESTDIR)$(INSTALLBIN)
-INSTALLSITEBIN = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSITEBIN = /home/app/perl5/perlbrew/perls/perl-5.28.0/bin
 DESTINSTALLSITEBIN = $(DESTDIR)$(INSTALLSITEBIN)
 INSTALLVENDORBIN = 
 DESTINSTALLVENDORBIN = $(DESTDIR)$(INSTALLVENDORBIN)
-INSTALLSCRIPT = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSCRIPT = /home/app/perl5/perlbrew/perls/perl-5.28.0/bin
 DESTINSTALLSCRIPT = $(DESTDIR)$(INSTALLSCRIPT)
-INSTALLSITESCRIPT = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin
+INSTALLSITESCRIPT = /home/app/perl5/perlbrew/perls/perl-5.28.0/bin
 DESTINSTALLSITESCRIPT = $(DESTDIR)$(INSTALLSITESCRIPT)
 INSTALLVENDORSCRIPT = 
 DESTINSTALLVENDORSCRIPT = $(DESTDIR)$(INSTALLVENDORSCRIPT)
-INSTALLMAN1DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man1
+INSTALLMAN1DIR = none
 DESTINSTALLMAN1DIR = $(DESTDIR)$(INSTALLMAN1DIR)
-INSTALLSITEMAN1DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man1
+INSTALLSITEMAN1DIR = $(INSTALLMAN1DIR)
 DESTINSTALLSITEMAN1DIR = $(DESTDIR)$(INSTALLSITEMAN1DIR)
 INSTALLVENDORMAN1DIR = 
 DESTINSTALLVENDORMAN1DIR = $(DESTDIR)$(INSTALLVENDORMAN1DIR)
-INSTALLMAN3DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man3
+INSTALLMAN3DIR = none
 DESTINSTALLMAN3DIR = $(DESTDIR)$(INSTALLMAN3DIR)
-INSTALLSITEMAN3DIR = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/man/man3
+INSTALLSITEMAN3DIR = $(INSTALLMAN3DIR)
 DESTINSTALLSITEMAN3DIR = $(DESTDIR)$(INSTALLSITEMAN3DIR)
 INSTALLVENDORMAN3DIR = 
 DESTINSTALLVENDORMAN3DIR = $(DESTDIR)$(INSTALLVENDORMAN3DIR)
-PERL_LIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0
-PERL_ARCHLIB = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
-PERL_ARCHLIBDEP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux
+PERL_LIB = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0
+PERL_ARCHLIB = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/x86_64-linux
+PERL_ARCHLIBDEP = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/x86_64-linux
 LIBPERL_A = libperl.a
 FIRST_MAKEFILE = Makefile
 MAKEFILE_OLD = Makefile.old
 MAKE_APERL_FILE = Makefile.aperl
 PERLMAINCC = $(CC)
-PERL_INC = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
-PERL_INCDEP = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/x86_64-linux/CORE
-PERL = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
-FULLPERL = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
+PERL_INC = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/x86_64-linux/CORE
+PERL_INCDEP = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/x86_64-linux/CORE
+PERL = "/home/app/perl5/perlbrew/perls/perl-5.28.0/bin/perl"
+FULLPERL = "/home/app/perl5/perlbrew/perls/perl-5.28.0/bin/perl"
 ABSPERL = $(PERL)
 PERLRUN = $(PERL)
 FULLPERLRUN = $(FULLPERL)
@@ -142,9 +142,9 @@ PERM_DIR = 755
 PERM_RW = 644
 PERM_RWX = 755
 
-MAKEMAKER   = /home/lucas/perl5/perlbrew/perls/perl-5.24.0/lib/5.24.0/ExtUtils/MakeMaker.pm
-MM_VERSION  = 7.1001
-MM_REVISION = 71001
+MAKEMAKER   = /home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/ExtUtils/MakeMaker.pm
+MM_VERSION  = 7.34
+MM_REVISION = 73400
 
 # FULLEXT = Pathname for extension directory (eg Foo/Bar/Oracle).
 # BASEEXT = Basename part of FULLEXT. May be just equal FULLEXT. (eg Oracle)
@@ -167,31 +167,7 @@ C_FILES  =
 O_FILES  = 
 H_FILES  = 
 MAN1PODS = 
-MAN3PODS = lib/Data/Verifier.pm \
-	lib/Prep/Schema/Result/Answer.pm \
-	lib/Prep/Schema/Result/Appointment.pm \
-	lib/Prep/Schema/Result/AppointmentType.pm \
-	lib/Prep/Schema/Result/AppointmentWindow.pm \
-	lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm \
-	lib/Prep/Schema/Result/Calendar.pm \
-	lib/Prep/Schema/Result/Category.pm \
-	lib/Prep/Schema/Result/ChatbotSession.pm \
-	lib/Prep/Schema/Result/Config.pm \
-	lib/Prep/Schema/Result/ExternalIntegrationToken.pm \
-	lib/Prep/Schema/Result/MinionJob.pm \
-	lib/Prep/Schema/Result/MinionLock.pm \
-	lib/Prep/Schema/Result/MinionWorker.pm \
-	lib/Prep/Schema/Result/MojoMigration.pm \
-	lib/Prep/Schema/Result/Question.pm \
-	lib/Prep/Schema/Result/QuestionMap.pm \
-	lib/Prep/Schema/Result/Recipient.pm \
-	lib/Prep/Schema/Result/RecipientFlag.pm \
-	lib/Prep/Schema/Result/Role.pm \
-	lib/Prep/Schema/Result/Stash.pm \
-	lib/Prep/Schema/Result/TermSignature.pm \
-	lib/Prep/Schema/Result/User.pm \
-	lib/Prep/Schema/Result/UserRole.pm \
-	lib/Prep/Schema/Result/UserSession.pm
+MAN3PODS = 
 
 # Where is the Config information that we are using/depend on
 CONFIGDEP = $(PERL_ARCHLIBDEP)$(DFSEP)Config.pm $(PERL_INCDEP)$(DFSEP)config.h
@@ -233,11 +209,18 @@ TO_INST_PM = lib/Data/Verifier.pm \
 	lib/Prep/Controller/Chatbot/Recipient/CountShare.pm \
 	lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm \
 	lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
+	lib/Prep/Controller/Chatbot/Recipient/Research.pm \
+	lib/Prep/Controller/Chatbot/Recipient/ResetScreening.pm \
 	lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm \
 	lib/Prep/Controller/Internal.pm \
 	lib/Prep/Controller/Internal/DeleteAnswer.pm \
+	lib/Prep/Controller/Internal/Integration.pm \
+	lib/Prep/Controller/Internal/Integration/Recipient.pm \
+	lib/Prep/Controller/Internal/Integration/Recipient/Notification.pm \
+	lib/Prep/Controller/Internal/Integration/Recipient/Sync.pm \
 	lib/Prep/Data/Manager.pm \
 	lib/Prep/Data/Visitor.pm \
+	lib/Prep/Logger.pm \
 	lib/Prep/Role/Verification.pm \
 	lib/Prep/Role/Verification/TransactionalActions.pm \
 	lib/Prep/Role/Verification/TransactionalActions/DBIC.pm \
@@ -253,164 +236,45 @@ TO_INST_PM = lib/Data/Verifier.pm \
 	lib/Prep/Schema/Result/ChatbotSession.pm \
 	lib/Prep/Schema/Result/Config.pm \
 	lib/Prep/Schema/Result/ExternalIntegrationToken.pm \
+	lib/Prep/Schema/Result/ExternalNotification.pm \
 	lib/Prep/Schema/Result/MinionJob.pm \
 	lib/Prep/Schema/Result/MinionLock.pm \
 	lib/Prep/Schema/Result/MinionWorker.pm \
 	lib/Prep/Schema/Result/MojoMigration.pm \
+	lib/Prep/Schema/Result/NotificationQueue.pm \
+	lib/Prep/Schema/Result/NotificationType.pm \
 	lib/Prep/Schema/Result/Question.pm \
 	lib/Prep/Schema/Result/QuestionMap.pm \
 	lib/Prep/Schema/Result/Recipient.pm \
 	lib/Prep/Schema/Result/RecipientFlag.pm \
 	lib/Prep/Schema/Result/Role.pm \
+	lib/Prep/Schema/Result/Screening.pm \
 	lib/Prep/Schema/Result/Stash.pm \
 	lib/Prep/Schema/Result/TermSignature.pm \
 	lib/Prep/Schema/Result/User.pm \
 	lib/Prep/Schema/Result/UserRole.pm \
 	lib/Prep/Schema/Result/UserSession.pm \
+	lib/Prep/Schema/Result/ViewQuizReset.pm \
 	lib/Prep/Schema/Result/ViewRecipientQuiz.pm \
 	lib/Prep/Schema/ResultSet/Answer.pm \
 	lib/Prep/Schema/ResultSet/Appointment.pm \
+	lib/Prep/Schema/ResultSet/ExternalNotification.pm \
 	lib/Prep/Schema/ResultSet/QuestionMap.pm \
 	lib/Prep/Schema/ResultSet/Recipient.pm \
 	lib/Prep/Schema/ResultSet/TermSignature.pm \
 	lib/Prep/SchemaConnected.pm \
+	lib/Prep/TrapSignals.pm \
 	lib/Prep/Types.pm \
 	lib/Prep/Utils.pm \
+	lib/Prep/Worker.pm \
+	lib/Prep/Worker/Notify.pm \
 	lib/WebService/Facebook.pm \
-	lib/WebService/GoogleCalendar.pm
-
-PM_TO_BLIB = lib/Data/Verifier.pm \
-	blib/lib/Data/Verifier.pm \
-	lib/Mojolicious/Plugin/Detach.pm \
-	blib/lib/Mojolicious/Plugin/Detach.pm \
-	lib/Mojolicious/Plugin/SimpleAuthentication.pm \
-	blib/lib/Mojolicious/Plugin/SimpleAuthentication.pm \
-	lib/Prep.pm \
-	blib/lib/Prep.pm \
-	lib/Prep/Authentication.pm \
-	blib/lib/Prep/Authentication.pm \
-	lib/Prep/Authorization.pm \
-	blib/lib/Prep/Authorization.pm \
-	lib/Prep/Controller.pm \
-	blib/lib/Prep/Controller.pm \
-	lib/Prep/Controller/Chatbot.pm \
-	blib/lib/Prep/Controller/Chatbot.pm \
-	lib/Prep/Controller/Chatbot/Appointment.pm \
-	blib/lib/Prep/Controller/Chatbot/Appointment.pm \
-	lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm \
-	blib/lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm \
-	lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm \
-	blib/lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm \
-	lib/Prep/Controller/Chatbot/Recipient.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient.pm \
-	lib/Prep/Controller/Chatbot/Recipient/Answer.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient/Answer.pm \
-	lib/Prep/Controller/Chatbot/Recipient/Appointment.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient/Appointment.pm \
-	lib/Prep/Controller/Chatbot/Recipient/CountQuiz.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient/CountQuiz.pm \
-	lib/Prep/Controller/Chatbot/Recipient/CountResearchInvite.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient/CountResearchInvite.pm \
-	lib/Prep/Controller/Chatbot/Recipient/CountShare.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient/CountShare.pm \
-	lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm \
-	lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
-	lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm \
-	blib/lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm \
-	lib/Prep/Controller/Internal.pm \
-	blib/lib/Prep/Controller/Internal.pm \
-	lib/Prep/Controller/Internal/DeleteAnswer.pm \
-	blib/lib/Prep/Controller/Internal/DeleteAnswer.pm \
-	lib/Prep/Data/Manager.pm \
-	blib/lib/Prep/Data/Manager.pm \
-	lib/Prep/Data/Visitor.pm \
-	blib/lib/Prep/Data/Visitor.pm \
-	lib/Prep/Role/Verification.pm \
-	blib/lib/Prep/Role/Verification.pm \
-	lib/Prep/Role/Verification/TransactionalActions.pm \
-	blib/lib/Prep/Role/Verification/TransactionalActions.pm \
-	lib/Prep/Role/Verification/TransactionalActions/DBIC.pm \
-	blib/lib/Prep/Role/Verification/TransactionalActions/DBIC.pm \
-	lib/Prep/Routes.pm \
-	blib/lib/Prep/Routes.pm \
-	lib/Prep/Schema.pm \
-	blib/lib/Prep/Schema.pm \
-	lib/Prep/Schema/Result/Answer.pm \
-	blib/lib/Prep/Schema/Result/Answer.pm \
-	lib/Prep/Schema/Result/Appointment.pm \
-	blib/lib/Prep/Schema/Result/Appointment.pm \
-	lib/Prep/Schema/Result/AppointmentType.pm \
-	blib/lib/Prep/Schema/Result/AppointmentType.pm \
-	lib/Prep/Schema/Result/AppointmentWindow.pm \
-	blib/lib/Prep/Schema/Result/AppointmentWindow.pm \
-	lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm \
-	blib/lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm \
-	lib/Prep/Schema/Result/Calendar.pm \
-	blib/lib/Prep/Schema/Result/Calendar.pm \
-	lib/Prep/Schema/Result/Category.pm \
-	blib/lib/Prep/Schema/Result/Category.pm \
-	lib/Prep/Schema/Result/ChatbotSession.pm \
-	blib/lib/Prep/Schema/Result/ChatbotSession.pm \
-	lib/Prep/Schema/Result/Config.pm \
-	blib/lib/Prep/Schema/Result/Config.pm \
-	lib/Prep/Schema/Result/ExternalIntegrationToken.pm \
-	blib/lib/Prep/Schema/Result/ExternalIntegrationToken.pm \
-	lib/Prep/Schema/Result/MinionJob.pm \
-	blib/lib/Prep/Schema/Result/MinionJob.pm \
-	lib/Prep/Schema/Result/MinionLock.pm \
-	blib/lib/Prep/Schema/Result/MinionLock.pm \
-	lib/Prep/Schema/Result/MinionWorker.pm \
-	blib/lib/Prep/Schema/Result/MinionWorker.pm \
-	lib/Prep/Schema/Result/MojoMigration.pm \
-	blib/lib/Prep/Schema/Result/MojoMigration.pm \
-	lib/Prep/Schema/Result/Question.pm \
-	blib/lib/Prep/Schema/Result/Question.pm \
-	lib/Prep/Schema/Result/QuestionMap.pm \
-	blib/lib/Prep/Schema/Result/QuestionMap.pm \
-	lib/Prep/Schema/Result/Recipient.pm \
-	blib/lib/Prep/Schema/Result/Recipient.pm \
-	lib/Prep/Schema/Result/RecipientFlag.pm \
-	blib/lib/Prep/Schema/Result/RecipientFlag.pm \
-	lib/Prep/Schema/Result/Role.pm \
-	blib/lib/Prep/Schema/Result/Role.pm \
-	lib/Prep/Schema/Result/Stash.pm \
-	blib/lib/Prep/Schema/Result/Stash.pm \
-	lib/Prep/Schema/Result/TermSignature.pm \
-	blib/lib/Prep/Schema/Result/TermSignature.pm \
-	lib/Prep/Schema/Result/User.pm \
-	blib/lib/Prep/Schema/Result/User.pm \
-	lib/Prep/Schema/Result/UserRole.pm \
-	blib/lib/Prep/Schema/Result/UserRole.pm \
-	lib/Prep/Schema/Result/UserSession.pm \
-	blib/lib/Prep/Schema/Result/UserSession.pm \
-	lib/Prep/Schema/Result/ViewRecipientQuiz.pm \
-	blib/lib/Prep/Schema/Result/ViewRecipientQuiz.pm \
-	lib/Prep/Schema/ResultSet/Answer.pm \
-	blib/lib/Prep/Schema/ResultSet/Answer.pm \
-	lib/Prep/Schema/ResultSet/Appointment.pm \
-	blib/lib/Prep/Schema/ResultSet/Appointment.pm \
-	lib/Prep/Schema/ResultSet/QuestionMap.pm \
-	blib/lib/Prep/Schema/ResultSet/QuestionMap.pm \
-	lib/Prep/Schema/ResultSet/Recipient.pm \
-	blib/lib/Prep/Schema/ResultSet/Recipient.pm \
-	lib/Prep/Schema/ResultSet/TermSignature.pm \
-	blib/lib/Prep/Schema/ResultSet/TermSignature.pm \
-	lib/Prep/SchemaConnected.pm \
-	blib/lib/Prep/SchemaConnected.pm \
-	lib/Prep/Types.pm \
-	blib/lib/Prep/Types.pm \
-	lib/Prep/Utils.pm \
-	blib/lib/Prep/Utils.pm \
-	lib/WebService/Facebook.pm \
-	blib/lib/WebService/Facebook.pm \
 	lib/WebService/GoogleCalendar.pm \
-	blib/lib/WebService/GoogleCalendar.pm
+	lib/WebService/Simprep.pm
 
 
 # --- MakeMaker platform_constants section:
-MM_Unix_VERSION = 7.1001
+MM_Unix_VERSION = 7.34
 PERL_MALLOC_DEF = -DPERL_EXTMALLOC_DEF -Dmalloc=Perl_malloc -Dfree=Perl_mfree -Drealloc=Perl_realloc -Dcalloc=Perl_calloc
 
 
@@ -476,7 +340,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = prep_api
-DISTVNAME = prep_api-20190207
+DISTVNAME = prep_api-20190618
 
 
 # --- MakeMaker macro section:
@@ -501,13 +365,15 @@ DISTVNAME = prep_api-20190207
 
 PASTHRU = LIBPERL_A="$(LIBPERL_A)"\
 	LINKTYPE="$(LINKTYPE)"\
-	PREFIX="$(PREFIX)"
+	PREFIX="$(PREFIX)"\
+	PASTHRU_DEFINE='$(DEFINE) $(PASTHRU_DEFINE)'\
+	PASTHRU_INC='$(INC) $(PASTHRU_INC)'
 
 
 # --- MakeMaker special_targets section:
 .SUFFIXES : .xs .c .C .cpp .i .s .cxx .cc $(OBJ_EXT)
 
-.PHONY: all config static dynamic test linkext manifest blibdirs clean realclean disttest distdir
+.PHONY: all config static dynamic test linkext manifest blibdirs clean realclean disttest distdir pure_all subdirs clean_subdirs makemakerdflt manifypods realclean_subdirs subdirs_dynamic subdirs_pure_nolink subdirs_static subdirs-test_dynamic subdirs-test_static test_dynamic test_static
 
 
 
@@ -524,8 +390,9 @@ PASTHRU = LIBPERL_A="$(LIBPERL_A)"\
 all :: pure_all manifypods
 	$(NOECHO) $(NOOP)
 
-
 pure_all :: config pm_to_blib subdirs linkext
+	$(NOECHO) $(NOOP)
+
 	$(NOECHO) $(NOOP)
 
 subdirs :: $(MYEXTLIB)
@@ -590,7 +457,7 @@ $(INST_MAN3DIR)$(DFSEP).exists :: Makefile.PL
 
 # --- MakeMaker linkext section:
 
-linkext :: $(LINKTYPE)
+linkext :: dynamic
 	$(NOECHO) $(NOOP)
 
 
@@ -604,7 +471,7 @@ BOOTSTRAP =
 
 # --- MakeMaker dynamic section:
 
-dynamic :: $(FIRST_MAKEFILE) $(BOOTSTRAP) $(INST_DYNAMIC)
+dynamic :: $(FIRST_MAKEFILE) config $(INST_BOOT) $(INST_DYNAMIC)
 	$(NOECHO) $(NOOP)
 
 
@@ -628,58 +495,8 @@ POD2MAN_EXE = $(PERLRUN) "-MExtUtils::Command::MM" -e pod2man "--"
 POD2MAN = $(POD2MAN_EXE)
 
 
-manifypods : pure_all  \
-	lib/Data/Verifier.pm \
-	lib/Prep/Schema/Result/Answer.pm \
-	lib/Prep/Schema/Result/Appointment.pm \
-	lib/Prep/Schema/Result/AppointmentType.pm \
-	lib/Prep/Schema/Result/AppointmentWindow.pm \
-	lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm \
-	lib/Prep/Schema/Result/Calendar.pm \
-	lib/Prep/Schema/Result/Category.pm \
-	lib/Prep/Schema/Result/ChatbotSession.pm \
-	lib/Prep/Schema/Result/Config.pm \
-	lib/Prep/Schema/Result/ExternalIntegrationToken.pm \
-	lib/Prep/Schema/Result/MinionJob.pm \
-	lib/Prep/Schema/Result/MinionLock.pm \
-	lib/Prep/Schema/Result/MinionWorker.pm \
-	lib/Prep/Schema/Result/MojoMigration.pm \
-	lib/Prep/Schema/Result/Question.pm \
-	lib/Prep/Schema/Result/QuestionMap.pm \
-	lib/Prep/Schema/Result/Recipient.pm \
-	lib/Prep/Schema/Result/RecipientFlag.pm \
-	lib/Prep/Schema/Result/Role.pm \
-	lib/Prep/Schema/Result/Stash.pm \
-	lib/Prep/Schema/Result/TermSignature.pm \
-	lib/Prep/Schema/Result/User.pm \
-	lib/Prep/Schema/Result/UserRole.pm \
-	lib/Prep/Schema/Result/UserSession.pm
-	$(NOECHO) $(POD2MAN) --section=3 --perm_rw=$(PERM_RW) -u \
-	  lib/Data/Verifier.pm $(INST_MAN3DIR)/Data::Verifier.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Answer.pm $(INST_MAN3DIR)/Prep::Schema::Result::Answer.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Appointment.pm $(INST_MAN3DIR)/Prep::Schema::Result::Appointment.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/AppointmentType.pm $(INST_MAN3DIR)/Prep::Schema::Result::AppointmentType.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/AppointmentWindow.pm $(INST_MAN3DIR)/Prep::Schema::Result::AppointmentWindow.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm $(INST_MAN3DIR)/Prep::Schema::Result::AppointmentWindowDayOfWeek.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Calendar.pm $(INST_MAN3DIR)/Prep::Schema::Result::Calendar.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Category.pm $(INST_MAN3DIR)/Prep::Schema::Result::Category.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/ChatbotSession.pm $(INST_MAN3DIR)/Prep::Schema::Result::ChatbotSession.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Config.pm $(INST_MAN3DIR)/Prep::Schema::Result::Config.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/ExternalIntegrationToken.pm $(INST_MAN3DIR)/Prep::Schema::Result::ExternalIntegrationToken.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/MinionJob.pm $(INST_MAN3DIR)/Prep::Schema::Result::MinionJob.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/MinionLock.pm $(INST_MAN3DIR)/Prep::Schema::Result::MinionLock.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/MinionWorker.pm $(INST_MAN3DIR)/Prep::Schema::Result::MinionWorker.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/MojoMigration.pm $(INST_MAN3DIR)/Prep::Schema::Result::MojoMigration.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Question.pm $(INST_MAN3DIR)/Prep::Schema::Result::Question.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/QuestionMap.pm $(INST_MAN3DIR)/Prep::Schema::Result::QuestionMap.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Recipient.pm $(INST_MAN3DIR)/Prep::Schema::Result::Recipient.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/RecipientFlag.pm $(INST_MAN3DIR)/Prep::Schema::Result::RecipientFlag.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Role.pm $(INST_MAN3DIR)/Prep::Schema::Result::Role.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/Stash.pm $(INST_MAN3DIR)/Prep::Schema::Result::Stash.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/TermSignature.pm $(INST_MAN3DIR)/Prep::Schema::Result::TermSignature.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/User.pm $(INST_MAN3DIR)/Prep::Schema::Result::User.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/UserRole.pm $(INST_MAN3DIR)/Prep::Schema::Result::UserRole.$(MAN3EXT) \
-	  lib/Prep/Schema/Result/UserSession.pm $(INST_MAN3DIR)/Prep::Schema::Result::UserSession.$(MAN3EXT) 
+manifypods : pure_all config 
+	$(NOECHO) $(NOOP)
 
 
 
@@ -729,13 +546,14 @@ clean :: clean_subdirs
 
 
 # --- MakeMaker realclean_subdirs section:
-realclean_subdirs :
+# so clean is forced to complete before realclean_subdirs runs
+realclean_subdirs : clean
 	$(NOECHO) $(NOOP)
 
 
 # --- MakeMaker realclean section:
 # Delete temporary files (via clean) and also delete dist files
-realclean purge ::  clean realclean_subdirs
+realclean purge :: realclean_subdirs
 	- $(RM_F) \
 	  $(FIRST_MAKEFILE) $(MAKEFILE_OLD) 
 	- $(RM_RF) \
@@ -762,7 +580,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) 'configure_requires:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  ExtUtils::MakeMaker: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'dynamic_config: 1' >> META_new.yml
-	$(NOECHO) $(ECHO) 'generated_by: '\''ExtUtils::MakeMaker version 7.1001, CPAN::Meta::Converter version 2.150005'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) 'generated_by: '\''ExtUtils::MakeMaker version 7.34, CPAN::Meta::Converter version 2.150010'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'license: open_source' >> META_new.yml
 	$(NOECHO) $(ECHO) 'meta-spec:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  url: http://module-build.sourceforge.net/META-spec-v1.4.html' >> META_new.yml
@@ -776,6 +594,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  App::ForkProve: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  App::Sqitch: '\''0.9996'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Business::BR::CPF: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Carp: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Config::General: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Crypt::PRNG: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  DBD::Pg: '\''0'\''' >> META_new.yml
@@ -785,6 +604,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  DBIx::Class::ResultSet: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  DBIx::Class::Schema: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  DBIx::Class::TimeStamp: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  DDP: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Data::Diver: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Data::Fake: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Data::Manager: '\''0'\''' >> META_new.yml
@@ -800,13 +620,18 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  Exporter: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  FindBin: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Furl: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  IO::Handle: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  JSON: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  JSON::MaybeXS: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  LWP::UserAgent: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Log::Log4perl: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mojo::Base: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Mojo::IOLoop: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mojo::Pg: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Mojo::Promise: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mojolicious::Plugin::Authorization: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mojolicious::Plugin::Minion: '\''0'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Mojolicious::Plugin::ParamLogger: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Moose: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Moose::Role: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Moose::Util::TypeConstraints: '\''0'\''' >> META_new.yml
@@ -830,7 +655,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '  utf8: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  vars: '\''0'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  warnings: '\''0'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version: '\''20190207'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version: '\''20190618'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'x_serialization_backend: '\''CPAN::Meta::YAML version 0.018'\''' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
 	$(NOECHO) $(ECHO) Generating META.json
@@ -840,13 +665,13 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      "Lucas Ansei <lucastakushi@hotmail.com.com>"' >> META_new.json
 	$(NOECHO) $(ECHO) '   ],' >> META_new.json
 	$(NOECHO) $(ECHO) '   "dynamic_config" : 1,' >> META_new.json
-	$(NOECHO) $(ECHO) '   "generated_by" : "ExtUtils::MakeMaker version 7.1001, CPAN::Meta::Converter version 2.150005",' >> META_new.json
+	$(NOECHO) $(ECHO) '   "generated_by" : "ExtUtils::MakeMaker version 7.34, CPAN::Meta::Converter version 2.150010",' >> META_new.json
 	$(NOECHO) $(ECHO) '   "license" : [' >> META_new.json
 	$(NOECHO) $(ECHO) '      "open_source"' >> META_new.json
 	$(NOECHO) $(ECHO) '   ],' >> META_new.json
 	$(NOECHO) $(ECHO) '   "meta-spec" : {' >> META_new.json
 	$(NOECHO) $(ECHO) '      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",' >> META_new.json
-	$(NOECHO) $(ECHO) '      "version" : "2"' >> META_new.json
+	$(NOECHO) $(ECHO) '      "version" : 2' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "name" : "prep_api",' >> META_new.json
 	$(NOECHO) $(ECHO) '   "no_index" : {' >> META_new.json
@@ -858,15 +683,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '   "prereqs" : {' >> META_new.json
 	$(NOECHO) $(ECHO) '      "build" : {' >> META_new.json
 	$(NOECHO) $(ECHO) '         "requires" : {' >> META_new.json
-	$(NOECHO) $(ECHO) '            "ExtUtils::MakeMaker" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "File::Spec" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "IO::Handle" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "IPC::Open3" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "Mojo::Util" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "Test::Mojo" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "Test::More" : "0",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "blib" : "1.01",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "lib" : "0"' >> META_new.json
+	$(NOECHO) $(ECHO) '            "ExtUtils::MakeMaker" : "0"' >> META_new.json
 	$(NOECHO) $(ECHO) '         }' >> META_new.json
 	$(NOECHO) $(ECHO) '      },' >> META_new.json
 	$(NOECHO) $(ECHO) '      "configure" : {' >> META_new.json
@@ -879,6 +696,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '            "App::ForkProve" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "App::Sqitch" : "0.9996",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Business::BR::CPF" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Carp" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Config::General" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Crypt::PRNG" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "DBD::Pg" : "0",' >> META_new.json
@@ -888,6 +706,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '            "DBIx::Class::ResultSet" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "DBIx::Class::Schema" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "DBIx::Class::TimeStamp" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "DDP" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Data::Diver" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Data::Fake" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Data::Manager" : "0",' >> META_new.json
@@ -903,13 +722,18 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '            "Exporter" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "FindBin" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Furl" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "IO::Handle" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "JSON" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "JSON::MaybeXS" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "LWP::UserAgent" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Log::Log4perl" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Mojo::Base" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Mojo::IOLoop" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Mojo::Pg" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Mojo::Promise" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Mojolicious::Plugin::Authorization" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Mojolicious::Plugin::Minion" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Mojolicious::Plugin::ParamLogger" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Moose" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Moose::Role" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Moose::Util::TypeConstraints" : "0",' >> META_new.json
@@ -934,11 +758,23 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '            "vars" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "warnings" : "0"' >> META_new.json
 	$(NOECHO) $(ECHO) '         }' >> META_new.json
+	$(NOECHO) $(ECHO) '      },' >> META_new.json
+	$(NOECHO) $(ECHO) '      "test" : {' >> META_new.json
+	$(NOECHO) $(ECHO) '         "requires" : {' >> META_new.json
+	$(NOECHO) $(ECHO) '            "File::Spec" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "IO::Handle" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "IPC::Open3" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Mojo::Util" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Test::Mojo" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Test::More" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "blib" : "1.01",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "lib" : "0"' >> META_new.json
+	$(NOECHO) $(ECHO) '         }' >> META_new.json
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "version" : "20190207",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "x_serialization_backend" : "JSON::PP version 2.27300"' >> META_new.json
+	$(NOECHO) $(ECHO) '   "version" : 20190618,' >> META_new.json
+	$(NOECHO) $(ECHO) '   "x_serialization_backend" : "JSON::PP version 2.97001"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
 	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
 
@@ -1038,17 +874,17 @@ ci :
 distmeta : create_distdir metafile
 	$(NOECHO) cd $(DISTVNAME) && $(ABSPERLRUN) -MExtUtils::Manifest=maniadd -e 'exit unless -e q{META.yml};' \
 	  -e 'eval { maniadd({q{META.yml} => q{Module YAML meta-data (added by MakeMaker)}}) }' \
-	  -e '    or print "Could not add META.yml to MANIFEST: $$$${'\''@'\''}\n"' --
+	  -e '    or die "Could not add META.yml to MANIFEST: $${'\''@'\''}"' --
 	$(NOECHO) cd $(DISTVNAME) && $(ABSPERLRUN) -MExtUtils::Manifest=maniadd -e 'exit unless -f q{META.json};' \
 	  -e 'eval { maniadd({q{META.json} => q{Module JSON meta-data (added by MakeMaker)}}) }' \
-	  -e '    or print "Could not add META.json to MANIFEST: $$$${'\''@'\''}\n"' --
+	  -e '    or die "Could not add META.json to MANIFEST: $${'\''@'\''}"' --
 
 
 
 # --- MakeMaker distsignature section:
 distsignature : distmeta
 	$(NOECHO) cd $(DISTVNAME) && $(ABSPERLRUN) -MExtUtils::Manifest=maniadd -e 'eval { maniadd({q{SIGNATURE} => q{Public-key signature (added by MakeMaker)}}) }' \
-	  -e '    or print "Could not add SIGNATURE to MANIFEST: $$$${'\''@'\''}\n"' --
+	  -e '    or die "Could not add SIGNATURE to MANIFEST: $${'\''@'\''}"' --
 	$(NOECHO) cd $(DISTVNAME) && $(TOUCH) SIGNATURE
 	cd $(DISTVNAME) && cpansign -s
 
@@ -1124,7 +960,7 @@ doc_perl_install :: all
 	-$(NOECHO) $(MKPATH) "$(DESTINSTALLARCHLIB)"
 	-$(NOECHO) $(DOC_INSTALL) \
 		"Module" "$(NAME)" \
-		"installed into" $(INSTALLPRIVLIB) \
+		"installed into" "$(INSTALLPRIVLIB)" \
 		LINKTYPE "$(LINKTYPE)" \
 		VERSION "$(VERSION)" \
 		EXE_FILES "$(EXE_FILES)" \
@@ -1135,7 +971,7 @@ doc_site_install :: all
 	-$(NOECHO) $(MKPATH) "$(DESTINSTALLARCHLIB)"
 	-$(NOECHO) $(DOC_INSTALL) \
 		"Module" "$(NAME)" \
-		"installed into" $(INSTALLSITELIB) \
+		"installed into" "$(INSTALLSITELIB)" \
 		LINKTYPE "$(LINKTYPE)" \
 		VERSION "$(VERSION)" \
 		EXE_FILES "$(EXE_FILES)" \
@@ -1146,7 +982,7 @@ doc_vendor_install :: all
 	-$(NOECHO) $(MKPATH) "$(DESTINSTALLARCHLIB)"
 	-$(NOECHO) $(DOC_INSTALL) \
 		"Module" "$(NAME)" \
-		"installed into" $(INSTALLVENDORLIB) \
+		"installed into" "$(INSTALLVENDORLIB)" \
 		LINKTYPE "$(LINKTYPE)" \
 		VERSION "$(VERSION)" \
 		EXE_FILES "$(EXE_FILES)" \
@@ -1195,12 +1031,13 @@ $(FIRST_MAKEFILE) : Makefile.PL $(CONFIGDEP)
 
 # --- MakeMaker makeaperl section ---
 MAP_TARGET    = perl
-FULLPERL      = "/home/lucas/perl5/perlbrew/perls/perl-5.24.0/bin/perl"
+FULLPERL      = "/home/app/perl5/perlbrew/perls/perl-5.28.0/bin/perl"
+MAP_PERLINC   = "-Iblib/arch" "-Iblib/lib" "-I/home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/x86_64-linux" "-I/home/app/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0"
 
-$(MAP_TARGET) :: static $(MAKE_APERL_FILE)
+$(MAP_TARGET) :: $(MAKE_APERL_FILE)
 	$(MAKE) $(USEMAKEFILE) $(MAKE_APERL_FILE) $@
 
-$(MAKE_APERL_FILE) : $(FIRST_MAKEFILE) pm_to_blib
+$(MAKE_APERL_FILE) : static $(FIRST_MAKEFILE) pm_to_blib
 	$(NOECHO) $(ECHO) Writing \"$(MAKE_APERL_FILE)\" for this $(MAP_TARGET)
 	$(NOECHO) $(PERLRUNINST) \
 		Makefile.PL DIR="" \
@@ -1209,7 +1046,6 @@ $(MAKE_APERL_FILE) : $(FIRST_MAKEFILE) pm_to_blib
 
 
 # --- MakeMaker test section:
-
 TEST_VERBOSE=0
 TEST_TYPE=test_$(LINKTYPE)
 TEST_FILE = test.pl
@@ -1217,168 +1053,213 @@ TEST_FILES = t/*.t t/chatbot/*.t t/internal/*.t
 TESTDB_SW = -d
 
 testdb :: testdb_$(LINKTYPE)
-
-test :: $(TEST_TYPE) subdirs-test
-
-subdirs-test ::
 	$(NOECHO) $(NOOP)
 
+test :: $(TEST_TYPE)
+	$(NOECHO) $(NOOP)
 
-test_dynamic :: pure_all
+# Occasionally we may face this degenerate target:
+test_ : test_dynamic
+	$(NOECHO) $(NOOP)
+
+subdirs-test_dynamic :: dynamic pure_all
+
+test_dynamic :: subdirs-test_dynamic
 	PERL_DL_NONLAZY=1 $(FULLPERLRUN) "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness($(TEST_VERBOSE), '$(INST_LIB)', '$(INST_ARCHLIB)')" $(TEST_FILES)
 
-testdb_dynamic :: pure_all
+testdb_dynamic :: dynamic pure_all
 	PERL_DL_NONLAZY=1 $(FULLPERLRUN) $(TESTDB_SW) "-I$(INST_LIB)" "-I$(INST_ARCHLIB)" $(TEST_FILE)
 
-test_ : test_dynamic
+subdirs-test_static :: static pure_all
 
-test_static :: test_dynamic
-testdb_static :: testdb_dynamic
+test_static :: subdirs-test_static
+	PERL_DL_NONLAZY=1 $(FULLPERLRUN) "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness($(TEST_VERBOSE), '$(INST_LIB)', '$(INST_ARCHLIB)')" $(TEST_FILES)
+
+testdb_static :: static pure_all
+	PERL_DL_NONLAZY=1 $(FULLPERLRUN) $(TESTDB_SW) "-I$(INST_LIB)" "-I$(INST_ARCHLIB)" $(TEST_FILE)
+
 
 
 # --- MakeMaker ppd section:
 # Creates a PPD (Perl Package Description) for a binary distribution.
 ppd :
-	$(NOECHO) $(ECHO) '<SOFTPKG NAME="$(DISTNAME)" VERSION="$(VERSION)">' > $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '    <ABSTRACT>PREP API</ABSTRACT>' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '    <AUTHOR>Lucas Ansei &lt;lucastakushi@hotmail.com.com&gt;</AUTHOR>' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <PERLCORE VERSION="5,014002,0,0" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="App::ForkProve" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="App::Sqitch" VERSION="0.9996" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Business::BR::CPF" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Config::General" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Crypt::PRNG" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBD::Pg" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::Core" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::InflateColumn::Serializer" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::PassphraseColumn" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::ResultSet" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::Schema" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::TimeStamp" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Diver" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Fake" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Manager" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Printer" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Section::Simple" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Validate::URI" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Verifier::Field" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Verifier::Filters" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Verifier::Results" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Visitor" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Visitor::Callback" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DateTime::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Exporter::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="FindBin::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Furl::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="JSON::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="JSON::MaybeXS" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="LWP::UserAgent" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojo::Base" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojo::Pg" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojolicious::Plugin::Authorization" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojolicious::Plugin::Minion" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::Role" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::Util::TypeConstraints" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::MarkAsMethods" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::NonMoose" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::Singleton" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::Types" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::Types::Moose" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Net::Google::OAuth" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Regexp::Common" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Regexp::Common::time" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Scalar::Util" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Text::CSV" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Time::Piece" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Try::Tiny::Retry" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="base::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="common::sense" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="namespace::autoclean" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="strict::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="utf8::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="vars::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="warnings::" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <ARCHITECTURE NAME="x86_64-linux-5.24" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '        <CODEBASE HREF="" />' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '    </IMPLEMENTATION>' >> $(DISTNAME).ppd
-	$(NOECHO) $(ECHO) '</SOFTPKG>' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '<SOFTPKG NAME="prep_api" VERSION="20190618">' > prep_api.ppd
+	$(NOECHO) $(ECHO) '    <ABSTRACT>PREP API</ABSTRACT>' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '    <AUTHOR>Lucas Ansei &lt;lucastakushi@hotmail.com.com&gt;</AUTHOR>' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <PERLCORE VERSION="5,014002,0,0" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="App::ForkProve" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="App::Sqitch" VERSION="0.9996" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Business::BR::CPF" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Carp::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Config::General" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Crypt::PRNG" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBD::Pg" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::Core" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::InflateColumn::Serializer" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::PassphraseColumn" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::ResultSet" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::Schema" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DBIx::Class::TimeStamp" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DDP::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Diver" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Fake" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Manager" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Printer" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Section::Simple" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Validate::URI" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Verifier::Field" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Verifier::Filters" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Verifier::Results" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Visitor" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Data::Visitor::Callback" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="DateTime::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Exporter::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="FindBin::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Furl::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="IO::Handle" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="JSON::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="JSON::MaybeXS" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="LWP::UserAgent" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Log::Log4perl" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojo::Base" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojo::IOLoop" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojo::Pg" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojo::Promise" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojolicious::Plugin::Authorization" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojolicious::Plugin::Minion" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojolicious::Plugin::ParamLogger" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::Role" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moose::Util::TypeConstraints" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::MarkAsMethods" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::NonMoose" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::Singleton" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::Types" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="MooseX::Types::Moose" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Net::Google::OAuth" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Regexp::Common" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Regexp::Common::time" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Scalar::Util" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Text::CSV" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Time::Piece" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Try::Tiny::Retry" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="base::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="common::sense" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="namespace::autoclean" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="strict::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="utf8::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="vars::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="warnings::" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <ARCHITECTURE NAME="x86_64-linux-5.28" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '        <CODEBASE HREF="" />' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '    </IMPLEMENTATION>' >> prep_api.ppd
+	$(NOECHO) $(ECHO) '</SOFTPKG>' >> prep_api.ppd
 
 
 # --- MakeMaker pm_to_blib section:
 
 pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', q[$(PM_FILTER)], '\''$(PERM_DIR)'\'')' -- \
-	  lib/Data/Verifier.pm blib/lib/Data/Verifier.pm \
-	  lib/Mojolicious/Plugin/Detach.pm blib/lib/Mojolicious/Plugin/Detach.pm \
-	  lib/Mojolicious/Plugin/SimpleAuthentication.pm blib/lib/Mojolicious/Plugin/SimpleAuthentication.pm \
-	  lib/Prep.pm blib/lib/Prep.pm \
-	  lib/Prep/Authentication.pm blib/lib/Prep/Authentication.pm \
-	  lib/Prep/Authorization.pm blib/lib/Prep/Authorization.pm \
-	  lib/Prep/Controller.pm blib/lib/Prep/Controller.pm \
-	  lib/Prep/Controller/Chatbot.pm blib/lib/Prep/Controller/Chatbot.pm \
-	  lib/Prep/Controller/Chatbot/Appointment.pm blib/lib/Prep/Controller/Chatbot/Appointment.pm \
-	  lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm blib/lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm \
-	  lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm blib/lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm \
-	  lib/Prep/Controller/Chatbot/Recipient.pm blib/lib/Prep/Controller/Chatbot/Recipient.pm \
-	  lib/Prep/Controller/Chatbot/Recipient/Answer.pm blib/lib/Prep/Controller/Chatbot/Recipient/Answer.pm \
-	  lib/Prep/Controller/Chatbot/Recipient/Appointment.pm blib/lib/Prep/Controller/Chatbot/Recipient/Appointment.pm \
-	  lib/Prep/Controller/Chatbot/Recipient/CountQuiz.pm blib/lib/Prep/Controller/Chatbot/Recipient/CountQuiz.pm \
-	  lib/Prep/Controller/Chatbot/Recipient/CountResearchInvite.pm blib/lib/Prep/Controller/Chatbot/Recipient/CountResearchInvite.pm \
-	  lib/Prep/Controller/Chatbot/Recipient/CountShare.pm blib/lib/Prep/Controller/Chatbot/Recipient/CountShare.pm \
-	  lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm blib/lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm \
-	  lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm blib/lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm \
-	  lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm blib/lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm \
-	  lib/Prep/Controller/Internal.pm blib/lib/Prep/Controller/Internal.pm \
-	  lib/Prep/Controller/Internal/DeleteAnswer.pm blib/lib/Prep/Controller/Internal/DeleteAnswer.pm \
-	  lib/Prep/Data/Manager.pm blib/lib/Prep/Data/Manager.pm \
-	  lib/Prep/Data/Visitor.pm blib/lib/Prep/Data/Visitor.pm \
-	  lib/Prep/Role/Verification.pm blib/lib/Prep/Role/Verification.pm \
-	  lib/Prep/Role/Verification/TransactionalActions.pm blib/lib/Prep/Role/Verification/TransactionalActions.pm \
-	  lib/Prep/Role/Verification/TransactionalActions/DBIC.pm blib/lib/Prep/Role/Verification/TransactionalActions/DBIC.pm \
-	  lib/Prep/Routes.pm blib/lib/Prep/Routes.pm \
-	  lib/Prep/Schema.pm blib/lib/Prep/Schema.pm \
-	  lib/Prep/Schema/Result/Answer.pm blib/lib/Prep/Schema/Result/Answer.pm \
-	  lib/Prep/Schema/Result/Appointment.pm blib/lib/Prep/Schema/Result/Appointment.pm 
+	  'lib/Data/Verifier.pm' 'blib/lib/Data/Verifier.pm' \
+	  'lib/Mojolicious/Plugin/Detach.pm' 'blib/lib/Mojolicious/Plugin/Detach.pm' \
+	  'lib/Mojolicious/Plugin/SimpleAuthentication.pm' 'blib/lib/Mojolicious/Plugin/SimpleAuthentication.pm' \
+	  'lib/Prep.pm' 'blib/lib/Prep.pm' \
+	  'lib/Prep/Authentication.pm' 'blib/lib/Prep/Authentication.pm' \
+	  'lib/Prep/Authorization.pm' 'blib/lib/Prep/Authorization.pm' \
+	  'lib/Prep/Controller.pm' 'blib/lib/Prep/Controller.pm' \
+	  'lib/Prep/Controller/Chatbot.pm' 'blib/lib/Prep/Controller/Chatbot.pm' \
+	  'lib/Prep/Controller/Chatbot/Appointment.pm' 'blib/lib/Prep/Controller/Chatbot/Appointment.pm' \
+	  'lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm' 'blib/lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm' \
+	  'lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm' 'blib/lib/Prep/Controller/Chatbot/Appointment/AvailableDates.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/Answer.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/Answer.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/Appointment.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/Appointment.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/CountQuiz.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/CountQuiz.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/CountResearchInvite.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/CountResearchInvite.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/CountShare.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/CountShare.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/IntegrationToken.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/PendingQuestion.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/Research.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/Research.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/ResetScreening.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/ResetScreening.pm' \
+	  'lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm' 'blib/lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm' \
+	  'lib/Prep/Controller/Internal.pm' 'blib/lib/Prep/Controller/Internal.pm' \
+	  'lib/Prep/Controller/Internal/DeleteAnswer.pm' 'blib/lib/Prep/Controller/Internal/DeleteAnswer.pm' \
+	  'lib/Prep/Controller/Internal/Integration.pm' 'blib/lib/Prep/Controller/Internal/Integration.pm' \
+	  'lib/Prep/Controller/Internal/Integration/Recipient.pm' 'blib/lib/Prep/Controller/Internal/Integration/Recipient.pm' 
 	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', q[$(PM_FILTER)], '\''$(PERM_DIR)'\'')' -- \
-	  lib/Prep/Schema/Result/AppointmentType.pm blib/lib/Prep/Schema/Result/AppointmentType.pm \
-	  lib/Prep/Schema/Result/AppointmentWindow.pm blib/lib/Prep/Schema/Result/AppointmentWindow.pm \
-	  lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm blib/lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm \
-	  lib/Prep/Schema/Result/Calendar.pm blib/lib/Prep/Schema/Result/Calendar.pm \
-	  lib/Prep/Schema/Result/Category.pm blib/lib/Prep/Schema/Result/Category.pm \
-	  lib/Prep/Schema/Result/ChatbotSession.pm blib/lib/Prep/Schema/Result/ChatbotSession.pm \
-	  lib/Prep/Schema/Result/Config.pm blib/lib/Prep/Schema/Result/Config.pm \
-	  lib/Prep/Schema/Result/ExternalIntegrationToken.pm blib/lib/Prep/Schema/Result/ExternalIntegrationToken.pm \
-	  lib/Prep/Schema/Result/MinionJob.pm blib/lib/Prep/Schema/Result/MinionJob.pm \
-	  lib/Prep/Schema/Result/MinionLock.pm blib/lib/Prep/Schema/Result/MinionLock.pm \
-	  lib/Prep/Schema/Result/MinionWorker.pm blib/lib/Prep/Schema/Result/MinionWorker.pm \
-	  lib/Prep/Schema/Result/MojoMigration.pm blib/lib/Prep/Schema/Result/MojoMigration.pm \
-	  lib/Prep/Schema/Result/Question.pm blib/lib/Prep/Schema/Result/Question.pm \
-	  lib/Prep/Schema/Result/QuestionMap.pm blib/lib/Prep/Schema/Result/QuestionMap.pm \
-	  lib/Prep/Schema/Result/Recipient.pm blib/lib/Prep/Schema/Result/Recipient.pm \
-	  lib/Prep/Schema/Result/RecipientFlag.pm blib/lib/Prep/Schema/Result/RecipientFlag.pm \
-	  lib/Prep/Schema/Result/Role.pm blib/lib/Prep/Schema/Result/Role.pm \
-	  lib/Prep/Schema/Result/Stash.pm blib/lib/Prep/Schema/Result/Stash.pm \
-	  lib/Prep/Schema/Result/TermSignature.pm blib/lib/Prep/Schema/Result/TermSignature.pm \
-	  lib/Prep/Schema/Result/User.pm blib/lib/Prep/Schema/Result/User.pm \
-	  lib/Prep/Schema/Result/UserRole.pm blib/lib/Prep/Schema/Result/UserRole.pm \
-	  lib/Prep/Schema/Result/UserSession.pm blib/lib/Prep/Schema/Result/UserSession.pm \
-	  lib/Prep/Schema/Result/ViewRecipientQuiz.pm blib/lib/Prep/Schema/Result/ViewRecipientQuiz.pm \
-	  lib/Prep/Schema/ResultSet/Answer.pm blib/lib/Prep/Schema/ResultSet/Answer.pm \
-	  lib/Prep/Schema/ResultSet/Appointment.pm blib/lib/Prep/Schema/ResultSet/Appointment.pm \
-	  lib/Prep/Schema/ResultSet/QuestionMap.pm blib/lib/Prep/Schema/ResultSet/QuestionMap.pm \
-	  lib/Prep/Schema/ResultSet/Recipient.pm blib/lib/Prep/Schema/ResultSet/Recipient.pm \
-	  lib/Prep/Schema/ResultSet/TermSignature.pm blib/lib/Prep/Schema/ResultSet/TermSignature.pm \
-	  lib/Prep/SchemaConnected.pm blib/lib/Prep/SchemaConnected.pm \
-	  lib/Prep/Types.pm blib/lib/Prep/Types.pm \
-	  lib/Prep/Utils.pm blib/lib/Prep/Utils.pm \
-	  lib/WebService/Facebook.pm blib/lib/WebService/Facebook.pm \
-	  lib/WebService/GoogleCalendar.pm blib/lib/WebService/GoogleCalendar.pm 
+	  'lib/Prep/Controller/Internal/Integration/Recipient/Notification.pm' 'blib/lib/Prep/Controller/Internal/Integration/Recipient/Notification.pm' \
+	  'lib/Prep/Controller/Internal/Integration/Recipient/Sync.pm' 'blib/lib/Prep/Controller/Internal/Integration/Recipient/Sync.pm' \
+	  'lib/Prep/Data/Manager.pm' 'blib/lib/Prep/Data/Manager.pm' \
+	  'lib/Prep/Data/Visitor.pm' 'blib/lib/Prep/Data/Visitor.pm' \
+	  'lib/Prep/Logger.pm' 'blib/lib/Prep/Logger.pm' \
+	  'lib/Prep/Role/Verification.pm' 'blib/lib/Prep/Role/Verification.pm' \
+	  'lib/Prep/Role/Verification/TransactionalActions.pm' 'blib/lib/Prep/Role/Verification/TransactionalActions.pm' \
+	  'lib/Prep/Role/Verification/TransactionalActions/DBIC.pm' 'blib/lib/Prep/Role/Verification/TransactionalActions/DBIC.pm' \
+	  'lib/Prep/Routes.pm' 'blib/lib/Prep/Routes.pm' \
+	  'lib/Prep/Schema.pm' 'blib/lib/Prep/Schema.pm' \
+	  'lib/Prep/Schema/Result/Answer.pm' 'blib/lib/Prep/Schema/Result/Answer.pm' \
+	  'lib/Prep/Schema/Result/Appointment.pm' 'blib/lib/Prep/Schema/Result/Appointment.pm' \
+	  'lib/Prep/Schema/Result/AppointmentType.pm' 'blib/lib/Prep/Schema/Result/AppointmentType.pm' \
+	  'lib/Prep/Schema/Result/AppointmentWindow.pm' 'blib/lib/Prep/Schema/Result/AppointmentWindow.pm' \
+	  'lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm' 'blib/lib/Prep/Schema/Result/AppointmentWindowDayOfWeek.pm' \
+	  'lib/Prep/Schema/Result/Calendar.pm' 'blib/lib/Prep/Schema/Result/Calendar.pm' \
+	  'lib/Prep/Schema/Result/Category.pm' 'blib/lib/Prep/Schema/Result/Category.pm' \
+	  'lib/Prep/Schema/Result/ChatbotSession.pm' 'blib/lib/Prep/Schema/Result/ChatbotSession.pm' \
+	  'lib/Prep/Schema/Result/Config.pm' 'blib/lib/Prep/Schema/Result/Config.pm' \
+	  'lib/Prep/Schema/Result/ExternalIntegrationToken.pm' 'blib/lib/Prep/Schema/Result/ExternalIntegrationToken.pm' \
+	  'lib/Prep/Schema/Result/ExternalNotification.pm' 'blib/lib/Prep/Schema/Result/ExternalNotification.pm' \
+	  'lib/Prep/Schema/Result/MinionJob.pm' 'blib/lib/Prep/Schema/Result/MinionJob.pm' \
+	  'lib/Prep/Schema/Result/MinionLock.pm' 'blib/lib/Prep/Schema/Result/MinionLock.pm' \
+	  'lib/Prep/Schema/Result/MinionWorker.pm' 'blib/lib/Prep/Schema/Result/MinionWorker.pm' \
+	  'lib/Prep/Schema/Result/MojoMigration.pm' 'blib/lib/Prep/Schema/Result/MojoMigration.pm' \
+	  'lib/Prep/Schema/Result/NotificationQueue.pm' 'blib/lib/Prep/Schema/Result/NotificationQueue.pm' \
+	  'lib/Prep/Schema/Result/NotificationType.pm' 'blib/lib/Prep/Schema/Result/NotificationType.pm' \
+	  'lib/Prep/Schema/Result/Question.pm' 'blib/lib/Prep/Schema/Result/Question.pm' \
+	  'lib/Prep/Schema/Result/QuestionMap.pm' 'blib/lib/Prep/Schema/Result/QuestionMap.pm' \
+	  'lib/Prep/Schema/Result/Recipient.pm' 'blib/lib/Prep/Schema/Result/Recipient.pm' 
+	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', q[$(PM_FILTER)], '\''$(PERM_DIR)'\'')' -- \
+	  'lib/Prep/Schema/Result/RecipientFlag.pm' 'blib/lib/Prep/Schema/Result/RecipientFlag.pm' \
+	  'lib/Prep/Schema/Result/Role.pm' 'blib/lib/Prep/Schema/Result/Role.pm' \
+	  'lib/Prep/Schema/Result/Screening.pm' 'blib/lib/Prep/Schema/Result/Screening.pm' \
+	  'lib/Prep/Schema/Result/Stash.pm' 'blib/lib/Prep/Schema/Result/Stash.pm' \
+	  'lib/Prep/Schema/Result/TermSignature.pm' 'blib/lib/Prep/Schema/Result/TermSignature.pm' \
+	  'lib/Prep/Schema/Result/User.pm' 'blib/lib/Prep/Schema/Result/User.pm' \
+	  'lib/Prep/Schema/Result/UserRole.pm' 'blib/lib/Prep/Schema/Result/UserRole.pm' \
+	  'lib/Prep/Schema/Result/UserSession.pm' 'blib/lib/Prep/Schema/Result/UserSession.pm' \
+	  'lib/Prep/Schema/Result/ViewQuizReset.pm' 'blib/lib/Prep/Schema/Result/ViewQuizReset.pm' \
+	  'lib/Prep/Schema/Result/ViewRecipientQuiz.pm' 'blib/lib/Prep/Schema/Result/ViewRecipientQuiz.pm' \
+	  'lib/Prep/Schema/ResultSet/Answer.pm' 'blib/lib/Prep/Schema/ResultSet/Answer.pm' \
+	  'lib/Prep/Schema/ResultSet/Appointment.pm' 'blib/lib/Prep/Schema/ResultSet/Appointment.pm' \
+	  'lib/Prep/Schema/ResultSet/ExternalNotification.pm' 'blib/lib/Prep/Schema/ResultSet/ExternalNotification.pm' \
+	  'lib/Prep/Schema/ResultSet/QuestionMap.pm' 'blib/lib/Prep/Schema/ResultSet/QuestionMap.pm' \
+	  'lib/Prep/Schema/ResultSet/Recipient.pm' 'blib/lib/Prep/Schema/ResultSet/Recipient.pm' \
+	  'lib/Prep/Schema/ResultSet/TermSignature.pm' 'blib/lib/Prep/Schema/ResultSet/TermSignature.pm' \
+	  'lib/Prep/SchemaConnected.pm' 'blib/lib/Prep/SchemaConnected.pm' \
+	  'lib/Prep/TrapSignals.pm' 'blib/lib/Prep/TrapSignals.pm' \
+	  'lib/Prep/Types.pm' 'blib/lib/Prep/Types.pm' \
+	  'lib/Prep/Utils.pm' 'blib/lib/Prep/Utils.pm' \
+	  'lib/Prep/Worker.pm' 'blib/lib/Prep/Worker.pm' \
+	  'lib/Prep/Worker/Notify.pm' 'blib/lib/Prep/Worker/Notify.pm' \
+	  'lib/WebService/Facebook.pm' 'blib/lib/WebService/Facebook.pm' \
+	  'lib/WebService/GoogleCalendar.pm' 'blib/lib/WebService/GoogleCalendar.pm' \
+	  'lib/WebService/Simprep.pm' 'blib/lib/WebService/Simprep.pm' 
 	$(NOECHO) $(TOUCH) pm_to_blib
 
 
 # --- MakeMaker selfdocument section:
+
+# here so even if top_targets is overridden, these will still be defined
+# gmake will silently still work if any are .PHONY-ed but nmake won't
+
+static ::
+	$(NOECHO) $(NOOP)
+
+dynamic ::
+	$(NOECHO) $(NOOP)
+
+config ::
+	$(NOECHO) $(NOOP)
 
 
 # --- MakeMaker postamble section:
