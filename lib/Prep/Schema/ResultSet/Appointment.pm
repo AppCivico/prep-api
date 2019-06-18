@@ -137,7 +137,7 @@ sub action_specs {
                     recipient_id => $appointment->recipient_id,
                     type_id      => 2,
                     text         => "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms.",
-                    wait_until   => $appointment->appointment_at->subtract( days => 10 )
+                    wait_until   => $appointment->appointment_at->subtract( days => 2 )
                 }
             );
 
