@@ -94,4 +94,43 @@ sub get_form_for_notification {
     }
 }
 
+sub verify_voucher {
+    my ($self, %opts) = @_;
+
+    my @required_opts = qw( voucher );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
+    if (is_test()) {
+        return {
+            "status" => "success",
+            "data" => {
+                "voucher" => "00100000001",
+                "registration" => 0,
+                "eligibility" => 0,
+                "is_prep" => 0,
+                "is_part_of_research" => 0
+            }
+        };
+    }
+    else {
+        my $res;
+        eval {
+            retry {
+                my $url = $ENV{SIMPREP_API_URL} . '/recrutamento/' . $opts{voucher};
+
+                $res = $self->ua->get($url);
+                die $res->decoded_content unless $res->is_success;
+
+                my $response = decode_json( $res->decoded_content );
+                die 'invalid response' unless $response;
+
+            }
+            retry_if { shift() < 3 } catch { die $_; };
+        };
+        die $@ if $@;
+
+        return decode_json( $res->decoded_content );
+    }
+}
+
 1;

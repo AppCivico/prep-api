@@ -1021,24 +1021,16 @@ sub assign_token {
     my ($self, $integration_token) = @_;
 
     $self->result_source->schema->txn_do( sub {
-        my $token_rs = $self->result_source->schema->resultset('ExternalIntegrationToken');
-        my $token    = $token_rs->search(
-            {
-                value       => $integration_token,
-                assigned_at => \'IS NULL'
-            }
-        )->next;
-
-        die \['integration_token', 'invalid'] unless $token;
+        # Verificando se o token existe
+        my $res = $self->_simprep->verify_voucher( voucher => $integration_token );
+        die \['integration_token', 'invalid'] unless defined $res;
 
         $self->update(
             {
-                integration_token    => $token->value,
+                integration_token    => $integration_token,
                 using_external_token => 1
             }
         );
-
-        $token->update( { assigned_at => \'NOW()' } );
     });
 }
 
