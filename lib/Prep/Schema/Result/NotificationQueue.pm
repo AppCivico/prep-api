@@ -206,11 +206,13 @@ sub send {
     };
 
     if ($@) {
-
+        $self->update( { err_msg => $@ } );
     }
     else {
         $self->update( { sent_at => \'NOW()' } );
     }
+
+    return 1;
 
 }
 
