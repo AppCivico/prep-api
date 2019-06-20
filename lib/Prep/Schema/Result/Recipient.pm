@@ -1518,20 +1518,32 @@ sub message_for_fun_questions_score {
     my $score = $self->fun_questions_score;
 
     if ( $score <= 69 ) {
-        $ret = 'VC É A PABLLO VITTAR, YUKEEEÊ???
-Famosissimah nos rolês, mas tá só nas love song que nem a Pablo, nenon? Você parece ser mais de boas quando o assunto é sexo com várias pessoas - ou pelo menos está numa fase de boas, bem romantiquinha. Pode ser que vc não sinta mta necessidady de sarrar, pode ser q esteja namorando fechado e seu tesão se direcione mais para um/uma parceiro/a fixo, pode ser q vc prefira poucos (e bons) doq muitos, pode ser mil coisas - o importante é vc fazer (ou não fazer) oq vc tiver vontade <3';
+        $ret = {
+            message => 'VC É A PABLLO VITTAR, YUKEEEÊ???
+Famosissimah nos rolês, mas tá só nas love song que nem a Pablo, nenon? Você parece ser mais de boas quando o assunto é sexo com várias pessoas - ou pelo menos está numa fase de boas, bem romantiquinha. Pode ser que vc não sinta mta necessidady de sarrar, pode ser q esteja namorando fechado e seu tesão se direcione mais para um/uma parceiro/a fixo, pode ser q vc prefira poucos (e bons) doq muitos, pode ser mil coisas - o importante é vc fazer (ou não fazer) oq vc tiver vontade <3',
+            picture => 'https://i.imgur.com/u6khXYZ.png'
+        }
     }
     elsif ( $score >= 70 && $score <= 129 ) {
-        $ret = 'VC É A LINN DA QUEBRADA! #TRA #TRA
-Afinal, pra qq eu kro pica se eu tenho todos esses dedo??? Pelo q eu catei, vc curte transar mas vê o sexo como algo q vai muito além de penetração - tb ama viver outras experiências além da neca no edi: chupação, dedo, linguada, de repente até um brinquedinho, nenon? Amo que a sra é super sensorial e tá aberta a experiências, acho um bapho SYM';
+        $ret = {
+            message => 'VC É A LINN DA QUEBRADA! #TRA #TRA
+Afinal, pra qq eu kro pica se eu tenho todos esses dedo??? Pelo q eu catei, vc curte transar mas vê o sexo como algo q vai muito além de penetração - tb ama viver outras experiências além da neca no edi: chupação, dedo, linguada, de repente até um brinquedinho, nenon? Amo que a sra é super sensorial e tá aberta a experiências, acho um bapho SYM',
+            picture => 'https://i.imgur.com/nZksGbf.png'
+        }
     }
     elsif ( $score >= 130 && $score <= 200 ) {
-        $ret = 'VC É A GLORIA GROOVE! LIGADYNHA NO PROCEDER
-Vc é GLORIOSA gatan, toda dona de vc meixxxma! Assim como a Gloria, passa logo o proceder, joga o papo reto, sabe oq tu quer (e quem tu quer, kkkk) e vive suas vontadys livremente - mto empoderada ela. Vc é rainha na pista, e convoca geral pra arrastar e sarrar com autonomia - mas sempre ligadinha na prevenção. Ai que coisa boa!';
+        $ret = {
+            message => 'VC É A GLORIA GROOVE! LIGADYNHA NO PROCEDER
+Vc é GLORIOSA gatan, toda dona de vc meixxxma! Assim como a Gloria, passa logo o proceder, joga o papo reto, sabe oq tu quer (e quem tu quer, kkkk) e vive suas vontadys livremente - mto empoderada ela. Vc é rainha na pista, e convoca geral pra arrastar e sarrar com autonomia - mas sempre ligadinha na prevenção. Ai que coisa boa!',
+            picture => 'https://i.imgur.com/QwscttE.png'
+        }
     }
     else {
-        $ret = 'VC É A MULHER PEPITA! RANNNNNN
-Uma vez piranha, smp piranha, piranha eu sempre hei de ser RANNNN kkk. Kerida, a sra é deshtruidora mesmo 🔥🔥🔥Gosta de sexo sem tabu e sem moralismo, e deve adorar novas experiências, nenon? Deve ter uns sagitário babado nesse mapa astral, aloka. E é isso ai mana, se joga - o segredynho é saber os riscos das suas escolhas e pensar um jeito babado de manter a saúde sexual em dia sem deixar de fazer nada q tu keira.';
+        $ret = {
+            message => 'VC É A MULHER PEPITA! RANNNNNN
+Uma vez piranha, smp piranha, piranha eu sempre hei de ser RANNNN kkk. Kerida, a sra é deshtruidora mesmo 🔥🔥🔥Gosta de sexo sem tabu e sem moralismo, e deve adorar novas experiências, nenon? Deve ter uns sagitário babado nesse mapa astral, aloka. E é isso ai mana, se joga - o segredynho é saber os riscos das suas escolhas e pensar um jeito babado de manter a saúde sexual em dia sem deixar de fazer nada q tu keira.',
+            picture => 'https://i.imgur.com/DKuRSXT.png'
+        }
     }
 
     return $ret;
