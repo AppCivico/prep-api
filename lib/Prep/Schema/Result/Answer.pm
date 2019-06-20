@@ -328,12 +328,14 @@ sub followup_messages {
         }
         elsif ( $question->code eq 'AC7' ) {
             # Na resposta da AC7 deve ser enviado o texto respectivo para o score
-            push @messages, $self->recipient->message_for_fun_questions_score;
+            push @messages, $self->recipient->message_for_fun_questions_score->{picture};
+            push @messages, $self->recipient->message_for_fun_questions_score->{message};
             push @messages, 'Calma! Compartilha ainda não!';
         }
     }
     elsif( $question_map->category->name eq 'fun_questions' ) {
-        push @messages, $self->recipient->message_for_fun_questions_score
+        push @messages, $self->recipient->message_for_fun_questions_score->{picture};
+        push @messages, $self->recipient->message_for_fun_questions_score->{message};
     }
 
     return @messages;
