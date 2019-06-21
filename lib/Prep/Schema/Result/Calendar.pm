@@ -308,6 +308,10 @@ sub available_dates {
 
     return [
         map {
+            my $custom_quota_time = $_->custom_quota_time;
+            $custom_quota_time    = Time::Piece->strptime( $custom_quota_time, '%H:%M:%S' )
+              if defined $custom_quota_time;
+
             my $interval;
 
             my $appointment_window_id = $_->id;
@@ -319,9 +323,10 @@ sub available_dates {
             my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
             my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
 
+
             # Pego a diferença entre os dois em segundos e divido pelo numero de cotas
             my $delta = ( $end_time - $start_time );
-            my $seconds_per_quota = ( $delta / $_->quotas );
+            my $seconds_per_quota = ( $custom_quota_time ? ($custom_quota_time->[9]) : ( $delta / $_->quotas ));
 
             my @days_of_week = $_->appointment_window_days_of_week->search( undef, { rows => 8, order_by => { -asc => 'day_of_week' } } )->get_column('day_of_week')->all();
 

@@ -38,3 +38,4 @@
 0034-signature-url [0033-update-city] 2019-05-24T18:09:03Z Lucas Ansei,,, <lucas@lucas-G750JX> # Removing not null on url for term signature
 0035-add-notification_queue [0034-signature-url] 2019-06-03T14:27:39Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the notification_queue table
 0036-add-created_by_chatbot [0035-add-notification_queue] 2019-06-10T17:05:48Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding the 'created_by_chatbot' boolean on the 'appointment' table
+0037-custom_quota_time [0036-add-created_by_chatbot] 2019-06-21T12:53:24Z Lucas Ansei,,, <lucas@lucas-G750JX> # Updating the custom quota time column

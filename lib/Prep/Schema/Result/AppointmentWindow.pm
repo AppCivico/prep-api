@@ -84,7 +84,7 @@ __PACKAGE__->table("appointment_window");
 
 =head2 custom_quota_time
 
-  data_type: 'time'
+  data_type: 'interval'
   is_nullable: 1
 
 =cut
@@ -115,7 +115,7 @@ __PACKAGE__->add_columns(
     original      => { default_value => \"now()" },
   },
   "custom_quota_time",
-  { data_type => "time", is_nullable => 1 },
+  { data_type => "interval", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -178,8 +178,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 09:47:50
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LnsdPwYR7lyvanwrbZgzcQ
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-21 09:48:37
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:7eE0tw+yKnK2/e05BwTQTA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
