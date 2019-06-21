@@ -422,7 +422,7 @@ sub sync_appointments {
                 my $month = $appointment_ts->month;
                 my $hms   = $appointment_ts->hms;
 
-                my $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms. E toma aqui o seu voucher: $voucher."
+                my $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms. E toma aqui o seu voucher: $voucher.";
 
                 my $notification = {
                     type_id      => 2,
