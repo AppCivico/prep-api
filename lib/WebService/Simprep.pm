@@ -118,7 +118,7 @@ sub verify_voucher {
             retry {
                 my $url = $ENV{SIMPREP_API_URL} . '/recrutamento/' . $opts{voucher};
 
-                $res = $self->ua->get($url);
+                $res = $self->ua->get($url, 'X-API-KEY' => $ENV{SIMPREP_TOKEN});
                 die $res->decoded_content unless $res->is_success;
 
                 my $response = decode_json( $res->decoded_content );

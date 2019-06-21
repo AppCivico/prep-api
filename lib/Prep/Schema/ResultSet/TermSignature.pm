@@ -51,10 +51,23 @@ sub action_specs {
             #     die \['url', 'invalid'];
             # }
 
-            my $term_signature = $self->create(\%values);
+            my ($term_signature, $simprep_url);
+            $self->result_source->schema->txn_do(sub {
+                $term_signature = $self->create(\%values);
 
-            my $recipient   = $term_signature->recipient;
-            my $simprep_url = $recipient->register_simprep;
+                my $recipient = $term_signature->recipient;
+                $simprep_url  = $recipient->register_simprep;
+
+                # Caso a pessoa tenha assinado devo considerar que ela participa da pesquisa
+                # e o oposto caso não tenha assinado.
+                if ( $term_signature->signed == 1 ) {
+                    $recipient->recipient_flag->update( { is_part_of_research => 1 } );
+                }
+                else {
+                    $recipient->recipient_flag->update( { is_part_of_research => 0 } );
+                }
+
+            });
 
             return {
                 term_signature                => $term_signature,
