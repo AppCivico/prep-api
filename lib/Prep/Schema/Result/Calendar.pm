@@ -391,8 +391,8 @@ sub sync_appointments {
     my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
 
     $self->result_source->schema->txn_do( sub {
-        my $voucher;
         eval {
+            my $voucher;
             for my $appointment (@manual_appointments) {
                 my %fields = $appointment->{description} =~ /^(identificador)*\s*:\s*(\S+)/gm;
 
@@ -422,13 +422,7 @@ sub sync_appointments {
                 my $month = $appointment_ts->month;
                 my $hms   = $appointment_ts->hms;
 
-                my $text;
-                if (defined $voucher) {
-                    $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms. E toma aqui o seu voucher: $voucher."
-                }
-                else {
-                    $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms."
-                }
+                my $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms. E toma aqui o seu voucher: $voucher."
 
                 my $notification = {
                     type_id      => 2,
