@@ -1020,6 +1020,10 @@ sub appointment_description {
 sub assign_token {
     my ($self, $integration_token) = @_;
 
+    # Verificando se alguem já está com o token.
+    $self->result_source->schema->resultset('Recipient')->search( { integration_token => $integration_token } )->count
+      and die \['integration_token', 'in-use'];
+
     $self->result_source->schema->txn_do( sub {
         # Verificando se o token existe
         my $res = $self->_simprep->verify_voucher( voucher => $integration_token );
@@ -1131,7 +1135,7 @@ sub update_is_target_audience {
 sub is_target_audience {
     my ($self) = @_;
 
-    if ( !$self->recipient_flag->is_target_audience || $self->recipient_flag->is_target_audience == 1 ) {
+    if ( !$self->recipient_flag->is_target_audience ) {
         $self->update_is_target_audience();
     }
 
