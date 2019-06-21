@@ -152,7 +152,6 @@ sub action_specs {
 
                         my $is_eligible_for_research = $recipient->is_eligible_for_research;
 
-
                         %flags = $answer->flags;
                     }
                 }

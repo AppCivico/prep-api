@@ -1,6 +1,8 @@
 package Prep::Controller::Chatbot::Recipient::Answer;
 use Mojo::Base 'Prep::Controller';
 
+use Prep::Logger;
+
 sub post {
     my $c = shift;
 
