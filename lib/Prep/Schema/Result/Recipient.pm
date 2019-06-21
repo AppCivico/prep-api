@@ -1007,7 +1007,7 @@ sub appointment_description {
 
     # Adicionando flag e fb_id na descrição para identificar no sync
     $answers->[$i]     = { agendamento_chatbot => 1 };
-    $answers->[$i + 1] = { identificador       => $self->integration_token };
+    $answers->[$i + 1] = { voucher             => $self->integration_token };
 
     my $json = JSON->new->pretty(1);
     $answers = $json->encode( $answers );

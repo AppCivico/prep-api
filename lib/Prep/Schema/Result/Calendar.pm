@@ -394,9 +394,9 @@ sub sync_appointments {
         eval {
             my $voucher;
             for my $appointment (@manual_appointments) {
-                my %fields = $appointment->{description} =~ /^(identificador)*\s*:\s*(\S+)/gm;
+                my %fields = $appointment->{description} =~ /^(voucher)*\s*:\s*(\S+)/gm;
 
-                my $recipient = $self->result_source->schema->resultset('Recipient')->search( { integration_token => $fields{identificador} } )->next;
+                my $recipient = $self->result_source->schema->resultset('Recipient')->search( { integration_token => $fields{voucher} } )->next;
                 next unless $recipient;
 
                 $voucher = $recipient->integration_token;
