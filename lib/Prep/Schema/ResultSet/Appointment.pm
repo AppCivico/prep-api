@@ -132,11 +132,21 @@ sub action_specs {
             my $month = $appointment_ts->month;
             my $hms   = $appointment_ts->hms;
 
+            my $voucher = $recipient->integration_token;
+            my $text;
+
+            if (defined $voucher) {
+                $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms. E toma aqui o seu voucher: $voucher.";
+            }
+            else {
+                $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms.";
+            }
+
             my $notification = $notification_rs->create(
                 {
                     recipient_id => $appointment->recipient_id,
                     type_id      => 2,
-                    text         => "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms.",
+                    text         => $text,
                     wait_until   => $appointment->appointment_at->subtract( days => 2 )
                 }
             );
