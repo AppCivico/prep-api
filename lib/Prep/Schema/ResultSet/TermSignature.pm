@@ -56,15 +56,12 @@ sub action_specs {
                 $term_signature = $self->create(\%values);
 
                 my $recipient = $term_signature->recipient;
-                $simprep_url  = $recipient->register_simprep;
 
-                # Caso a pessoa tenha assinado devo considerar que ela participa da pesquisa
-                # e o oposto caso não tenha assinado.
-                if ( $term_signature->signed == 1 ) {
-                    $recipient->recipient_flag->update( { is_part_of_research => 1 } );
-                }
-                else {
-                    $recipient->recipient_flag->update( { is_part_of_research => 0 } );
+                if ( $recipient->recipient_flag->is_target_audience && $recipient->recipient_flag->is_eligible_for_research ) {
+                    $simprep_url  = $recipient->register_simprep;
+
+                    $recipient->recipient_flag->update( { is_part_of_research => 1 } ) if $term_signature->signed == 1;
+                    $recipient->recipient_flag->update( { is_part_of_research => 0 } ) if $term_signature->signed == 0;
                 }
 
             });
