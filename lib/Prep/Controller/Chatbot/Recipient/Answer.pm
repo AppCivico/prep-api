@@ -29,8 +29,6 @@ sub post {
     if ( $answer->{finished_quiz} == 1 && $c->req->params->to_hash->{category} eq 'screening' ) {
         $recipient->reset_screening;
     }
-    my $log = get_logger();
-    $log->debug('is_target_audience=' . $answer->{is_target_audience});
 
     return $c->render(
         status => 201,
