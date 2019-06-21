@@ -202,6 +202,7 @@ sub get_quota_info {
     my ($count, $time_in_secs);
     if ( $self->custom_quota_time ) {
         $time_in_secs = Time::Piece->strptime( $self->custom_quota_time, '%H:%M:%S' );
+        $time_in_secs = $time_in_secs->[9];
         $time_in_secs = ( $time_in_secs->min * 60 ) + $time_in_secs->sec;
 
         $count = $delta / $time_in_secs;
