@@ -153,13 +153,6 @@ sub action_specs {
                         my $is_eligible_for_research = $recipient->is_eligible_for_research;
 
                         %flags = $answer->flags;
-                        print STDERR "\nIS_TARGET_AUDIENCE=" . $flags{is_target_audience} . "\n";
-                        print STDOUT "\nIS_TARGET_AUDIENCE=" . $flags{is_target_audience} . "\n";
-                        say "\nIS_TARGET_AUDIENCE=" . $flags{is_target_audience} . "\n";
-                        print "\nIS_TARGET_AUDIENCE=" . $flags{is_target_audience} . "\n";
-                        use DDP;
-                        my $v = "\nIS_TARGET_AUDIENCE=" . $flags{is_target_audience} . "\n";
-                        p $v;
                     }
                 }
                 elsif ($question_map->category_id == 2) {
