@@ -1027,7 +1027,7 @@ sub assign_token {
     $self->result_source->schema->txn_do( sub {
         # Verificando se o token existe
         my $res = $self->_simprep->verify_voucher( voucher => $integration_token );
-        die \['integration_token', 'invalid'] unless defined $res;
+        die \['integration_token', 'invalid'] unless $res->{status} eq 'success';
 
         my @required_res = qw(is_prep is_part_of_research);
         defined $res->{data}->{$_} or die \["integration_res{$_}", 'missing'] for @required_res;
