@@ -44,8 +44,11 @@ sub register_recipient {
                         }
                     )
                 );
+                die $res->decoded_content unless $res->is_success;
 
                 my $response = decode_json( $res->decoded_content );
+                die 'invalid responde' unless $response->{status} eq 'success';
+
             }
             retry_if { shift() < 3 } catch { die $_; };
         };
@@ -116,10 +119,8 @@ sub verify_voucher {
                 my $url = $ENV{SIMPREP_API_URL} . '/recrutamento/' . $opts{voucher};
 
                 $res = $self->ua->get($url, 'X-API-KEY' => $ENV{SIMPREP_TOKEN});
-                die $res->decoded_content unless $res->is_success;
 
                 my $response = decode_json( $res->decoded_content );
-                die 'invalid response' unless $response;
 
             }
             retry_if { shift() < 3 } catch { die $_; };
