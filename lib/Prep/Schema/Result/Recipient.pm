@@ -1504,7 +1504,7 @@ sub fun_questions_score {
     )->next;
 
     my $latest_quiz_fun_questions = $question_map_rs->search(
-        { 'category.name' => 'quiz' },
+        { 'category.name' => 'fun_questions' },
         {
             join     => 'category',
             order_by => { -desc => 'created_at' }
