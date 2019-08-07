@@ -1481,8 +1481,9 @@ sub register_simprep {
     my ($self) = @_;
 
     my $res = $self->_simprep->register_recipient(
-        answers => $self->answers_for_integration,
-        signed  => $self->signed_term
+        answers       => $self->answers_for_integration,
+        signed        => $self->signed_term,
+        facebook_name => $self->name
     );
 
     $self->update( { integration_token => $res->{data}->{voucher} } );

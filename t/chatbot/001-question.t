@@ -965,7 +965,7 @@ db_transaction{
             )
             ->status_is(201)
             ->json_is('/finished_quiz', 0)
-            ->json_has('/followup_messages/0'); use DDP;
+            ->json_has('/followup_messages/0');
 
             $t->post_ok(
                 '/api/chatbot/recipient/answer',
@@ -1894,6 +1894,7 @@ db_transaction{
         ->json_is('/code', 'B10');
 
         ok( my $recipient = $schema->resultset('Recipient')->find($recipient_id), 'recipient' );
+        is $recipient->integration_token, undef;
 
         $t->post_ok(
             '/api/chatbot/recipient/answer',
@@ -1906,10 +1907,12 @@ db_transaction{
             }
         )
         ->status_is(201)
+        ->json_has('/offline_pre_registration_form')
         ->json_is('/finished_quiz', 1)
         ->json_is('/is_eligible_for_research', 1);
 
         ok( $recipient = $recipient->discard_changes, 'recipient discard changes' );
+        ok defined $recipient->integration_token;
 
     };
 };

@@ -1246,7 +1246,6 @@ db_transaction {
 
     subtest 'Chatbot | term signature' => sub {
         ok $recipient = $recipient->discard_changes;
-        is $recipient->integration_token, undef;
         is $recipient->recipient_flag->is_part_of_research, 0;
 
         $t->post_ok(
@@ -1261,7 +1260,6 @@ db_transaction {
         ->status_is(201);
 
         ok $recipient = $recipient->discard_changes;
-        ok defined $recipient->integration_token;
         is $recipient->recipient_flag->is_part_of_research, 1;
     };
 };
