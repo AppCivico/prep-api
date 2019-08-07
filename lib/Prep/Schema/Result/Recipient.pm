@@ -1027,7 +1027,7 @@ sub assign_token {
     $self->result_source->schema->txn_do( sub {
         # Verificando se o token existe
         my $res = $self->_simprep->verify_voucher( voucher => $integration_token );
-        die \['integration_token', 'invalid'] unless defined $res;
+        die \['integration_token', 'invalid'] unless $res->{status} eq 'success';
 
         my @required_res = qw(is_prep is_part_of_research);
         defined $res->{data}->{$_} or die \["integration_res{$_}", 'missing'] for @required_res;
@@ -1494,14 +1494,32 @@ sub register_simprep {
 sub fun_questions_score {
     my ($self) = @_;
 
-    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+    my $question_map_rs = $self->result_source->schema->resultset('QuestionMap');
+
+    my $latest_quiz     = $question_map_rs->search(
         { 'category.name' => 'quiz' },
         {
-            join => 'category',
+            join     => 'category',
             order_by => { -desc => 'created_at' }
         }
     )->next;
 
+    my $latest_quiz_fun_questions = $question_map_rs->search(
+        { 'category.name' => 'fun_questions' },
+        {
+            join     => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    my $fun_questions_answer_count = 0;
+    if ($latest_quiz_fun_questions) {
+        $fun_questions_answer_count = $self->answers->search(
+            { 'me.question_map_id' => $latest_quiz_fun_questions->id }
+        )->count;
+    }
+
+    my $question_map = $fun_questions_answer_count > 0 ? $latest_quiz_fun_questions : $latest_quiz;
     my @questions = qw( AC2 AC3 AC4 AC5 AC6 AC7 );
 
     my $answer_rs = $self->answers->search(
