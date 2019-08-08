@@ -41,7 +41,7 @@ sub register_recipient {
                         {
                             answers       => $opts{answers},
                             signed_TCLE   => $opts{signed},
-                            facebook_name => $opts{facebook_name}
+                            # facebook_name => $opts{facebook_name}
                         }
                     )
                 );
