@@ -152,7 +152,7 @@ sub action_specs {
 
                         my $is_eligible_for_research = $recipient->is_eligible_for_research;
 
-                        $simprep_url = $recipient->register_simprep if $answer->answer_value eq '1';
+                        $simprep_url = $recipient->register_simprep if $recipient->is_eligible_for_research == 1 && $answer->answer_value == 1;
                         %flags = $answer->flags;
                     }
                 }
