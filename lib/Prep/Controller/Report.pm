@@ -12,7 +12,7 @@ sub get {
         status => 200,
         json   => {
             count_all => {
-                label => 'quantas pessoas interagiram',
+                label => 'Quantas pessoas interagiram',
                 value => $report->count_all
             },
             count_target_audience => {
@@ -32,7 +32,7 @@ sub get {
                 value => $report->count_finished_quiz
             },
             count_created_appointment => {
-                label => 'Criaram consulta'
+                label => 'Criaram consulta',
                 value => $report->count_created_appointment
             },
         }
