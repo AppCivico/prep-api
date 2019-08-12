@@ -1962,7 +1962,7 @@ db_transaction{
             ->json_is('/is_eligible_for_research', 1);
 
             ok( $recipient = $recipient->discard_changes, 'recipient discard changes' );
-            is $recipient->integration_token, undef;
+            ok defined $recipient->integration_token;
         };
 
         $t->post_ok(

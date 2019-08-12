@@ -12,7 +12,6 @@ use JSON;
 db_transaction {
     # Criando question map
     $t->get_ok('/api/report')->status_is(200);
-    use DDP; p $t->tx->res->json;
 };
 
 done_testing();
