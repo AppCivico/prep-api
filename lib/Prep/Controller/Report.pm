@@ -6,7 +6,17 @@ use Prep::Utils;
 sub get {
     my $c = shift;
 
+    $c->validate_request_params(
+        security_token => {
+            type     => 'Str',
+            required => 1,
+        },
+    );
+
     my $report = $c->schema->resultset('ViewReport')->next;
+
+    my $security_token = $ENV{REPORT_SECURITY_TOKEN};
+    die \['security_token', 'invalid'] unless $c->req->params->to_hash->{security_token} eq $security_token;
 
     return $c->render(
         status => 200,
