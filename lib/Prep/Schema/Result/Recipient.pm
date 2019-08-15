@@ -1406,7 +1406,7 @@ sub answers_for_integration {
     )->next;
 
     # Removendo perguntas adicionadas por nós
-    my @questions_to_skip = qw(AC1 AC2 AC3 AC4 AC5 AC6 AC7 AC8 A4a A4b);
+    my @questions_to_skip = qw(AC1 AC2 AC3 AC4 AC5 AC6 AC7 AC8 AC9 A4a A4b);
 
     my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
     my $answers   = $answer_rs->search(
@@ -1481,8 +1481,9 @@ sub register_simprep {
     my ($self) = @_;
 
     my $res = $self->_simprep->register_recipient(
-        answers => $self->answers_for_integration,
-        signed  => $self->signed_term
+        answers       => $self->answers_for_integration,
+        signed        => $self->signed_term,
+        facebook_name => $self->name
     );
 
     $self->update( { integration_token => $res->{data}->{voucher} } );
