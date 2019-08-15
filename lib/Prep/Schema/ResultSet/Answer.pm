@@ -152,7 +152,7 @@ sub action_specs {
 
                         my $is_eligible_for_research = $recipient->is_eligible_for_research;
 
-                        $simprep_url = $recipient->register_simprep;
+                        $simprep_url = $recipient->register_simprep && $answer->question->code =~ /^(B10|AC9)$/;
                         %flags = $answer->flags;
                     }
                 }
