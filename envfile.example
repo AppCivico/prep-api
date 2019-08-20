@@ -9,3 +9,5 @@ export POSTGRESQL_USER=""
 export POSTGRESQL_PASSWORD=""
 
 export CHATBOT_SECURITY_TOKEN=""
+
+export REPORT_SECURITY_TOKEN="foobar"
