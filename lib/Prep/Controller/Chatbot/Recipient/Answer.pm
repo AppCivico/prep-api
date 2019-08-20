@@ -30,6 +30,15 @@ sub post {
         $recipient->reset_screening;
     }
 
+    if ( $answer->{integration_failed} ) {
+        return $c->render(
+            status => 400,
+            json   => {
+                error => 'integration_error'
+            }
+        );
+    }
+
     return $c->render(
         status => 201,
         json   => {
