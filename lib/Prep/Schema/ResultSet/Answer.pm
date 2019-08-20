@@ -104,6 +104,8 @@ sub action_specs {
 
             }
 
+            my $integration_failed = 0;
+
             my ($answer, $finished_quiz, %flags, @followup_messages, $simprep_url);
             $self->result_source->schema->txn_do( sub {
                 # Caso seja a última pergunta, devo atualizar o boolean de quiz preenchido do recipient
@@ -152,7 +154,9 @@ sub action_specs {
 
                         my $is_eligible_for_research = $recipient->is_eligible_for_research;
 
-                        $simprep_url = $recipient->register_simprep && $answer->question->code =~ /^(B10|AC9)$/;
+                        eval { $simprep_url = $recipient->register_simprep && $answer->question->code eq 'AC9' };
+                        $integration_failed = 1 if $@;
+
                         %flags = $answer->flags;
                     }
                 }
@@ -184,8 +188,10 @@ sub action_specs {
             });
 
             return {
-                answer        => $answer,
-                finished_quiz => $finished_quiz,
+                answer             => $answer,
+                finished_quiz      => $finished_quiz,
+                integration_failed => $integration_failed,
+
                 %flags,
 
                 (
