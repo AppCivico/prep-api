@@ -154,7 +154,7 @@ sub action_specs {
 
                         my $is_eligible_for_research = $recipient->is_eligible_for_research;
 
-                        eval { $simprep_url = $recipient->register_simprep && $answer->question->code eq 'AC9' };
+                        eval { $simprep_url = $recipient->register_simprep if $answer->question->code eq 'AC9' && $answer->answer_value eq '1' };
                         $integration_failed = 1 if $@;
 
                         %flags = $answer->flags;
