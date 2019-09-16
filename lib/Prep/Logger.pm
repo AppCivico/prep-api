@@ -6,6 +6,9 @@ use DateTime;
 use IO::Handle;
 use Log::Log4perl qw(:easy);
 use Prep::Utils qw(is_test);
+use Mojo::Util qw(monkey_patch);
+
+monkey_patch 'Log::Log4perl::Logger', context => sub { return $_[0] };
 
 my $test_is_folder;
 if (@ARGV) {
