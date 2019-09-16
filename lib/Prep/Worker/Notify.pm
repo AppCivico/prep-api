@@ -38,6 +38,7 @@ sub _queue_rs {
     return $self->schema->resultset('NotificationQueue')->search(
         {
             'me.sent_at' => \'IS NULL',
+            'me.err_msg' => \'IS NULL',
             '-or' => [
                 'me.wait_until' => \'IS NULL',
                 'me.wait_until' => { '<=' => \'NOW()' }
@@ -117,6 +118,7 @@ sub process_item {
 
     if ($@) {
         $self->logger->debug('Erro ao processar job job=' . $job->id . ", erro: $@");
+        $job->update( { err_msg => $@ } );
         return 0;
     }
     else {
