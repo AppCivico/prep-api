@@ -55,7 +55,9 @@ my %WriteMakefileArgs = (
     "Mojo::IOLoop" => 0,
     "Mojo::Pg" => 0,
     "Mojo::Promise" => 0,
+    "Mojo::Util" => 0,
     "Mojolicious::Plugin::Authorization" => 0,
+    "Mojolicious::Plugin::Log::Any" => 0,
     "Mojolicious::Plugin::Minion" => 0,
     "Mojolicious::Plugin::ParamLogger" => 0,
     "Moose" => 0,
@@ -85,15 +87,13 @@ my %WriteMakefileArgs = (
     "File::Spec" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
-    "Mojo::Util" => 0,
     "Test::Mojo" => 0,
     "Test::More" => 0,
-    "blib" => "1.01",
     "lib" => 0
   },
-  "VERSION" => 20190618,
+  "VERSION" => 20190916,
   "test" => {
-    "TESTS" => "t/*.t t/chatbot/*.t t/internal/*.t"
+    "TESTS" => "t/*.t t/chatbot/*.t t/internal/*.t t/report/*.t"
   }
 );
 
@@ -141,6 +141,7 @@ my %FallbackPrereqs = (
   "Mojo::Promise" => 0,
   "Mojo::Util" => 0,
   "Mojolicious::Plugin::Authorization" => 0,
+  "Mojolicious::Plugin::Log::Any" => 0,
   "Mojolicious::Plugin::Minion" => 0,
   "Mojolicious::Plugin::ParamLogger" => 0,
   "Moose" => 0,
@@ -161,7 +162,6 @@ my %FallbackPrereqs = (
   "Time::Piece" => 0,
   "Try::Tiny::Retry" => 0,
   "base" => 0,
-  "blib" => "1.01",
   "common::sense" => 0,
   "lib" => 0,
   "namespace::autoclean" => 0,
