@@ -38,4 +38,4 @@ RUN mkdir /etc/service/prep-notify
 COPY prep-notify.sh /etc/service/prep-notify/run
 
 RUN mkdir /etc/service/prep-sync-calendars
-COPY prep-notify.sh /etc/service/prep-sync-calendars/run
+COPY prep-sync-calendars.sh /etc/service/prep-sync-calendars/run
