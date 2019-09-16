@@ -133,88 +133,108 @@ sub get_info {
     }
     elsif ($name eq 'upcoming_appointment') {
         $text = 'Bafo!Tem uma consulta chegando';
-		$quick_replies = [
-			{
-				content_type => 'text',
-				title        => "Voltar para o início",
-				payload      => 'greetings'
-			}
-		];
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => "Voltar para o início",
+                payload      => 'greetings'
+            }
+        ];
     }
     elsif ($name eq 'fa_7_days') {
         $text = 'E ai, BB? Os humanos me informaram que você passou com o médico. Já começou a tomar os remédios?';
-		$quick_replies = [
-			{
-				content_type => 'text',
-				title        => 'Sim',
-				payload      => 'go_to_A'
-			},
-			{
-				content_type => 'text',
-				title        => 'Não',
-				payload      => 'go_to_D'
-			},
-		];
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'Sim',
+                payload      => 'go_to_A'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não',
+                payload      => 'go_to_D'
+            },
+        ];
     }
     elsif ($name eq 'fa_17_days') {
         $text = 'Oiii! Tô passando por aqui para saber de você! Tipo assim: se tá rolando de tomar os remédios, se tá lembrando direitinho, se não tá sentindo nada estranha ou se rolou alguma situação chata por causa da PrEP. E ai, tá tudo bem?';
         $quick_replies = [
             {
-				content_type => 'text',
-				title        => 'Sim, tá sucesso!',
-				payload      => 'yes'
-			},
-			{
-				content_type => 'text',
-				title        => 'Não! ☹',
-				payload      => 'followup'
-			},
+                content_type => 'text',
+                title        => 'Sim, tá sucesso!',
+                payload      => 'yes'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não! ☹',
+                payload      => 'followup'
+            },
         ];
     }
     elsif ($name eq 'ra_15_days') {
         $text = 'Olá Bee, tudo bem? Tô passando por aqui para saber algumas coisinhas sobre como está seu seguimento em PrEP. Posso te fazer umas perguntinhas?';
         $quick_replies = [
             {
-				content_type => 'text',
-				title        => 'Sim',
-				payload      => 'go_to_A'
-			},
-			{
-				content_type => 'text',
-				title        => 'Não',
-				payload      => 'mainMenu'
-			},
+                content_type => 'text',
+                title        => 'Sim',
+                payload      => 'go_to_A'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não',
+                payload      => 'mainMenu'
+            },
         ]
     }
     elsif ($name eq 'ra_45_days') {
         $text = 'Oiii! Tô passando por aqui para saber de você! Tipo assim: se tá rolando de tomar os remédios, se tá lembrando direitinho, se não tá sentindo nada estranha ou se rolou alguma situação chata por causa da PrEP. E ai, tá tudo bem?';
         $quick_replies = [
             {
-				content_type => 'text',
-				title        => 'Sim, tá sucesso!',
-				payload      => 'yes'
-			},
-			{
-				content_type => 'text',
-				title        => 'Não! ☹',
-				payload      => 'followup'
-			},
+                content_type => 'text',
+                title        => 'Sim, tá sucesso!',
+                payload      => 'yes'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não! ☹',
+                payload      => 'followup'
+            },
         ]
     }
     elsif ($name eq '3_month_ra_45_days') {
         $text = 'Oiii! Tô passando por aqui para saber de você! Tipo assim: se tá rolando de tomar os remédios, se tá lembrando direitinho, se não tá sentindo nada estranha ou se rolou alguma situação chata por causa da PrEP. E ai, tá tudo bem?';
-		$quick_replies = [
-			{
-				content_type => 'text',
-				title        => 'Sim, tá sucesso!',
-				payload      => 'yes'
-			},
-			{
-				content_type => 'text',
-				title        => 'Não! ☹',
-				payload      => 'followup'
-			},
-		]
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'Sim, tá sucesso!',
+                payload      => 'yes'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não! ☹',
+                payload      => 'followup'
+            },
+        ]
+    }
+    elsif ($name eq 'no_appointment_after_7_days_quiz') {
+        $text = 'Oi bee! ✌ Tás boua? Eu catei aki q tu se interessou pela pesquisa mas ñ conseguiu ou ñ quis agendar 1 encontro com a nossa ekipe 😐, mas vim aki de bunitahh 💅😎 te oferecer maneiras da gent continuar esse contatinho goxtosu, cata minhas opções de hj, lindee:';
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'Entrar em contato',
+                payload      => 'getContact'
+            },
+            {
+                content_type => 'text',
+                title        => 'Quero agendar',
+                payload      => 'showDays'
+            },
+            {
+                content_type => 'text',
+                title        => 'Fale comigo',
+                payload      => 'leavePhone'
+            }
+        ];
     }
     else {
         die 'missing dictionary for name=' . $name;
