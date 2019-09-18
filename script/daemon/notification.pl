@@ -13,15 +13,15 @@ use Prep::Worker::Notify;
 my $logger = get_logger();
 my $schema = get_schema( pg_advisory_lock => 1 );
 
-my $daemon = Prep::Worker::Notify->new( schema => $schema );
+my $daemon = Prep::Worker::Notify->new( schema => $schema, max_process => 1 );
 
 while (1) {
-	eval { $daemon->listen_queue; };
-	if ($@) {
-		print STDERR time . " - fatal error on $0: $@";
-		ON_TERM_EXIT;
-		EXIT_IF_ASKED;
-		sleep 5;
-	}
+    eval { $daemon->listen_queue; };
+    if ($@) {
+        print STDERR time . " - fatal error on $0: $@";
+        ON_TERM_EXIT;
+        EXIT_IF_ASKED;
+        sleep 5;
+    }
 }
 

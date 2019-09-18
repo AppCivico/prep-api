@@ -28,6 +28,18 @@ sub get {
                             label => 'Quantas pessoas interagiram',
                             value => $report->count_all
                         },
+                        count_started_quiz => {
+                            label => 'Começaram o quiz',
+                            value => $report->count_started_quiz
+                        },
+                        count_finished_quiz => {
+                            label => 'Terminaram o quiz',
+                            value => $report->count_finished_quiz
+                        },
+                        count_signed_term => {
+                            label => 'Assinaram o TCLE',
+                            value => $report->count_signed_term
+                        },
                         count_target_audience => {
                             label => 'Público de interesse',
                             value => $report->count_target_audience
@@ -35,14 +47,6 @@ sub get {
                         count_eligible_for_research => {
                             label => 'Elegíveis',
                             value => $report->count_eligible_for_research
-                        },
-                        count_signed_term => {
-                            label => 'Assinaram o TCLE',
-                            value => $report->count_signed_term
-                        },
-                        count_finished_quiz => {
-                            label => 'Terminaram o quiz',
-                            value => $report->count_finished_quiz
                         },
                         count_created_appointment => {
                             label => 'Criaram consulta',
@@ -56,6 +60,18 @@ sub get {
                             label => 'Quantas pessoas interagiram',
                             value => $report->count_all_sp
                         },
+                        count_started_quiz => {
+                            label => 'Começaram o quiz',
+                            value => $report->count_started_quiz_sp
+                        },
+                        count_finished_quiz => {
+                            label => 'Terminaram o quiz',
+                            value => $report->count_finished_quiz_sp
+                        },
+                        count_signed_term => {
+                            label => 'Assinaram o TCLE',
+                            value => $report->count_signed_term_sp
+                        },
                         count_target_audience => {
                             label => 'Público de interesse',
                             value => $report->count_target_audience_sp
@@ -63,14 +79,6 @@ sub get {
                         count_eligible_for_research => {
                             label => 'Elegíveis',
                             value => $report->count_eligible_for_research_sp
-                        },
-                        count_signed_term => {
-                            label => 'Assinaram o TCLE',
-                            value => $report->count_signed_term_sp
-                        },
-                        count_finished_quiz => {
-                            label => 'Terminaram o quiz',
-                            value => $report->count_finished_quiz_sp
                         },
                         count_created_appointment => {
                             label => 'Criaram consulta',
@@ -84,6 +92,18 @@ sub get {
                             label => 'Quantas pessoas interagiram',
                             value => $report->count_all_bh
                         },
+                        count_started_quiz => {
+                            label => 'Começaram o quiz',
+                            value => $report->count_started_quiz_bh
+                        },
+                        count_finished_quiz => {
+                            label => 'Terminaram o quiz',
+                            value => $report->count_finished_quiz_bh
+                        },
+                        count_signed_term => {
+                            label => 'Assinaram o TCLE',
+                            value => $report->count_signed_term_bh
+                        },
                         count_target_audience => {
                             label => 'Público de interesse',
                             value => $report->count_target_audience_bh
@@ -92,48 +112,44 @@ sub get {
                             label => 'Elegíveis',
                             value => $report->count_eligible_for_research_bh
                         },
-                        count_signed_term => {
-                            label => 'Assinaram o TCLE',
-                            value => $report->count_signed_term_bh
-                        },
-                        count_finished_quiz => {
-                            label => 'Terminaram o quiz',
-                            value => $report->count_finished_quiz_bh
-                        },
                         count_created_appointment => {
                             label => 'Criaram consulta',
                             value => $report->count_created_appointment_bh
                         },
                     }
                 },
-				{
-					'Salvador' => {
-						count_all => {
-							label => 'Quantas pessoas interagiram',
-							value => $report->count_all_s
-						},
-						count_target_audience => {
-							label => 'Público de interesse',
-							value => $report->count_target_audience_s
-						},
-						count_eligible_for_research => {
-							label => 'Elegíveis',
-							value => $report->count_eligible_for_research_s
-						},
-						count_signed_term => {
-							label => 'Assinaram o TCLE',
-							value => $report->count_signed_term_s
-						},
-						count_finished_quiz => {
-							label => 'Terminaram o quiz',
-							value => $report->count_finished_quiz_s
-						},
-						count_created_appointment => {
-							label => 'Criaram consulta',
-							value => $report->count_created_appointment_s
-						},
-					}
-				}
+                {
+                    'Salvador' => {
+                        count_all => {
+                            label => 'Quantas pessoas interagiram',
+                            value => $report->count_all_s
+                        },
+                        count_started_quiz => {
+                            label => 'Começaram o quiz',
+                            value => $report->count_started_quiz_sp
+                        },
+                        count_finished_quiz => {
+                            label => 'Terminaram o quiz',
+                            value => $report->count_finished_quiz_s
+                        },
+                        count_signed_term => {
+                            label => 'Assinaram o TCLE',
+                            value => $report->count_signed_term_s
+                        },
+                        count_target_audience => {
+                            label => 'Público de interesse',
+                            value => $report->count_target_audience_s
+                        },
+                        count_eligible_for_research => {
+                            label => 'Elegíveis',
+                            value => $report->count_eligible_for_research_s
+                        },
+                        count_created_appointment => {
+                            label => 'Criaram consulta',
+                            value => $report->count_created_appointment_s
+                        },
+                    }
+                }
             ]
         }
     )

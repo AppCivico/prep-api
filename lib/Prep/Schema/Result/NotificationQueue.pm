@@ -178,8 +178,6 @@ use WebService::Facebook;
 sub send {
     my ($self) = @_;
 
-    $self = $self->discard_changes;
-
     my $facebook = WebService::Facebook->instance;
     my $config   = $self->result_source->schema->resultset('Config')->search( { key => 'ACCESS_TOKEN' } )->next;
 

@@ -158,6 +158,16 @@ sub action_specs {
                         $integration_failed = 1 if $@;
 
                         %flags = $answer->flags;
+
+                        # Crio uma notificação para atender esse caso: https://trello.com/c/75oiZ3Tn/145-enviar-notifica%C3%A7%C3%B5es-para-pessoas-que-clicaram-em-sim-na-pergunta-23-quer-saber-mais-sobre-a-pesquisa-mas-que-n%C3%A3o-possuem-nenhum
+                        # E no post do appointment, eu verifico se a pessoa possui essa notificação pendente.
+                        $answer->discard_changes;
+                        $recipient->notification_queues->create(
+                            {
+                                type_id    => 8,
+                                wait_until => $answer->created_at->add( days => 7 )
+                            }
+                        );
                     }
                 }
                 elsif ($question_map->category_id == 2) {
