@@ -26,7 +26,7 @@ WITH recipient_without_team AS (
         *
     FROM recipient
     WHERE
-    id NOT IN(7, 26, 57, 3, 55, 17, 12, 13, 4, 1, 18, 16, 20)
+    id NOT IN (7, 57, 3, 55, 17, 12, 13, 4, 1, 18, 16, 20, 22, 10, 9,15, 14, 70, 30)
 )
 SELECT
     -- GENERAL
