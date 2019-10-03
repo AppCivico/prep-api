@@ -125,28 +125,7 @@ sub action_specs {
 
                     if ( defined $pending_question_data->{question} ) {
 
-                        if ( $next_question->{code} eq 'A2' ) {
-
-                            if ($answer->answer_value =~ /^(15|16|17|18|19)$/) {
-                                $finished_quiz = 0;
-                            }
-                            else {
-                                $finished_quiz = 1;
-                            }
-                        }
-                        elsif ( $next_question->{code} eq 'A1' ) {
-
-                            if ($answer->answer_value =~ /^(1|2|3)$/) {
-                                $finished_quiz = 0;
-                            }
-                            else {
-                                $finished_quiz = 1;
-                            }
-                        }
-                        else {
-                            $finished_quiz = 0;
-
-                        }
+                        $finished_quiz = 0;
                     }
                     else {
                         $recipient->recipient_flag->update( { finished_quiz => 1 } );

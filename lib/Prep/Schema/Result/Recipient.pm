@@ -938,18 +938,19 @@ sub is_eligible_for_research {
 sub update_is_eligible_for_research {
     my ($self) = @_;
 
-    if ( !$self->is_target_audience ) {
-        return $self->recipient_flag->update(
-            {
-                is_eligible_for_research => 0,
-                updated_at               => \'NOW()'
-            }
-        )
-    }
+    # if ( !$self->is_target_audience ) {
+    #     return $self->recipient_flag->update(
+    #         {
+    #             is_eligible_for_research => 0,
+    #             updated_at               => \'NOW()'
+    #         }
+    #     )
+    # }
 
-    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9' ] } }, { prefetch => 'question' } );
+    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'A1', 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9' ] } }, { prefetch => 'question' } );
 
     my $conditions_met = 0;
+    my $city_condition = 0;
     while ( my $answer = $answer_rs->next() ) {
         my $code = $answer->question->code;
 
@@ -957,16 +958,19 @@ sub update_is_eligible_for_research {
 
             $conditions_met = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
         }
+        elsif ($code eq 'A1') {
+            $city_condition = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
+        }
         else {
             $conditions_met = 1 if $answer->answer_value eq '1';
         }
 
-        next if $conditions_met == 1;
+        next if $conditions_met == 1 || $city_condition == 1;
     }
 
     $self->recipient_flag->update(
         {
-            is_eligible_for_research => $conditions_met ? 1 : 0,
+            is_eligible_for_research => $conditions_met && $city_condition ? 1 : 0,
             updated_at               => \'NOW()'
         }
     )
@@ -1096,7 +1100,7 @@ sub update_is_target_audience {
 
     my $answer_rs = $self->answers->search(
         {
-            'question.code'      => { -in => ['A2', 'A6', 'A1', 'A3'] },
+            'question.code'      => { -in => ['A2', 'A6','A3'] },
             'me.question_map_id' => $question_map->id
         },
         { join => 'question' }
@@ -1116,9 +1120,6 @@ sub update_is_target_audience {
         }
         elsif ( $code eq 'A3' ) {
             $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
-        }
-        elsif ( $code eq 'A1' ) {
-            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
         }
 
         last if $is_target_audience == 0;
