@@ -59,122 +59,142 @@ sub get {
                             label         => 'Criaram consulta',
                             value         => $report->count_created_appointment
                         },
+                        count_answered_last_question => {
+                            display_order => 8,
+                            label         => 'Responderam a última pergunta do quiz',
+                            value         => $report->count_answered_last_question
+                        },
                     }
                 },
                 {
                     'São Paulo' => {
                         count_all => {
-                            display_order => 8,
+                            display_order => 9,
                             label         => 'Quantas pessoas interagiram',
                             value         => $report->count_all_sp
                         },
                         count_started_quiz => {
-                            display_order => 9,
+                            display_order => 10,
                             label         => 'Começaram o quiz',
                             value         => $report->count_started_quiz_sp
                         },
                         count_finished_quiz => {
-                            display_order => 10,
+                            display_order => 11,
                             label         => 'Terminaram o quiz',
                             value         => $report->count_finished_quiz_sp
                         },
                         count_signed_term => {
-                            display_order => 11,
+                            display_order => 12,
                             label         => 'Assinaram o TCLE',
                             value         => $report->count_signed_term_sp
                         },
                         count_target_audience => {
-                            display_order => 12,
+                            display_order => 13,
                             label         => 'Público de interesse',
                             value         => $report->count_target_audience_sp
                         },
                         count_eligible_for_research => {
-                            display_order => 13,
+                            display_order => 14,
                             label         => 'Elegíveis',
                             value         => $report->count_eligible_for_research_sp
                         },
                         count_created_appointment => {
-                            display_order => 14,
+                            display_order => 15,
                             label         => 'Criaram consulta',
                             value         => $report->count_created_appointment_sp
+                        },
+                        count_answered_last_question => {
+                            display_order => 16,
+                            label         => 'Responderam a última pergunta do quiz',
+                            value         => $report->count_answered_last_question_sp
                         },
                     }
                 },
                 {
                     'Belo Horizonte' => {
                         count_all => {
-                            display_order => 15,
+                            display_order => 17,
                             label         => 'Quantas pessoas interagiram',
                             value         => $report->count_all_bh
                         },
                         count_started_quiz => {
-                            display_order => 16,
+                            display_order => 18,
                             label         => 'Começaram o quiz',
                             value         => $report->count_started_quiz_bh
                         },
                         count_finished_quiz => {
-                            display_order => 17,
+                            display_order => 19,
                             label         => 'Terminaram o quiz',
                             value         => $report->count_finished_quiz_bh
                         },
                         count_signed_term => {
-                            display_order => 18,
+                            display_order => 20,
                             label         => 'Assinaram o TCLE',
                             value         => $report->count_signed_term_bh
                         },
                         count_target_audience => {
-                            display_order => 19,
+                            display_order => 21,
                             label         => 'Público de interesse',
                             value         => $report->count_target_audience_bh
                         },
                         count_eligible_for_research => {
-                            display_order => 20,
+                            display_order => 22,
                             label         => 'Elegíveis',
                             value         => $report->count_eligible_for_research_bh
                         },
                         count_created_appointment => {
-                            display_order => 21,
+                            display_order => 23,
                             label         => 'Criaram consulta',
                             value         => $report->count_created_appointment_bh
+                        },
+                        count_answered_last_question => {
+                            display_order => 24,
+                            label         => 'Responderam a última pergunta do quiz',
+                            value         => $report->count_answered_last_question_bh
                         },
                     }
                 },
                 {
                     'Salvador' => {
                         count_all => {
-                            display_order => 22,
+                            display_order => 25,
                             label         => 'Quantas pessoas interagiram',
                             value         => $report->count_all_s
                         },
                         count_started_quiz => {
-                            display_order => 23,
+                            display_order => 26,
                             label         => 'Começaram o quiz',
-                            value         => $report->count_started_quiz_sp
+                            value         => $report->count_started_quiz_s
                         },
                         count_finished_quiz => {
-                            display_order => 24,
+                            display_order => 27,
                             label         => 'Terminaram o quiz',
                             value         => $report->count_finished_quiz_s
                         },
                         count_signed_term => {
-                            display_order => 25,
+                            display_order => 28,
                             label         => 'Assinaram o TCLE',
                             value         => $report->count_signed_term_s
                         },
                         count_target_audience => {
-                            display_order => 26,
+                            display_order => 29,
                             label         => 'Público de interesse',
                             value         => $report->count_target_audience_s
                         },
                         count_eligible_for_research => {
-                            display_order => 27,
+                            display_order => 30,
                             label         => 'Elegíveis',
                             value         => $report->count_eligible_for_research_s
                         },
                         count_created_appointment => {
-                            display_order => 28,
+                            display_order => 31,
                             label         => 'Criaram consulta',
                             value         => $report->count_created_appointment_s
+                        },
+                        count_answered_last_question => {
+                            display_order => 32,
+                            label         => 'Responderam a última pergunta do quiz',
+                            value         => $report->count_answered_last_question_s
                         },
                     }
                 }
