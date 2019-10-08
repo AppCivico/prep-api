@@ -1415,7 +1415,7 @@ sub answers_for_integration {
         { join => 'question' }
     );
 
-    my @yes_no_questions = qw( A6 B4 B5 B6 B8 B9 B10 );
+    my @yes_no_questions = qw( A6.1 A6.2 B4 B5 B6 B8 B9 B10 );
     $answers = [
         map {
             my $a = $_;
@@ -1455,6 +1455,13 @@ sub answers_for_integration {
                     die 'error at Result::Recipient::answers_for_integration';
                 }
             }
+
+			# Caso seja a A6 e A6a mudo para A6.1 e A6.2
+			if ( $question_code eq 'A6' ) {
+				$question_code = 'A6.1';
+			}elsif ( $question_code eq 'A6a' ) {
+				$question_code = 'A6.2';
+			} else { }
 
             # Questões de sim/não devem ser enviadas como 1 ou 0
             if ( grep { $question_code eq $_ } @yes_no_questions ) {
