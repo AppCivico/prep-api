@@ -37,7 +37,7 @@ SELECT
     ( SELECT count(1) FROM recipient_with_flags r WHERE r.is_eligible_for_research = true ) AS count_eligible_for_research,
     ( SELECT count(1) FROM recipient_with_flags r WHERE r.signed_term = true ) AS count_signed_term,
     ( SELECT count(1) FROM recipient_with_flags r WHERE r.finished_quiz = true ) AS count_finished_quiz,
-    ( SELECT count(1) FROM (SELECT DISTINCT recipient_id FROM appointment) a ) AS count_created_appointment,
+    ( SELECT count(1) FROM (SELECT DISTINCT aa.recipient_id FROM appointment aa, recipient_with_flags rr WHERE aa.recipient_id = rr.id) a ) AS count_created_appointment,
     ( SELECT count(1) FROM recipient_with_flags r WHERE EXISTS (SELECT 1 FROM answer a, question q WHERE a.recipient_id = r.id AND q.id = a.question_id AND q.code = 'AC9' ) ) AS count_answered_last_question,
 
     --- SP
