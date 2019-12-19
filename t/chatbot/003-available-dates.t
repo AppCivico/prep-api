@@ -102,6 +102,8 @@ db_transaction {
 
         $recipient_id = $t->tx->res->json->{id};
         $recipient    = $schema->resultset('Recipient')->find($recipient_id);
+
+        ok $recipient->recipient_flag->update( { is_eligible_for_research => 1 } );
     };
 
     subtest 'Chatbot | Get available dates' => sub {

@@ -1125,10 +1125,6 @@ sub update_is_target_audience {
         last if $is_target_audience == 0;
     }
 
-    if ($is_target_audience == 1 && $answer_rs->count != 4) {
-        $is_target_audience = undef;
-    }
-
     $self->recipient_flag->update(
         {
             is_target_audience => $is_target_audience,
