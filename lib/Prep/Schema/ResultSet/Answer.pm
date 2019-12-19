@@ -126,7 +126,7 @@ sub action_specs {
                     # Caso seja a reposta das perguntas "A6" ou "A6a", valido a flag de target_audience.
                     # Caso seja false, o quiz é finalizado.
                     if ( $answer->question->code eq 'A6a' && !$recipient->is_target_audience ) {
-                        $pending_question_data = undef
+                        $pending_question_data = undef;
                         %flags = $answer->flags;
                         $answer->stash->update( { finished => 1 } );
                     }
