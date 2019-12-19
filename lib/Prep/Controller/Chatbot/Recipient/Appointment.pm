@@ -18,6 +18,8 @@ sub post {
 
     my $recipient = $c->stash('recipient');
 
+    die \['recipient', 'not-eligible'] unless $recipient->is_eligible_for_research == 1;
+
     my $appointment = $recipient->appointments->execute(
         $c,
         for  => 'create',

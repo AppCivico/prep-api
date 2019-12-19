@@ -1100,7 +1100,7 @@ sub update_is_target_audience {
 
     my $answer_rs = $self->answers->search(
         {
-            'question.code'      => { -in => ['A2', 'A6','A3'] },
+            'question.code'      => { -in => ['A1', 'A2', 'A6','A3'] },
             'me.question_map_id' => $question_map->id
         },
         { join => 'question' }
@@ -1112,7 +1112,10 @@ sub update_is_target_audience {
 
         my $code = $answer->question->code;
 
-        if ( $code eq 'A2' ) {
+        if ( $code eq 'A1' ) {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
+        }
+        elsif ( $code eq 'A2' ) {
             $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
         }
         elsif ( $code eq 'A6' ) {
@@ -1123,10 +1126,6 @@ sub update_is_target_audience {
         }
 
         last if $is_target_audience == 0;
-    }
-
-    if ($is_target_audience == 1 && $answer_rs->count != 4) {
-        $is_target_audience = undef;
     }
 
     $self->recipient_flag->update(

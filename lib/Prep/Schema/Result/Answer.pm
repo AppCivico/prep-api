@@ -341,5 +341,11 @@ sub followup_messages {
     return @messages;
 }
 
+sub stash {
+    my $self = shift;
+
+    return $self->recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
