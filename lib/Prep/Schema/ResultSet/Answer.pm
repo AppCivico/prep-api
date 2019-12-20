@@ -154,7 +154,7 @@ sub action_specs {
                                 type_id    => 8,
                                 wait_until => $answer->created_at->add( days => 7 )
                             }
-                        ) if $recipient->is_target_audience;
+                        ) if $recipient->is_eligible_for_research;
                     }
                 }
                 elsif ($question_map->category_id == 2) {
