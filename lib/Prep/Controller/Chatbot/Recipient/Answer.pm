@@ -54,7 +54,8 @@ sub post {
             ( exists $answer->{suggest_wait_for_test}         ? ( suggest_wait_for_test => $answer->{suggest_wait_for_test} ) : () ),
             ( exists $answer->{go_to_test}                    ? ( go_to_test => $answer->{go_to_test} ) : () ),
             ( exists $answer->{followup_messages}             ? ( followup_messages => $answer->{followup_messages} ) : () ),
-            ( exists $answer->{offline_pre_registration_form} ? ( offline_pre_registration_form => $answer->{offline_pre_registration_form} ) : () )
+            ( exists $answer->{offline_pre_registration_form} ? ( offline_pre_registration_form => $answer->{offline_pre_registration_form} ) : () ),
+            ( exists $answer->{risk_group}                    ? ( risk_group => $answer->{risk_group} ) : () )
         }
     )
 }

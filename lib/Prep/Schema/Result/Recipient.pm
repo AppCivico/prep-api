@@ -1091,7 +1091,7 @@ sub update_is_target_audience {
     my ($self) = @_;
 
     my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
-        { 'category.name' => 'quiz' },
+        { 'category.name' => 'publico_interesse' },
         {
             join => 'category',
             order_by => { -desc => 'created_at' }
@@ -1134,6 +1134,71 @@ sub update_is_target_audience {
             updated_at         => \'NOW()'
         }
     );
+}
+
+sub risk_group {
+    my $self = shift;
+
+    if ( !$self->recipient_flag->risk_group ) {
+        $self->update_risk_group();
+    }
+
+    return $self->recipient_flag->risk_group;
+}
+
+sub update_risk_group {
+    my $self = shift;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'publico_interesse' },
+        {
+            join => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    my $answer = $self->answers->search(
+        {
+            'question.code'      => 'A6',
+            'me.question_map_id' => $question_map->id
+        },
+        { join => 'question' }
+    )->next;
+
+    if ($answer) {
+        my $risk_group;
+
+        if ($answer->answer_value == 1) {
+            # Procurando pela resposta da A6a
+
+            my $next_answer = $self->answers->search(
+                {
+                    'question.code'      => 'A6a',
+                    'me.question_map_id' => $question_map->id
+                },
+                { join => 'question' }
+            )->next;
+
+            if ($next_answer->answer_value == 1) {
+                $risk_group = 1;
+            }
+            else {
+                $risk_group = 0;
+            }
+        }
+        else {
+            $risk_group = 0;
+        }
+
+        $self->recipient_flag->update(
+            {
+                risk_group => $risk_group,
+                updated_at => \'NOW()'
+            }
+        );
+    }
+
+    return 1;
 }
 
 sub is_target_audience {
@@ -1288,7 +1353,7 @@ sub stash_by_category {
 sub all_flags {
     my ($self) = @_;
 
-    my @flags = qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz );
+    my @flags = qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz risk_group );
 
     return
         map {

@@ -92,6 +92,11 @@ __PACKAGE__->table("recipient_flags");
   data_type: 'timestamp'
   is_nullable: 1
 
+=head2 risk_group
+
+  data_type: 'boolean'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -113,6 +118,8 @@ __PACKAGE__->add_columns(
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "prep_since",
   { data_type => "timestamp", is_nullable => 1 },
+  "risk_group",
+  { data_type => "boolean", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -145,8 +152,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-04-03 16:11:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ILrFfWRGec2lGUAUIRaChQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-01-23 15:45:16
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:uRq83hzisTHM7mLg5PxU5A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

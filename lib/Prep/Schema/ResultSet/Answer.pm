@@ -45,7 +45,8 @@ sub verifiers_specs {
                     post_check => sub {
                         my $category = $_[0]->get_value('category');
 
-                        die \['category', 'invalid'] unless $category =~ m/(quiz|screening|fun_questions)/;
+                        $self->result_source->schema->resultset('Category')->search( { name => $category } )->count == 1
+                          or die \['category', 'invalid'];
                     }
                 }
             }
@@ -172,12 +173,18 @@ sub action_specs {
                     }
                 }
                 else {
+                    if ( $answer->question->code eq 'A1' ) {
+                        $recipient->update( { city => $answer->answer_value } );
+                    }
+
                     $pending_question_data = $recipient->get_next_question_data($category);
 
                     if ( defined $pending_question_data->{question} ) {
                         $finished_quiz = 0;
                     }
                     else {
+                        %flags = $answer->flags;
+
                         $finished_quiz = 1;
                     }
                 }
