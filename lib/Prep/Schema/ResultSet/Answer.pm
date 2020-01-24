@@ -185,6 +185,17 @@ sub action_specs {
                     else {
                         %flags = $answer->flags;
 
+                        if ( $answer->question_map->category->name eq 'recrutamento' && $recipient->recipient_flag->is_eligible_for_research == 1 ) {
+                            $answer->discard_changes;
+                            $recipient->notification_queues->create(
+                                {
+                                    type_id    => 8,
+                                    wait_until => $answer->created_at->add( days => 7 )
+                                }
+                            )
+                        }
+
+                        $recipient->recipient_flag->update( { finished_quiz => 1 } );
                         $finished_quiz = 1;
                     }
                 }

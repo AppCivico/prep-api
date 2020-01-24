@@ -965,12 +965,12 @@ sub update_is_eligible_for_research {
             $conditions_met = 1 if $answer->answer_value eq '1';
         }
 
-        next if $conditions_met == 1 || $city_condition == 1;
+        last if $conditions_met == 1;
     }
 
     $self->recipient_flag->update(
         {
-            is_eligible_for_research => $conditions_met && $city_condition ? 1 : 0,
+            is_eligible_for_research => $conditions_met ? 1 : 0,
             updated_at               => \'NOW()'
         }
     )

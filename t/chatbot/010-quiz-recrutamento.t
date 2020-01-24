@@ -18,17 +18,18 @@ db_transaction {
             my $question_map = $schema->resultset('QuestionMap')->create(
                 {
                     map => to_json({
-                        1 => 'A1',
-                        2 => 'A2',
-                        3 => 'A3',
-                        4 => 'A4',
-                        5 => 'A4a',
-                        6 => 'A4b',
-                        7 => 'A5',
-                        8 => 'A6',
-                        9 => 'A6a'
+                        1  => "B1",
+                        2  => "B2",
+                        3  => "B3",
+                        4  => "B4",
+                        5  => "B5",
+                        6  => "B6",
+                        7  => "B7",
+                        8  => "B8",
+                        9  => "B9",
+                        10 => "B10"
                     }),
-                    category_id => 3
+                    category_id => 4
                 }
             ),
             'question map created'
@@ -38,160 +39,192 @@ db_transaction {
         ok(
             $question_rs->create(
                 {
-                    code              => 'A1',
+                    code              => 'B1',
                     text              => 'Foobar?',
                     type              => 'multiple_choice',
                     question_map_id   => $question_map->id,
                     is_differentiator => 0,
-                    multiple_choices  => to_json ({ 1 => 'foo', 2 => 'bar', 3 => 'FOOBAR', 4 => 'foobar' })
-                }
-            ),
-            'A1 created'
-        );
-
-        ok(
-            $question_rs->create(
-                {
-                    code              => 'A2',
-                    text              => 'open_text?',
-                    type              => 'open_text',
-                    question_map_id   => $question_map->id,
-                    is_differentiator => 0,
-                    rules             => '{
-                        "logic_jumps": [],
-                        "qualification_conditions": [15, 16, 17, 18, 19],
-                        "flags": [ "is_target_audience" ]
+                    multiple_choices  => '{
+                        "1": "Sim, mais de 1",
+                        "2": "Sim, apenas 1",
+                        "3": "Não"
+                    }',
+                    rules => '{
+                        "logic_jumps" : [
+                            {
+                                "code"   : "B2",
+                                "values" : [1, 2]
+                            }
+                        ],
+                        "qualification_conditions" : []
                     }'
                 }
             ),
-            'A2 created'
+            'B1 created'
         );
 
         ok(
             $question_rs->create(
                 {
-                    code              => 'A3',
-                    text              => 'Você gosta?',
+                    code              => 'B2',
+                    text              => 'Foobar?',
                     type              => 'multiple_choice',
                     question_map_id   => $question_map->id,
-                    is_differentiator => 1,
-                    multiple_choices  => to_json (
-                        {
-                            1 => 'Sim',
-                            2 => 'Não',
-                            3 => 'FOOBAR',
-                            4 => 'barvaz',
-                            5 => 'foo',
-                            6 => 'bar',
-                            7 => 'foobar',
-                            8 => 'quz'
-                        }
-                    ),
-                    rules => '{
-                        "logic_jumps": [],
-                        "qualification_conditions": [1, 4, 5, 6, 7],
-                        "flags": [ "is_target_audience" ]
-                    }'
+                    is_differentiator => 0,
+                    multiple_choices  => '{
+                        "1": "Sim, é positivo",
+                        "2": "Sim, é negativo",
+                        "3": "Ele nunca se testou",
+                        "4": "Não sei"
+                    }',
                 }
             ),
-            'A3 created'
+            'B2 created'
         );
 
         ok(
             $question_rs->create(
                 {
-                    code              => 'A4',
+                    code              => 'B3',
+                    text              => 'Você gosta?',
+                    type              => 'open_text',
+                    question_map_id   => $question_map->id,
+                    is_differentiator => 1,
+                    rules => '{
+                        "logic_jumps" : [
+                            {
+                                "code"   : "B4",
+                                "values" : {
+                                    "operator" : ">",
+                                    "value"    : "0"
+                                }
+                            }
+                        ],
+                        "qualification_conditions" : []
+                    }'
+                }
+            ),
+            'B3 created'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code              => 'B4',
                     text              => 'barbaz?',
                     type              => 'multiple_choice',
                     question_map_id   => $question_map->id,
                     is_differentiator => 0,
-                    multiple_choices  => to_json ({ 1 => 'Sim', 2 => 'Nunca', 3 => 'Regularmente' }),
-                    rules             => '{
-                        "logic_jumps": [
-                        {
-                            "code": "A4a",
-                            "values": [1]
-                        },
-                        {
-                            "code": "A4b",
-                            "values": [2]
-                        }
+                    multiple_choices  => '{
+                        "1": "Sim",
+                        "2": "Não"
+                    }',
+                    rules  => '{
+                        "logic_jumps" : [
+                            {
+                                "code"   : "B5",
+                                "values" : ["1"]
+                            }
                         ],
-                        "qualification_conditions": [],
-                        "flags": []
+                        "qualification_conditions" : []
                     }'
                 }
             ),
-            'A4 created'
+            'B4 created'
         );
 
         ok(
             $question_rs->create(
                 {
-                    code                => 'A4a',
+                    code                => 'B5',
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
                     question_map_id     => $question_map->id,
                     is_differentiator   => 0,
                     multiple_choices    => '{
-                        "1": "1º ano E.Fundamental",
-                        "2": "2º ano E.Fundamental",
-                        "3": "3º ano E.Fundamental",
-                        "4": "4º ano E.Fundamental",
-                        "5": "5º ano E.Fundamental",
-                        "6": "6º ano E.Fundamental",
-                        "7": "7º ano E.Fundamental",
-                        "8": "8º ano E.Fundamental",
-                        "9": "9º ano E.Fundamental"
+                        "1": "Sim",
+                        "2": "Não"
                     }',
                 }
             ),
-            'A4a created'
+            'B5 created'
         );
 
         ok(
             $question_rs->create(
                 {
-                    code                => 'A4b',
+                    code                => 'B6',
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
                     question_map_id     => $question_map->id,
                     is_differentiator   => 0,
                     multiple_choices    => '{
-                        "1": "1º ano E.Médio",
-                        "2": "2º ano E.Médio",
-                        "3": "3º ano E.Médio"
+                        "1": "Sim",
+                        "2": "Não"
                     }',
                 }
             ),
-            'A4b created'
+            'B6 created'
         );
 
 
         ok(
             $question_rs->create(
                 {
-                    code                => 'A5',
+                    code                => 'B7',
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
                     question_map_id     => $question_map->id,
                     is_differentiator   => 0,
                     multiple_choices    => '{
-                        "1": "Branca",
-                        "2": "Preta",
-                        "3": "Amarela",
-                        "4": "Parda",
-                        "5": "Indígena"
+                        "1": "Uma vez",
+                        "2": "De 2 a 4 vezes",
+                        "3": "5 vezes ou mais",
+                        "4": "Nenhuma vez"
                     }',
                 }
             ),
-            'A5 created'
+            'B7 created'
         );
 
         ok(
             $question_rs->create(
                 {
-                    code                => 'A6',
+                    code                => 'B8',
+                    text                => 'barbaz?',
+                    type                => 'multiple_choice',
+                    question_map_id     => $question_map->id,
+                    is_differentiator   => 0,
+                    multiple_choices    => '{
+                        "1": "Sim",
+                        "2": "Não"
+                    }',
+                }
+            ),
+            'B8 created'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code                => 'B9',
+                    text                => 'barbaz?',
+                    type                => 'multiple_choice',
+                    question_map_id     => $question_map->id,
+                    is_differentiator   => 0,
+                    multiple_choices    => '{
+                        "1": "Sim",
+                        "2": "Não"
+                    }',
+                }
+            ),
+            'B9 created'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code                => 'B10',
                     text                => 'barbaz?',
                     type                => 'multiple_choice',
                     question_map_id     => $question_map->id,
@@ -202,34 +235,12 @@ db_transaction {
                     }',
                     rules => '{
                         "logic_jumps": [ ],
-                        "qualification_conditions": [1],
-                        "flags": [ "is_target_audience" ]
-                    }'
-                }
-            ),
-            'A6 created'
-        );
-
-        ok(
-            $question_rs->create(
-                {
-                    code                => 'A6a',
-                    text                => 'barbaz?',
-                    type                => 'multiple_choice',
-                    question_map_id     => $question_map->id,
-                    is_differentiator   => 0,
-                    multiple_choices    => '{
-                        "1": "Sim",
-                        "2": "Não"
-                    }',
-                    rules => '{
-                        "logic_jumps": [ ],
                         "qualification_conditions": [],
-                        "flags": [ "is_target_audience", "risk_group" ]
+                        "flags": [ "is_eligible_for_research" ]
                     }'
                 }
             ),
-            'A6a created'
+            'B10 created'
         );
     };
 
@@ -247,26 +258,208 @@ db_transaction {
         )
         ->status_is(201);
 
+        ok my $recipient = $schema->resultset('Recipient')->search( { fb_id => $fb_id } )->next;
+        ok $recipient->recipient_flag->update( { is_target_audience => 1 } );
+
         my $res = $t->get_ok(
             '/api/chatbot/recipient/pending-question',
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                category       => 'publico_interesse'
+                category       => 'recrutamento'
             }
         )
         ->status_is(200)
         ->tx->res->json;
 
-        is $res->{code}, 'A1';
+        is $res->{code}, 'B1';
+
+        subtest 'B1 logic jump' => sub {
+            db_transaction{
+                $res = $t->post_ok(
+                    '/api/chatbot/recipient/answer',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        code           => 'B1',
+                        category       => 'recrutamento',
+                        answer_value   => '1'
+                    }
+                )
+                ->status_is(201)
+                ->tx->res->json;
+
+                is $res->{finished_quiz}, 0;
+
+                $res = $t->get_ok(
+                    '/api/chatbot/recipient/pending-question',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        category       => 'recrutamento'
+                    }
+                )
+                ->status_is(200)
+                ->tx->res->json;
+
+                is $res->{code}, 'B2';
+            };
+
+            db_transaction{
+                $res = $t->post_ok(
+                    '/api/chatbot/recipient/answer',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        code           => 'B1',
+                        category       => 'recrutamento',
+                        answer_value   => '2'
+                    }
+                )
+                ->status_is(201)
+                ->tx->res->json;
+
+                is $res->{finished_quiz}, 0;
+
+                $res = $t->get_ok(
+                    '/api/chatbot/recipient/pending-question',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        category       => 'recrutamento'
+                    }
+                )
+                ->status_is(200)
+                ->tx->res->json;
+
+                is $res->{code}, 'B2';
+            };
+        };
 
         $res = $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                code           => 'A1',
-                category       => 'publico_interesse',
+                code           => 'B1',
+                category       => 'recrutamento',
+                answer_value   => '3'
+            }
+        )
+        ->status_is(201)
+        ->tx->res->json;
+
+        is $res->{finished_quiz}, 0;
+
+        $res = $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'recrutamento'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        is $res->{code}, 'B3';
+
+        subtest 'B3 logic jump' => sub {
+            db_transaction{
+                $res = $t->post_ok(
+                    '/api/chatbot/recipient/answer',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        code           => 'B3',
+                        category       => 'recrutamento',
+                        answer_value   => '1'
+                    }
+                )
+                ->status_is(201)
+                ->tx->res->json;
+
+                is $res->{finished_quiz}, 0;
+
+                $res = $t->get_ok(
+                    '/api/chatbot/recipient/pending-question',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        category       => 'recrutamento'
+                    }
+                )
+                ->status_is(200)
+                ->tx->res->json;
+
+                is $res->{code}, 'B4';
+
+                $res = $t->post_ok(
+                    '/api/chatbot/recipient/answer',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        code           => 'B4',
+                        category       => 'recrutamento',
+                        answer_value   => '1'
+                    }
+                )
+                ->status_is(201)
+                ->tx->res->json;
+
+                is $res->{finished_quiz}, 0;
+
+                $res = $t->get_ok(
+                    '/api/chatbot/recipient/pending-question',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        category       => 'recrutamento'
+                    }
+                )
+                ->status_is(200)
+                ->tx->res->json;
+
+                is $res->{code}, 'B5';
+
+            };
+        };
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'B3',
+                category       => 'recrutamento',
+                answer_value   => '0'
+            }
+        )
+        ->status_is(201)
+        ->tx->res->json;
+
+        is $res->{finished_quiz}, 0;
+
+        $res = $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'recrutamento'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        is $res->{code}, 'B6';
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'B6',
+                category       => 'recrutamento',
                 answer_value   => '1'
             }
         )
@@ -280,13 +473,113 @@ db_transaction {
             form => {
                 security_token => $security_token,
                 fb_id          => $fb_id,
-                category       => 'publico_interesse'
+                category       => 'recrutamento'
             }
         )
         ->status_is(200)
         ->tx->res->json;
 
-        is $res->{code}, 'A2';
+        is $res->{code}, 'B7';
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'B7',
+                category       => 'recrutamento',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->tx->res->json;
+
+        is $res->{finished_quiz}, 0;
+
+        $res = $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'recrutamento'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        is $res->{code}, 'B8';
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'B8',
+                category       => 'recrutamento',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->tx->res->json;
+
+        is $res->{finished_quiz}, 0;
+
+        $res = $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'recrutamento'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        is $res->{code}, 'B9';
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'B9',
+                category       => 'recrutamento',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->tx->res->json;
+
+        is $res->{finished_quiz}, 0;
+
+        $res = $t->get_ok(
+            '/api/chatbot/recipient/pending-question',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                category       => 'recrutamento'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        is $res->{code}, 'B10';
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/answer',
+            form => {
+                security_token => $security_token,
+                fb_id          => $fb_id,
+                code           => 'B10',
+                category       => 'recrutamento',
+                answer_value   => '1'
+            }
+        )
+        ->status_is(201)
+        ->tx->res->json;
+
+        is $res->{finished_quiz}, 1;
+    };
 };
 
 done_testing();

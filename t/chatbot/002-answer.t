@@ -23,7 +23,7 @@ db_transaction {
                         1 => 'Q1',
                         2 => 'E4'
                     }),
-                    category_id => 1
+                    category_id => 3
                 }
             ),
             'question map created'
@@ -116,7 +116,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'foobar',
-                category       => 'quiz',
+                category       => 'publico_interesse',
                 answer_value   => '1'
             }
         )
@@ -131,7 +131,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
-                category       => 'quiz',
+                category       => 'publico_interesse',
                 answer_value   => 'foobar'
             }
         )
@@ -146,7 +146,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
-                category       => 'quiz',
+                category       => 'publico_interesse',
                 answer_value   => '10'
             }
         )
@@ -160,7 +160,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
-                category       => 'quiz',
+                category       => 'publico_interesse',
                 answer_value   => '1'
             }
         )
@@ -176,7 +176,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'Q1',
-                category       => 'quiz',
+                category       => 'publico_interesse',
                 answer_value   => '1'
             }
         )
@@ -192,7 +192,7 @@ db_transaction {
                 security_token => $security_token,
                 fb_id          => $fb_id,
                 code           => 'E4',
-                category       => 'quiz',
+                category       => 'publico_interesse',
                 answer_value   => '3'
             }
         )

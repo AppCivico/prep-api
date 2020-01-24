@@ -333,7 +333,7 @@ sub followup_messages {
             push @messages, 'Calma! Compartilha ainda não!';
         }
     }
-    elsif( $question_map->category->name eq 'fun_questions' ) {
+    elsif( $question_map->category->name eq 'quiz_brincadeira' ) {
         push @messages, $self->recipient->message_for_fun_questions_score->{picture};
         push @messages, $self->recipient->message_for_fun_questions_score->{message};
     }
