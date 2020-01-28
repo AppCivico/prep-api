@@ -124,7 +124,7 @@ sub action_specs {
                     datetime_start     => $datetime_start,
                     datetime_end       => $datetime_end,
                     summary            => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
-                    description        => $recipient->appointment_description,
+                    description        => $recipient->appointment_description($appointment->id),
                 );
 
                 # Criando notificação

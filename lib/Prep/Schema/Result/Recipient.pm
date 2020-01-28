@@ -983,7 +983,9 @@ sub upcoming_appointments {
 }
 
 sub appointment_description {
-    my ($self) = @_;
+    my ($self, $appointment_id) = @_;
+
+    die 'appointment_id missing' unless $appointment_id;
 
     my @codes = [
         'A1', 'A5', 'A2', 'A3',
@@ -1012,6 +1014,7 @@ sub appointment_description {
     # Adicionando flag e fb_id na descrição para identificar no sync
     $answers->[$i]     = { agendamento_chatbot => 1 };
     $answers->[$i + 1] = { voucher             => $self->integration_token };
+    $answers->[$i + 2] = { appointment_id      => $appointment_id };
 
     my $json = JSON->new->pretty(1);
     $answers = $json->encode( $answers );

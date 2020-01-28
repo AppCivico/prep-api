@@ -388,7 +388,8 @@ sub sync_appointments {
 
     my $res = $self->_calendar->get_calendar_events( calendar => $self, google_id => $self->google_id );
 
-    my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+    my @manual_appointments  = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+    my @deleted_appointments = grep { $_->{description} =~ m/deletado/m } @{ $res->{items} };
 
     $self->result_source->schema->txn_do( sub {
         eval {
@@ -436,6 +437,15 @@ sub sync_appointments {
 
             $self->result_source->schema->resultset('NotificationQueue')->populate(\@notifications);
             $appointment_rs->update( { notification_created_at => \'NOW()' } );
+
+            # Deletando appointments que foram sinalizados como "deletados".
+            for my $deleted_appointment (@deleted_appointments) {
+
+                my %fields = $deleted_appointment->{description} =~ /^(appointment_id)*\s*:\s*(\S+)/m;
+
+                $appointment_rs->search( { 'me.id' => $fields{appointment_id} } )->delete;
+                $self->_calendar->delete_event( calendar => $self, calendar_id => $self->google_id, event_id => $deleted_appointment->{id} );
+            }
         };
         die $@ if $@;
     });
