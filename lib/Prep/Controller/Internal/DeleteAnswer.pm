@@ -33,6 +33,7 @@ sub post {
                 is_target_audience       => undef,
                 signed_term              => 0,
                 is_prep                  => 0,
+                risk_group               => undef,
             }
         );
         $recipient->term_signatures->delete;
