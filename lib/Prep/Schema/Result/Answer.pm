@@ -304,6 +304,9 @@ sub has_followup_messages {
     if ( $question_map->category->name eq 'quiz' ) {
         return 1 if $self->question->code =~ /^(AC7|A6a)$/;
     }
+    elsif ($question_map->category->name eq 'quiz_brincadeira') {
+        return 1 if $self->question->code eq 'AC6';
+    }
     elsif( $question_map->category->name eq 'fun_questions' ) {
         return 1 if $self->question->code eq 'AC7';
     }
