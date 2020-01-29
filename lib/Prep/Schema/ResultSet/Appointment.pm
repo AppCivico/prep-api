@@ -43,7 +43,7 @@ sub verifiers_specs {
                         my $count = $self->result_source->schema->resultset('Appointment')->search(
                             {
                                 quota_number          => $quota_number,
-                                appointment_at        => { '>=' => \"'$datetime_start'::date", '<=' => \"'$datetime_start'::date + interval '1 day'" },
+                                # appointment_at        => { '>=' => \"'$datetime_start'::date", '<=' => \"'$datetime_start'::date + interval '1 day'" },
                                 appointment_window_id => $appointment_window_id
                             }
                         )->count;
