@@ -287,7 +287,9 @@ __PACKAGE__->has_many(
 use Prep::Utils qw(get_ymd_by_day_of_the_week);
 
 use Time::Piece;
+use Time::Seconds;
 use DateTime;
+use DateTime::Format::Strptime;
 
 use WebService::GoogleCalendar;
 
@@ -306,7 +308,7 @@ sub available_dates {
     my $appointment_windows = $self->appointment_windows;
     my $now = Time::Piece->new();
 
-    return [
+    my $res = [
         map {
             my $custom_quota_time = $_->custom_quota_time;
             $custom_quota_time    = Time::Piece->strptime( $custom_quota_time, '%H:%M:%S' )
@@ -323,21 +325,32 @@ sub available_dates {
             my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
             my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
 
-
             # Pego a diferença entre os dois em segundos e divido pelo numero de cotas
-            my $delta = ( $end_time - $start_time );
-            my $seconds_per_quota = ( $custom_quota_time ? ($custom_quota_time->[9]) : ( $delta / $_->quotas ));
+            my $delta = ( $end_time->epoch - $start_time->epoch );
+
+            my $seconds_per_quota = ( $custom_quota_time ? ($custom_quota_time->epoch) : ( $delta / $_->quotas ));
 
             my @days_of_week = $_->appointment_window_days_of_week->search( undef, { rows => 8, order_by => { -asc => 'day_of_week' } } )->get_column('day_of_week')->all();
 
-            for ( 1 .. 2 ) {
-                push @days_of_week, @days_of_week;
+            my $week_i = 0;
+            my @dow_with_week;
+            for ( 1 .. 4 ) {
+                for my $dow (@days_of_week) {
+                    push @dow_with_week, {
+                        week => $week_i,
+                        dow  => $dow
+                    };
+                }
+                $week_i++;
             }
 
             my $week = 0;
+
+
             map {
-                my $ymd = get_ymd_by_day_of_the_week(dow => $_, week => $week);
+                my $ymd = get_ymd_by_day_of_the_week(dow => $_->{dow}, week => $_->{week});
                 $week++;
+
 
                 my @taken_quotas = $appointment_rs->search(
                     {
@@ -378,9 +391,11 @@ sub available_dates {
                         } @available_quotas
                     ]
                 }
-            } @days_of_week;
+            } @dow_with_week;
         } $self->appointment_windows->search(undef, { page => $page, rows => $rows } )->all()
     ];
+
+    return $res;
 }
 
 sub sync_appointments {
