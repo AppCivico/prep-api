@@ -48,7 +48,7 @@ sub verifiers_specs {
                             }
                         )->count;
 
-                        die \['quota_number', 'invalid'] if $count > 0;
+                        die \['quota_number', 'invalid'] if $count == 1;
 
                         return 1;
                     }
