@@ -405,6 +405,10 @@ sub available_dates {
 
         if ($res->[$i]->{ymd} eq $now->ymd) {
             @{$res->[$i]->{hours}} = grep { $_->{epoch_start} > $now_epoch } @{$res->[$i]->{hours}};
+
+            if (scalar @{$res->[$i]->{hours}} == 0) {
+                splice @{$res}, $i, 1;
+            }
         }
     }
 
