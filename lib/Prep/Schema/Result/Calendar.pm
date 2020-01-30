@@ -395,6 +395,20 @@ sub available_dates {
         } $self->appointment_windows->search(undef, { page => $page, rows => $rows } )->all()
     ];
 
+    # Removendo dates que já passaram de now().
+    my $now_epoch = time();
+    for (my $i = 0; $i < scalar @{$res}; $i++) {
+
+        if ($res->[$i]->{ymd} eq $now->ymd) {
+            for (my $i_hours = 0; $i_hours < scalar @{$res->[$i]->{hours}}; $i_hours++) {
+                my $start = Time::Piece->strptime( $res->[$i]->{hours}->[$i_hours]->{datetime_start}, '%Y-%m-%dT%H:%M:%S' );
+
+                splice @{$res->[$i]->{hours}}, $i_hours, 1 if $start < $now_epoch;
+            }
+        }
+    }
+
+
     return $res;
 }
 
