@@ -386,7 +386,8 @@ sub available_dates {
                                 datetime_start => $is_first_quota ?
                                     ( $ymd . 'T' . $start_time->hms ) :
                                     ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
-                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms
+                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms,
+                                epoch_start => $complete_time->epoch
                             }
                         } @available_quotas
                     ]
@@ -397,17 +398,15 @@ sub available_dates {
 
     # Removendo dates que já passaram de now().
     my $now_epoch = time();
+    $now_epoch    = $self->id == 2 ? ($now_epoch - (3600 * 2)) : (($now_epoch - (3600 * 3)));
+
     for (my $i = 0; $i < scalar @{$res}; $i++) {
+        my $ymd = $res->[$i]->{ymd};
 
         if ($res->[$i]->{ymd} eq $now->ymd) {
-            for (my $i_hours = 0; $i_hours < scalar @{$res->[$i]->{hours}}; $i_hours++) {
-                my $start = Time::Piece->strptime( $res->[$i]->{hours}->[$i_hours]->{datetime_start}, '%Y-%m-%dT%H:%M:%S' );
-
-                splice @{$res->[$i]->{hours}}, $i_hours, 1 if $start < $now_epoch;
-            }
+            @{$res->[$i]->{hours}} = grep { $_->{epoch_start} > $now_epoch } @{$res->[$i]->{hours}};
         }
     }
-
 
     return $res;
 }
