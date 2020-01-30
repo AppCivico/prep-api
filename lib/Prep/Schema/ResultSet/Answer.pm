@@ -185,7 +185,7 @@ sub action_specs {
                     else {
                         %flags = $answer->flags;
 
-                        if ( $answer->question_map->category->name eq 'recrutamento' && $recipient->recipient_flag->is_eligible_for_research == 1 ) {
+                        if ( $answer->question_map->category->name eq 'recrutamento' && $recipient->recipient_flag->is_target_audience == 1 ) {
                             $answer->discard_changes;
                             $recipient->notification_queues->create(
                                 {
