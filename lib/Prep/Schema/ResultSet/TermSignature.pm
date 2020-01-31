@@ -58,7 +58,7 @@ sub action_specs {
                 my $recipient = $term_signature->recipient;
 
                 if ( $recipient->recipient_flag->is_target_audience && $recipient->recipient_flag->is_eligible_for_research ) {
-                    $simprep_url  = $recipient->register_simprep;
+                    # $simprep_url  = $recipient->register_simprep;
 
                     # $recipient->recipient_flag->update( { is_part_of_research => 1 } ) if $term_signature->signed == 1;
                     # $recipient->recipient_flag->update( { is_part_of_research => 0 } ) if $term_signature->signed == 0;
