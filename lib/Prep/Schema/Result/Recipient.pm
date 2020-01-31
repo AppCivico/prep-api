@@ -947,7 +947,7 @@ sub update_is_eligible_for_research {
     #     )
     # }
 
-    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9' ] } }, { prefetch => 'question' } );
+    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1', 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10' ] } }, { prefetch => 'question' } );
 
     my $conditions_met = 0;
     my $city_condition = 0;
@@ -972,7 +972,7 @@ sub update_is_eligible_for_research {
 
     $self->recipient_flag->update(
         {
-            is_eligible_for_research => $conditions_met ? 1 : 0,
+            is_eligible_for_research => $is_eligible_for_research,
             updated_at               => \'NOW()'
         }
     )
