@@ -1116,7 +1116,7 @@ sub update_is_target_audience {
         my $code = $answer->question->code;
 
         if ( $code eq 'A1' ) {
-            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3|7)$/;
         }
         elsif ( $code eq 'A2' ) {
             $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
