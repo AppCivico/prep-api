@@ -947,25 +947,27 @@ sub update_is_eligible_for_research {
     #     )
     # }
 
-    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'A1', 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9' ] } }, { prefetch => 'question' } );
+    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9' ] } }, { prefetch => 'question' } );
 
     my $conditions_met = 0;
     my $city_condition = 0;
+    my $is_eligible_for_research = $answer_rs->count > 0 ? 0 : undef;
+
     while ( my $answer = $answer_rs->next() ) {
         my $code = $answer->question->code;
 
         if ( $code eq 'B7' ) {
 
-            $conditions_met = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
+            $is_eligible_for_research = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
         }
         elsif ($code eq 'A1') {
             $city_condition = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
         }
         else {
-            $conditions_met = 1 if $answer->answer_value eq '1';
+            $is_eligible_for_research = 1 if $answer->answer_value eq '1';
         }
 
-        last if $conditions_met == 1;
+        last if $is_eligible_for_research == 1;
     }
 
     $self->recipient_flag->update(
