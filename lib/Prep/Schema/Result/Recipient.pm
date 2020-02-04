@@ -1503,17 +1503,28 @@ sub system_labels {
     ]
 }
 
-sub answers_for_publico_interesse_integration {
+sub answers_for_integration {
     my $self = shift;
 
+    my @codes;
+    if ($self->recipient_flag->finished_recrutamento) {
+        @codes = qw(A1 A2 A3 A4 A4a A4b A5 A6 A6a B1 B2 B3 B4 B5 B6 B7 B8 B9 B10);
+    }
+    elsif ($self->recipient_flag->finished_publico_interesse) {
+        @codes = qw(A1 A2 A3 A4 A4a A4b A5 A6);
+    }
+    else {
+        die "must have at least 'publico_interesse' finished"
+    }
+
     my $answer_rs = $self->answers->search(
-        { 'question.code' => { -in => ['A1', 'A2', 'A3', 'A4', 'A4a', 'A4b', 'A5', 'A6', 'A6a'] } },
+        { 'question.code' => { -in => \@codes } },
         { join => 'question' }
     );
 
     my @answers = $answer_rs->all();
 
-    my @yes_no_questions = qw( A6.1 A6.2 );
+    my @yes_no_questions = qw( A6.1 A6.2 B4 B5 B6 B8 B9 B10 );
     my $answers = [
         map {
             my $a = $_;
@@ -1580,164 +1591,54 @@ sub answers_for_publico_interesse_integration {
     return $answers;
 }
 
-sub answers_for_integration {
-    my ($self) = @_;
+sub register_sisprep {
+    my ($self, $step) = @_;
 
-    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
-        { 'category.name' => 'quiz' },
-        {
-            join     => 'category',
-            order_by => { -desc => 'created_at' }
-        }
-    )->next;
-
-    # Removendo perguntas adicionadas por nós
-    my @questions_to_skip = qw(AC1 AC2 AC3 AC4 AC5 AC6 AC7 AC8 AC9 A4a A4b AC9);
-
-    my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
-    my $answers   = $answer_rs->search(
-        { 'question.code' => { -not_in => \@questions_to_skip } },
-        { join => 'question' }
-    );
-
-    my @yes_no_questions = qw( A6.1 A6.2 B4 B5 B6 B8 B9 B10 );
-    $answers = [
-        map {
-            my $a = $_;
-
-            my $question_code = $a->question->code;
-            my $answer        = $a->answer_value;
-
-            # Caso seja a A4 devo verificar qual a resposta e remover todas relacionadas
-            if ( $question_code eq 'A4' ) {
-                if ( $answer eq '1' ) {
-                    # Caso seja 1, devo verificar a resposta da A4a
-                    my $logic_jump_answer = $answer_rs->search( { 'question.code' => 'A4a' }, { join => 'question' } )->next;
-
-                    # Como a A4a é para ensino fundamental, logo são as primeiras opções
-                    # Basta preencher com o número da reposta
-                    $answer = $logic_jump_answer->answer_value;
-                }
-                elsif ( $answer eq '2' ) {
-                    # Devo verificar a resposta da A4b
-                    my $logic_jump_answer = $answer_rs->search( { 'question.code' => 'A4b' }, { join => 'question' } )->next;
-
-                    if ( $logic_jump_answer->answer_value eq '1' ) {
-                        $answer = '10';
-                    }
-                    elsif ( $logic_jump_answer->answer_value eq '2' ) {
-                        $answer = '11';
-                    }
-                    else {
-                        $answer = '12';
-                    }
-                }
-                elsif ( $answer eq '3' ) {
-                    # Devo preencher com o valor 13
-                    $answer = '13'
-                }
-                else {
-                    die 'error at Result::Recipient::answers_for_integration';
-                }
-            }
-
-			# Caso seja a A6 e A6a mudo para A6.1 e A6.2
-			if ( $question_code eq 'A6' ) {
-				$question_code = 'A6.1';
-			}elsif ( $question_code eq 'A6a' ) {
-				$question_code = 'A6.2';
-			} else { }
-
-            # Questões de sim/não devem ser enviadas como 1 ou 0
-            if ( grep { $question_code eq $_ } @yes_no_questions ) {
-                +{
-                    question_code => $question_code,
-                    value         => $answer eq '1' ? 1 : 0
-                }
-            }
-            else {
-                +{
-                    question_code => $question_code,
-                    value         => $answer
-                }
-            }
-        } $answers->all()
-    ];
-
-    # Adicionando pergunta B11, ela só existe offline e consiste na pergunta se a pessoa quer participar da pesquisa.
-    push @{$answers}, { question_code => 'B11', value => 1 };
-
-    return $answers
-}
-
-sub register_sisprep_publico_interesse {
-    my ($self) = @_;
+    die 'missing step unless step' unless $step;
 
     my $success;
     $self->result_source->schema->txn_do( sub {
-        die 'recipient_alredy_has_integration' if $self->recipient_integration;
-        my $recipient_integration = $self->result_source->schema->resultset('RecipientIntegration')->create( { recipient_id => $self->id } );
+        my $recipient_integration = $self->result_source->schema->resultset('RecipientIntegration')->find_or_create(
+            { recipient_id => $self->id },
+            { key => 'recipient_integration_recipient_id_key' }
+        );
+
+        my $data = $recipient_integration->data;
 
         my $res;
         eval {
             $res = $self->_simprep->register_recipient(
-                answers       => $self->answers_for_publico_interesse_integration,
+                answers       => $self->answers_for_integration,
                 facebook_name => $self->name
             );
         };
 
         if ($@ || $res->{status} ne 'success') {
-
             my $coded_res = $res ? to_json($res) : undef;
 
-            $recipient_integration->update(
-                {
-                    data => {
-                        publico_interesse => {
-                            status => 'failed',
-                            epoch  => time(),
-                            res    => $coded_res ? $coded_res : $@
-                        }
-                    },
-                    errmsg => $coded_res ? $coded_res : $@
-                }
-            );
+            $data->{$step} = {
+                status => 'failed',
+                epoch  => time(),
+                res    => $coded_res ? $coded_res : $@
+            };
 
+            $recipient_integration->update( { errmsg => $coded_res ? $coded_res : $@ } );
             $success = 0;
         }
         else {
-            $recipient_integration->update(
-                {
-                    data => {
-                        publico_interesse => {
-                            status => 'success',
-                            epoch  => time(),
-                        }
-                    },
-                }
-            );
+            $data->{$step} = {
+                status => 'success',
+                epoch  => time(),
+            };
 
             $self->update( { integration_token => $res->{data}->{voucher} } );
             $success = 1;
         }
 
+        $recipient_integration->update( { data => $data } );
     });
 
     return $success;
-}
-
-sub register_simprep {
-    my ($self) = @_;
-
-    my $res = $self->_simprep->register_recipient(
-        answers       => $self->answers_for_integration,
-        signed        => $self->signed_term,
-        facebook_name => $self->name
-    );
-
-    $self->update( { integration_token => $res->{data}->{voucher} } );
-
-    return $res->{data}->{url}
 }
 
 sub fun_questions_score {
