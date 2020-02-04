@@ -44,3 +44,4 @@
 0040-add-risk-group [0039-add-categories] 2020-01-23T19:03:58Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding risk group flag
 0041-add-flags [0040-add-risk-group] 2020-02-04T18:30:11Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding more flags
 0042-recipient_integration [0041-add-flags] 2020-02-04T18:30:55Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the recipient_integration table
+0043-add-counts [0042-recipient_integration] 2020-02-04T19:42:47Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # adding more counts to the recipient table
