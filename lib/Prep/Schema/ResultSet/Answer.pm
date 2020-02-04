@@ -133,7 +133,7 @@ sub action_specs {
                         if ($recipient->recipient_flag->is_target_audience == 1) {
                             # Enviando para o sisprep.
                             eval {
-                                $recipient->register_sisprep('publico_interesse');
+                                # $recipient->register_sisprep('publico_interesse');
                             };
                             p $@ if $@;
 
@@ -149,7 +149,7 @@ sub action_specs {
                     }
                     elsif ( $answer->question_map->category->name eq 'recrutamento' ) {
                         $recipient->recipient_flag->update( { finished_recrutamento => 1 } );
-                        eval { $recipient->register_sisprep('recrutamento') };
+                        # eval { $recipient->register_sisprep('recrutamento') };
                     }
                     elsif ( $answer->question_map->category->name eq 'quiz_brincadeira' ) {
                         $recipient->recipient_flag->update( { finished_quiz_brincadeira => 1 } )
