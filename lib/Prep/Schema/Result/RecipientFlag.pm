@@ -97,6 +97,24 @@ __PACKAGE__->table("recipient_flags");
   data_type: 'boolean'
   is_nullable: 1
 
+=head2 finished_publico_interesse
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
+=head2 finished_recrutamento
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
+=head2 finished_quiz_brincadeira
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -120,6 +138,12 @@ __PACKAGE__->add_columns(
   { data_type => "timestamp", is_nullable => 1 },
   "risk_group",
   { data_type => "boolean", is_nullable => 1 },
+  "finished_publico_interesse",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "finished_recrutamento",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "finished_quiz_brincadeira",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -152,8 +176,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-01-23 15:45:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:uRq83hzisTHM7mLg5PxU5A
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-04 15:17:22
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:A31q9KRWZVF3EKeMYvUFrw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

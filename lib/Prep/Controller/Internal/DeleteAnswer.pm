@@ -27,13 +27,16 @@ sub post {
         );
         $recipient->recipient_flag->update(
             {
-                finished_quiz            => 0,
-                is_eligible_for_research => undef,
-                is_part_of_research      => 0,
-                is_target_audience       => undef,
-                signed_term              => 0,
-                is_prep                  => 0,
-                risk_group               => undef,
+                finished_quiz              => 0,
+                is_eligible_for_research   => undef,
+                is_part_of_research        => 0,
+                is_target_audience         => undef,
+                signed_term                => 0,
+                is_prep                    => 0,
+                risk_group                 => undef,
+                finished_publico_interesse => 0,
+                finished_recrutamento      => 0,
+                finished_quiz_brincadeira  => 0,
             }
         );
         $recipient->term_signatures->delete;

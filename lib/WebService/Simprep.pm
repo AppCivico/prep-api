@@ -14,7 +14,7 @@ sub _build_ua { LWP::UserAgent->new() }
 sub register_recipient {
     my ( $self, %opts ) = @_;
 
-    my @required_opts = qw( answers signed facebook_name );
+    my @required_opts = qw( answers facebook_name );
     defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
     if (is_test()) {
