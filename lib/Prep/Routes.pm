@@ -58,6 +58,21 @@ sub register {
     my $term_signature = $recipient->route('/term-signature');
     $term_signature->post('/')->to('chatbot-recipient-term_signature#post');
 
+    # Recipient::CountQuizBrincadeira
+    my $recipient_quiz_brincadeira = $recipient->route('/count-quiz-brincadeira');
+    $recipient_quiz_brincadeira->post('/')->to('chatbot-recipient-count_quiz_brincadeira#post');
+    $recipient_quiz_brincadeira->get('/')->to('chatbot-recipient-count_quiz_brincadeira#get');
+
+    # Recipient::CountPublicoInteresse
+    my $recipient_count_publico_interesse = $recipient->route('/count-publico-interesse');
+    $recipient_count_publico_interesse->post('/')->to('chatbot-recipient-count_publico_interesse#post');
+    $recipient_count_publico_interesse->get('/')->to('chatbot-recipient-count_publico_interesse#get');
+
+    # Recipient::CountRecrutamento
+    my $recipient_count_recrutamento = $recipient->route('/count-recrutamento');
+    $recipient_count_recrutamento->post('/')->to('chatbot-recipient-count_recrutamento#post');
+    $recipient_count_recrutamento->get('/')->to('chatbot-recipient-count_recrutamento#get');
+
     # Recipient::ResetScreening
     my $reset_screening = $recipient->route('/reset-screening');
     $reset_screening->post('/')->to('chatbot-recipient-reset_screening#post');

@@ -128,6 +128,24 @@ __PACKAGE__->table("recipient");
   data_type: 'text'
   is_nullable: 1
 
+=head2 count_publico_interesse
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
+=head2 count_recrutamento
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
+=head2 count_quiz_brincadeira
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -179,6 +197,12 @@ __PACKAGE__->add_columns(
   { data_type => "integer", default_value => 0, is_nullable => 0 },
   "city",
   { data_type => "text", is_nullable => 1 },
+  "count_publico_interesse",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "count_recrutamento",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "count_quiz_brincadeira",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -372,8 +396,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-04 15:17:22
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:OkSULAI7jz7im1+OuSHiNQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-04 16:41:15
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:4Nbc/d2INqBG98O5ZOYXwA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
