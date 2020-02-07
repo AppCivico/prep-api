@@ -72,7 +72,9 @@ sub get {
             has_appointments         => $recipient->has_appointments,
             prep_since               => $recipient->recipient_flag->prep_since,
             city                     => $recipient->city,
-            system_labels            => $recipient->system_labels
+            system_labels            => $recipient->system_labels,
+            phone                    => $recipient->phone,
+            instagram                => $recipient->instagram
         }
     )
 }

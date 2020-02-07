@@ -8,8 +8,6 @@ use JSON;
 my $t      = test_instance;
 my $schema = $t->app->schema;
 
-plan skip_all => "skip for now";
-
 db_transaction {
     my $security_token = $ENV{CHATBOT_SECURITY_TOKEN};
 
@@ -298,6 +296,68 @@ db_transaction {
 		->json_is('/opt_in', 0)
 		->json_has('/system_labels')
         ->json_has('/system_labels/0/name');
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                phone          => '+5599901010101',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id');
+
+        $t->get_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+		->json_has('/phone');
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                phone          => '+5599901010101111',
+            }
+        )
+        ->status_is(400);
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                phone          => 'wrong type',
+            }
+        )
+        ->status_is(400);
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                instagram      => 'foobar_profile',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id');
+
+        $t->get_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+		->json_has('/instagram');
     };
 };
 

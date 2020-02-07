@@ -146,6 +146,16 @@ __PACKAGE__->table("recipient");
   default_value: 0
   is_nullable: 0
 
+=head2 phone
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 instagram
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -203,6 +213,10 @@ __PACKAGE__->add_columns(
   { data_type => "integer", default_value => 0, is_nullable => 0 },
   "count_quiz_brincadeira",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "phone",
+  { data_type => "text", is_nullable => 1 },
+  "instagram",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -396,8 +410,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-04 16:41:15
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:4Nbc/d2INqBG98O5ZOYXwA
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-07 11:15:36
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Bc2Eu0Lw8sxZ8QNp8saDTA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -418,6 +432,8 @@ use Prep::Utils qw(is_test);
 use Text::CSV;
 use DateTime;
 use JSON;
+
+use Prep::Types qw(MobileNumber);
 
 sub _build__simprep { WebService::Simprep->instance }
 
@@ -447,6 +463,15 @@ sub verifiers_specs {
                 is_prep => {
                     required => 0,
                     type     => 'Bool'
+                },
+                phone => {
+                    required => 0,
+                    type     => MobileNumber,
+                },
+                instagram => {
+                    required   => 0,
+                    type       => 'Str',
+                    max_length => 30,
                 }
             }
         ),
@@ -1144,8 +1169,13 @@ sub update_is_target_audience {
 
     my $answer_rs = $self->answers->search(
         {
-            'question.code'      => { -in => ['A1', 'A2', 'A6','A3'] },
-            'me.question_map_id' => $question_map->id
+            'question.code' => { -in => ['A1', 'A2', 'A6','A3'] },
+            (
+                $question_map ?
+                ( 'me.question_map_id' => $question_map->id ) :
+                ()
+
+            )
         },
         { join => 'question' }
     );
