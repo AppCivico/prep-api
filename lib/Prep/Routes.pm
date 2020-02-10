@@ -81,6 +81,12 @@ sub register {
     my $research = $recipient->route('/research-participation');
     $research->post('/')->to('chatbot-recipient-research#post');
 
+    # Recipient::Interaction
+    my $interaction = $recipient->route('/interaction');
+    $interaction->post('/')->to('chatbot-recipient-interaction#create');
+    $interaction->post('/close')->to('chatbot-recipient-interaction#close');
+    $interaction->get('/')->to('chatbot-recipient-interaction#get');
+
     # Appointment
     my $appointment = $chatbot->route('/appointment');
 

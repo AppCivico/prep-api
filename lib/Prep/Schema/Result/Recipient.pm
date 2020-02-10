@@ -146,16 +146,6 @@ __PACKAGE__->table("recipient");
   default_value: 0
   is_nullable: 0
 
-=head2 phone
-
-  data_type: 'text'
-  is_nullable: 1
-
-=head2 instagram
-
-  data_type: 'text'
-  is_nullable: 1
-
 =cut
 
 __PACKAGE__->add_columns(
@@ -213,10 +203,6 @@ __PACKAGE__->add_columns(
   { data_type => "integer", default_value => 0, is_nullable => 0 },
   "count_quiz_brincadeira",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
-  "phone",
-  { data_type => "text", is_nullable => 1 },
-  "instagram",
-  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -319,6 +305,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 interactions
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Interaction>
+
+=cut
+
+__PACKAGE__->has_many(
+  "interactions",
+  "Prep::Schema::Result::Interaction",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 notification_queues
 
 Type: has_many
@@ -410,8 +411,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-07 11:15:36
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Bc2Eu0Lw8sxZ8QNp8saDTA
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-10 14:08:12
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:I6eLD6Tyts1oDIGAvRv8lg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
