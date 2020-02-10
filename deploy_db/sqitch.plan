@@ -46,3 +46,4 @@
 0042-recipient_integration [0041-add-flags] 2020-02-04T18:30:55Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the recipient_integration table
 0043-add-counts [0042-recipient_integration] 2020-02-04T19:42:47Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # adding more counts to the recipient table
 0044-add-phone-instagram [0043-add-counts] 2020-02-07T14:33:54Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding both the 'phone' and 'instagram' cols on the 'recipient' table
+0045-add-interaction [0044-add-phone-instagram] 2020-02-10T18:40:25Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the interaction table
