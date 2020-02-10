@@ -114,7 +114,7 @@ db_transaction {
         my $datetime_start = $res->{dates}->[0]->{hours}->[0]->{datetime_start};
         my $datetime_end   = $res->{dates}->[0]->{hours}->[0]->{datetime_end};
 
-        is( scalar @{ $res->{dates}->[0]->{hours} }, 3, '3 available hours' );
+        is( scalar @{ $res->{dates}->[0]->{hours} }, 1, '1 available hours' );
 
 
     };
