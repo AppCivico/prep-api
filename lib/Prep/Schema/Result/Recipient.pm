@@ -349,6 +349,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 quick_reply_logs
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::QuickReplyLog>
+
+=cut
+
+__PACKAGE__->has_many(
+  "quick_reply_logs",
+  "Prep::Schema::Result::QuickReplyLog",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 recipient_flag
 
 Type: might_have
@@ -425,8 +440,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-10 15:44:33
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:sv0XIO2IAngayd56Zwj7aA
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-11 11:44:55
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:uX/c4CpQKpq4ftOSOHqOhQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

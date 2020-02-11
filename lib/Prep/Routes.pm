@@ -87,6 +87,11 @@ sub register {
     $interaction->post('/close')->to('chatbot-recipient-interaction#close');
     $interaction->get('/')->to('chatbot-recipient-interaction#get');
 
+    # Recipient::QuickReplyLog
+    my $quick_reply_log = $recipient->route('/quick-reply-log');
+    $quick_reply_log->post('/')->to('chatbot-recipient-quick_reply_log#create');
+    $quick_reply_log->get('/')->to('chatbot-recipient-quick_reply_log#get');
+
     # Appointment
     my $appointment = $chatbot->route('/appointment');
 
