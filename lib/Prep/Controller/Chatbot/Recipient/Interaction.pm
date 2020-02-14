@@ -37,7 +37,7 @@ sub close {
     my $interaction = $recipient->interactions->find($c->req->params->to_hash->{interaction_id});
     die \['interaction_id', 'invalid'] unless $interaction;
 
-    $interaction->close;
+    # $interaction->close;
 
     $interaction->update( { closed_at => \'NOW()' } );
 
