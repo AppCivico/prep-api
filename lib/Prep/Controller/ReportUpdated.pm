@@ -105,37 +105,37 @@ sub get {
                 count_multiple_interactions => {
                     display_order => 2,
                     label         => 'Contatos com mais de uma interação',
-                    value         => $assistente_civico_metrics->{count_multiple_interactions} || 0
+                    value         => $report_updated->{count_multiple_interactions} || 0
                 },
                 count_refused_publico_interesse => {
                     display_order => 3,
                     label         => 'Contatos que clicaram em "agora não"',
-                    value         => $assistente_civico_metrics->{count_refused_publico_interesse} || 0
+                    value         => $report_updated->{count_refused_publico_interesse} || 0
                 },
                 count_started_publico_interesse_after_refusal => {
                     display_order => 4,
                     label         => 'Contatos que clicaram em "agora não" e depois iniciaram o bloco A',
-                    value         => $assistente_civico_metrics->{count_started_publico_interesse_after_refusal} || 0
+                    value         => $report_updated->{count_started_publico_interesse_after_refusal} || 0
                 },
                 count_started_publico_interesse => {
                     display_order => 5,
                     label         => 'Contatos que iniciaram o bloco A',
-                    value         => $assistente_civico_metrics->{count_started_publico_interesse} || 0
+                    value         => $report_updated->{count_started_publico_interesse} || 0
                 },
                 count_finished_publico_interesse => {
                     display_order => 6,
                     label         => 'Contatos que finalizaram o bloco A',
-                    value         => $assistente_civico_metrics->{count_finished_publico_interesse} || 0
+                    value         => $report_updated->{count_finished_publico_interesse} || 0
                 },
                 count_started_quiz_brincadeira => {
                     display_order => 7,
                     label         => 'Contatos que iniciaram o quiz de brincadeira',
-                    value         => $assistente_civico_metrics->{count_started_quiz_brincadeira} || 0
+                    value         => $report_updated->{count_started_quiz_brincadeira} || 0
                 },
                 count_finished_quiz_brincadeira => {
                     display_order => 8,
                     label         => 'Contatos que finalizaram o quiz de brincadeira',
-                    value         => $assistente_civico_metrics->{count_finished_quiz_brincadeira} || 0
+                    value         => $report_updated->{count_finished_quiz_brincadeira} || 0
                 },
             },
             intents => {
