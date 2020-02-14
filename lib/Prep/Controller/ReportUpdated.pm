@@ -96,7 +96,7 @@ sub get {
     return $c->render(
         status => 200,
         json   => {
-            general_public => {
+            general_public => [
                 count_one_interaction => {
                     display_order => 1,
                     label         => 'Contatos com apenas uma interação',
@@ -137,8 +137,8 @@ sub get {
                     label         => 'Contatos que finalizaram o quiz de brincadeira',
                     value         => $report_updated->{count_finished_quiz_brincadeira} || 0
                 },
-            },
-            intents => {
+            ],
+            intents => [
                 count_recipients_with_intent => {
                     display_order => 9,
                     label         => 'Contatos com ao menos uma intent',
@@ -159,7 +159,7 @@ sub get {
                     label         => 'Intentenções mais acessadas por quem é público de interesse',
                     value         => $assistente_civico_metrics->{most_used_intents_target_audience}
                 },
-            }
+            ]
         }
     )
 }
