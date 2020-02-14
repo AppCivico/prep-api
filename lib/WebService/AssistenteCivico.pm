@@ -3,7 +3,7 @@ use common::sense;
 use MooseX::Singleton;
 
 use JSON::MaybeXS;
-use LWP::UserAgent;
+use Furl;
 use Try::Tiny::Retry;
 use Prep::Utils qw(is_test);
 use Prep::Logger;
@@ -15,7 +15,7 @@ has logger => (
     builder => '_build_logger',
 );
 
-sub _build_ua { LWP::UserAgent->new() }
+sub _build_ua { Furl->new() }
 sub _build_logger { &get_logger }
 
 sub get_metrics {
