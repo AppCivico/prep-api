@@ -26,26 +26,8 @@ sub get {
     my $security_token = $ENV{REPORT_SECURITY_TOKEN};
     die \['security_token', 'invalid'] unless $c->req->params->to_hash->{security_token} eq $security_token;
 
-    my ($since, $until);
-
-    if ($since = $c->req->params->to_hash->{since}) {
-        my $since_dt = DateTime->from_epoch( epoch => $since )
-          or die \['since', 'invalid'];
-    }
-
-    if ($until = $c->req->params->to_hash->{until}) {
-        my $until_dt = DateTime->from_epoch( epoch => $until )
-          or die \['since', 'invalid'];
-    }
-
-    if ($since && $until) {
-        die \['until', 'invalid'] if $until < $since;
-    }
-
     my $report = $c->schema->resultset('ViewReport')->next;
 
-    my $assistente_civico         = WebService::AssistenteCivico->instance;
-    my $assistente_civico_metrics = $assistente_civico->get_metrics(since => $since, until => $until);
 
     return $c->render(
         status => 200,
@@ -92,27 +74,6 @@ sub get {
                             display_order => 8,
                             label         => 'Responderam a última pergunta do quiz',
                             value         => $report->count_answered_last_question
-                        },
-
-                        count_recipients_with_intent => {
-                            display_order => 9,
-                            label         => 'Contatos com ao menos uma intent',
-                            value         => $assistente_civico_metrics->{recipients_with_intent}
-                        },
-                        count_recipients_with_fallback_intent => {
-                            display_order => 10,
-                            label         => 'Contatos com intent de fallback',
-                            value         => $assistente_civico_metrics->{recipients_with_fallback_intent}
-                        },
-                        most_used_intents => {
-                            display_order => 11,
-                            label         => 'Intentenções mais acessadas',
-                            value         => $assistente_civico_metrics->{most_used_intents}
-                        },
-                        most_used_intents_target_audience => {
-                            display_order => 12,
-                            label         => 'Intentenções mais acessadas por quem é público de interesse',
-                            value         => $assistente_civico_metrics->{most_used_intents_target_audience}
                         },
                     }
                 },
@@ -248,7 +209,7 @@ sub get {
                         },
                     }
                 }
-            ]
+            ],
         }
     )
 }

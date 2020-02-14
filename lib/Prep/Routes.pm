@@ -9,6 +9,7 @@ sub register {
 
     # Report
     $api->route('/report')->to('report#get');
+    $api->route('/report-new')->to('report_updated#get');
 
     # Chatbot
     my $chatbot = $api->route('/chatbot')->under->to('chatbot#validade_security_token');
