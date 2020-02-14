@@ -26,10 +26,10 @@ sub get_metrics {
     my $since = $opts{since};
     my $until = $opts{until};
 
-    my $url = $ENV{ASSISTENTE_CIVICO_API_URL} . '/api/metrics';
+    my $url = 'https://dapi-assistente.appcivico.com' . '/api/metrics';
 
-    $url .= '?chatbot_id=' . $ENV{ASSISTENTE_CIVICO_CHATBOT_ID};
-    $url .= '&security_token=' . $ENV{ASSISTENTE_CIVICO_METRICS_SECURITY_TOKEN};
+    $url .= '?chatbot_id=' . '226';
+    $url .= '&security_token=' . 'prep-dev';
     $url .= '&since=' . $since if $since;
     $url .= '&until=' . $until if $until;
 
