@@ -6,18 +6,28 @@ use JSON::MaybeXS;
 use LWP::UserAgent;
 use Try::Tiny::Retry;
 use Prep::Utils qw(is_test);
+use Prep::Logger;
 
 has 'ua' => ( is => 'rw', lazy => 1, builder => '_build_ua' );
+has logger => (
+    is      => 'rw',
+    lazy    => 1,
+    builder => '_build_logger',
+);
 
 sub _build_ua { LWP::UserAgent->new() }
+sub _build_logger { &get_logger }
 
 sub get_metrics {
     my ($self, %opts) = @_;
+
+    my $logger = $self->logger;
 
     my $since = $opts{since};
     my $until = $opts{until};
 
     my $url = $ENV{ASSISTENTE_CIVICO_API_URL} . '/api/metrics';
+    $logger->info("url: $url");
 
     if (is_test()) {
         return {
