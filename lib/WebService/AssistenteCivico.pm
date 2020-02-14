@@ -27,8 +27,14 @@ sub get_metrics {
     my $until = $opts{until};
 
     my $url = $ENV{ASSISTENTE_CIVICO_API_URL} . '/api/metrics';
-    $logger->info("url: $url");
 
+    $url .= '?chatbot_id=' . $ENV{ASSISTENTE_CIVICO_CHATBOT_ID};
+    $url .= '&security_token=' . $ENV{ASSISTENTE_CIVICO_METRICS_SECURITY_TOKEN};
+    $url .= '&since=' . $since if $since;
+    $url .= '&until=' . $until if $until;
+
+
+    $logger->info("url: $url");
     if (is_test()) {
         return {
             most_used_intents => [
