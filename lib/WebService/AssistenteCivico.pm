@@ -52,13 +52,14 @@ sub get_metrics {
             retry {
                 $res = $self->ua->get(
                     $url,
-                    [
+                    []
+                    {
                         chatbot_id     => $ENV{ASSISTENTE_CIVICO_CHATBOT_ID},
                         security_token => $ENV{ASSISTENTE_CIVICO_METRICS_SECURITY_TOKEN},
 
                         ($since ? (since => $since) : ()),
                         ($until ? (until => $until) : ()),
-                    ]
+                    }
                 );
 
                 die $res->decoded_content unless $res->is_success;
