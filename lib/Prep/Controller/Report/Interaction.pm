@@ -4,12 +4,14 @@ use Mojo::Base 'Prep::Controller';
 use Prep::Utils;
 use WebService::AssistenteCivico;
 use Prep::Logger;
+use Moose;
 
 has logger => (
     is      => 'rw',
     lazy    => 1,
     builder => '_build_logger',
 );
+sub _build_logger { &get_logger }
 
 sub get {
     my $c = shift;
@@ -31,7 +33,7 @@ sub get {
 
     my $now_epoch = time();
 
-    my $logger = $self->logger;
+    my $logger = $c->logger;
     $logger->debug("now_epoch: $now_epoch");
 
     # Métricas de interação.
