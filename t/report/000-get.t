@@ -183,6 +183,12 @@ db_transaction {
 
         is $recipient->city, undef;
 
+        $res = $t->get_ok(
+            "/api/report/interaction-target-audience?security_token=$security_token",
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
         # $res = $t->get_ok(
         #     "/api/report/interaction?security_token=$security_token&city=bh",
         # )
