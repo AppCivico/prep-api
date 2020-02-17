@@ -7,7 +7,6 @@ use DateTime;
 
 sub base {
     my $c = shift;
-    use DDP; p $c->req->params;
 
     $c->validate_request_params(
         security_token => {
@@ -52,10 +51,10 @@ sub base {
           or die \['since', 'invalid'];
     }
 
-    my $city = 'todas';
+    my $city;
     if ($c->req->params->to_hash->{city}) {
         $city = lc $c->req->params->to_hash->{city};
-        die \['city', 'invalid'] unless $city =~ /^(sp|bh|ssa|todas)$/;
+        die \['city', 'invalid'] unless $city =~ /^(sp|bh|ssa)$/;
 
         if ($city eq 'bh') {
             $city = 1;
@@ -63,11 +62,8 @@ sub base {
         elsif ($city eq 'ssa') {
             $city = 2;
         }
-        elsif ($city eq 'sp') {
-            $city = 3;
-        }
         else {
-            $city = undef
+            $city = 3;
         }
     }
 

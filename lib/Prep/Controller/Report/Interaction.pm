@@ -8,10 +8,11 @@ sub get {
     my $c = shift;
 
     my $city = $c->stash('city');
-    use DDP; p $c->stash;
 
     my $interaction_rs = $c->schema->resultset('Interaction')->search(
         {
+            'me.closed_at' => \'IS NOT NULL',
+
             $city ?
               (
                   'recipient.city' => $city
@@ -34,37 +35,51 @@ sub get {
             $label = 'Últimos 3 dias';
 
             $interaction_metric_since = $now_epoch - (86400 * 3);
-            $interaction_metric_until = $now_epoch;
         }
         elsif ($_ == 2) {
             $label = '4 a 7 dias';
 
-            $interaction_metric_since = $now_epoch - (86400 * 7);
-            $interaction_metric_until = $now_epoch - (86400 * 4);
+            $interaction_metric_since = $now_epoch - (86400 * 7 - 1);
+            $interaction_metric_until = $now_epoch - (86400 * 3 - 1);
         }
         elsif ($_ == 3) {
             $label = '8 a 15 dias';
 
-            $interaction_metric_since = $now_epoch - (86400 * 15);
-            $interaction_metric_until = $now_epoch - (86400 * 8);
+            $interaction_metric_since = $now_epoch - (86400 * 15 - 1);
+            $interaction_metric_until = $now_epoch - (86400 * 7 - 1);
         }
         else {
             $label = 'Mais de 15 dias';
 
-            $interaction_metric_until = $now_epoch - (86400 * 8);
+            $interaction_metric_until = $now_epoch - (86400 * 8 - 1);
         }
 
         my $interaction_metric = $interaction_rs->search(
             {
                 '-and' => [
-                    \['started_at >= to_timestamp(?)', $interaction_metric_since],
-                    \['closed_at <= to_timestamp(?)', $interaction_metric_until],
+                    (
+                        $interaction_metric_since ?
+                            (
+                                \['started_at >= to_timestamp(?)', $interaction_metric_since],
+                            ) :
+                            ( )
+                    ),
+
+                    (
+                        $interaction_metric_until ?
+                            (
+                                \['closed_at <= to_timestamp(?)', $interaction_metric_until],
+                            ) :
+                            ( )
+                    )
                 ]
             }
         )->count;
 
         push @interaction_window_metrics, {label => $label, value => $interaction_metric};
 
+        $interaction_metric_since = undef;
+        $interaction_metric_until = undef;
     }
 
     return $c->render(
