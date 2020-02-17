@@ -20,13 +20,13 @@ sub get {
 
     my $interaction_rs = $c->schema->resultset('Interaction')->search(
         {
-            'me.closed_at' => \'IS NOT NULL',
+            # 'me.closed_at' => \'IS NOT NULL',
 
-            $city ?
-              (
-                  'recipient.city' => $city
-              ) :
-              ( )
+            # $city ?
+            #   (
+            #       'recipient.city' => $city
+            #   ) :
+            #   ( )
         },
         { join => 'recipient' }
     );
@@ -90,12 +90,13 @@ sub get {
                     )
                 ]
             }
-        )->count;
+        );
 
-        $logger->debug("count: $interaction_metric");
+        $logger->debug("count: " . $interaction_metric->count);
+        # $logger->debug("query: " . $interaction_metric->as_query);
 
 
-        push @interaction_window_metrics, {label => $label, value => $interaction_metric};
+        push @interaction_window_metrics, {label => $label, value => $interaction_metric->count};
 
         $interaction_metric_since = undef;
         $interaction_metric_until = undef;

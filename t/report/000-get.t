@@ -183,27 +183,27 @@ db_transaction {
 
         is $recipient->city, undef;
 
-        $res = $t->get_ok(
-            "/api/report/interaction?security_token=$security_token&city=bh",
-        )
-        ->status_is(200)
-        ->tx->res->json;
+        # $res = $t->get_ok(
+        #     "/api/report/interaction?security_token=$security_token&city=bh",
+        # )
+        # ->status_is(200)
+        # ->tx->res->json;
 
-        ok $metric = $res->{metrics}->[3];
-        is $metric->{label}, 'Mais de 15 dias';
-        is $metric->{value}, 0;
+        # ok $metric = $res->{metrics}->[3];
+        # is $metric->{label}, 'Mais de 15 dias';
+        # is $metric->{value}, 0;
 
-        ok $recipient->update( { city => 1 } );
+        # ok $recipient->update( { city => 1 } );
 
-        $res = $t->get_ok(
-            "/api/report/interaction?security_token=$security_token&city=bh",
-        )
-        ->status_is(200)
-        ->tx->res->json;
+        # $res = $t->get_ok(
+        #     "/api/report/interaction?security_token=$security_token&city=bh",
+        # )
+        # ->status_is(200)
+        # ->tx->res->json;
 
-        ok $metric = $res->{metrics}->[3];
-        is $metric->{label}, 'Mais de 15 dias';
-        is $metric->{value}, 1;
+        # ok $metric = $res->{metrics}->[3];
+        # is $metric->{label}, 'Mais de 15 dias';
+        # is $metric->{value}, 1;
     };
 };
 
