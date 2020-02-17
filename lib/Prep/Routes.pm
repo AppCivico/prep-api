@@ -8,8 +8,10 @@ sub register {
     my $api = $r->route('/api');
 
     # Report
-    $api->route('/report')->to('report#get');
-    $api->route('/report-new')->to('report_updated#get');
+    my $report = $api->route('/report')->under->to('report#base');
+
+    # Report::Interaction
+    my $report_interaction = $report->route('/interaction')->to('report-interaction#get');
 
     # Chatbot
     my $chatbot = $api->route('/chatbot')->under->to('chatbot#validade_security_token');
