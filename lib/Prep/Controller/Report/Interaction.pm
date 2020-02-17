@@ -3,6 +3,13 @@ use Mojo::Base 'Prep::Controller';
 
 use Prep::Utils;
 use WebService::AssistenteCivico;
+use Prep::Logger;
+
+has logger => (
+    is      => 'rw',
+    lazy    => 1,
+    builder => '_build_logger',
+);
 
 sub get {
     my $c = shift;
@@ -23,6 +30,9 @@ sub get {
     );
 
     my $now_epoch = time();
+
+    my $logger = $self->logger;
+    $logger->debug("now_epoch: $now_epoch");
 
     # Métricas de interação.
     my ($interaction_metric_since, $interaction_metric_until);
@@ -54,13 +64,17 @@ sub get {
             $interaction_metric_until = $now_epoch - (86400 * 8 - 1);
         }
 
+        $logger->debug("label: $label");
+        $logger->debug("since: $interaction_metric_since");
+        $logger->debug("until: $interaction_metric_until");
+
         my $interaction_metric = $interaction_rs->search(
             {
                 '-and' => [
                     (
                         $interaction_metric_since ?
                             (
-                                \['started_at::date >= to_timestamp(?)::date', $interaction_metric_since],
+                                \['started_at >= to_timestamp(?)', $interaction_metric_since],
                             ) :
                             ( )
                     ),
@@ -68,13 +82,16 @@ sub get {
                     (
                         $interaction_metric_until ?
                             (
-                                \['closed_at::date <= to_timestamp(?)::date', $interaction_metric_until],
+                                \['closed_at <= to_timestamp(?)', $interaction_metric_until],
                             ) :
                             ( )
                     )
                 ]
             }
         )->count;
+
+        $logger->debug("count: $interaction_metric");
+
 
         push @interaction_window_metrics, {label => $label, value => $interaction_metric};
 
