@@ -60,7 +60,7 @@ sub get {
                     (
                         $interaction_metric_since ?
                             (
-                                \['started_at >= to_timestamp(?)', $interaction_metric_since],
+                                \['started_at::date >= to_timestamp(?)::date', $interaction_metric_since],
                             ) :
                             ( )
                     ),
@@ -68,7 +68,7 @@ sub get {
                     (
                         $interaction_metric_until ?
                             (
-                                \['closed_at <= to_timestamp(?)', $interaction_metric_until],
+                                \['closed_at::date <= to_timestamp(?)::date', $interaction_metric_until],
                             ) :
                             ( )
                     )
