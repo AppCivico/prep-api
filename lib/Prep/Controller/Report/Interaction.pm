@@ -17,19 +17,15 @@ sub get_general {
     my $c = shift;
 
     my $city = $c->stash('city');
-    use DDP; p $city;
-    my $interaction_rs = $c->schema->resultset('Interaction')->search(
-        {
-            # 'me.closed_at' => \'IS NOT NULL',
 
-            (
-                $city ?
-                    (
-                        'recipient.city' => $city
-                    ) :
-                    ( 'recipient.city' => { '-in' => [1, 2, 3] } )
-            )
-        },
+    my $cond = {};
+
+    if ($city) {
+        $cond->{'recipient.city'} = $city;
+    }
+
+    my $interaction_rs = $c->schema->resultset('Interaction')->search(
+        $cond,
         { join => 'recipient' }
     );
 
