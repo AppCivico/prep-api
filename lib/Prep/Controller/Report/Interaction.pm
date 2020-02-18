@@ -115,14 +115,14 @@ sub get_target_audience {
 
     my $interaction_rs = $c->schema->resultset('Interaction')->search(
         {
-            'recipient_flag.is_target_audience' => 1
+            'recipient_flag.is_target_audience' => 1,
             # 'me.closed_at' => \'IS NOT NULL',
 
-            # $city ?
-            #   (
-            #       'recipient.city' => $city
-            #   ) :
-            #   ( )
+            $city ?
+              (
+                  'recipient.city' => $city
+              ) :
+              ( )
         },
         { join => {'recipient' => 'recipient_flag'} }
     );
