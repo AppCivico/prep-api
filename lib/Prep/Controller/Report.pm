@@ -54,7 +54,7 @@ sub base {
     my $city;
     if ($c->req->params->to_hash->{city}) {
         $city = lc $c->req->params->to_hash->{city};
-        die \['city', 'invalid'] unless $city =~ /^(sp|bh|ssa)$/;
+        die \['city', 'invalid'] unless $city =~ /^(sp|bh|ssa|todas)$/;
 
         if ($city eq 'bh') {
             $city = 1;
@@ -62,9 +62,13 @@ sub base {
         elsif ($city eq 'ssa') {
             $city = 2;
         }
-        else {
+        elsif ($city eq 'sp') {
             $city = 3;
         }
+        else {
+            # nada.
+        }
+
     }
 
     $c->stash(
