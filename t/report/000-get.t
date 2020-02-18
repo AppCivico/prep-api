@@ -84,6 +84,7 @@ db_transaction {
         ->tx->res->json;
 
         ok $recipient = $schema->resultset('Recipient')->find($res->{id});
+        ok $recipient->update( { city => 3 } )
     };
 
     subtest 'Test interaction' => sub {
@@ -180,8 +181,6 @@ db_transaction {
         ok $metric = $res->{metrics}->[3];
         is $metric->{label}, 'Mais de 15 dias';
         is $metric->{value}, 1;
-
-        is $recipient->city, undef;
 
         $res = $t->get_ok(
             "/api/report/interaction-target-audience?security_token=$security_token",
