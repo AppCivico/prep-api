@@ -66,7 +66,7 @@ sub base {
             $city = 3;
         }
         else {
-            # nada.
+            $city = undef;
         }
 
     }
