@@ -22,11 +22,13 @@ sub get_general {
         {
             # 'me.closed_at' => \'IS NOT NULL',
 
-            # $city ?
-            #   (
-            #       'recipient.city' => $city
-            #   ) :
-            #   ( )
+            (
+                $city ?
+                    (
+                        'recipient.city' => $city
+                    ) :
+                    ( )
+            )
         },
         { join => 'recipient' }
     );
