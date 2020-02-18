@@ -14,6 +14,9 @@ sub register {
     my $report_interaction                 = $report->route('/interaction')->to('report-interaction#get_general');
     my $report_interaction_public_audience = $report->route('/interaction-target-audience')->to('report-interaction#get_target_audience');
 
+    # Report::GeneralPublic
+    my $report_general_public = $report->route('/general-public')->to('report-general_public#get');
+
     # Chatbot
     my $chatbot = $api->route('/chatbot')->under->to('chatbot#validade_security_token');
 

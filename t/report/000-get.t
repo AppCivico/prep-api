@@ -189,10 +189,18 @@ db_transaction {
         ->tx->res->json;
 
         $res = $t->get_ok(
-            "/api/report/interaction?security_token=$security_token&city=bh",
+            "/api/report/interaction?security_token=$security_token&city=todas",
         )
         ->status_is(200)
         ->tx->res->json;
+
+        $res = $t->get_ok(
+            "/api/report/general-public?security_token=$security_token&city=todas",
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        use DDP; p $res;
 
         # ok $metric = $res->{metrics}->[3];
         # is $metric->{label}, 'Mais de 15 dias';
