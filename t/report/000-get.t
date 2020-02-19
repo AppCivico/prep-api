@@ -844,6 +844,13 @@ db_transaction {
         ->status_is(200)
         ->tx->res->json;
 
+
+        $res = $t->get_ok(
+            "/api/report/intents?security_token=$security_token&city=todas",
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
         # ok $metric = $res->{metrics}->[3];
         # is $metric->{label}, 'Mais de 15 dias';
         # is $metric->{value}, 0;

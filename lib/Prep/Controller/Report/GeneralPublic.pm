@@ -2,7 +2,6 @@ package Prep::Controller::Report::GeneralPublic;
 use Mojo::Base 'Prep::Controller';
 
 use Prep::Utils;
-use WebService::AssistenteCivico;
 use Prep::Logger;
 use Moose;
 

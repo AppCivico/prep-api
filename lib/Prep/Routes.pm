@@ -20,6 +20,9 @@ sub register {
     # Report::TargetAudience
     my $report_target_audience = $report->route('/target-audience')->to('report-target_audience#get');
 
+    # Report::Intents
+    my $report_intents = $report->route('/intents')->to('report-intents#get');
+
     # Chatbot
     my $chatbot = $api->route('/chatbot')->under->to('chatbot#validade_security_token');
 

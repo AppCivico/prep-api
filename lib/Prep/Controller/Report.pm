@@ -2,7 +2,6 @@ package Prep::Controller::Report;
 use Mojo::Base 'Prep::Controller';
 
 use Prep::Utils;
-use WebService::AssistenteCivico;
 use DateTime;
 
 sub base {
