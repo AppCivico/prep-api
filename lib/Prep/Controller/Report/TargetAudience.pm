@@ -32,6 +32,9 @@ sub get {
 
     my @metrics;
 
+    $logger->debug("since_target_audience:$since");
+    $logger->debug("until_target_audience:$until");
+
     # Métricas de escolaridade
     my @scolarity_metrics;
     for ( 1 .. 4 ) {
@@ -48,6 +51,7 @@ sub get {
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
+            $logger->debug("fundamental 1: $value");
         }
         elsif ($_ == 2) {
             $label = 'Fundamental II';
@@ -60,6 +64,7 @@ sub get {
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
+            $logger->debug("fundamental 2: $value");
         }
         elsif ($_ == 3) {
             $label = 'Ensino médio';
@@ -72,6 +77,7 @@ sub get {
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
+            $logger->debug("em: $value");
         }
         else {
             $label = 'Ensino superior';
@@ -84,6 +90,7 @@ sub get {
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
+            $logger->debug("es: $value");
         }
 
         push @scolarity_metrics, { label => $label, value => $value };

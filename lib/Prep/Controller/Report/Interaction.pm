@@ -63,10 +63,6 @@ sub get_general {
             $interaction_metric_until = $now_epoch - (86400 * 8 - 1);
         }
 
-        $logger->debug("label: $label");
-        $logger->debug("since: $interaction_metric_since");
-        $logger->debug("until: $interaction_metric_until");
-
         my $interaction_metric = $interaction_rs->search(
             {
                 '-and' => [
@@ -88,10 +84,6 @@ sub get_general {
                 ]
             }
         );
-
-        $logger->debug("count: " . $interaction_metric->count);
-        # $logger->debug("query: " . $interaction_metric->as_query);
-
 
         push @interaction_window_metrics, {label => $label, value => $interaction_metric->count};
 
@@ -129,7 +121,6 @@ sub get_target_audience {
     my $now_epoch = time();
 
     my $logger = $c->logger;
-    $logger->debug("now_epoch: $now_epoch");
 
     # Métricas de interação.
     my ($interaction_metric_since, $interaction_metric_until);
@@ -161,10 +152,6 @@ sub get_target_audience {
             $interaction_metric_until = $now_epoch - (86400 * 8 - 1);
         }
 
-        $logger->debug("label: $label");
-        $logger->debug("since: $interaction_metric_since");
-        $logger->debug("until: $interaction_metric_until");
-
         my $interaction_metric = $interaction_rs->search(
             {
                 '-and' => [
@@ -186,10 +173,6 @@ sub get_target_audience {
                 ]
             }
         );
-
-        $logger->debug("count: " . $interaction_metric->count);
-        # $logger->debug("query: " . $interaction_metric->as_query);
-
 
         push @interaction_window_metrics, {label => $label, value => $interaction_metric->count};
 
