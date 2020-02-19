@@ -24,7 +24,7 @@ sub get {
 
     my $recipient_rs = $c->schema->resultset('Recipient')->search(
         {
-            ( $city ? ( { 'me.city' => $city } ) : ( ) ),
+            ( $city ? ( 'me.city' => $city ) : ( ) ),
             'recipient_flag.is_target_audience' => 1
         },
         { join => 'recipient_flag' }
