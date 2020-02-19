@@ -43,7 +43,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A4a',
-                    'answers.answer_value' => { '-in' => ['1', '2', '3', '4'] }
+                    'answers.answer_value' => { '-in' => ['1', '2', '3', '4'] },
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -54,7 +55,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A4a',
-                    'answers.answer_value' => { '-in' => ['5', '6', '7', '8', '9'] }
+                    'answers.answer_value' => { '-in' => ['5', '6', '7', '8', '9'] },
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -65,7 +67,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A4',
-                    'answers.answer_value' => '2'
+                    'answers.answer_value' => '2',
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -76,7 +79,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A4',
-                    'answers.answer_value' => '3'
+                    'answers.answer_value' => '3',
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -98,7 +102,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A5',
-                    'answers.answer_value' => '1'
+                    'answers.answer_value' => '1',
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -109,7 +114,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A5',
-                    'answers.answer_value' => '2'
+                    'answers.answer_value' => '2',
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -120,7 +126,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A5',
-                    'answers.answer_value' => '3'
+                    'answers.answer_value' => '3',
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -131,7 +138,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A5',
-                    'answers.answer_value' => '4'
+                    'answers.answer_value' => '4',
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -142,7 +150,8 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     'question.code'        => 'A5',
-                    'answers.answer_value' => '5'
+                    'answers.answer_value' => '5',
+                    'answers.created_at'   => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                 },
                 { join => { 'answers' => 'question' } }
             )->count;
@@ -156,31 +165,44 @@ sub get {
 
     # Métricas sobre questionários
     my $started_publico_interesse = $recipient_rs->search(
-        { 'question.code' => 'A1' },
+        {
+            'question.code'      => 'A1',
+            'answers.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
+        },
         { join => { 'answers' => 'question' } }
     )->count;
     push @metrics, { label => 'Iniciaram o questionário de público de interesse', value => $started_publico_interesse };
 
     my $finished_publico_interesse = $recipient_rs->search(
-        { 'recipient_flag.finished_publico_interesse' => 1 }
+        {
+            'question.code'      => 'A6',
+            'answers.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
+        },
+        { join => { 'answers' => 'question' } }
     )->count;
     push @metrics, { label => 'Finalizaram o questionário de público de interesse', value => $finished_publico_interesse };
 
     my $started_recrutamento = $recipient_rs->search(
-        { 'question.code' => 'B1' },
+        {
+            'question.code'      => 'B1',
+            'answers.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
+        },
         { join => { 'answers' => 'question' } }
     )->count;
     push @metrics, { label => 'Iniciaram o questionário de recrutamento', value => $started_recrutamento };
 
     my $finished_recrutamento = $recipient_rs->search(
-        { 'question.code' => 'B10' },
+        {
+            'question.code'      => 'B10',
+            'answers.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
+        },
         { join => { 'answers' => 'question' } }
     )->count;
     push @metrics, { label => 'Finalizaram o questionário de recrutamento', value => $finished_recrutamento };
 
     # Métricas do TCLE
     my $term_signature_rs = $c->schema->resultset('TermSignature')->search(
-        undef,
+        { 'me.signed_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}] },
         {
             order_by => { '-desc' => 'me.signed_at' },
             group_by => 'me.recipient_id'
@@ -193,18 +215,19 @@ sub get {
 
         if ($_ == 1) {
             $label = 'Aceitaram o TCLE';
-            $value = $recipient_rs->search( { 'recipient_flag.signed_term' => 1 } )->count;
+            $value = $recipient_rs->search( { 'recipient_flag.signed_term' => 1, 'me.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}] } )->count;
         }
         elsif ($_ == 2) {
             $label = 'Não aceitaram o TCLE';
-            $value = $term_signature_rs->search( { 'me.signed' => 0 } )->count;
+            $value = $term_signature_rs->search( { 'me.signed' => 0, 'me.signed_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}] } )->count;
         }
         else {
             $label = 'Não responderam o TCLE';
             $value = $recipient_rs->search(
                 {
                     '-and' => [
-                        \[ 'NOT EXISTS (SELECT 1 FROM term_signature)' ]
+                        \[ 'NOT EXISTS (SELECT 1 FROM term_signature)' ],
+                        'me.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
                     ]
                 }
             )->count;
@@ -215,12 +238,22 @@ sub get {
     push @metrics, { sub_group => 'Sobre o TCLE', metrics => \@tcle_metrics };
 
     my $eligible_for_research = $recipient_rs->search(
-        { 'recipient_flag.is_eligible_for_research' => 1 }
+        {
+            'recipient_flag.is_eligible_for_research' => 1,
+            'question.code' => 'B10',
+            'answers.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
+        },
+        { join => { 'answers' => 'question' } }
     )->count;
     push @metrics, { label => 'Número de elegíveis', value => $eligible_for_research };
 
     my $created_appointment = $recipient_rs->search(
-        { '-and' => [ \['EXISTS (SELECT 1 FROM appointment)'] ] }
+        {
+            '-and' => [
+                \['EXISTS (SELECT 1 FROM appointment)' ],
+                'me.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}]
+            ]
+        }
     )->count;
     push @metrics, { label => 'Agendaram', value => $created_appointment };
 
@@ -231,11 +264,11 @@ sub get {
 
         if ($_ == 1) {
             $label = 'Passaram WhatsApp';
-            $value = $recipient_rs->search( { 'me.phone' => \'IS NOT NULL' } )->count;
+            $value = $recipient_rs->search( { 'me.phone' => \'IS NOT NULL', 'me.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}] } )->count;
         }
         else {
             $label = 'Passaram Instagram';
-            $value = $recipient_rs->search( { 'me.instagram' => \'IS NOT NULL' } )->count;
+            $value = $recipient_rs->search( { 'me.instagram' => \'IS NOT NULL', 'me.created_at' => [{ '>=' => \"to_timestamp($since)" }, {'<=' => \"to_timestamp($until)"}] } )->count;
         }
         push @contact_metrics, {label => $label, value => $value};
     }
