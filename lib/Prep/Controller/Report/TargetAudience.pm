@@ -25,9 +25,13 @@ sub get {
     my $recipient_rs = $c->schema->resultset('Recipient')->search(
         {
             ( $city ? ( 'me.city' => $city ) : ( ) ),
-            'recipient_flag.is_target_audience' => 1
+            'recipient_flag.is_target_audience' => 1,
+
+            '-and' => [
+                \[ "EXISTS (SELECT 1 FROM answer a, question q WHERE q.code = 'A6' AND a.question_id = q.id AND a.created_at >= to_timestamp(?) AND a.created_at <= to_timestamp(?))", $since, $until ]
+            ]
         },
-        { join => 'recipient_flag' }
+        { join => [ { 'answers' => 'question' },'recipient_flag' ] }
     );
 
     my @metrics;
