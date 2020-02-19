@@ -218,11 +218,23 @@ sub get {
 
         if ($_ == 1) {
             $label = 'Aceitaram o TCLE';
-            $value = $recipient_rs->search( { 'recipient_flag.signed_term' => 1, 'me.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"} } )->count;
+            $value = $term_signature_rs->search(
+                {
+                    'me.signed'    => 1,
+                    'me.signed_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)" }
+                },
+                { group_by => 'me.recipient_id' }
+            )->count;
         }
         elsif ($_ == 2) {
             $label = 'Não aceitaram o TCLE';
-            $value = $term_signature_rs->search( { 'me.signed' => 0, 'me.signed_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"} } )->count;
+            $value = $term_signature_rs->search(
+                {
+                    'me.signed'    => 0,
+                    'me.signed_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)" }
+                },
+                { group_by => 'me.recipient_id' }
+            )->count;;
         }
         else {
             $label = 'Não responderam o TCLE';
@@ -230,9 +242,11 @@ sub get {
                 {
                     '-and' => [
                         \[ 'NOT EXISTS (SELECT 1 FROM term_signature)' ],
-                        'me.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
+                        'question.code'      => 'A6',
+                        'answers.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
                     ]
-                }
+                },
+                { join => {'answers' => 'question'} }
             )->count;
         }
 
