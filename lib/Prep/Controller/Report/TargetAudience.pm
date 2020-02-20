@@ -31,7 +31,10 @@ sub get {
                 \[ "EXISTS (SELECT 1 FROM answer a, question q WHERE q.code = 'A6' AND a.question_id = q.id AND a.created_at >= to_timestamp(?) AND a.created_at <= to_timestamp(?))", $since, $until ]
             ]
         },
-        { join => [ { 'answers' => 'question' },'recipient_flag' ] }
+        {
+            group_by => 'me.id',
+            join => [ { 'answers' => 'question' },'recipient_flag' ]
+        }
     );
 
     my @metrics;
@@ -216,6 +219,8 @@ sub get {
         }
     );
 
+    use DDP; p $recipient_rs->count;
+
     my @tcle_metrics;
     for (1 .. 3) {
         my ($label, $value);
@@ -238,7 +243,7 @@ sub get {
                     'me.signed_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)" }
                 },
                 { group_by => 'me.recipient_id' }
-            )->count;;
+            )->count;
         }
         else {
             $label = 'Não responderam o TCLE';
@@ -246,12 +251,12 @@ sub get {
                 {
                     '-and' => [
                         \[ 'NOT EXISTS (SELECT 1 FROM term_signature)' ],
-                        'question.code'      => 'A6',
-                        'answers.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
                     ]
                 },
                 { join => {'answers' => 'question'} }
-            )->count;
+            );
+            use DDP; p $value->as_query; p [$recipient_rs->all];
+            $value = $value->count;
         }
 
         push @tcle_metrics, {label => $label, value => $value};
