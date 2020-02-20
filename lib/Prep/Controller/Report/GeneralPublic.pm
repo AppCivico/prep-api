@@ -63,7 +63,7 @@ sub get {
         }
         elsif ($key eq 'count_started_publico_interesse_after_refusal') {
             $label  = 'Começaram o bloco A após apertar "agora não" no menu principal';
-            $value  = $view->count_started_publico_interesse_after_refusal;
+            $value  = $view->count_started_publico_interesse_after_refusal || 0;
             $weight = 4;
         }
         else {
