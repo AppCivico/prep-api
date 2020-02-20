@@ -177,24 +177,6 @@ sub get {
     # Métricas de interação.
 
     # Métricas sobre questionários
-    my $started_publico_interesse = $recipient_rs->search(
-        {
-            'question.code'      => 'A1',
-            'answers.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
-        },
-        { join => { 'answers' => 'question' } }
-    )->count;
-    push @metrics, { label => 'Iniciaram o questionário de público de interesse', value => $started_publico_interesse };
-
-    my $finished_publico_interesse = $recipient_rs->search(
-        {
-            'question.code'      => 'A6',
-            'answers.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
-        },
-        { join => { 'answers' => 'question' } }
-    )->count;
-    push @metrics, { label => 'Finalizaram o questionário de público de interesse', value => $finished_publico_interesse };
-
     my $started_recrutamento = $recipient_rs->search(
         {
             'question.code'      => 'B1',
