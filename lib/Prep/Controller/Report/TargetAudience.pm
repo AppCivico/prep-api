@@ -219,8 +219,6 @@ sub get {
         }
     );
 
-    use DDP; p $recipient_rs->count;
-
     my @tcle_metrics;
     for (1 .. 3) {
         my ($label, $value);
@@ -255,7 +253,7 @@ sub get {
                 },
                 { join => {'answers' => 'question'} }
             );
-            use DDP; p $value->as_query; p [$recipient_rs->all];
+
             $value = $value->count;
         }
 
