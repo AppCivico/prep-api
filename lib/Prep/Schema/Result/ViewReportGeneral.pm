@@ -18,6 +18,7 @@ __PACKAGE__->add_columns(
         count_finished_publico_interesse
         count_started_quiz_brincadeira
         count_finished_quiz_brincadeira
+        count_recipients
     )
 );
 
@@ -67,7 +68,7 @@ SELECT
         WHERE
             EXISTS ( SELECT 1 FROM answers_filtered a WHERE a.recipient_id = q.recipient_id )
     ) AS count_started_publico_interesse_after_refusal,
-    ( SELECT COUNT(DISTINCT recipient_id) FROM answers_filtered GROUP BY recipient_id ) AS count_started_publico_interesse,
+    ( SELECT COUNT(DISTINCT recipient_id) FROM answers_filtered ) AS count_started_publico_interesse,
     (
         SELECT
             count(1)
@@ -89,7 +90,13 @@ SELECT
             JOIN question q ON q.id = a.question_id
             WHERE q.code = 'AC8'
         )
-    ) AS count_finished_quiz_brincadeira
+    ) AS count_finished_quiz_brincadeira,
+    (
+        SELECT
+            COUNT(1)
+        FROM recipient
+        WHERE created_at BETWEEN to_timestamp(?) AND to_timestamp(?)
+    ) AS count_recipients
 
 SQL_QUERY
 
