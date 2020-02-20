@@ -33,7 +33,6 @@ WITH interaction_grouped AS (
     FROM
         interaction
     WHERE started_at BETWEEN to_timestamp(?) AND to_timestamp(?)
-    AND closed_at IS NOT NULL
     GROUP BY recipient_id
 ), quick_reply_log_grouped AS (
     SELECT
