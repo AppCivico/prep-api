@@ -250,7 +250,7 @@ sub get {
             $value = $recipient_rs->search(
                 {
                     '-and' => [
-                        \[ 'NOT EXISTS (SELECT 1 FROM term_signature)' ],
+                        \[ 'NOT EXISTS (SELECT 1 FROM term_signature s WHERE s.recipient_id = me.id)' ],
                     ]
                 },
                 { join => {'answers' => 'question'} }
