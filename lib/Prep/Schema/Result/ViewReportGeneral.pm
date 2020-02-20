@@ -32,7 +32,7 @@ WITH interaction_grouped AS (
         recipient_id
     FROM
         interaction
-    WHERE started_at BETWEEN to_timestamp(?) AND to_timestamp(?)
+    WHERE started_at >= to_timestamp(?) AND started_at <= to_timestamp(?)
     GROUP BY recipient_id
 ), quick_reply_log_grouped AS (
     SELECT
