@@ -42,6 +42,9 @@ sub get {
     $logger->debug("since_target_audience:$since");
     $logger->debug("until_target_audience:$until");
 
+    my $recipient_count = $recipient_rs->count;
+    push @metrics, { label => 'Contatos novos no período', value => $recipient_count };
+
     # Métricas de escolaridade
     my @scolarity_metrics;
     for ( 1 .. 4 ) {
@@ -274,12 +277,23 @@ sub get {
     my $created_appointment = $recipient_rs->search(
         {
             '-and' => [
-                \['EXISTS (SELECT 1 FROM appointment)' ],
-                'me.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
+                \[
+                    'EXISTS (
+                        SELECT 1 FROM appointment a WHERE a.recipient_id = me.id AND a.created_at BETWEEN to_timestamp(?) AND to_timestamp(?)
+                    )',
+                    $since, $until
+                ],
             ]
         }
     )->count;
-    push @metrics, { label => 'Agendaram', value => $created_appointment };
+    push @metrics, { label => 'Criaram agendamento', value => $created_appointment };
+
+    my $appointments = $c->schema->resultset('Appointment')->search(
+        {
+            'me.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)" }
+        }
+    )->count;
+    push @metrics, { label => 'Agendamentos', value => $appointments };
 
     # Métricas de contato
     my @contact_metrics;
