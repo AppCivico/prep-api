@@ -39,7 +39,7 @@ sub get {
         elsif ($key eq 'count_finished_quiz_brincadeira') {
             $label  = 'Finalizaram quiz de brincadeira';
             $value  = $view->count_finished_quiz_brincadeira;
-            $weight = 7;
+            $weight = 8;
         }
         elsif ($key eq 'count_multiple_interactions') {
             $label  = 'Possuem mais de uma interação';
@@ -63,13 +63,13 @@ sub get {
         }
         elsif ($key eq 'count_started_publico_interesse_after_refusal') {
             $label  = 'Começaram o bloco A após apertar "agora não" no menu principal';
-            $value  = $view->count_started_publico_interesse_after_refusal || 0;
+            $value  = $view->count_started_publico_interesse_after_refusal;
             $weight = 4;
         }
         else {
             $label  = 'Começaram o quiz de brincadeira';
             $value  = $view->count_started_quiz_brincadeira;
-            $weight = 8;
+            $weight = 7;
         }
 
         push @metrics, { label => $label, value => $value, weight => $weight }

@@ -45,13 +45,15 @@ WITH interaction_grouped AS (
     GROUP BY recipient_id
 ), answers_filtered AS (
     select
-        id,
+        a.id,
         recipient_id,
         question_id,
-        created_at
+        code,
+        a.created_at
     FROM
-        answer
-    WHERE created_at BETWEEN to_timestamp(?) AND to_timestamp(?)
+        answer a
+    JOIN question q ON q.id = a.question_id
+    WHERE a.created_at BETWEEN to_timestamp(?) AND to_timestamp(?)
 )
 SELECT
     (SELECT count(1) FROM interaction_grouped i WHERE i.count = 1) AS count_one_interaction,
@@ -65,13 +67,14 @@ SELECT
         WHERE
             EXISTS ( SELECT 1 FROM answers_filtered a WHERE a.recipient_id = q.recipient_id )
     ) AS count_started_publico_interesse_after_refusal,
-    ( SELECT COUNT(DISTINCT recipient_id) FROM answers_filtered ) AS count_started_publico_interesse,
+    ( SELECT COUNT(DISTINCT recipient_id) FROM answers_filtered GROUP BY recipient_id ) AS count_started_publico_interesse,
     (
         SELECT
             count(1)
         FROM recipient_flags f
         JOIN answers_filtered a ON a.recipient_id = f.recipient_id
         WHERE f.finished_publico_interesse = true
+        AND a.code = 'A6'
     ) AS count_finished_publico_interesse,
     (SELECT count(1) FROM answers_filtered a JOIN question q ON a.question_id = q.id WHERE q.code = 'AC1' ) AS count_started_quiz_brincadeira,
     (
