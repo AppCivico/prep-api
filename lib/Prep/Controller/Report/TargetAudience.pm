@@ -28,7 +28,7 @@ sub get {
             'recipient_flag.is_target_audience' => 1,
 
             '-and' => [
-                \[ "EXISTS (SELECT 1 FROM answer a, question q WHERE q.code = 'A6' AND a.question_id = q.id AND a.created_at >= to_timestamp(?) AND a.created_at <= to_timestamp(?))", $since, $until ]
+                \[ "EXISTS (SELECT 1 FROM answer a, question q WHERE a.recipient_id = me.id AND q.code = 'A6' AND a.question_id = q.id AND a.created_at >= to_timestamp(?) AND a.created_at <= to_timestamp(?))", $since, $until ]
             ]
         },
         {
