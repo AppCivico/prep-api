@@ -61,7 +61,7 @@ SELECT
         SELECT
             count(1)
         FROM
-            answer a
+            answers_filtered a
         WHERE
             EXISTS(
                 SELECT 1 FROM quick_reply_log_grouped q WHERE a.recipient_id = q.recipient_id
