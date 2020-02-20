@@ -288,13 +288,6 @@ sub get {
     )->count;
     push @metrics, { label => 'Criaram agendamento', value => $created_appointment };
 
-    my $appointments = $c->schema->resultset('Appointment')->search(
-        {
-            'me.created_at' => { '>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)" }
-        }
-    )->count;
-    push @metrics, { label => 'Agendamentos', value => $appointments };
-
     # Métricas de contato
     my @contact_metrics;
     for (1 .. 2) {
