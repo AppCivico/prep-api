@@ -42,6 +42,8 @@ sub post {
         $recipient->term_signatures->delete;
         $recipient->appointments->delete;
         $recipient->stashes->delete;
+        $recipient->quick_reply_logs->delete;
+        $recipient->interactions->delete;
     };
 
     return $c->render(
