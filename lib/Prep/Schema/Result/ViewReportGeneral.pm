@@ -62,10 +62,7 @@ SELECT
             count(1)
         FROM
             answers_filtered a
-        WHERE
-            EXISTS(
-                SELECT 1 FROM quick_reply_log_grouped q WHERE a.recipient_id = q.recipient_id
-            )
+        JOIN quick_reply_log_grouped q ON q.recipient_id = a.recipient_id
     ) AS count_started_publico_interesse_after_refusal,
     ( SELECT COUNT(DISTINCT recipient_id) FROM answers_filtered ) AS count_started_publico_interesse,
     (
