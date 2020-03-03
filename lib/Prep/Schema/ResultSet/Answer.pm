@@ -121,6 +121,20 @@ sub action_specs {
 
                 $pending_question_data = $recipient->get_next_question_data($category);
 
+                # Caso seja a A2 e a resposta da A1 tenha sido '4', ou seja, 'nenhuma dessas'.
+                # O quiz deve ser finalizado.
+                if ( $answer->question->code eq 'A2' ) {
+                    my $first_answer = $recipient->answers->search(
+                        { 'question.code' => 'A1' },
+                        { join => 'question' }
+                    )->next;
+
+                    if ($first_answer->answer_value eq '4') {
+                        $pending_question_data = undef;
+                        $answer->stash->update( { finished => 1, updated_at => \'NOW()' } );
+                    }
+                }
+
                 if ( defined $pending_question_data->{question} ) {
                     $finished_quiz = 0;
                 }

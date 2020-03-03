@@ -260,6 +260,51 @@ db_transaction {
 
         is $res->{code}, 'A1';
 
+        # Testando tratamento para quando a reposta da A1 for '4'
+        # O quiz deve morrer após responder a A2.
+        db_transaction {
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A1',
+                    category       => 'publico_interesse',
+                    answer_value   => '4'
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
+
+            is $res->{finished_quiz}, 0;
+
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'A2',
+                    category       => 'publico_interesse',
+                    answer_value   => 15
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
+
+            is $res->{finished_quiz}, 1;
+
+            $res = $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => 'publico_interesse'
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+        };
+
         $res = $t->post_ok(
             '/api/chatbot/recipient/answer',
             form => {
