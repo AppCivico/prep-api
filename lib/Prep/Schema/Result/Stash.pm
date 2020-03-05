@@ -85,6 +85,12 @@ __PACKAGE__->table("stash");
   default_value: false
   is_nullable: 0
 
+=head2 times_answered
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -112,6 +118,8 @@ __PACKAGE__->add_columns(
   },
   "finished",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "times_answered",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -178,8 +186,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-17 22:17:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZFuzH1uxv82JCJT3tFLpuQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-05 15:46:02
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:9E4HLMhktukAftYYGefCrQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
