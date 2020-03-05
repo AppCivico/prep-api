@@ -91,6 +91,11 @@ __PACKAGE__->table("stash");
   default_value: 0
   is_nullable: 0
 
+=head2 must_be_reseted
+
+  data_type: 'boolean'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -120,6 +125,8 @@ __PACKAGE__->add_columns(
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "times_answered",
   { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "must_be_reseted",
+  { data_type => "boolean", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -186,8 +193,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-05 15:46:02
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:9E4HLMhktukAftYYGefCrQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-05 18:47:12
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:7Xzaswj2XLQ751ph0260zg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
