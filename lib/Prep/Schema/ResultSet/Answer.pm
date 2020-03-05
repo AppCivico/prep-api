@@ -105,6 +105,16 @@ sub action_specs {
 
             }
 
+            # Verificando a iteração da resposta
+            my $stash = $recipient->stashes->search( { question_map_id => $question_map->id } )->next;
+
+            if ($stash->times_answered == 0) {
+                $values{question_map_iteration} = 1;
+            }
+            else {
+                $values{question_map_iteration} = $stash->times_answered + 1;
+            }
+
             my $integration_failed = 0;
 
             my ($answer, $finished_quiz, %flags, @followup_messages, $simprep_url);
