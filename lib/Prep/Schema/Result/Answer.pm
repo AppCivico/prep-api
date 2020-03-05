@@ -185,22 +185,49 @@ sub update_stash {
     my ($self, $finished) = @_;
 
     my $recipient = $self->recipient;
-    my $stash     = $recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
     my $question  = $self->question;
     my $rules     = $question->rules_parsed;
+
+    my $stash = $recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
+
+    # Verificando se o type do questionário pode ser iterado
+    # Caso verdadeiro, a flag times_answered é atualizada e mantenho o bool finished como false
+    # E também é resetado o value da stash.
+    my $can_be_iterated = $stash->question_map->category->can_be_iterated;
+
+    my $values_for_finished;
+    if ($can_be_iterated) {
+        $values_for_finished = {
+            # Essa flag será resetada no GET da resposta
+            finished => 1,
+
+            must_be_reseted => 1,
+            times_answered  => $self->times_answered + 1
+        };
+    }
+    else {
+        $values_for_finished = {
+            finished       => 1,
+            times_answered => 1,
+        };
+    }
 
     $self->result_source->schema->txn_do(sub {
         if ( !$rules ) {
             # Caso não tenham rules, verifico se há perguntas pendentes
             my $next_question = $stash->next_question;
 
-            if ( !defined $next_question->{question} ) {
-                # Verificando se o type do questionário pode ser iterado
-                # Caso verdadeiro, a flag times_answered é atualizada e mantenho o bool finished como false
-                # E também é resetado o value da stash.
-                use DDP; p $stash->question_map->category;
 
-                $stash->update( { finished => 1 } )
+            if ( !defined $next_question->{question} ) {
+
+                $stash->update(
+                    {
+
+
+
+                        times_answered => $can_be_iterated ?  $stash->times_answered + 1 : 1
+                    }
+                )
             }
         }
 
@@ -224,7 +251,13 @@ sub update_stash {
                 # Caso seja do quiz devo desqualificar e atualizar os booleans
                 $recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
 
-                $stash->update( { finished => 1 } );
+                $stash->update(
+                    {
+                        finished => 1,
+
+                        times_answered => $can_be_iterated ?  $stash->times_answered + 1 : 1
+                    }
+                );
             }
 
         }
