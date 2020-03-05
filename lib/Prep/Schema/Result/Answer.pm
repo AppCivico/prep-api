@@ -79,6 +79,11 @@ __PACKAGE__->table("answer");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 question_map_iteration
+
+  data_type: 'integer'
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -104,6 +109,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "question_map_iteration",
+  { data_type => "integer", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -166,8 +173,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 16:16:26
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LaBwvhRj2ejUvKTF5neekw
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-05 15:07:18
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:w7uTWetavj8s8nu2BxrKpg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -188,6 +195,11 @@ sub update_stash {
             my $next_question = $stash->next_question;
 
             if ( !defined $next_question->{question} ) {
+                # Verificando se o type do questionário pode ser iterado
+                # Caso verdadeiro, a flag times_answered é atualizada e mantenho o bool finished como false
+                # E também é resetado o value da stash.
+                use DDP; p $stash->question_map->category;
+
                 $stash->update( { finished => 1 } )
             }
         }
