@@ -632,11 +632,6 @@ sub get_next_question_data {
     );
     $stash->initiate if $stash->is_empty;
 
-    if ($stash->must_be_reseted) {
-        $stash->update( { finished => 0 } );
-        $stash->initiate;
-    }
-
     return $stash->next_question;
 }
 

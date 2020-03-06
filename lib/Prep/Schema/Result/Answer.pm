@@ -202,7 +202,7 @@ sub update_stash {
             finished => 1,
 
             must_be_reseted => 1,
-            times_answered  => $self->times_answered + 1
+            times_answered  => $stash->times_answered + 1
         };
     }
     else {
@@ -219,15 +219,7 @@ sub update_stash {
 
 
             if ( !defined $next_question->{question} ) {
-
-                $stash->update(
-                    {
-
-
-
-                        times_answered => $can_be_iterated ?  $stash->times_answered + 1 : 1
-                    }
-                )
+                $stash->update($values_for_finished)
             }
         }
 
@@ -251,13 +243,7 @@ sub update_stash {
                 # Caso seja do quiz devo desqualificar e atualizar os booleans
                 $recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
 
-                $stash->update(
-                    {
-                        finished => 1,
-
-                        times_answered => $can_be_iterated ?  $stash->times_answered + 1 : 1
-                    }
-                );
+                $stash->update($values_for_finished);
             }
 
         }

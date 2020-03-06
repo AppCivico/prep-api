@@ -223,7 +223,17 @@ sub initiate {
 sub answered_questions {
     my ($self) = @_;
 
-    return $self->recipient->answers->question_code_by_map_id( $self->question_map_id )->get_column('question.code')->all();
+    my @codes = $self->recipient->answers->question_code_by_map_id( $self->question_map_id )->get_column('question.code')->all();
+
+    # Caso o questionário seja iterado e já tiver todas as respostas
+    # Verifico se a iteração deve ser "fechada" e iniciada uma nova.
+    if ( $self->question_map->can_be_iterated && scalar @codes >= $self->question_map->count_questions  ) {
+        @codes = $self->recipient->answers->question_code_by_map_id( $self->question_map_id )->search(
+            { 'me.question_map_iteration' => { '>' => $self->times_answered } }
+        )->get_column('question.code')->all();
+    }
+
+    return @codes;
 }
 
 sub next_question {
