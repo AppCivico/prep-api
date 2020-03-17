@@ -156,6 +156,33 @@ __PACKAGE__->table("recipient");
   data_type: 'text'
   is_nullable: 1
 
+=head2 voucher_type
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 prep_reminder_before
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
+=head2 prep_reminder_before_ts
+
+  data_type: 'timestamp'
+  is_nullable: 1
+
+=head2 prep_reminder_after
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
+=head2 prep_reminder_after_interval
+
+  data_type: 'interval'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -217,6 +244,16 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "instagram",
   { data_type => "text", is_nullable => 1 },
+  "voucher_type",
+  { data_type => "text", is_nullable => 1 },
+  "prep_reminder_before",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "prep_reminder_before_ts",
+  { data_type => "timestamp", is_nullable => 1 },
+  "prep_reminder_after",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "prep_reminder_after_interval",
+  { data_type => "interval", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -440,8 +477,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-11 11:44:55
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:uX/c4CpQKpq4ftOSOHqOhQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-17 14:30:22
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:9SP56oEA2C8gnurdsV4BGg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -502,7 +539,36 @@ sub verifiers_specs {
                     required   => 0,
                     type       => 'Str',
                     max_length => 30,
-                }
+                },
+                voucher_type => {
+                    required   => 0,
+                    type       => 'Str',
+                    post_check => sub {
+                        my $voucher_type = $_[0]->get_value('voucher_type');
+
+                        die \['voucher_type', 'invalid'] unless $voucher_type =~ /^(sus|sisprep|combina)$/;
+
+                        return 1;
+                    }
+                },
+                prep_reminder_before => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                prep_reminder_before_ts => {
+                    required => 0,
+                    type     => 'Str'
+                    # TODO mudar type e adicionar verificação
+                },
+                prep_reminder_after => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                prep_reminder_after_interval => {
+                    required => 0,
+                    type     => 'Str'
+                    # TODO mudar type e adicionar verificação
+                },
             }
         ),
         research_participation => Data::Verifier->new(

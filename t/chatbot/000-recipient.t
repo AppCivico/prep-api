@@ -358,6 +358,53 @@ db_transaction {
         )
         ->status_is(200)
 		->json_has('/instagram');
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                voucher_type   => 'foobar'
+            }
+        )
+        ->status_is(400);
+
+        for (1 .. 3) {
+
+            my $voucher_type;
+            if ($_ == 1) {
+                $voucher_type = 'sisprep';
+            }
+            elsif($_ == 2) {
+                $voucher_type = 'combina';
+            }
+            else {
+                $voucher_type = 'sus';
+            }
+
+            $t->put_ok(
+                '/api/chatbot/recipient',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => '710488549074724',
+                    voucher_type   => $voucher_type
+                }
+            )
+            ->status_is(200)
+            ->json_has('/id');
+
+            $t->get_ok(
+            '/api/chatbot/recipient',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => '710488549074724'
+                }
+            )
+            ->status_is(200)
+            ->json_has('/voucher_type')
+            ->json_is('/voucher_type', $voucher_type);
+        }
+
     };
 };
 
