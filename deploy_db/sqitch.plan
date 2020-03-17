@@ -49,3 +49,4 @@
 0045-add-interaction [0044-add-phone-instagram] 2020-02-10T18:40:25Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the interaction table
 0046-add-quick_reply_log [0045-add-interaction] 2020-02-11T18:02:10Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding quick_reply_log table
 0047-allow-multiple-responses [0046-add-quick_reply_log] 2020-03-05T22:00:09Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding cols needed in order to support multiple responses
+0048-add-cols [0047-allow-multiple-responses] 2020-03-17T17:41:18Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding cols to the 'recipient' table
