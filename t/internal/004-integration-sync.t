@@ -58,7 +58,7 @@ db_transaction {
         my $flags = $recipient->recipient_flag;
 
         is( $flags->is_part_of_research, 1 );
-        is( $flags->is_prep,             0 );
+        is( $flags->is_prep,             undef );
 
         $t->post_ok(
             '/api/internal/integration/recipient/sync' => { 'x-api-key' => $security_token },
