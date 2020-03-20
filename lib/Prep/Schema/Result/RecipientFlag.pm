@@ -62,7 +62,6 @@ __PACKAGE__->table("recipient_flags");
 =head2 is_prep
 
   data_type: 'boolean'
-  default_value: false
   is_nullable: 1
 
 =head2 updated_at
@@ -125,7 +124,7 @@ __PACKAGE__->add_columns(
   "is_part_of_research",
   { data_type => "boolean", default_value => \"false", is_nullable => 1 },
   "is_prep",
-  { data_type => "boolean", default_value => \"false", is_nullable => 1 },
+  { data_type => "boolean", is_nullable => 1 },
   "updated_at",
   { data_type => "timestamp", is_nullable => 1 },
   "is_target_audience",
@@ -176,8 +175,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-02-04 15:17:22
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:A31q9KRWZVF3EKeMYvUFrw
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-18 14:55:18
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:W1RV2qSAfbZaL4lWCTu4Fw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
