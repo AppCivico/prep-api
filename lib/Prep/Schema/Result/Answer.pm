@@ -341,6 +341,9 @@ sub has_followup_messages {
     elsif( $question_map->category->name eq 'fun_questions' ) {
         return 1 if $self->question->code eq 'AC7';
     }
+    elsif ( $question_map->category->name eq 'deu_ruim_nao_tomei' ) {
+        return 1 if $self->question->code eq 'NT3';
+    }
     else {
         return 0;
     }
@@ -370,6 +373,46 @@ sub followup_messages {
     elsif( $question_map->category->name eq 'quiz_brincadeira' ) {
         push @messages, $self->recipient->message_for_fun_questions_score->{picture};
         push @messages, $self->recipient->message_for_fun_questions_score->{message};
+    }
+    elsif ( $question_map->category->name eq 'deu_ruim_nao_tomei' ) {
+        # Pegando todas as respostas.
+        my @answers = $self->recipient->answers->search(
+            { 'me.question_map_id' => $question_map->id },
+            { order_by => { -asc => 'me.created_at' } }
+        )->get_column('answer_value')->all();
+
+        my $all_answers_string = '';
+        for my $answer (@answers) {
+            # Eles tratam o nosso "2" como "0";
+            $all_answers_string .= $answer eq '2' ? '0' : '1';
+
+            # Sim, é desse jeito mesmo que eles montaram as regras ¬¬...
+            if ($all_answers_string eq '111') {
+                push @messages, 'Você precisa procurar o serviço o quanto antes, podemos te ajudar, talvez você precise de PEP..Mas você ainda pode conversar com os humanos…';
+            }
+            elsif ($all_answers_string eq '110') {
+                push @messages, 'Você precisa procurar o serviço o quanto antes, podemos te ajudar, talvez você precise de PEP. Mas você ainda pode conversar com os humanos…';
+            }
+            elsif ($all_answers_string eq '101') {
+                push @messages, 'Você já está sem proteção, precisa voltar a tomar a medicação, fale com os humanes para ter orientação. Mas você ainda pode conversar com os humanos…';
+            }
+            elsif ($all_answers_string eq '100') {
+                push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender. Mas você ainda pode conversar com os humanos…';
+            }
+            elsif ($all_answers_string eq '001') {
+                push @messages, 'Quando você toma direitinho, pular 1 ou 2 dias pode não ser um problema. É bom confirmar com os humanes de deve voltar a tomar. Mas você ainda pode conversar com os humanos…';
+            }
+            elsif ($all_answers_string eq '000') {
+                push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender. Mas você ainda pode conversar com os humanos…';
+            }
+            elsif ($all_answers_string eq '010') {
+                push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender. Se preferir agendar, entre em contato pelo whatsapp. Mas você ainda pode conversar com os humanos…';
+            }
+            elsif ($all_answers_string eq '011') {
+                push @messages, 'Quando você toma direitinho, pular 1 ou 2 dias pode não ser um problema. É bom confirmar com os humanes de deve voltar a tomar. Mas você ainda pode conversar com os humanos…';
+            }
+        }
+
     }
 
     return @messages;
