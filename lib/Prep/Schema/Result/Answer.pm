@@ -319,7 +319,20 @@ sub flags {
         if ( $rules->{flags} && scalar @{ $rules->{flags} } > 0 ) {
             for my $flag ( @{ $rules->{flags} } ) {
 
-                $ret{$flag} = $recipient->$flag;
+                # Tratando flags virtuais
+                if ($flag eq 'entrar_em_contato') {
+                    $ret{$flag} = $self->answer_value eq '1' ? 1 : 0;
+                }
+                elsif ($flag eq 'ir_para_agendamento') {
+                    $ret{$flag} = $self->answer_value eq '1' ? 1 : 0;
+                }
+                elsif ($flag eq 'ir_para_menu') {
+                    $ret{$flag} = $self->answer_value eq '2' ? 1 : 0;
+                }
+                else {
+                    $ret{$flag} = $recipient->$flag;
+                }
+
             }
         }
     }

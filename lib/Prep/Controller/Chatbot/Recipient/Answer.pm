@@ -55,7 +55,10 @@ sub post {
             ( exists $answer->{go_to_test}                    ? ( go_to_test => $answer->{go_to_test} ) : () ),
             ( exists $answer->{followup_messages}             ? ( followup_messages => $answer->{followup_messages} ) : () ),
             ( exists $answer->{offline_pre_registration_form} ? ( offline_pre_registration_form => $answer->{offline_pre_registration_form} ) : () ),
-            ( exists $answer->{risk_group}                    ? ( risk_group => $answer->{risk_group} ) : () )
+            ( exists $answer->{risk_group}                    ? ( risk_group => $answer->{risk_group} ) : () ),
+            ( exists $answer->{ir_para_menu}                  ? ( ir_para_menu => $answer->{ir_para_menu} ) : () ),
+            ( exists $answer->{ir_para_agendamento}           ? ( ir_para_agendamento => $answer->{ir_para_agendamento} ) : () ),
+            ( exists $answer->{entrar_em_contato}             ? ( entrar_em_contato => $answer->{entrar_em_contato} ) : () ),
         }
     )
 }
