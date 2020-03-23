@@ -298,6 +298,10 @@ sub update_stash {
             }
         }
 
+        if ($can_be_iterated && !$stash->next_question) {
+            $stash->update($values_for_finished)
+        }
+
     });
 
 }

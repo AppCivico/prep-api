@@ -227,9 +227,9 @@ sub answered_questions {
 
     # Caso o questionário seja iterado e já tiver todas as respostas
     # Verifico se a iteração deve ser "fechada" e iniciada uma nova.
-    if ( $self->question_map->can_be_iterated && scalar @codes >= $self->question_map->count_questions  ) {
+    if ( $self->question_map->can_be_iterated ) {
         @codes = $self->recipient->answers->question_code_by_map_id( $self->question_map_id )->search(
-            { 'me.question_map_iteration' => { '>' => $self->times_answered } }
+            { 'me.question_map_iteration' => $self->times_answered > 0 ? $self->times_answered + 1 : 1 }
         )->get_column('question.code')->all();
     }
 

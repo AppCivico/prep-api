@@ -143,22 +143,195 @@ db_transaction {
         is $stash->times_answered, 0;
         is $stash->must_be_reseted, 0;
 
-        $res = $t->post_ok(
-            '/api/chatbot/recipient/answer',
-            form => {
-                security_token => $security_token,
-                fb_id          => $fb_id,
-                code           => 'T1',
-                category       => $category,
-                answer_value   => 1
-            }
-        )
-        ->status_is(201)
-        ->tx->res->json;
+        db_transaction {
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'T1',
+                    category       => $category,
+                    answer_value   => 1
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
 
-        ok $stash->discard_changes;
-        is $stash->times_answered, 1;
-        is $stash->must_be_reseted, 1;
+            is $res->{finished_quiz}, 1;
+            is $res->{entrar_em_contato}, 1;
+
+            ok $stash->discard_changes;
+            is $stash->times_answered, 1;
+            is $stash->must_be_reseted, 1;
+
+            $res = $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => $category
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+
+            is $res->{code}, 'T1';
+        };
+
+        db_transaction {
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'T1',
+                    category       => $category,
+                    answer_value   => 2
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
+
+            is $res->{finished_quiz}, 0;
+
+            $res = $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => $category
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+
+            is $res->{code}, 'T2';
+
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'T2',
+                    category       => $category,
+                    answer_value   => 1
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
+
+            is $res->{finished_quiz}, 1;
+            is $res->{ir_para_agendamento}, 1;
+
+            ok $stash->discard_changes;
+            is $stash->times_answered, 1;
+            is $stash->must_be_reseted, 1;
+
+            $res = $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => $category
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+
+            is $res->{code}, 'T1';
+        };
+
+        db_transaction {
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'T1',
+                    category       => $category,
+                    answer_value   => 2
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
+
+            is $res->{finished_quiz}, 0;
+
+            $res = $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => $category
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+
+            is $res->{code}, 'T2';
+
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'T2',
+                    category       => $category,
+                    answer_value   => 2
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
+
+            is $res->{finished_quiz}, 0;
+
+            $res = $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => $category
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+
+            is $res->{code}, 'T3';
+
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'T3',
+                    category       => $category,
+                    answer_value   => 2
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
+
+            is $res->{finished_quiz}, 1;
+            is $res->{ir_para_menu}, 1;
+
+            ok $stash->discard_changes;
+
+            is $stash->times_answered, 1;
+            is $stash->must_be_reseted, 1;
+
+            $res = $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => $category
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+
+            is $res->{code}, 'T1';
+        };
 
     };
 
