@@ -32,7 +32,7 @@ sub post {
                 is_part_of_research        => 0,
                 is_target_audience         => undef,
                 signed_term                => 0,
-                is_prep                    => 0,
+                is_prep                    => undef,
                 risk_group                 => undef,
                 finished_publico_interesse => 0,
                 finished_recrutamento      => 0,
