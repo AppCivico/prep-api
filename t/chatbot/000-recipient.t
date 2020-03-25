@@ -403,6 +403,29 @@ db_transaction {
             ->status_is(200)
             ->json_has('/voucher_type')
             ->json_is('/voucher_type', $voucher_type);
+
+            my $res = $t->put_ok(
+                '/api/chatbot/recipient',
+                form => {
+                    security_token       => $security_token,
+                    fb_id                => '710488549074724',
+                    prep_reminder_before => 1,
+                    prep_reminder_before_interval => '15:46:39.286572'
+                }
+            )
+            ->status_is(200)
+            ->json_has('/id');
+
+            $t->get_ok(
+            '/api/chatbot/recipient',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => '710488549074724'
+                }
+            )
+            ->status_is(200)
+            ->json_is('/prep_reminder_before', 1)
+            ->json_is('/prep_reminder_before_interval', '15:46:39.286572');
         }
 
     };

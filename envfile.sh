@@ -1,6 +1,6 @@
-export SQITCH_DEPLOY="docker"
+export SQITCH_DEPLOY="development"
 
-export POSTGRESQL_HOST="172.17.0.1"
+export POSTGRESQL_HOST="localhost"
 export POSTGRESQL_PORT="5432"
 export POSTGRESQL_DBNAME="prep_dev"
 export POSTGRESQL_USER="postgres"

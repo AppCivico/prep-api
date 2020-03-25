@@ -167,11 +167,6 @@ __PACKAGE__->table("recipient");
   default_value: false
   is_nullable: 0
 
-=head2 prep_reminder_before_ts
-
-  data_type: 'timestamp'
-  is_nullable: 1
-
 =head2 prep_reminder_after
 
   data_type: 'boolean'
@@ -179,6 +174,11 @@ __PACKAGE__->table("recipient");
   is_nullable: 0
 
 =head2 prep_reminder_after_interval
+
+  data_type: 'interval'
+  is_nullable: 1
+
+=head2 prep_reminder_before_interval
 
   data_type: 'interval'
   is_nullable: 1
@@ -248,11 +248,11 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "prep_reminder_before",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
-  "prep_reminder_before_ts",
-  { data_type => "timestamp", is_nullable => 1 },
   "prep_reminder_after",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "prep_reminder_after_interval",
+  { data_type => "interval", is_nullable => 1 },
+  "prep_reminder_before_interval",
   { data_type => "interval", is_nullable => 1 },
 );
 
@@ -477,8 +477,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-17 14:30:22
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:9SP56oEA2C8gnurdsV4BGg
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-25 15:53:29
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZMOOuzV+oowECYPjf1Rk6w
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -499,6 +499,7 @@ use Prep::Utils qw(is_test);
 use Text::CSV;
 use DateTime;
 use JSON;
+use DateTime::Format::Pg;
 
 use Prep::Types qw(MobileNumber);
 
@@ -555,7 +556,7 @@ sub verifiers_specs {
                     required => 0,
                     type     => 'Bool'
                 },
-                prep_reminder_before_ts => {
+                prep_reminder_before_interval => {
                     required => 0,
                     type     => 'Str'
                     # TODO mudar type e adicionar verificação
@@ -616,6 +617,47 @@ sub action_specs {
 
                 $self->recipient_flag->update( { $flag => $values{$flag} } );
                 delete $values{$flag};
+            }
+
+            if ($values{prep_reminder_before} && $values{prep_reminder_after}) {
+                die \['prep_reminder_after', 'not-allowed'];
+            }
+
+            if ($values{prep_reminder_before}) {
+                die \['prep_reminder_before_interval'] unless $values{prep_reminder_before_interval};
+            }
+
+            if ($values{prep_reminder_after}) {
+                die \['prep_reminder_after_interval'] unless $values{prep_reminder_after_interval};
+            }
+
+            if ( $values{prep_reminder_after_interval} && $values{prep_reminder_after_interval} ne '__DELETE__' ) {
+                die \['prep_reminder_after', 'missing'] unless $values{prep_reminder_after} || $self->prep_reminder_after;
+
+                my $prep_reminder_after_interval = delete $values{prep_reminder_after_interval};
+
+                my $dt_parser = DateTime::Format::Pg->new();
+
+                my $parsed_interval;
+                eval { $parsed_interval = $dt_parser->parse_interval($prep_reminder_after_interval) };
+
+                die \['prep_reminder_after_interval', 'invalid'] if $@;
+
+                $values{prep_reminder_after_interval} = $prep_reminder_after_interval;
+            }
+
+            if ( $values{prep_reminder_before_interval} && $values{prep_reminder_before_interval} ne '__DELETE__' ) {
+                die \['prep_reminder_before', 'missing'] unless $values{prep_reminder_before} || $self->prep_reminder_before;
+
+                my $prep_reminder_before_interval = delete $values{prep_reminder_before_interval};
+                my $dt_parser = DateTime::Format::Pg->new();
+
+                my $parsed_interval;
+                eval { $parsed_interval = $dt_parser->parse_interval($prep_reminder_before_interval) };
+                use DDP; p $@;
+                die \['prep_reminder_before_interval', 'invalid'] if $@;
+
+                $values{prep_reminder_before_interval} = $prep_reminder_before_interval;
             }
 
             $self->update(\%values);
