@@ -122,7 +122,7 @@ sub register {
     $delete_answer->post('/')->to('internal-delete_answer#post');
 
     # Internal::SetProfilePrep
-    my $prep_profile = $internal->route('/set-profile-prep')->under->to('internal#validade_security_token');
+    my $prep_profile = $internal->route('/set-profile')->under->to('internal#validade_security_token');
     $prep_profile->post('/')->to('internal-set_profile_prep#post');
 
     # Internal::Integration

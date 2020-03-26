@@ -8,6 +8,10 @@ sub post {
         fb_id => {
             required => 1,
             type     => 'Num'
+        },
+        profile => {
+            required => 1,
+            type     => 'Str'
         }
     );
 
@@ -15,15 +19,26 @@ sub post {
     my $recipient       = $c->schema->resultset('Recipient')->search( { fb_id => $recipient_fb_id } )->next
       or die \['fb_id', 'invalid'];
 
+    my $profile = $c->req->params->to_hash->{profile};
+    die \['profile', 'invalid'] unless $profile =~ m/^(prep|not-prep)$/;
+
     eval {
-        $recipient->recipient_flag->update(
-            {
-                finished_quiz              => 1,
-                is_target_audience         => 1,
-                is_prep                    => 1,
-                finished_publico_interesse => 1,
-            }
-        );
+
+        if ($profile eq 'prep') {
+            $recipient->recipient_flag->update(
+                {
+                    finished_quiz              => 1,
+                    is_target_audience         => 1,
+                    is_prep                    => 1,
+                    finished_publico_interesse => 1,
+                }
+            );
+        }
+        else {
+            $recipient->recipient_flag->update(
+                { is_prep => 0 }
+            );
+        }
     };
 
     return $c->render(
