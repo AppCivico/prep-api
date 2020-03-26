@@ -121,6 +121,10 @@ sub register {
     my $delete_answer = $internal->route('/delete-answers')->under->to('internal#validade_security_token');
     $delete_answer->post('/')->to('internal-delete_answer#post');
 
+    # Internal::SetProfilePrep
+    my $prep_profile = $internal->route('/set-profile-prep')->under->to('internal#validade_security_token');
+    $prep_profile->post('/')->to('internal-set_profile_prep#post');
+
     # Internal::Integration
     my $internal_integration = $internal->route('/integration')->under->to('internal-integration#validate_header_and_pass');
 
