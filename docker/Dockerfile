@@ -39,3 +39,6 @@ COPY prep-notify.sh /etc/service/prep-notify/run
 
 RUN mkdir /etc/service/prep-sync-calendars
 COPY prep-sync-calendars.sh /etc/service/prep-sync-calendars/run
+
+RUN mkdir /etc/service/prep-reminder
+COPY prep-reminder.sh /etc/service/prep-reminder/run
