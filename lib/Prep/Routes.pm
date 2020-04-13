@@ -31,6 +31,10 @@ sub register {
     $recipient->get('/')->to('chatbot-recipient#get');
     $recipient->put('/')->to('chatbot-recipient#put');
 
+    # Recipient::PrepReminder
+    my $prep_reminder = $recipient->route('/prep-reminder-yes');
+    $prep_reminder->post('/')->to('chatbot-recipient#prep_reminder_yes');
+
     # Recipient POST
     # Para não passar pelo método stasher
     $chatbot->route('/recipient')->post('/')->to('chatbot-recipient#post');

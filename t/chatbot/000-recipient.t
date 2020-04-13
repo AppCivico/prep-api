@@ -2,6 +2,7 @@ use common::sense;
 use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
+use Prep::Worker::PrepReminder;
 use Prep::Test;
 use JSON;
 
@@ -100,6 +101,7 @@ db_transaction {
         );
     };
 
+    my $recipient;
     subtest 'Chatbot | Create recipient' => sub {
 
         subtest 'Invalid' => sub {
@@ -183,6 +185,9 @@ db_transaction {
         )
         ->status_is(201)
         ->json_has('/id');
+
+        my $recipient_id = $t->tx->res->json->{id};
+        ok $recipient = $schema->resultset('Recipient')->find($recipient_id);
 
         # fb_id repetido
         $t->post_ok(
@@ -404,19 +409,52 @@ db_transaction {
             ->json_has('/voucher_type')
             ->json_is('/voucher_type', $voucher_type);
 
-            my $res = $t->put_ok(
+        }
+
+        # Tornando recipient como prep
+        ok $recipient->recipient_flag->update( { is_prep => 1 } );
+
+        my $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+                prep_reminder_before => 1,
+                prep_reminder_before_interval => '15:46:39.286572'
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        $res = $t->get_ok(
+        '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/prep_reminder_before', 1)
+        ->json_is('/prep_reminder_before_interval', '15:46:39.286572')
+        ->tx->res->json;
+
+        my $prep_reminder = $schema->resultset('PrepReminder')->next;
+
+        db_transaction{
+            $res = $t->put_ok(
                 '/api/chatbot/recipient',
                 form => {
                     security_token       => $security_token,
                     fb_id                => '710488549074724',
-                    prep_reminder_before => 1,
-                    prep_reminder_before_interval => '15:46:39.286572'
+                    prep_reminder_before => 0,
                 }
             )
             ->status_is(200)
-            ->json_has('/id');
+            ->json_has('/id')
+            ->tx->res->json;
 
-            $t->get_ok(
+            $res = $t->get_ok(
             '/api/chatbot/recipient',
                 form => {
                     security_token => $security_token,
@@ -424,9 +462,46 @@ db_transaction {
                 }
             )
             ->status_is(200)
-            ->json_is('/prep_reminder_before', 1)
-            ->json_is('/prep_reminder_before_interval', '15:46:39.286572');
-        }
+            ->json_is('/prep_reminder_before', 0)
+            ->tx->res->json;
+        };
+
+        my $notification_queue_rs = $schema->resultset('NotificationQueue');
+
+        ok my $worker = Prep::Worker::PrepReminder->new(
+            schema      => $schema,
+            logger      => $t->app->log,
+            max_process => 1,
+        );
+
+        my @queue = $worker->_queue_rs;
+        is @queue, 0;
+
+        ok $prep_reminder->update( { reminder_temporal_wait_until => \"NOW() - INTERVAL '10 MINUTES'" } );
+        ok $prep_reminder->discard_changes;
+
+        @queue = $worker->_queue_rs;
+        is @queue, 1;
+
+        ok $worker->run_once();
+
+        @queue = $worker->_queue_rs;
+        is @queue, 0;
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/prep-reminder-yes',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        ok $prep_reminder->discard_changes;
+        ok defined $prep_reminder->reminder_temporal_last_sent_at;
+        ok defined $prep_reminder->reminder_temporal_confirmed_at;
 
     };
 };

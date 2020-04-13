@@ -54,3 +54,4 @@
 0050-add-category [0049-is_prep-default] 2020-03-20T20:16:53Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding a new category for a question map
 0051-add-triagem-category [0050-add-category] 2020-03-23T18:21:21Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding the 'triagem' question_map category
 0052-update-col [0051-add-triagem-category] 2020-03-25T18:59:42Z Lucas Ansei,,, <lucas@lucas-G750JX> # Updating the reminder col
+0053-add-reminder [0052-update-col] 2020-04-13T18:56:50Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding reminder

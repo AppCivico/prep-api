@@ -161,27 +161,11 @@ __PACKAGE__->table("recipient");
   data_type: 'text'
   is_nullable: 1
 
-=head2 prep_reminder_before
+=head2 prep_reminder_on_demand
 
   data_type: 'boolean'
   default_value: false
   is_nullable: 0
-
-=head2 prep_reminder_after
-
-  data_type: 'boolean'
-  default_value: false
-  is_nullable: 0
-
-=head2 prep_reminder_after_interval
-
-  data_type: 'interval'
-  is_nullable: 1
-
-=head2 prep_reminder_before_interval
-
-  data_type: 'interval'
-  is_nullable: 1
 
 =cut
 
@@ -246,14 +230,8 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "voucher_type",
   { data_type => "text", is_nullable => 1 },
-  "prep_reminder_before",
+  "prep_reminder_on_demand",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
-  "prep_reminder_after",
-  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
-  "prep_reminder_after_interval",
-  { data_type => "interval", is_nullable => 1 },
-  "prep_reminder_before_interval",
-  { data_type => "interval", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -386,6 +364,21 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 prep_reminder
+
+Type: might_have
+
+Related object: L<Prep::Schema::Result::PrepReminder>
+
+=cut
+
+__PACKAGE__->might_have(
+  "prep_reminder",
+  "Prep::Schema::Result::PrepReminder",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 quick_reply_logs
 
 Type: has_many
@@ -477,8 +470,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-25 15:53:29
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZMOOuzV+oowECYPjf1Rk6w
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-02 17:42:29
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:qOvac8Le3d3BdOO5Q7krDQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -570,6 +563,10 @@ sub verifiers_specs {
                     type     => 'Str'
                     # TODO mudar type e adicionar verificação
                 },
+                prep_reminder_on_demand => {
+                    required => 0,
+                    type     => 'Bool'
+                }
             }
         ),
         research_participation => Data::Verifier->new(
@@ -609,7 +606,11 @@ sub action_specs {
             my $r = shift;
 
             my %values = $r->valid_values;
-            not defined $values{$_} and delete $values{$_} for keys %values;
+
+            for my $key (keys %values) {
+                next if $key =~ /^(prep_reminder_after|prep_reminder_before)$/;
+                not defined $values{$key} and delete $values{$key}
+            }
 
             my @updatable_flags = qw( is_part_of_research is_prep );
             for my $flag ( @updatable_flags ) {
@@ -631,36 +632,68 @@ sub action_specs {
                 die \['prep_reminder_after_interval'] unless $values{prep_reminder_after_interval};
             }
 
-            if ( $values{prep_reminder_after_interval} && $values{prep_reminder_after_interval} ne '__DELETE__' ) {
-                die \['prep_reminder_after', 'missing'] unless $values{prep_reminder_after} || $self->prep_reminder_after;
+            $self->result_source->schema->txn_do( sub {
+                if ( defined $values{prep_reminder_after} || defined $values{prep_reminder_before} ) {
+                    my $dt_parser = DateTime::Format::Pg->new();
+                    my $interval;
 
-                my $prep_reminder_after_interval = delete $values{prep_reminder_after_interval};
+                    if ($values{prep_reminder_before} && $values{prep_reminder_before_interval}) {
+                        my $parsed_interval;
 
-                my $dt_parser = DateTime::Format::Pg->new();
+                        eval { $parsed_interval = $dt_parser->parse_interval($values{prep_reminder_before_interval}) };
+                        die \['prep_reminder_before_interval', 'invalid'] if $@;
 
-                my $parsed_interval;
-                eval { $parsed_interval = $dt_parser->parse_interval($prep_reminder_after_interval) };
+                        $interval = $parsed_interval->hours . ':' . $parsed_interval->minutes . ':' . $parsed_interval->seconds;
+                        $interval = \"(NOW()::date + interval '1 day') + interval '$interval'";
+                    }
 
-                die \['prep_reminder_after_interval', 'invalid'] if $@;
+                    if ($values{prep_reminder_after} && $values{prep_reminder_after_interval}) {
+                        my $parsed_interval;
 
-                $values{prep_reminder_after_interval} = $prep_reminder_after_interval;
-            }
+                        eval { $parsed_interval = $dt_parser->parse_interval($values{prep_reminder_after_interval}) };
+                        die \['prep_reminder_after_interval', 'invalid'] if $@;
 
-            if ( $values{prep_reminder_before_interval} && $values{prep_reminder_before_interval} ne '__DELETE__' ) {
-                die \['prep_reminder_before', 'missing'] unless $values{prep_reminder_before} || $self->prep_reminder_before;
+                        $interval = $parsed_interval->hours . ':' . $parsed_interval->minutes . ':' . $parsed_interval->seconds;
+                        $interval = \"(NOW()::date + interval '1 day') + interval '$interval'";
+                    }
 
-                my $prep_reminder_before_interval = delete $values{prep_reminder_before_interval};
-                my $dt_parser = DateTime::Format::Pg->new();
+                    my $prep_reminder;
+                    if ($self->prep_reminder) {
+                        $prep_reminder = $self->prep_reminder;
 
-                my $parsed_interval;
-                eval { $parsed_interval = $dt_parser->parse_interval($prep_reminder_before_interval) };
-                use DDP; p $@;
-                die \['prep_reminder_before_interval', 'invalid'] if $@;
+                        $prep_reminder = $prep_reminder->update(
+                            {
+                                reminder_before          => $values{prep_reminder_before} ? 1 : 0,
+                                reminder_before_interval => $values{prep_reminder_before_interval},
+                                reminder_after           => $values{prep_reminder_after} ? 1 : 0,
+                                reminder_after_interval  => $values{prep_reminder_after_interval},
 
-                $values{prep_reminder_before_interval} = $prep_reminder_before_interval;
-            }
+                                reminder_temporal_wait_until => $interval
+                            },
+                        );
+                    }
+                    else {
+                        $prep_reminder = $self->result_source->schema->resultset('PrepReminder')->create(
+                            {
+                                recipient_id => $self->id,
 
-            $self->update(\%values);
+                                reminder_before          => $values{prep_reminder_before} ? 1 : 0,
+                                reminder_before_interval => $values{prep_reminder_before_interval},
+                                reminder_after           => $values{prep_reminder_after} ? 1 : 0,
+                                reminder_after_interval  => $values{prep_reminder_after_interval},
+
+                                reminder_temporal_wait_until => $interval
+                            },
+                        );
+                    }
+                }
+
+
+                delete $values{$_} for qw( prep_reminder_before prep_reminder_before_interval prep_reminder_after prep_reminder_after_interval );
+                $self->update(\%values);
+            });
+
+            return $self;
         },
         research_participation => sub {
             my $r = shift;
@@ -1892,6 +1925,27 @@ Uma vez piranha, smp piranha, piranha eu sempre hei de ser RANNNN kkk. Kerida, a
     }
 
     return $ret;
+}
+
+sub prep_reminder_confirmation {
+    my $self = shift;
+
+    my $prep_reminder = $self->prep_reminder;
+
+    my $interval;
+    if ($prep_reminder->reminder_before) {
+        $interval = $prep_reminder->reminder_before_interval;
+    }
+    else {
+        $interval = $prep_reminder->reminder_after_interval;
+    }
+
+    return $prep_reminder->update(
+        {
+            reminder_temporal_confirmed_at => \'NOW()',
+            reminder_temporal_wait_until   => \"(NOW()::DATE + interval '1 day') + interval '$interval'"
+        }
+    );
 }
 
 __PACKAGE__->meta->make_immutable;
