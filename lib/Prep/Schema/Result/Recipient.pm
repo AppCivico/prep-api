@@ -566,6 +566,10 @@ sub verifiers_specs {
                 prep_reminder_on_demand => {
                     required => 0,
                     type     => 'Bool'
+                },
+                cancel_prep_reminder => {
+                    required => 0,
+                    type     => 'Bool'
                 }
             }
         ),
@@ -625,19 +629,21 @@ sub action_specs {
             }
 
             if ($values{prep_reminder_before}) {
-                die \['prep_reminder_before_interval'] unless $values{prep_reminder_before_interval};
+                die \['prep_reminder_before_interval', 'missing'] unless $values{prep_reminder_before_interval};
             }
 
             if ($values{prep_reminder_after}) {
-                die \['prep_reminder_after_interval'] unless $values{prep_reminder_after_interval};
+                die \['prep_reminder_after_interval', 'missing'] unless $values{prep_reminder_after_interval};
             }
 
             $self->result_source->schema->txn_do( sub {
                 if ( defined $values{prep_reminder_after} || defined $values{prep_reminder_before} ) {
+                    die \['fb_id', 'must-be-prep'] unless $self->recipient_flag->is_prep;
+
                     my $dt_parser = DateTime::Format::Pg->new();
                     my $interval;
 
-                    if ($values{prep_reminder_before} && $values{prep_reminder_before_interval}) {
+                    if ($values{prep_reminder_before}) {
                         my $parsed_interval;
 
                         eval { $parsed_interval = $dt_parser->parse_interval($values{prep_reminder_before_interval}) };
@@ -647,7 +653,7 @@ sub action_specs {
                         $interval = \"(NOW()::date + interval '1 day') + interval '$interval'";
                     }
 
-                    if ($values{prep_reminder_after} && $values{prep_reminder_after_interval}) {
+                    if ($values{prep_reminder_after}) {
                         my $parsed_interval;
 
                         eval { $parsed_interval = $dt_parser->parse_interval($values{prep_reminder_after_interval}) };
@@ -685,6 +691,32 @@ sub action_specs {
                                 reminder_temporal_wait_until => $interval
                             },
                         );
+                    }
+                }
+
+                if ($values{cancel_prep_reminder}) {
+                    delete $values{cancel_prep_reminder};
+
+                    my $prep_reminder = $self->prep_reminder;
+
+                    if ( $prep_reminder ) {
+                        $prep_reminder->update(
+                            {
+                                reminder_before           => 0,
+                                reminder_before_interval  => undef,
+                                reminder_after            => 0,
+                                reminder_after_interval   => undef,
+                                reminder_running_out      => 0,
+                                reminder_running_out_date => undef,
+                            }
+                        );
+
+                        $self->result_source->schema->resultset('NotificationQueue')->search(
+                            {
+                                prep_reminder_id => $prep_reminder->id,
+                                sent_at          => \'IS NULL',
+                            }
+                        )->delete;
                     }
                 }
 
