@@ -361,6 +361,9 @@ sub has_followup_messages {
     elsif ( $question_map->category->name eq 'deu_ruim_nao_tomei' ) {
         return 1 if $self->question->code eq 'NT3';
     }
+    elsif ( $question_map->category->name eq 'duvidas_nao_prep' ) {
+        return 1 if $self->question->code eq 'D4';
+    }
     else {
         return 0;
     }
@@ -430,6 +433,36 @@ sub followup_messages {
             }
         }
 
+    }
+    elsif ($question_map->category->name eq 'duvidas_nao_prep') {
+        my @answers = $self->recipient->answers->search(
+            { 'me.question_map_id' => $question_map->id },
+            { order_by => { -asc => 'me.created_at' } }
+        )->all();
+
+        my $score;
+        for my $answer (@answers) {
+            if ($answer->question->code eq 'D1') {
+                $score += $answer->answer_value eq '1' ? 1 : -1;
+            }
+            elsif ($answer->question->code eq 'D2') {
+                $score += $answer->answer_value eq '1' ? 1 : -5;
+            }
+            else {
+                $score += $answer->answer_value eq '1' ? 1 : -1;
+            }
+        }
+
+        if ($score > 0) {
+            # Alto risco
+            push @messages, 'PrEP é pra vc, não bobeia!';
+        }
+        elsif ($score == 0) {
+            push @messages, 'Pelo o que vejo vc já se colocou em risco! Mas nao pira, vemk q posso ajudar!';
+        }
+        else {
+            push @messages, 'Arrasou! Parece q vc tá por dentro de prevenção! Se quiser saber mais, podemos trocar uma ideia sobre PrEP';
+        }
     }
 
     return @messages;
