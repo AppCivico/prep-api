@@ -109,6 +109,10 @@ sub register {
     $quick_reply_log->post('/')->to('chatbot-recipient-quick_reply_log#create');
     $quick_reply_log->get('/')->to('chatbot-recipient-quick_reply_log#get');
 
+    # Recipient::TestRequest
+    my $recipient_test = $recipient->route('/test-request');
+    $recipient_test->post('/')->to('chatbot-recipient-test_request#post');
+
     # Appointment
     my $appointment = $chatbot->route('/appointment');
 

@@ -469,9 +469,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 test_requests
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-02 17:42:29
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:qOvac8Le3d3BdOO5Q7krDQ
+Type: has_many
+
+Related object: L<Prep::Schema::Result::TestRequest>
+
+=cut
+
+__PACKAGE__->has_many(
+  "test_requests",
+  "Prep::Schema::Result::TestRequest",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-16 13:34:11
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:pBk1+Xp9thzLjbWxJvUnKQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
