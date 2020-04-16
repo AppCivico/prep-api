@@ -440,7 +440,7 @@ sub followup_messages {
             { order_by => { -asc => 'me.created_at' } }
         )->all();
 
-        my $score;
+        my $score = 0;
         for my $answer (@answers) {
             if ($answer->question->code eq 'D1') {
                 $score += $answer->answer_value eq '1' ? 1 : -1;
