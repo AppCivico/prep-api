@@ -435,10 +435,17 @@ sub followup_messages {
 
     }
     elsif ($question_map->category->name eq 'duvidas_nao_prep') {
+        my $stash = $self->recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
+
         my @answers = $self->recipient->answers->search(
-            { 'me.question_map_id' => $question_map->id },
+            {
+                'me.question_map_id'        => $question_map->id,
+                'me.question_map_iteration' => $stash->times_answered
+            },
             { order_by => { -asc => 'me.created_at' } }
         )->all();
+
+        # my $stash = ;
 
         my $score = 0;
         for my $answer (@answers) {
@@ -453,7 +460,7 @@ sub followup_messages {
             }
         }
 
-        if ($score > 0) {
+        if ($score >= 1) {
             # Alto risco
             push @messages, 'PrEP é pra vc, não bobeia!';
         }
