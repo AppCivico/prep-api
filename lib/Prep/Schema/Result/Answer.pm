@@ -442,10 +442,8 @@ sub followup_messages {
                 'me.question_map_id'        => $question_map->id,
                 'me.question_map_iteration' => $stash->times_answered
             },
-            { order_by => { -asc => 'me.created_at' } }
+            { rows => 4 }
         )->all();
-
-        # my $stash = ;
 
         my $score = 0;
         for my $answer (@answers) {
