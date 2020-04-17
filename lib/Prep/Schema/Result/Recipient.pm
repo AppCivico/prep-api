@@ -582,6 +582,14 @@ sub verifiers_specs {
                     required => 0,
                     type     => 'Bool'
                 },
+                prep_reminder_running_out => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                prep_reminder_running_out_date => {
+                    required => 0,
+                    type     => 'Str'
+                },
                 cancel_prep_reminder => {
                     required => 0,
                     type     => 'Bool'
@@ -652,7 +660,7 @@ sub action_specs {
             }
 
             $self->result_source->schema->txn_do( sub {
-                if ( defined $values{prep_reminder_after} || defined $values{prep_reminder_before} ) {
+                if ( defined $values{prep_reminder_after} || defined $values{prep_reminder_before} || defined $values{prep_reminder_running_out} ) {
                     die \['fb_id', 'must-be-prep'] unless $self->recipient_flag->is_prep;
 
                     my $dt_parser = DateTime::Format::Pg->new();
@@ -676,6 +684,15 @@ sub action_specs {
 
                         $interval = $parsed_interval->hours . ':' . $parsed_interval->minutes . ':' . $parsed_interval->seconds;
                         $interval = \"(NOW()::date + interval '1 day') + interval '$interval'";
+                    }
+
+                    if ($values{prep_reminder_running_out}) {
+                        my $parsed_interval;
+
+                        eval { $parsed_interval = $dt_parser->parse_date($values{prep_reminder_running_out_date}) };
+                        die \['prep_reminder_after_interval', 'invalid'] if $@;
+
+                        $interval = $parsed_interval;
                     }
 
                     my $prep_reminder;
@@ -736,7 +753,7 @@ sub action_specs {
                 }
 
 
-                delete $values{$_} for qw( prep_reminder_before prep_reminder_before_interval prep_reminder_after prep_reminder_after_interval );
+                delete $values{$_} for qw( prep_reminder_before prep_reminder_before_interval prep_reminder_after prep_reminder_after_interval prep_reminder_running_out prep_reminder_running_out_date );
                 $self->update(\%values);
             });
 

@@ -189,6 +189,18 @@ db_transaction {
         is @queue, 0;
 
         is $notification_queue_rs->count, 1;
+
+        $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => $fb_id,
+                prep_reminder_running_out => 1,
+                prep_reminder_running_out_date => '1998-05-11',
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
     };
 
     # subtest 'Iterating questionnaire' => sub {
