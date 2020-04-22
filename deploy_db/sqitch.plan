@@ -57,3 +57,4 @@
 0053-add-reminder [0052-update-col] 2020-04-13T18:56:50Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding reminder
 0054-add-test_request [0053-add-reminder] 2020-04-16T16:47:43Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding test-request
 0055-add-quiz-type [0054-add-test_request] 2020-04-16T17:04:29Z Lucas Ansei,,, <lucas@lucas-G750JX> # adding the 'duvidas_nao_prep' quiz type
+0056-add-running-out-data [0055-add-quiz-type] 2020-04-22T17:25:27Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding prep reminder running out

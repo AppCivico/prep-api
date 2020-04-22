@@ -223,17 +223,25 @@ db_transaction {
             ok $wait_until ne $prep_reminder->discard_changes->reminder_temporal_wait_until->datetime;
         };
 
+        my $date = DateTime->now;
+        $date    = $date->subtract( days => '15' );
+
+        is $notification_queue_rs->count, 1;
+
         $res = $t->put_ok(
             '/api/chatbot/recipient',
             form => {
                 security_token       => $security_token,
                 fb_id                => $fb_id,
                 prep_reminder_running_out => 1,
-                prep_reminder_running_out_date => '1998-05-11',
+                prep_reminder_running_out_date => $date->ymd,
+                prep_reminder_running_out_count => '2',
             }
         )
         ->status_is(200)
         ->tx->res->json;
+
+        is $notification_queue_rs->count, 2;
     };
 
     # subtest 'Iterating questionnaire' => sub {

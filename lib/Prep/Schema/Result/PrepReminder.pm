@@ -113,6 +113,16 @@ __PACKAGE__->table("prep_reminder");
   data_type: 'text'
   is_nullable: 1
 
+=head2 reminder_running_out_count
+
+  data_type: 'integer'
+  is_nullable: 1
+
+=head2 reminder_running_out_wait_until
+
+  data_type: 'timestamp'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -147,6 +157,10 @@ __PACKAGE__->add_columns(
   { data_type => "timestamp", is_nullable => 1 },
   "errmsg",
   { data_type => "text", is_nullable => 1 },
+  "reminder_running_out_count",
+  { data_type => "integer", is_nullable => 1 },
+  "reminder_running_out_wait_until",
+  { data_type => "timestamp", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -208,8 +222,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-13 15:31:45
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Hw8XbY14goORwYiDXUd9Tg
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-22 14:48:15
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:t9TuW0rdl/w0sZNy4V3d4g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

@@ -590,6 +590,10 @@ sub verifiers_specs {
                     required => 0,
                     type     => 'Str'
                 },
+                prep_reminder_running_out_count => {
+                    required => 0,
+                    type     => 'Str'
+                },
                 cancel_prep_reminder => {
                     required => 0,
                     type     => 'Bool'
@@ -664,7 +668,7 @@ sub action_specs {
                     die \['fb_id', 'must-be-prep'] unless $self->recipient_flag->is_prep;
 
                     my $dt_parser = DateTime::Format::Pg->new();
-                    my $interval;
+                    my ($interval, $running_out_date, $running_out_count, $running_out_wait_until);
 
                     if ($values{prep_reminder_before}) {
                         my $parsed_interval;
@@ -687,12 +691,33 @@ sub action_specs {
                     }
 
                     if ($values{prep_reminder_running_out}) {
-                        my $parsed_interval;
+                        defined $values{$_} or die \["$_", 'missing'] for qw( prep_reminder_running_out_date prep_reminder_running_out_count );
 
-                        eval { $parsed_interval = $dt_parser->parse_date($values{prep_reminder_running_out_date}) };
+                        my $parsed_date;
+                        eval { $parsed_date = $dt_parser->parse_date($values{prep_reminder_running_out_date}) };
                         die \['prep_reminder_after_interval', 'invalid'] if $@;
 
-                        $interval = $parsed_interval;
+                        $running_out_date = $parsed_date;
+
+                        # Cálculando data que devemos enviar notificação.
+                        # Há 30 comprimidos em um frasco e é consumido 1 por dia.
+                        # Logo calculo quantos já foram consumidos desde a data que foi adquirido
+                        # e marco a notificação para 15 dias antes de esgotar.
+                        my $count = $values{prep_reminder_running_out_count} * 30;
+
+                        my $now = DateTime->now;
+                        my $delta = $now->subtract_datetime( $parsed_date );
+                        my %deltas = $delta->deltas;
+
+                        my $remaning_count = $count - $deltas{days};
+
+                        if ($remaning_count > 15) {
+                            $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
+                        }
+                        else {
+                            $running_out_wait_until = \"NOW() + interval '1 hour'"
+                        }
+
                     }
 
                     my $prep_reminder;
@@ -701,12 +726,16 @@ sub action_specs {
 
                         $prep_reminder = $prep_reminder->update(
                             {
-                                reminder_before          => $values{prep_reminder_before} ? 1 : 0,
-                                reminder_before_interval => $values{prep_reminder_before_interval},
-                                reminder_after           => $values{prep_reminder_after} ? 1 : 0,
-                                reminder_after_interval  => $values{prep_reminder_after_interval},
+                                reminder_before              => $values{prep_reminder_before} ? 1 : 0,
+                                reminder_before_interval     => $values{prep_reminder_before_interval},
+                                reminder_after               => $values{prep_reminder_after} ? 1 : 0,
+                                reminder_after_interval      => $values{prep_reminder_after_interval},
+                                reminder_temporal_wait_until => $interval,
 
-                                reminder_temporal_wait_until => $interval
+                                reminder_running_out            => $values{prep_reminder_running_out} ? 1 : 0,
+                                reminder_running_out_date       => $running_out_date,
+                                reminder_running_out_count      => $running_out_count,
+                                reminder_running_out_wait_until => $running_out_wait_until,
                             },
                         );
                     }
@@ -715,13 +744,29 @@ sub action_specs {
                             {
                                 recipient_id => $self->id,
 
-                                reminder_before          => $values{prep_reminder_before} ? 1 : 0,
-                                reminder_before_interval => $values{prep_reminder_before_interval},
-                                reminder_after           => $values{prep_reminder_after} ? 1 : 0,
-                                reminder_after_interval  => $values{prep_reminder_after_interval},
+                                reminder_before              => $values{prep_reminder_before} ? 1 : 0,
+                                reminder_before_interval     => $values{prep_reminder_before_interval},
+                                reminder_after               => $values{prep_reminder_after} ? 1 : 0,
+                                reminder_after_interval      => $values{prep_reminder_after_interval},
+                                reminder_temporal_wait_until => $interval,
 
-                                reminder_temporal_wait_until => $interval
+                                reminder_running_out            => $values{prep_reminder_running_out} ? 1 : 0,
+                                reminder_running_out_date       => $running_out_date,
+                                reminder_running_out_count      => $running_out_count,
+                                reminder_running_out_wait_until => $running_out_wait_until,
                             },
+                        );
+                    }
+
+
+                    # Criando notificação de running_out;
+                    if ($values{prep_reminder_running_out} == 1) {
+                        $self->notification_queues->create(
+                            {
+                                prep_reminder_id => $prep_reminder->id,
+                                type_id          => 11,
+                                wait_until       => $running_out_wait_until,
+                            }
                         );
                     }
                 }
@@ -734,12 +779,14 @@ sub action_specs {
                     if ( $prep_reminder ) {
                         $prep_reminder->update(
                             {
-                                reminder_before           => 0,
-                                reminder_before_interval  => undef,
-                                reminder_after            => 0,
-                                reminder_after_interval   => undef,
-                                reminder_running_out      => 0,
-                                reminder_running_out_date => undef,
+                                reminder_before                 => 0,
+                                reminder_before_interval        => undef,
+                                reminder_after                  => 0,
+                                reminder_after_interval         => undef,
+                                reminder_running_out            => 0,
+                                reminder_running_out_date       => undef,
+                                reminder_running_out_count      => undef,
+                                reminder_running_out_wait_until => undef,
                             }
                         );
 
@@ -753,7 +800,12 @@ sub action_specs {
                 }
 
 
-                delete $values{$_} for qw( prep_reminder_before prep_reminder_before_interval prep_reminder_after prep_reminder_after_interval prep_reminder_running_out prep_reminder_running_out_date );
+                delete $values{$_} for qw(
+                    prep_reminder_before prep_reminder_before_interval
+                    prep_reminder_after prep_reminder_after_interval
+                    prep_reminder_running_out prep_reminder_running_out_date prep_reminder_running_out_count
+                );
+
                 $self->update(\%values);
             });
 
