@@ -190,6 +190,39 @@ db_transaction {
 
         is $notification_queue_rs->count, 1;
 
+        db_transaction{
+            # Inserindo mais duas notificações para testar trava de 3 notificações por hora.
+            for (1 .. 2) {
+                my $wait_until;
+                if ($_ == 1) {
+                    $wait_until = \"NOW() + interval '10 minutes'";
+                }
+                else {
+                    $wait_until = \"NOW() + interval '20 minutes'";
+                }
+
+                ok $notification_queue_rs->create(
+                    {
+                        recipient_id     => $recipient->id,
+                        prep_reminder_id => $prep_reminder->id,
+                        type_id          => 10,
+                        wait_until       => $wait_until
+                    }
+                );
+            }
+
+            ok $prep_reminder->update( { reminder_temporal_wait_until => \"NOW() - INTERVAL '10 MINUTES'" } );
+            ok $prep_reminder->discard_changes;
+
+            @queue = $worker->_queue_rs;
+            is @queue, 1;
+
+            ok my $wait_until = $prep_reminder->reminder_temporal_wait_until->datetime;
+
+            ok $worker->run_once;
+            ok $wait_until ne $prep_reminder->discard_changes->reminder_temporal_wait_until->datetime;
+        };
+
         $res = $t->put_ok(
             '/api/chatbot/recipient',
             form => {

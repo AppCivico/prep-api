@@ -136,33 +136,51 @@ sub process_item {
 
         my $notification_queue_rs = $self->schema->resultset('NotificationQueue');
 
-        # Se for "before" a soneca dura 10 min, caso seja "after" dura 15.
-        my ($notification_type, $snooze_interval);
-
-        if ($job->reminder_before) {
-            $notification_type = 9;
-            $snooze_interval   = '10 minutes';
-        }
-        elsif ($job->reminder_after) {
-            $notification_type = 10;
-            $snooze_interval   = '15 minutes';
-        }
-
-        my $notification = $notification_queue_rs->create(
+        # Limite de 3 notificações por hora
+        my $notifications_last_hour = $notification_queue_rs->search(
             {
-                recipient_id => $job->recipient_id,
-                type_id      => $notification_type,
-                prep_reminder_id => $job->id
+                'me.prep_reminder_id' => $job->id,
+                'me.created_at'       => { '>=' => \"NOW() - interval '1 hour'" }
             }
-        );
+        )->count;
+
+        if ($notifications_last_hour >= 3) {
+            $job->update(
+                {
+                    reminder_temporal_last_sent_at => \'NOW()',
+                    reminder_temporal_wait_until   => \"NOW() + INTERVAL '1 hour'"
+                }
+            );
+        }
+        else {
+            # Se for "before" a soneca dura 10 min, caso seja "after" dura 15.
+            my ($notification_type, $snooze_interval);
+
+            if ($job->reminder_before) {
+                $notification_type = 9;
+                $snooze_interval   = '10 minutes';
+            }
+            elsif ($job->reminder_after) {
+                $notification_type = 10;
+                $snooze_interval   = '15 minutes';
+            }
+
+            my $notification = $notification_queue_rs->create(
+                {
+                    recipient_id => $job->recipient_id,
+                    type_id      => $notification_type,
+                    prep_reminder_id => $job->id
+                }
+            );
 
 
-        $job->update(
-            {
-                reminder_temporal_last_sent_at => \'NOW()',
-                reminder_temporal_wait_until   => \"NOW() + INTERVAL '$snooze_interval'"
-            }
-        );
+            $job->update(
+                {
+                    reminder_temporal_last_sent_at => \'NOW()',
+                    reminder_temporal_wait_until   => \"NOW() + INTERVAL '$snooze_interval'"
+                }
+            );
+        }
     };
 
     if ($@) {
