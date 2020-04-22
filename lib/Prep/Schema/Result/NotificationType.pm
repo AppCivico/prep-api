@@ -266,6 +266,16 @@ sub get_info {
             }
         ];
     }
+    elsif ($name eq 'prep_reminder_running_out') {
+        $text = 'Oie! Seus comprimidos devem estar acabando!';
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'OK',
+                payload      => 'mainMenu'
+            },
+        ]
+    }
     else {
         die 'missing dictionary for name=' . $name;
     }
