@@ -405,34 +405,33 @@ sub followup_messages {
         for my $answer (@answers) {
             # Eles tratam o nosso "2" como "0";
             $all_answers_string .= $answer eq '2' ? '0' : '1';
-
-            # Sim, é desse jeito mesmo que eles montaram as regras ¬¬...
-            if ($all_answers_string eq '111') {
-                push @messages, 'Você precisa procurar o serviço o quanto antes, podemos te ajudar, talvez você precise de PEP..Mas você ainda pode conversar com os humanos…';
-            }
-            elsif ($all_answers_string eq '110') {
-                push @messages, 'Você precisa procurar o serviço o quanto antes, podemos te ajudar, talvez você precise de PEP. Mas você ainda pode conversar com os humanos…';
-            }
-            elsif ($all_answers_string eq '101') {
-                push @messages, 'Você já está sem proteção, precisa voltar a tomar a medicação, fale com os humanes para ter orientação. Mas você ainda pode conversar com os humanos…';
-            }
-            elsif ($all_answers_string eq '100') {
-                push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender. Mas você ainda pode conversar com os humanos…';
-            }
-            elsif ($all_answers_string eq '001') {
-                push @messages, 'Quando você toma direitinho, pular 1 ou 2 dias pode não ser um problema. É bom confirmar com os humanes de deve voltar a tomar. Mas você ainda pode conversar com os humanos…';
-            }
-            elsif ($all_answers_string eq '000') {
-                push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender. Mas você ainda pode conversar com os humanos…';
-            }
-            elsif ($all_answers_string eq '010') {
-                push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender. Se preferir agendar, entre em contato pelo whatsapp. Mas você ainda pode conversar com os humanos…';
-            }
-            elsif ($all_answers_string eq '011') {
-                push @messages, 'Quando você toma direitinho, pular 1 ou 2 dias pode não ser um problema. É bom confirmar com os humanes de deve voltar a tomar. Mas você ainda pode conversar com os humanos…';
-            }
         }
 
+        # Sim, é desse jeito mesmo que eles montaram as regras ¬¬...
+        if ($all_answers_string eq '111') {
+            push @messages, 'Você precisa procurar o serviço o quanto antes, podemos te ajudar, talvez você precise de PEP.';
+        }
+        elsif ($all_answers_string eq '110') {
+            push @messages, 'Você precisa procurar o serviço o quanto antes, podemos te ajudar, talvez você precise de PEP.';
+        }
+        elsif ($all_answers_string eq '101') {
+            push @messages, 'Você já está sem proteção, precisa voltar a tomar a medicação, fale com os humanes para ter orientação.';
+        }
+        elsif ($all_answers_string eq '100') {
+            push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender.';
+        }
+        elsif ($all_answers_string eq '001') {
+            push @messages, 'Quando você toma direitinho, pular 1 ou 2 dias pode não ser um problema. É bom confirmar com os humanes de deve voltar a tomar.';
+        }
+        elsif ($all_answers_string eq '000') {
+            push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender.';
+        }
+        elsif ($all_answers_string eq '010') {
+            push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender. Se preferir agendar, entre em contato pelo whatsapp.';
+        }
+        elsif ($all_answers_string eq '011') {
+            push @messages, 'Quando você toma direitinho, pular 1 ou 2 dias pode não ser um problema. É bom confirmar com os humanes de deve voltar a tomar.';
+        }
     }
     elsif ($question_map->category->name eq 'duvidas_nao_prep') {
         my $stash = $self->recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
