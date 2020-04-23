@@ -87,7 +87,7 @@ sub put {
 
     my $recipient = $c->stash('recipient');
 
-    $recipient->execute(
+    my $recipient_put = $recipient->execute(
         $c,
         for  => 'update',
         with => $params
@@ -96,7 +96,11 @@ sub put {
     return $c->render(
         $c,
         code => 200,
-        json => { id => $recipient->id }
+        json => {
+            id => $recipient->id,
+
+            ( $recipient_put->{running_out_wait_until} ? (running_out_wait_until => $recipient_put->{running_out_wait_until}) : () )
+        }
     )
 }
 

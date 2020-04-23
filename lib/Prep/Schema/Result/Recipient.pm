@@ -663,12 +663,13 @@ sub action_specs {
                 die \['prep_reminder_after_interval', 'missing'] unless $values{prep_reminder_after_interval};
             }
 
+            my $running_out_wait_until;
             $self->result_source->schema->txn_do( sub {
                 if ( defined $values{prep_reminder_after} || defined $values{prep_reminder_before} || defined $values{prep_reminder_running_out} ) {
                     die \['fb_id', 'must-be-prep'] unless $self->recipient_flag->is_prep;
 
                     my $dt_parser = DateTime::Format::Pg->new();
-                    my ($interval, $running_out_date, $running_out_count, $running_out_wait_until, $running_out_followup_wait_until);
+                    my ($interval, $running_out_date, $running_out_count, $running_out_followup_wait_until);
 
                     if ($values{prep_reminder_before}) {
                         my $parsed_interval;
@@ -808,7 +809,6 @@ sub action_specs {
                     my $remaning_count = $count - $deltas{days};
                     my $running_out_followup_wait_until = $now->add( days => ($remaning_count + 5) );
 
-                    my $running_out_wait_until;
                     if ($remaning_count > 15) {
                         $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
                     }
@@ -880,7 +880,11 @@ sub action_specs {
                 $self->update(\%values);
             });
 
-            return $self;
+            return {
+                recipient => $self,
+
+                ( $running_out_wait_until ? (running_out_wait_until => $running_out_wait_until->ymd) : () )
+            };
         },
         research_participation => sub {
             my $r = shift;
