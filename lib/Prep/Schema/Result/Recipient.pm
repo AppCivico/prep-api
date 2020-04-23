@@ -883,7 +883,7 @@ sub action_specs {
             return {
                 recipient => $self,
 
-                ( $running_out_wait_until ? (running_out_wait_until => $running_out_wait_until->ymd) : () )
+                ( $running_out_wait_until ? (running_out_wait_until => $running_out_wait_until->dmy) : () )
             };
         },
         research_participation => sub {
