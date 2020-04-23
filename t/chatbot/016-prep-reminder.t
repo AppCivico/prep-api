@@ -241,13 +241,24 @@ db_transaction {
         ->status_is(200)
         ->tx->res->json;
 
-        is $notification_queue_rs->count, 2;
+        is $notification_queue_rs->count, 3;
+
+        $date = $date->add( days => '5' );
+
+        $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => $fb_id,
+                prep_reminder_running_out_date => $date->ymd,
+                prep_reminder_running_out_count => '2',
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        is $notification_queue_rs->count, 4;
     };
-
-    # subtest 'Iterating questionnaire' => sub {
-
-
-    # };
 
 };
 
