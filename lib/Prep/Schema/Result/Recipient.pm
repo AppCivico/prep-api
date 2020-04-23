@@ -899,7 +899,7 @@ sub action_specs {
                 if ($values{voucher_type} && $values{voucher_type} eq 'combina') {
                     die \['integration_token', 'missing'] unless $values{integration_token};
 
-                    my $voucher = $self->result_source->schema->resultset('CombinaVoucher')->search( { value => $values{integration_token} } )->next
+                    my $voucher = $self->result_source->schema->resultset('CombinaVoucher')->search( { value => $values{integration_token}, recipient_id => \'IS NULL' } )->next
                       or die \['integration_token', 'invalid'];
 
                     $voucher->update( { recipient_id => $self->id, assigned_at => \'NOW()' } );
