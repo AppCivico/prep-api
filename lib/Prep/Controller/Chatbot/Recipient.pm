@@ -72,6 +72,7 @@ sub get {
                     (
                         map { 'prep_' . $_ => $recipient->prep_reminder->$_ } qw(
                             reminder_before reminder_before_interval reminder_after reminder_after_interval
+                            reminder_running_out reminder_running_out_date reminder_running_out_count
                         )
                     )
                 :   ()
