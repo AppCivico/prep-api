@@ -319,6 +319,21 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 combina_vouchers
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::CombinaVoucher>
+
+=cut
+
+__PACKAGE__->has_many(
+  "combina_vouchers",
+  "Prep::Schema::Result::CombinaVoucher",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 external_notifications
 
 Type: has_many
@@ -485,8 +500,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-16 13:34:11
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:pBk1+Xp9thzLjbWxJvUnKQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-23 16:51:32
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:mqadKQZcfnxZgUX3aNIy2A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -597,6 +612,10 @@ sub verifiers_specs {
                 cancel_prep_reminder => {
                     required => 0,
                     type     => 'Bool'
+                },
+                integration_token => {
+                    required => 0,
+                    type     => 'Str'
                 }
             }
         ),
@@ -718,7 +737,7 @@ sub action_specs {
                             $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
                         }
                         else {
-                            $running_out_wait_until = \"NOW() + interval '1 hour'"
+                            $running_out_wait_until = $now->add( hours => 1 );
                         }
 
                     }
@@ -813,7 +832,7 @@ sub action_specs {
                         $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
                     }
                     else {
-                        $running_out_wait_until = \"NOW() + interval '1 hour'"
+                        $running_out_wait_until = $now->add( hours => 1 );
                     }
 
                     # Deletando notificação já marcada, se existir
@@ -876,6 +895,15 @@ sub action_specs {
                     prep_reminder_after prep_reminder_after_interval
                     prep_reminder_running_out prep_reminder_running_out_date prep_reminder_running_out_count
                 );
+
+                if ($values{voucher_type} && $values{voucher_type} eq 'combina') {
+                    die \['integration_token', 'missing'] unless $values{integration_token};
+
+                    my $voucher = $self->result_source->schema->resultset('CombinaVoucher')->search( { value => $values{integration_token} } )->next
+                      or die \['integration_token', 'invalid'];
+
+                    $voucher->update( { recipient_id => $self->id, assigned_at => \'NOW()' } );
+                }
 
                 $self->update(\%values);
             });

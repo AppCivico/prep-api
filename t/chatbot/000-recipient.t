@@ -382,6 +382,8 @@ db_transaction {
             }
             elsif($_ == 2) {
                 $voucher_type = 'combina';
+
+                ok $schema->resultset('CombinaVoucher')->create( { value => 'lalalala' } );
             }
             else {
                 $voucher_type = 'sus';
@@ -392,7 +394,8 @@ db_transaction {
                 form => {
                     security_token => $security_token,
                     fb_id          => '710488549074724',
-                    voucher_type   => $voucher_type
+                    voucher_type   => $voucher_type,
+                    ( $voucher_type eq 'combina' ? (integration_token => 'lalalala') : () )
                 }
             )
             ->status_is(200)
