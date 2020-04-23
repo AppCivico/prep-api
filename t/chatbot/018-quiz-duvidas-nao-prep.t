@@ -150,7 +150,7 @@ db_transaction {
                 fb_id          => $fb_id,
                 code           => 'D2',
                 category       => $category,
-                answer_value   => 2
+                answer_value   => 1
             }
         )
         ->status_is(201)
@@ -176,7 +176,7 @@ db_transaction {
                 fb_id          => $fb_id,
                 code           => 'D3',
                 category       => $category,
-                answer_value   => 1
+                answer_value   => 2
             }
         )
         ->status_is(201)
@@ -202,7 +202,7 @@ db_transaction {
                 fb_id          => $fb_id,
                 code           => 'D4',
                 category       => $category,
-                answer_value   => 1
+                answer_value   => 2
             }
         )
         ->status_is(201)

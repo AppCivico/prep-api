@@ -668,7 +668,7 @@ sub action_specs {
                     die \['fb_id', 'must-be-prep'] unless $self->recipient_flag->is_prep;
 
                     my $dt_parser = DateTime::Format::Pg->new();
-                    my ($interval, $running_out_date, $running_out_count, $running_out_wait_until);
+                    my ($interval, $running_out_date, $running_out_count, $running_out_wait_until, $running_out_followup_wait_until);
 
                     if ($values{prep_reminder_before}) {
                         my $parsed_interval;
@@ -709,7 +709,9 @@ sub action_specs {
                         my $delta = $now->subtract_datetime( $parsed_date );
                         my %deltas = $delta->deltas;
 
+                        $now = DateTime->now;
                         my $remaning_count = $count - $deltas{days};
+                        $running_out_followup_wait_until = $now->add( days => ($remaning_count + 5) );
 
                         if ($remaning_count > 15) {
                             $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
@@ -761,14 +763,83 @@ sub action_specs {
 
                     # Criando notificação de running_out;
                     if ($values{prep_reminder_running_out} == 1) {
-                        $self->notification_queues->create(
+
+                        my @notifications = (
                             {
                                 prep_reminder_id => $prep_reminder->id,
                                 type_id          => 11,
                                 wait_until       => $running_out_wait_until,
+                            },
+                            {
+                                prep_reminder_id => $prep_reminder->id,
+                                type_id          => 12,
+                                wait_until       => $running_out_followup_wait_until,
                             }
                         );
+
+                        $self->notification_queues->populate(\@notifications);
                     }
+                }
+
+                if (!defined $values{prep_reminder_running_out} && $values{prep_reminder_running_out_date} && $values{prep_reminder_running_out_count}) {
+                    my $prep_reminder = $self->prep_reminder or die \['fb_id', 'prep-reminder-not-configured'];
+                    last if !$prep_reminder->reminder_running_out;
+
+                    my $dt_parser = DateTime::Format::Pg->new();
+
+                    my $parsed_date;
+                    eval { $parsed_date = $dt_parser->parse_date($values{prep_reminder_running_out_date}) };
+                    die \['prep_reminder_after_interval', 'invalid'] if $@;
+
+                    my $running_out_date = $parsed_date;
+
+                    # Cálculando data que devemos enviar notificação.
+                    # Há 30 comprimidos em um frasco e é consumido 1 por dia.
+                    # Logo calculo quantos já foram consumidos desde a data que foi adquirido
+                    # e marco a notificação para 15 dias antes de esgotar.
+                    my $count = $values{prep_reminder_running_out_count} * 30;
+
+                    my $now = DateTime->now;
+                    my $delta = $now->subtract_datetime( $parsed_date );
+                    my %deltas = $delta->deltas;
+
+                    $now = DateTime->now;
+
+                    my $remaning_count = $count - $deltas{days};
+                    my $running_out_followup_wait_until = $now->add( days => ($remaning_count + 5) );
+
+                    my $running_out_wait_until;
+                    if ($remaning_count > 15) {
+                        $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
+                    }
+                    else {
+                        $running_out_wait_until = \"NOW() + interval '1 hour'"
+                    }
+
+                    # Deletando notificação já marcada, se existir
+                    $self->notification_queues->search(
+                        {
+                            prep_reminder_id => $prep_reminder->id,
+                            type_id          => 12,
+                            sent_at          => \'IS NULL'
+                        }
+                    )->delete;
+
+
+                    my @notifications = (
+                        {
+                            prep_reminder_id => $prep_reminder->id,
+                            type_id          => 11,
+                            wait_until       => $running_out_wait_until,
+                        },
+                        {
+                            prep_reminder_id => $prep_reminder->id,
+                            type_id          => 12,
+                            wait_until       => $running_out_followup_wait_until,
+                        }
+                    );
+
+                    $self->notification_queues->populate(\@notifications);
                 }
 
                 if ($values{cancel_prep_reminder}) {

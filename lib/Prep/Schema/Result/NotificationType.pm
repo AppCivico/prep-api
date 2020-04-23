@@ -276,6 +276,21 @@ sub get_info {
             },
         ]
     }
+    elsif ($name eq 'prep_reminder_running_out_followup') {
+        $text = 'Inhai! Rolou a consulta ? ';
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'Sim',
+                payload      => 'notiAlarmeB_Sim'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não',
+                payload      => 'notiAlarmeB_Nao'
+            }
+        ];
+    }
     else {
         die 'missing dictionary for name=' . $name;
     }
