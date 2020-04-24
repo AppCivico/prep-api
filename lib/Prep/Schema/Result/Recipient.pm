@@ -913,6 +913,8 @@ sub action_specs {
                     my $voucher = $self->result_source->schema->resultset('CombinaVoucher')->search( { value => $values{integration_token}, recipient_id => \'IS NULL' } )->next
                       or die \['integration_token', 'invalid'];
 
+                    die \['fb_id', 'already-has-voucher'] if $self->combina_vouchers->count >= 1;
+
                     $voucher->update( { recipient_id => $self->id, assigned_at => \'NOW()' } );
                 }
 
