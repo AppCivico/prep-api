@@ -46,6 +46,7 @@ sub post {
         $recipient->stashes->delete;
         $recipient->quick_reply_logs->delete;
         $recipient->interactions->delete;
+        $recipient->combina_vouchers->delete;
     };
 
     return $c->render(
