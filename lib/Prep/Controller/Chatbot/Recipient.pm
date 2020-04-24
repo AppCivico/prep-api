@@ -56,6 +56,7 @@ sub get {
                     picture opt_in finished_quiz updated_at created_at
                     signed_term has_appointments city system_labels
                     phone instagram voucher_type prep_reminder_on_demand
+                    combina_city
                   )
             ),
 

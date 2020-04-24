@@ -506,6 +506,27 @@ db_transaction {
         ok defined $prep_reminder->reminder_temporal_last_sent_at;
         ok defined $prep_reminder->reminder_temporal_confirmed_at;
 
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/prep-reminder-yes',
+            form => {
+                security_token => $security_token,
+                combina_city   => 'São Paulo',
+            }
+        )
+        ->status_is(400)
+        ->tx->res->json;
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/prep-reminder-yes',
+            form => {
+                security_token => $security_token,
+                voucher_type   => 'combina',
+                combina_city   => 'Ribeirão Preto',
+            }
+        )
+        ->status_is(400)
+        ->tx->res->json;
+
     };
 };
 

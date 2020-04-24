@@ -167,6 +167,11 @@ __PACKAGE__->table("recipient");
   default_value: false
   is_nullable: 0
 
+=head2 combina_city
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -232,6 +237,8 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "prep_reminder_on_demand",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "combina_city",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -500,8 +507,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-23 16:51:32
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:mqadKQZcfnxZgUX3aNIy2A
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-24 15:37:18
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Q/nDsJR5bUmB2iq0AKP7KQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -614,6 +621,10 @@ sub verifiers_specs {
                     type     => 'Bool'
                 },
                 integration_token => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_city => {
                     required => 0,
                     type     => 'Str'
                 }
@@ -903,6 +914,13 @@ sub action_specs {
                       or die \['integration_token', 'invalid'];
 
                     $voucher->update( { recipient_id => $self->id, assigned_at => \'NOW()' } );
+                }
+
+                if ($values{combina_city}) {
+                    die \['fb_id', 'must-be-combina']
+                      unless $self->voucher_type eq 'combina' || $values{voucher_type} eq 'combina';
+
+                    die \['combina_city', 'invalid'] unless $values{combina_city} =~ m/^(Ribeirão Preto|São Paulo|Fortaleza|Porto Alegre|Curitiba)$/;
                 }
 
                 $self->update(\%values);
