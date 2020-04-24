@@ -527,6 +527,62 @@ db_transaction {
         ->status_is(400)
         ->tx->res->json;
 
+        $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+                combina_reminder_hours_before => '10:00:00',
+                combina_reminder_hour_exact => '20:00:00',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        $res = $t->get_ok(
+        '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+                combina_reminder_22h => '2020-04-24T14:32:24.759',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+                combina_reminder_double => '2020-04-24T14:32:24',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        $res = $t->get_ok(
+        '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
     };
 };
 

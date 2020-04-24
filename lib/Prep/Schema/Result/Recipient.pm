@@ -326,6 +326,21 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 combina_reminder
+
+Type: might_have
+
+Related object: L<Prep::Schema::Result::CombinaReminder>
+
+=cut
+
+__PACKAGE__->might_have(
+  "combina_reminder",
+  "Prep::Schema::Result::CombinaReminder",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 combina_vouchers
 
 Type: has_many
@@ -507,8 +522,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-24 15:37:18
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Q/nDsJR5bUmB2iq0AKP7KQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-24 17:07:31
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:D3KBRt1jzKM6OTby7//S0w
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -627,7 +642,23 @@ sub verifiers_specs {
                 combina_city => {
                     required => 0,
                     type     => 'Str'
-                }
+                },
+                combina_reminder_hours_before => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_reminder_hour_exact => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_reminder_22h => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_reminder_double => {
+                    required => 0,
+                    type     => 'Str'
+                },
             }
         ),
         research_participation => Data::Verifier->new(
@@ -923,6 +954,76 @@ sub action_specs {
                       unless $self->voucher_type eq 'combina' || $values{voucher_type} eq 'combina';
 
                     die \['combina_city', 'invalid'] unless $values{combina_city} =~ m/^(Ribeirão Preto|São Paulo|Fortaleza|Porto Alegre|Curitiba)$/;
+                }
+
+                # Tratando alarmes do Combina.
+                if (my $combina_reminder_hours_before = delete $values{combina_reminder_hours_before}) {
+                    die \['combina_reminder_hour_exact', 'missing']
+                      unless my $combina_reminder_hours_exact = delete $values{combina_reminder_hour_exact};
+
+                    my $combina_reminder = $self->result_source->schema->resultset('CombinaReminder')->find_or_create(
+                        { recipient_id => $self->id },
+                        { key => 'combina_reminder_recipient_id_key' }
+                    );
+
+                    my $dt_parser = DateTime::Format::Pg->new();
+
+                    my $parsed_date;
+
+                    eval {
+                        $combina_reminder_hours_before = $dt_parser->parse_interval($combina_reminder_hours_before);
+                        $combina_reminder_hours_before = $combina_reminder_hours_before->hours . ':' . $combina_reminder_hours_before->minutes . ':' . $combina_reminder_hours_before->seconds;
+                    };
+                    die \['combina_reminder_hours_before', 'invalid'] if $@;
+
+                    eval {
+                        $combina_reminder_hours_exact  = $dt_parser->parse_interval($combina_reminder_hours_exact);
+                        $combina_reminder_hours_exact = $combina_reminder_hours_exact->hours . ':' . $combina_reminder_hours_exact->minutes . ':' . $combina_reminder_hours_exact->seconds;
+                    };
+                    die \['combina_reminder_hour_exact', 'invalid'] if $@;
+
+                    $combina_reminder->update(
+                        {
+                            reminder_hour_exact => $combina_reminder_hours_exact,
+                            reminder_hours_before => $combina_reminder_hours_before
+                        }
+                    );
+                }
+
+                if (my $combina_reminder_22h = delete $values{combina_reminder_22h}) {
+                    my $combina_reminder = $self->result_source->schema->resultset('CombinaReminder')->find_or_create(
+                        { recipient_id => $self->id },
+                        { key => 'combina_reminder_recipient_id_key' }
+                    );
+
+                    my $dt_parser = DateTime::Format::Pg->new();
+
+                    my $parsed_date;
+
+                    eval {
+                        $combina_reminder_22h = $dt_parser->parse_datetime($combina_reminder_22h);
+                    };
+                    die \['combina_reminder_22h', 'invalid'] if $@;
+
+                    $combina_reminder->update( { reminder_22h => $combina_reminder_22h } );
+                }
+
+                if (my $combina_reminder_double = delete $values{combina_reminder_double}) {
+                    my $combina_reminder = $self->result_source->schema->resultset('CombinaReminder')->find_or_create(
+                        { recipient_id => $self->id },
+                        { key => 'combina_reminder_recipient_id_key' }
+                    );
+
+                    my $dt_parser = DateTime::Format::Pg->new();
+
+                    my $parsed_date;
+
+                    eval {
+                        $combina_reminder_double = $dt_parser->parse_datetime($combina_reminder_double);
+                    };
+                    die \['combina_reminder_double', 'invalid'] if $@;
+
+                    $combina_reminder->update( { reminder_double => $combina_reminder_double } );
                 }
 
                 $self->update(\%values);

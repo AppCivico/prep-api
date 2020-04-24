@@ -61,3 +61,4 @@
 0057-add-notification-type [0056-add-running-out-data] 2020-04-23T17:51:51Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding new notification type
 0058-add-combina-voucher [0057-add-notification-type] 2020-04-23T19:51:53Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding the 'combina_voucher' table
 0059-add-combina_city [0058-add-combina-voucher] 2020-04-24T18:36:51Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding combina_city on the recipient table
+0060-add-combina-reminder [0059-add-combina_city] 2020-04-24T20:34:03Z Lucas Ansei,,, <lucas@lucas-G750JX> # Creating the 'combina_reminder' table

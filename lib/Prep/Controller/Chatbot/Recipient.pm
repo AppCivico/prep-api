@@ -77,6 +77,16 @@ sub get {
                         )
                     )
                 :   ()
+            ),
+
+            (
+                $recipient->combina_reminder ?
+                    (
+                        map { 'combina_' . $_ => $recipient->combina_reminder->$_ } qw(
+                            reminder_hours_before reminder_hour_exact reminder_22h reminder_double
+                        )
+                    )
+                :   ()
             )
         }
     )
