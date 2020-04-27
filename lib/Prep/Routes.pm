@@ -142,6 +142,10 @@ sub register {
     # Internal::Integration::Recipient::Sync
     my $sync = $integration_recipient->route('/sync');
     $sync->post('/')->to('internal-integration-recipient-sync#post');
+
+    # Internal::AvailableCombinaVouchers
+    my $combina_vouchers = $internal->route('/available-combina-vouchers')->under->to('internal#validade_security_token');
+    $combina_vouchers->get('/')->to('internal-available_combina_vouchers#get');
 }
 
 1;
