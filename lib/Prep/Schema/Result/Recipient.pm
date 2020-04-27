@@ -951,6 +951,14 @@ sub action_specs {
                     die \['fb_id', 'already-has-voucher'] if $self->combina_vouchers->count >= 1;
 
                     $voucher->update( { recipient_id => $self->id, assigned_at => \'NOW()' } );
+                    $self->recipient_flag->update(
+                        {
+                            finished_quiz              => 1,
+                            finished_publico_interesse => 1,
+                            is_eligible_for_research   => 1,
+                            is_prep                    => 1,
+                        }
+                    );
                 }
 
                 if ($values{combina_city}) {

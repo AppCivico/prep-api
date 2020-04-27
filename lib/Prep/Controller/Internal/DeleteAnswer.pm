@@ -23,6 +23,7 @@ sub post {
                 count_sent_quiz        => 0,
                 count_invited_research => 0,
                 count_share            => 0,
+                voucher_type           => undef,
                 phone                  => undef,
                 instagram              => undef,
             }
