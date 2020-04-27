@@ -955,7 +955,16 @@ sub action_specs {
                         {
                             finished_quiz              => 1,
                             finished_publico_interesse => 1,
-                            is_eligible_for_research   => 1,
+                            is_prep                    => 1,
+                        }
+                    );
+                }
+
+                if ($values{voucher_type} && $values{voucher_type} eq 'sus') {
+                    $self->recipient_flag->update(
+                        {
+                            finished_quiz              => 1,
+                            finished_publico_interesse => 1,
                             is_prep                    => 1,
                         }
                     );
@@ -1635,14 +1644,15 @@ sub assign_token {
                 finished_quiz       => 1,
                 is_target_audience  => 1,
                 is_prep             => $data->{is_prep},
-                is_part_of_research => $data->{is_part_of_research}
+                is_part_of_research => $data->{is_part_of_research},
             }
         );
 
         $self->update(
             {
                 integration_token    => $integration_token,
-                using_external_token => 1
+                using_external_token => 1,
+                voucher_type        => 'sisprep'
             }
         );
 
