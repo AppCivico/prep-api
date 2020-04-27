@@ -9,7 +9,7 @@ sub get {
     return $c->render(
         status => 200,
         json   => {
-            available_combina_vouchers => [ map {$_} $rs->get_column('value')->all() ]
+            available_combina_vouchers => [ map {$_} $rs->search('me.recipient_id' => undef)->get_column('value')->all() ]
         }
     )
 }
