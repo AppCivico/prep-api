@@ -95,6 +95,20 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
+=head1 UNIQUE CONSTRAINTS
+
+=head2 C<uniq_value>
+
+=over 4
+
+=item * L</value>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint("uniq_value", ["value"]);
+
 =head1 RELATIONS
 
 =head2 recipient
@@ -118,8 +132,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-23 16:51:32
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:kGWDEFnpraMfSzQSCdrsLQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-27 15:07:37
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:QNJpHCDgWj9pSyaewU6N9Q
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
