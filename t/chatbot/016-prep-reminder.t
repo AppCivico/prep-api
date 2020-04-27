@@ -210,6 +210,7 @@ db_transaction {
                     }
                 );
             }
+            use DDP; p $notification_queue_rs->count;
 
             ok $prep_reminder->update( { reminder_temporal_wait_until => \"NOW() - INTERVAL '10 MINUTES'" } );
             ok $prep_reminder->discard_changes;
@@ -240,7 +241,7 @@ db_transaction {
         )
         ->status_is(200)
         ->tx->res->json;
-
+        use DDP; p $res;
         is $notification_queue_rs->count, 3;
 
         $date = $date->add( days => '5' );
@@ -250,12 +251,13 @@ db_transaction {
             form => {
                 security_token       => $security_token,
                 fb_id                => $fb_id,
-                prep_reminder_running_out_date => $date->ymd,
-                prep_reminder_running_out_count => '2',
+                prep_reminder_running_out_date => '2020-03-01',
+                prep_reminder_running_out_count => '1',
             }
         )
         ->status_is(200)
         ->tx->res->json;
+        use DDP; p $res;
 
         is $notification_queue_rs->count, 4;
     };

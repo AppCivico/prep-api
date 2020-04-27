@@ -423,7 +423,7 @@ db_transaction {
                 security_token       => $security_token,
                 fb_id                => '710488549074724',
                 prep_reminder_before => 1,
-                prep_reminder_before_interval => '15:46:39.286572'
+                prep_reminder_before_interval => '10:00:00'
             }
         )
         ->status_is(200)
@@ -439,7 +439,7 @@ db_transaction {
         )
         ->status_is(200)
         ->json_is('/prep_reminder_before', 1)
-        ->json_is('/prep_reminder_before_interval', '15:46:39.286572')
+        ->json_is('/prep_reminder_before_interval', '10:00:00')
         ->tx->res->json;
 
         my $prep_reminder = $schema->resultset('PrepReminder')->next;
@@ -505,6 +505,9 @@ db_transaction {
         ok $prep_reminder->discard_changes;
         ok defined $prep_reminder->reminder_temporal_last_sent_at;
         ok defined $prep_reminder->reminder_temporal_confirmed_at;
+
+        @queue = $worker->_queue_rs;
+        is @queue, 0;
 
         $res = $t->post_ok(
             '/api/chatbot/recipient/prep-reminder-yes',

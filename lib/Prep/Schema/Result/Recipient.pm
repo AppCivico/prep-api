@@ -738,8 +738,12 @@ sub action_specs {
                         eval { $parsed_interval = $dt_parser->parse_interval($values{prep_reminder_before_interval}) };
                         die \['prep_reminder_before_interval', 'invalid'] if $@;
 
-                        $interval = $parsed_interval->hours . ':' . $parsed_interval->minutes . ':' . $parsed_interval->seconds;
-                        $interval = \"(NOW()::date + interval '1 day') + interval '$interval'";
+                        use DDP;
+                        my $interval_hours = $parsed_interval->hours >= 10 ? $parsed_interval->hours : '0' . $parsed_interval->hours;
+                        my $interval_minutes = $parsed_interval->minutes > 10 ? $parsed_interval->minutes : '0' . $parsed_interval->minutes;
+
+                        $interval = $interval_hours . ':' . $interval_minutes . ':00';
+                        $interval = \"DATE 'tomorrow' + interval '$interval'";
                     }
 
                     if ($values{prep_reminder_after}) {
@@ -749,7 +753,8 @@ sub action_specs {
                         die \['prep_reminder_after_interval', 'invalid'] if $@;
 
                         $interval = $parsed_interval->hours . ':' . $parsed_interval->minutes . ':' . $parsed_interval->seconds;
-                        $interval = \"(NOW()::date + interval '1 day') + interval '$interval'";
+
+                        $interval = \"DATE 'tomorrow' + interval '$interval'";
                     }
 
                     if ($values{prep_reminder_running_out}) {
@@ -821,7 +826,6 @@ sub action_specs {
                             },
                         );
                     }
-
 
                     # Criando notificação de running_out;
                     if ($values{prep_reminder_running_out} == 1) {

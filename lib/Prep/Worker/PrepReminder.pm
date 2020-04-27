@@ -143,12 +143,13 @@ sub process_item {
                 'me.created_at'       => { '>=' => \"NOW() - interval '1 hour'" }
             }
         )->count;
+        use DDP; p $notifications_last_hour;
 
         if ($notifications_last_hour >= 3) {
             $job->update(
                 {
                     reminder_temporal_last_sent_at => \'NOW()',
-                    reminder_temporal_wait_until   => \"NOW() + INTERVAL '1 hour'"
+                    reminder_temporal_wait_until   => \"NOW() + INTERVAL '3 hours'"
                 }
             );
         }
