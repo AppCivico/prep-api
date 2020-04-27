@@ -960,7 +960,7 @@ sub action_specs {
                     );
                 }
 
-                if ($values{voucher_type} && $values{voucher_type} eq 'sus') {
+                if ($values{voucher_type} && $values{voucher_type} =~ /^(sus|sisprep)$/) {
                     $self->recipient_flag->update(
                         {
                             finished_quiz              => 1,
