@@ -7,7 +7,7 @@ export INSIDE_WORKSPACE=/var/jenkins_home/dev-persistent/$JOB_NAME
 export DOCKER_LAN_IP=172.17.0.1
 
 # porta que será feito o bind
-export LISTEN_PORT=2049
+export LISTEN_PORT=5893
 
 mkdir -p $INSIDE_WORKSPACE/src
 mkdir -p $INSIDE_WORKSPACE/data
