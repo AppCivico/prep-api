@@ -4,6 +4,7 @@ use lib "$Bin/../lib";
 
 use Prep::Test;
 use Prep::Worker::Notify;
+use Prep::Worker::Interaction;
 
 my $t      = test_instance;
 my $schema = $t->app->schema;
@@ -44,6 +45,29 @@ db_transaction {
         ok defined $res->{id};
         my $interaction_id = $res->{id};
         my $interaction    = $schema->resultset('Interaction')->find($interaction_id);
+
+        db_transaction{
+            ok my $worker = Prep::Worker::Interaction->new(
+                schema      => $schema,
+                logger      => $t->app->log,
+                max_process => 1,
+            );
+
+            my @queue = $worker->_queue_rs;
+            is @queue, 0;
+
+            ok $interaction->update( { started_at => \"NOW() - interval '24 hours 1 second'" } );
+
+            is $interaction->closed_at, undef;
+
+            @queue = $worker->_queue_rs;
+            is @queue, 1;
+
+            ok $worker->run_once();
+
+            ok $interaction->discard_changes;
+            ok defined $interaction->closed_at;
+        };
 
         $res = $t->post_ok(
             '/api/chatbot/recipient/interaction',
