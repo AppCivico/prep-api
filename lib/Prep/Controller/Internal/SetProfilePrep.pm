@@ -36,7 +36,12 @@ sub post {
         }
         else {
             $recipient->recipient_flag->update(
-                { is_prep => 0 }
+                {
+                    finished_quiz => 1,
+                    finished_publico_interesse => 1,
+                    finished_recrutamento => 1,
+                    is_prep => 0
+                }
             );
         }
     };
