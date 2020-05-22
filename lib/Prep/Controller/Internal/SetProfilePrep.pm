@@ -40,6 +40,7 @@ sub post {
                     finished_quiz => 1,
                     finished_publico_interesse => 1,
                     finished_recrutamento => 1,
+                    finished_quiz_brincadeira => 1,
                     is_prep => 0
                 }
             );
