@@ -64,8 +64,19 @@ db_transaction {
 
         for ( 1 .. 4 ) {
             my $code;
+            my $rules;
             if ($_ == 1) {
                 $code = 'D1';
+                $rules = '{
+                    "logic_jumps": [
+                    {
+                        "code": "D2",
+                        "values": [1]
+                    }
+                    ],
+                    "qualification_conditions": [],
+                    "flags": []
+                }'
             }
             elsif ($_ == 2) {
                 $code = 'D2';
@@ -84,6 +95,8 @@ db_transaction {
                     text              => 'foobar',
                     is_differentiator => 0,
                     question_map_id   => $question_map->id,
+
+                    ( $rules ? ( rules => $rules ) : () ),
 
                     multiple_choices => to_json(
                         {
@@ -116,6 +129,34 @@ db_transaction {
 
         is $stash->times_answered, 0;
         is $stash->must_be_reseted, 0;
+
+        db_transaction{
+            $res = $t->post_ok(
+                '/api/chatbot/recipient/answer',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    code           => 'D1',
+                    category       => $category,
+                    answer_value   => 2
+                }
+            )
+            ->status_is(201)
+            ->tx->res->json;
+
+            $res = $t->get_ok(
+                '/api/chatbot/recipient/pending-question',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => $fb_id,
+                    category       => $category
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+
+            is $res->{code}, 'D3';
+        };
 
         $res = $t->post_ok(
             '/api/chatbot/recipient/answer',

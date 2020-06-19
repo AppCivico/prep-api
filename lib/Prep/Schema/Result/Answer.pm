@@ -459,13 +459,13 @@ sub followup_messages {
 
         if ($score >= 1) {
             # Alto risco
-            push @messages, 'PrEP é pra vc, não bobeia!';
+            push @messages, 'PrEP é pra vc, se liga!';
         }
         elsif ($score == 0) {
             push @messages, 'Pelo o que vejo vc já se colocou em risco! Mas nao pira, vemk q posso ajudar!';
         }
         else {
-            push @messages, 'Arrasou! Parece q vc tá por dentro de prevenção! Se quiser saber mais, podemos trocar uma ideia sobre PrEP';
+            push @messages, 'Arrasou! Parece q vc tá por dentro do babado da prevenção! Se quiser saber mais, podemos trocar uma ideia sobre PrEP!';
         }
     }
 
