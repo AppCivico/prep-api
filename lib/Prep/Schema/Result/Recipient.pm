@@ -974,7 +974,7 @@ sub action_specs {
                     die \['fb_id', 'must-be-combina']
                       unless $self->voucher_type eq 'combina' || $values{voucher_type} eq 'combina';
 
-                    die \['combina_city', 'invalid'] unless $values{combina_city} =~ m/^(Ribeirão Preto|São Paulo|Fortaleza|Porto Alegre|Curitiba)$/;
+                    die \['combina_city', 'invalid'] unless $values{combina_city} =~ m/^(CRT São Paulo|Campos Elíseos SP|Fortaleza|Porto Alegre|Ribeirão Preto|Curitiba)$/;
                 }
 
                 # Tratando alarmes do Combina.
