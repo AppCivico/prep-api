@@ -441,32 +441,58 @@ sub followup_messages {
                 'me.question_map_id'        => $question_map->id,
                 'me.question_map_iteration' => $stash->times_answered
             },
-            { rows => 4 }
+            {
+                rows => 4,
+                join     => 'question',
+                order_by => { -asc => 'question.code' }
+            }
         )->all();
 
         my $score = 0;
+        my $answer_str = '';
         for my $answer (@answers) {
             if ($answer->question->code eq 'D1') {
-                $score += $answer->answer_value eq '1' ? 1 : -1;
+                $score += $answer->answer_value eq '1' ? 1 : 0;
             }
             elsif ($answer->question->code eq 'D2') {
-                $score += $answer->answer_value eq '1' ? 1 : -5;
+                $score += $answer->answer_value eq '1' ? 1 : 0;
             }
             else {
-                $score += $answer->answer_value eq '1' ? 1 : -1;
+                $score += $answer->answer_value eq '1' ? 1 : 0;
             }
+            $answer_str .= $answer->answer_value;
         }
 
-        if ($score >= 1) {
-            # Alto risco
+        # Regras retiradas do ticket: https://trello.com/c/dReQ9Yif/410-altera%C3%A7%C3%A3o-de-fluxos-amanda-fluxo-d%C3%BAvidas-n%C3%A3o-prep-2
+        # Se sim nas perguntas 1 e 2, e + um ou dois sim nas perguntas 3 e 4, é alto risco
+        # Se sim na pergunta 1 e 2 e os resto (3 e 4) não, é médio risco
+        # Se não na pergunta 1 ou se sim na 1 e não na 2 é baixo risco,
+        # desde que as respostas na 3 e 4 sejam não.
+        # se não na pergunta 1 ou se sim na 1 e não na 2
+        # e as respostas na 3 e/ou 4 forem sim, é médio risco
+
+        if ($score >= 3 && $answer_str =~ /1{3,}/) {
+            # Se sim nas perguntas 1 e 2, e + um ou dois sim nas perguntas 3 e 4, é alto risco
             push @messages, 'PrEP é pra vc, se liga!';
         }
-        elsif ($score == 0) {
+        elsif ($answer_str =~ /^11/ && $score == 2) {
+            # Se sim na pergunta 1 e 2 e os resto (3 e 4) não, é médio risco
+            push @messages, 'Pelo o que vejo vc já se colocou em risco! Mas nao pira, vemk q posso ajudar!';
+        }
+        elsif ($score <= 1 && $answer_str =~ /(?<=\d{1})2{3}$/) {
+            # Se não na pergunta 1 ou se sim na 1 e não na 2 é baixo risco,
+            # desde que as respostas na 3 e 4 sejam não.
+            push @messages, 'Arrasou! Parece q vc tá por dentro do babado da prevenção! Se quiser saber mais, podemos trocar uma ideia sobre PrEP!';
+        }
+        elsif ($score > 1 && $answer_str =~ /^\d{1}2\d{2}$/ ) {
+            # se não na pergunta 1 ou se sim na 1 e não na 2
+            # e as respostas na 3 e/ou 4 forem sim, é médio risco
             push @messages, 'Pelo o que vejo vc já se colocou em risco! Mas nao pira, vemk q posso ajudar!';
         }
         else {
-            push @messages, 'Arrasou! Parece q vc tá por dentro do babado da prevenção! Se quiser saber mais, podemos trocar uma ideia sobre PrEP!';
+            die "faltando definição para regra. answer_string: $answer_str, score: $score";
         }
+
     }
 
     return @messages;
