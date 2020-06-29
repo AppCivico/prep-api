@@ -974,7 +974,7 @@ sub action_specs {
                     die \['fb_id', 'must-be-combina']
                       unless $self->voucher_type eq 'combina' || $values{voucher_type} eq 'combina';
 
-                    die \['combina_city', 'invalid'] unless $values{combina_city} =~ m/^(CRT São Paulo|Campos Elíseos SP|Fortaleza|Porto Alegre|Ribeirão Preto|Curitiba)$/;
+                    die \['combina_city', 'invalid'] unless $values{combina_city} =~ m/^(CRT São Paulo|Campos Elíseos - SP|Fortaleza|Porto Alegre|Ribeirão Preto|Curitiba)$/;
                 }
 
                 # Tratando alarmes do Combina.
@@ -2155,6 +2155,56 @@ sub answers_for_integration {
 }
 
 sub register_sisprep {
+    my ($self, $step) = @_;
+
+    die 'missing step unless step' unless $step;
+
+    my $success;
+    $self->result_source->schema->txn_do( sub {
+        my $recipient_integration = $self->result_source->schema->resultset('RecipientIntegration')->find_or_create(
+            { recipient_id => $self->id },
+            { key => 'recipient_integration_recipient_id_key' }
+        );
+
+        my $data = $recipient_integration->data;
+
+        my $res;
+        eval {
+            $res = $self->_simprep->register_recipient(
+                answers       => $self->answers_for_integration,
+                facebook_name => $self->name
+            );
+        };
+
+        if ($@ || $res->{status} ne 'success') {
+            my $coded_res = $res ? to_json($res) : undef;
+
+            $data->{$step} = {
+                status => 'failed',
+                epoch  => time(),
+                res    => $coded_res ? $coded_res : $@
+            };
+
+            $recipient_integration->update( { errmsg => $coded_res ? $coded_res : $@ } );
+            $success = 0;
+        }
+        else {
+            $data->{$step} = {
+                status => 'success',
+                epoch  => time(),
+            };
+
+            $self->update( { integration_token => $res->{data}->{voucher} } );
+            $success = 1;
+        }
+
+        $recipient_integration->update( { data => $data } );
+    });
+
+    return $success;
+}
+
+sub register_first_questionnaire {
     my ($self, $step) = @_;
 
     die 'missing step unless step' unless $step;
