@@ -55,8 +55,8 @@ db_transaction {
                 map         => to_json(
                     {
                         1 => 'T1',
-                        2 => 'T2',
-                        3 => 'T3'
+                        2 => 'T1a',
+                        3 => 'T1b'
                     }
                 )
             }
@@ -68,7 +68,16 @@ db_transaction {
                 $code = 'T1';
 
                 $rules = '{
-                    "logic_jumps": [],
+                    "logic_jumps": [
+                    {
+                        "code": "T1a",
+                        "values": [2]
+                    },
+                    {
+                        "code": "T1b",
+                        "values": [3]
+                    }
+                    ],
                     "qualification_conditions": [2, 3],
                     "flags": [ "entrar_em_contato" ]
                 }';
@@ -80,11 +89,11 @@ db_transaction {
                 }';
             }
             elsif ($_ == 2) {
-                $code = 'T2';
+                $code = 'T1a';
 
                 $rules = '{
                     "logic_jumps": [],
-                    "qualification_conditions": [2],
+                    "qualification_conditions": [],
                     "flags": [ "ir_para_agendamento" ]
                 }';
 
@@ -94,12 +103,12 @@ db_transaction {
                 }';
             }
             else {
-                $code = 'T3';
+                $code = 'T1b';
 
                 $rules = '{
                     "logic_jumps": [],
                     "qualification_conditions": [],
-                    "flags": [ "ir_para_menu" ]
+                    "flags": [ "ir_para_agendamento" ]
                 }';
 
                 $choices = '{
@@ -205,14 +214,14 @@ db_transaction {
             ->status_is(200)
             ->tx->res->json;
 
-            is $res->{code}, 'T2';
+            is $res->{code}, 'T1a';
 
             $res = $t->post_ok(
                 '/api/chatbot/recipient/answer',
                 form => {
                     security_token => $security_token,
                     fb_id          => $fb_id,
-                    code           => 'T2',
+                    code           => 'T1a',
                     category       => $category,
                     answer_value   => 1
                 }
@@ -249,7 +258,7 @@ db_transaction {
                     fb_id          => $fb_id,
                     code           => 'T1',
                     category       => $category,
-                    answer_value   => 2
+                    answer_value   => 3
                 }
             )
             ->status_is(201)
@@ -268,51 +277,23 @@ db_transaction {
             ->status_is(200)
             ->tx->res->json;
 
-            is $res->{code}, 'T2';
+            is $res->{code}, 'T1b';
 
             $res = $t->post_ok(
                 '/api/chatbot/recipient/answer',
                 form => {
                     security_token => $security_token,
                     fb_id          => $fb_id,
-                    code           => 'T2',
+                    code           => 'T1b',
                     category       => $category,
-                    answer_value   => 2
-                }
-            )
-            ->status_is(201)
-            ->tx->res->json;
-
-            is $res->{finished_quiz}, 0;
-
-            $res = $t->get_ok(
-                '/api/chatbot/recipient/pending-question',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    category       => $category
-                }
-            )
-            ->status_is(200)
-            ->tx->res->json;
-
-            is $res->{code}, 'T3';
-
-            $res = $t->post_ok(
-                '/api/chatbot/recipient/answer',
-                form => {
-                    security_token => $security_token,
-                    fb_id          => $fb_id,
-                    code           => 'T3',
-                    category       => $category,
-                    answer_value   => 2
+                    answer_value   => 1
                 }
             )
             ->status_is(201)
             ->tx->res->json;
 
             is $res->{finished_quiz}, 1;
-            is $res->{ir_para_menu}, 1;
+            is $res->{ir_para_agendamento}, 1;
 
             ok $stash->discard_changes;
 
