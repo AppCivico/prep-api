@@ -778,10 +778,10 @@ sub action_specs {
 
                         $now = DateTime->now;
                         my $remaning_count = $count - $deltas{days};
-                        $running_out_followup_wait_until = $now->add( days => ($remaning_count + 5) );
+                        $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
 
                         if ($remaning_count > 15) {
-                            $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
+                            $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
                         }
                         else {
                             $running_out_wait_until = $now->add( hours => 1 );
@@ -847,7 +847,7 @@ sub action_specs {
                     }
                 }
 
-                if (!defined $values{prep_reminder_running_out} && $values{prep_reminder_running_out_date} && $values{prep_reminder_running_out_count}) {
+                if (defined $values{prep_reminder_running_out} && $values{prep_reminder_running_out_date} && $values{prep_reminder_running_out_count}) {
                     my $prep_reminder = $self->prep_reminder or die \['fb_id', 'prep-reminder-not-configured'];
                     last if !$prep_reminder->reminder_running_out;
 
@@ -856,7 +856,6 @@ sub action_specs {
                     my $parsed_date;
                     eval { $parsed_date = $dt_parser->parse_date($values{prep_reminder_running_out_date}) };
                     die \['prep_reminder_after_interval', 'invalid'] if $@;
-
                     my $running_out_date = $parsed_date;
 
                     # Cálculando data que devemos enviar notificação.
@@ -872,10 +871,11 @@ sub action_specs {
                     $now = DateTime->now;
 
                     my $remaning_count = $count - $deltas{days};
-                    my $running_out_followup_wait_until = $now->add( days => ($remaning_count + 5) );
+                    my $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
 
                     if ($remaning_count > 15) {
-                        $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
+                        # $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
+                        $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
                     }
                     else {
                         $running_out_wait_until = $now->add( hours => 1 );

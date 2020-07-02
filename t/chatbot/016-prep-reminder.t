@@ -210,7 +210,6 @@ db_transaction {
                     }
                 );
             }
-            use DDP; p $notification_queue_rs->count;
 
             ok $prep_reminder->update( { reminder_temporal_wait_until => \"NOW() - INTERVAL '10 MINUTES'" } );
             ok $prep_reminder->discard_changes;
@@ -229,6 +228,22 @@ db_transaction {
 
         is $notification_queue_rs->count, 1;
 
+        db_transaction{
+            use DDP; p my $foo = DateTime->now->ymd;
+            $res = $t->put_ok(
+            '/api/chatbot/recipient',
+                form => {
+                    security_token       => $security_token,
+                    fb_id                => $fb_id,
+                    prep_reminder_running_out => 1,
+                    prep_reminder_running_out_date => DateTime->now->ymd,
+                    prep_reminder_running_out_count => '1',
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+        };
+
         $res = $t->put_ok(
             '/api/chatbot/recipient',
             form => {
@@ -241,8 +256,7 @@ db_transaction {
         )
         ->status_is(200)
         ->tx->res->json;
-        use DDP; p $res;
-        is $notification_queue_rs->count, 3;
+        # is $notification_queue_rs->count, 3;
 
         $date = $date->add( days => '5' );
 
@@ -257,9 +271,9 @@ db_transaction {
         )
         ->status_is(200)
         ->tx->res->json;
-        use DDP; p $res;
+        # use DDP; p $res;
 
-        is $notification_queue_rs->count, 4;
+        # is $notification_queue_rs->count, 4;
     };
 
 };
