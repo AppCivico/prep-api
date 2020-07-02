@@ -777,7 +777,7 @@ sub action_specs {
                         my %deltas = $delta->deltas;
 
                         $now = DateTime->now;
-                        my $remaning_count = $count - $deltas{days};
+                        my $remaning_count = $deltas{days} > 0 ? $count - $deltas{days} : 0;
                         $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
 
                         if ($remaning_count > 15) {
@@ -870,7 +870,7 @@ sub action_specs {
 
                     $now = DateTime->now;
 
-                    my $remaning_count = $count - $deltas{days};
+                    my $remaning_count = $deltas{days} > 0 ? $count - $deltas{days} : 0;
                     my $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
 
                     if ($remaning_count > 15) {
