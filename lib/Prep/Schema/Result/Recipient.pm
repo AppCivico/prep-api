@@ -780,12 +780,7 @@ sub action_specs {
                         my $remaning_count = $deltas{days} > 0 ? $count - $deltas{days} : 0;
                         $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
 
-                        if ($remaning_count > 15) {
-                            $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
-                        }
-                        else {
-                            $running_out_wait_until = $now->add( hours => 1 );
-                        }
+                        $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
 
                     }
 
@@ -873,13 +868,7 @@ sub action_specs {
                     my $remaning_count = $deltas{days} > 0 ? $count - $deltas{days} : 0;
                     my $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
 
-                    if ($remaning_count > 15) {
-                        # $running_out_wait_until = $now->add( days => ($remaning_count - 15) );
-                        $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
-                    }
-                    else {
-                        $running_out_wait_until = $now->add( hours => 1 );
-                    }
+                    $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
 
                     # Deletando notificação já marcada, se existir
                     $self->notification_queues->search(
