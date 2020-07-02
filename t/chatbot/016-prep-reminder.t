@@ -228,20 +228,36 @@ db_transaction {
 
         is $notification_queue_rs->count, 1;
 
+        # db_transaction{
+        #     $res = $t->put_ok(
+        #     '/api/chatbot/recipient',
+        #         form => {
+        #             security_token       => $security_token,
+        #             fb_id                => $fb_id,
+        #             prep_reminder_running_out => 1,
+        #             prep_reminder_running_out_date => DateTime->now->ymd,
+        #             prep_reminder_running_out_count => '1',
+        #         }
+        #     )
+        #     ->status_is(200)
+        #     ->tx->res->json;
+        # };
+
         db_transaction{
-            use DDP; p my $foo = DateTime->now->ymd;
+            use DDP; p my $foo = DateTime->now->subtract(days => 30)->ymd;
             $res = $t->put_ok(
             '/api/chatbot/recipient',
                 form => {
                     security_token       => $security_token,
                     fb_id                => $fb_id,
                     prep_reminder_running_out => 1,
-                    prep_reminder_running_out_date => DateTime->now->ymd,
+                    prep_reminder_running_out_date => DateTime->now->subtract(days => 30)->ymd,
                     prep_reminder_running_out_count => '1',
                 }
             )
             ->status_is(200)
             ->tx->res->json;
+
         };
 
         $res = $t->put_ok(
@@ -271,7 +287,6 @@ db_transaction {
         )
         ->status_is(200)
         ->tx->res->json;
-        # use DDP; p $res;
 
         # is $notification_queue_rs->count, 4;
     };
