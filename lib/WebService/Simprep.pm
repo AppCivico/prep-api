@@ -134,7 +134,7 @@ sub verify_voucher {
 
 sub update_data {
     my ( $self, %opts ) = @_;
-    use DDP; p \%opts;
+
     my @required_opts = qw( voucher code answer );
     defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
 
