@@ -2196,8 +2196,9 @@ sub register_sisprep {
 sub update_sisprep {
     my ($self, $code, $answer) = @_;
 
+    my $res;
     eval {
-        $self->_simprep->update_data(
+        $res = $self->_simprep->update_data(
             voucher => $self->integration_token,
             code    => $code,
             answer  => $answer
@@ -2211,8 +2212,11 @@ sub update_sisprep {
                 { key => 'recipient_integration_recipient_id_key' }
             );
 
+            my $coded_res = $res ? to_json($res) : undef;
+
             $recipient_integration->update(
                 {
+                    errmsg => $coded_res ? $coded_res : $@,
                     next_retry_at => \"NOW() + interval '4 hours'"
                 }
             );
