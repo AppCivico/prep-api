@@ -2262,7 +2262,7 @@ sub register_first_questionnaire {
                 res    => $coded_res ? $coded_res : $@
             };
 
-            $recipient_integration->update( { errmsg => $coded_res ? $coded_res : $@ } );
+            $recipient_integration->update( { err_msg => $coded_res ? $coded_res : $@ } );
             $success = 0;
         }
         else {
