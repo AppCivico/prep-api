@@ -21,7 +21,7 @@ sub register_recipient {
         return {
             status => 'success',
             data   => {
-                voucher => '00300000002',
+                voasdasducher => '00300000002',
                 url     => 'https://www.google.com'
             }
         };
