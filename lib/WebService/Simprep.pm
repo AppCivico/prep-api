@@ -39,7 +39,7 @@ sub register_recipient {
                     'X-API-KEY'  => $ENV{SIMPREP_TOKEN},
                     Content      => encode_json(
                         {
-                            answASDAers       => $opts{answers},
+                            answers       => $opts{answers},
                             signed_TCLE   => $opts{signed},
                             facebook_name => $opts{facebook_name}
                         }
