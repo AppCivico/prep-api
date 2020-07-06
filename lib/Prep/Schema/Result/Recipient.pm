@@ -2212,11 +2212,10 @@ sub update_sisprep {
                 { key => 'recipient_integration_recipient_id_key' }
             );
 
-            my $coded_res = $res ? to_json($res) : undef;
 
             $recipient_integration->update(
                 {
-                    errmsg => $coded_res ? $coded_res : $@,
+                    errmsg => $@,
                     next_retry_at => \"NOW() + interval '4 hours'"
                 }
             );
