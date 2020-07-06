@@ -26,7 +26,8 @@ db_transaction {
                         6 => 'A4b',
                         7 => 'A5',
                         8 => 'A6',
-                        9 => 'A6a'
+                        9 => 'A6a',
+                        10 => 'A6b'
                     }),
                     category_id => 3
                 }
@@ -201,8 +202,17 @@ db_transaction {
                         "2": "Não"
                     }',
                     rules => '{
-                        "logic_jumps": [ ],
-                        "qualification_conditions": [1],
+                        "logic_jumps": [
+                        {
+                            "code": "A6a",
+                            "values": [1]
+                        },
+                        {
+                            "code": "A6b",
+                            "values": [2]
+                        }
+                        ],
+                        "qualification_conditions": [],
                         "flags": [ "is_target_audience" ]
                     }'
                 }
@@ -230,6 +240,28 @@ db_transaction {
                 }
             ),
             'A6a created'
+        );
+
+        ok(
+            $question_rs->create(
+                {
+                    code                => 'A6b',
+                    text                => 'barbaz?',
+                    type                => 'multiple_choice',
+                    question_map_id     => $question_map->id,
+                    is_differentiator   => 0,
+                    multiple_choices    => '{
+                        "1": "Sim",
+                        "2": "Não"
+                    }',
+                    rules => '{
+                        "logic_jumps": [ ],
+                        "qualification_conditions": [],
+                        "flags": [ "entrar_em_contato" ]
+                    }'
+                }
+            ),
+            'A6b created'
         );
     };
 
@@ -631,6 +663,34 @@ db_transaction {
                         code           => 'A6',
                         category       => 'publico_interesse',
                         answer_value   => 2
+                    }
+                )
+                ->status_is(201)
+                ->tx->res->json;
+
+                is $res->{finished_quiz}, 0;
+
+                $res = $t->get_ok(
+                    '/api/chatbot/recipient/pending-question',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        category       => 'publico_interesse'
+                    }
+                )
+                ->status_is(200)
+                ->tx->res->json;
+
+                is $res->{code}, 'A6b';
+
+                $res = $t->post_ok(
+                    '/api/chatbot/recipient/answer',
+                    form => {
+                        security_token => $security_token,
+                        fb_id          => $fb_id,
+                        code           => 'A6b',
+                        category       => 'publico_interesse',
+                        answer_value   => 1
                     }
                 )
                 ->status_is(201)

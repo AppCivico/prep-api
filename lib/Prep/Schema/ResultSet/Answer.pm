@@ -147,6 +147,25 @@ sub action_specs {
 
                 if ( defined $pending_question_data->{question} ) {
                     $finished_quiz = 0;
+
+                    # Caso seja questionario do bloco B "recrutamento".
+                    # A cada resposta verifico se a pessoa tem voucher
+                    # Se tiver, mando req de atualização, se não tiver, mando de cadastro
+                    if ( $answer->question_map->category->name eq 'recrutamento' ) {
+
+                        if (!$recipient->integration_token) {
+                            eval {
+                                $recipient->register_sisprep('publico_interesse');
+                            };
+                            die $@ if $@;
+                        }
+                        else {
+                            eval {
+                                $recipient->update_sisprep($answer->question->code, $answer->answer_value);
+                            };
+                            die $@ if $@;
+                        }
+                    }
                 }
                 else {
                     %flags = $answer->flags;
@@ -157,9 +176,9 @@ sub action_specs {
                         if ($recipient->recipient_flag->is_target_audience == 1) {
                             # Enviando para o sisprep.
                             eval {
-                                # $recipient->register_sisprep('publico_interesse');
+                                $recipient->register_sisprep('publico_interesse');
                             };
-                            p $@ if $@;
+                            die $@ if $@;
 
                             $answer->discard_changes;
                             $recipient->notification_queues->create(

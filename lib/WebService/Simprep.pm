@@ -132,4 +132,49 @@ sub verify_voucher {
     }
 }
 
+sub update_data {
+    my ( $self, %opts ) = @_;
+    use DDP; p \%opts;
+    my @required_opts = qw( voucher code answer );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
+    if (is_test()) {
+        return {
+            status => 'success',
+            data   => {
+                voucher => '00300000002',
+            }
+        };
+    }
+    else {
+        my $res;
+
+        eval {
+            retry {
+                my $url = $ENV{SIMPREP_API_URL} . '/recrutamento/' . $opts{voucher} . '/editar';
+
+                $res = $self->ua->post(
+                    $url,
+                    Content_Type => 'application/json',
+                    'X-API-KEY'  => $ENV{SIMPREP_TOKEN},
+                    Content      => encode_json(
+                        {
+                            $opts{code} => $opts{answer}
+                        }
+                    )
+                );
+                die $res->decoded_content unless $res->is_success;
+
+                my $response = decode_json( $res->decoded_content );
+                die 'invalid responde' unless $response->{status} eq 'success';
+
+            }
+            retry_if { shift() < 3 } catch { die $_; };
+        };
+        die $@ if $@;
+
+        return decode_json( $res->decoded_content );
+    }
+}
+
 1;

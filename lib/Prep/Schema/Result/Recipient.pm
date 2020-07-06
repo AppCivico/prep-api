@@ -2059,15 +2059,15 @@ sub answers_for_integration {
     my $self = shift;
 
     my @codes;
-    if ($self->recipient_flag->finished_recrutamento) {
-        @codes = qw(A1 A2 A3 A4 A4a A4b A5 A6 A6a B1 B2 B3 B4 B5 B6 B7 B8 B9 B10);
-    }
-    elsif ($self->recipient_flag->finished_publico_interesse) {
-        @codes = qw(A1 A2 A3 A4 A4a A4b A5 A6);
-    }
-    else {
-        die "must have at least 'publico_interesse' finished"
-    }
+    @codes = qw(A1 A2 A3 A4 A4a A4b A5 A6 A6a B1 B2 B3 B4 B5 B6 B7 B8 B9 B10);
+    # if ($self->recipient_flag->finished_recrutamento) {
+    # }
+    # elsif ($self->recipient_flag->finished_publico_interesse) {
+    #     @codes = qw(A1 A2 A3 A4 A4a A4b A5 A6);
+    # }
+    # else {
+    #     die "must have at least 'publico_interesse' finished"
+    # }
 
     my $answer_rs = $self->answers->search(
         { 'question.code' => { -in => \@codes } },
@@ -2117,12 +2117,12 @@ sub answers_for_integration {
                 }
             }
 
-			# Caso seja a A6 e A6a mudo para A6.1 e A6.2
-			if ( $question_code eq 'A6' ) {
-				$question_code = 'A6.1';
-			}elsif ( $question_code eq 'A6a' ) {
-				$question_code = 'A6.2';
-			} else { }
+            # Caso seja a A6 e A6a mudo para A6.1 e A6.2
+            if ( $question_code eq 'A6' ) {
+                $question_code = 'A6.1';
+            }elsif ( $question_code eq 'A6a' ) {
+                $question_code = 'A6.2';
+            } else { }
 
             # Questões de sim/não devem ser enviadas como 1 ou 0
             if ( grep { $question_code eq $_ } @yes_no_questions ) {
@@ -2174,7 +2174,7 @@ sub register_sisprep {
                 res    => $coded_res ? $coded_res : $@
             };
 
-            $recipient_integration->update( { errmsg => $coded_res ? $coded_res : $@ } );
+            $recipient_integration->update( { errmsg => $coded_res ? $coded_res : $@, next_retry_at => \"NOW() + interval '4 hours'" } );
             $success = 0;
         }
         else {
@@ -2191,6 +2191,35 @@ sub register_sisprep {
     });
 
     return $success;
+}
+
+sub update_sisprep {
+    my ($self, $code, $answer) = @_;
+
+    eval {
+        $self->_simprep->update_data(
+            voucher => $self->integration_token,
+            code    => $code,
+            answer  => $answer
+        );
+    };
+
+    if ($@) {
+        $self->result_source->schema->txn_do( sub {
+            my $recipient_integration = $self->result_source->schema->resultset('RecipientIntegration')->find_or_create(
+                { recipient_id => $self->id },
+                { key => 'recipient_integration_recipient_id_key' }
+            );
+
+            $recipient_integration->update(
+                {
+                    next_retry_at => \"NOW() + interval '4 hours'"
+                }
+            );
+        });
+    }
+
+    return 1;
 }
 
 sub register_first_questionnaire {
