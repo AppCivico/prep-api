@@ -2196,6 +2196,12 @@ sub register_sisprep {
 sub update_sisprep {
     my ($self, $code, $answer) = @_;
 
+    my @yes_no_questions = qw( A6.1 A6.2 B4 B5 B6 B8 B9 B10 );
+
+    if ( grep { $code eq $_ } @yes_no_questions ) {
+        $answer = $answer eq '2' ? 0 : 1;
+    }
+
     my $res;
     eval {
         $res = $self->_simprep->update_data(
