@@ -2215,7 +2215,7 @@ sub update_sisprep {
 
             $recipient_integration->update(
                 {
-                    err_msg => length $@ > 1000 ? 'err_msg_too_big' : $@,
+                    err_msg => $@,
                     next_retry_at => \"NOW() + interval '4 hours'"
                 }
             );
