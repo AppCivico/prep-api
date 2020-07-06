@@ -192,6 +192,10 @@ sub action_specs {
                     }
                     elsif ( $answer->question_map->category->name eq 'recrutamento' ) {
                         $recipient->recipient_flag->update( { finished_recrutamento => 1 } );
+                        eval {
+                            $recipient->update_sisprep($answer->question->code, $answer->answer_value);
+                        };
+                        die $@ if $@;
                         # eval { $recipient->register_sisprep('recrutamento') };
                     }
                     elsif ( $answer->question_map->category->name eq 'quiz_brincadeira' ) {
