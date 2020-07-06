@@ -2190,7 +2190,9 @@ sub register_sisprep {
                 res    => $coded_res ? $coded_res : $@
             };
 
-            $recipient_integration->update( { err_msg => $coded_res ? $coded_res : $@, next_retry_at => \"NOW() + interval '4 hours'" } );
+            $recipient_integration->update( {
+                # err_msg => $coded_res ? $coded_res : $@,
+                next_retry_at => \"NOW() + interval '4 hours'" } );
             $success = 0;
         }
         else {
