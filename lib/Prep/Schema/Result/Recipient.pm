@@ -1637,11 +1637,27 @@ sub assign_token {
             }
         );
 
+        my $city_code = substr $integration_token, 0, 3;
+
+        my $city;
+        if ($city_code eq '001') {
+            $city = '2'
+        }
+        elsif ($city_code eq '002') {
+            $city = '3'
+        }
+        elsif ($city_code eq '003') {
+            $city = '1';
+        }
+
+
         $self->update(
             {
                 integration_token    => $integration_token,
                 using_external_token => 1,
-                voucher_type        => 'sisprep'
+                voucher_type        => 'sisprep',
+
+                ( $city ? ( city => $city ) : () )
             }
         );
 
