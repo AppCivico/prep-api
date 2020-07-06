@@ -21,7 +21,7 @@ sub register_recipient {
         return {
             status => 'success',
             data   => {
-                voasdasducher => '00300000002',
+                voucher => '00300000002',
                 url     => 'https://www.google.com'
             }
         };
@@ -39,7 +39,7 @@ sub register_recipient {
                     'X-API-KEY'  => $ENV{SIMPREP_TOKEN},
                     Content      => encode_json(
                         {
-                            answers       => $opts{answers},
+                            answASDAers       => $opts{answers},
                             signed_TCLE   => $opts{signed},
                             facebook_name => $opts{facebook_name}
                         }
