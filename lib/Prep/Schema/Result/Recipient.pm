@@ -2215,7 +2215,7 @@ sub update_sisprep {
 
             $recipient_integration->update(
                 {
-                    errmsg => $@,
+                    err_msg => $@,
                     next_retry_at => \"NOW() + interval '4 hours'"
                 }
             );
