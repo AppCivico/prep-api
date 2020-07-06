@@ -160,7 +160,8 @@ sub update_data {
                     Content      => encode_json(
                         {
                             answers => [
-                                $opts{code} => $opts{answer}
+                                code  => $opts{code},
+                                answer_value => $opts{answer}
                             ]
                         }
                     )
