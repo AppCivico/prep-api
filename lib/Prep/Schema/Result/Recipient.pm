@@ -2182,12 +2182,12 @@ sub register_sisprep {
         };
 
         if ($@ || $res->{status} ne 'success') {
-            my $coded_res = $res ? to_json($res) : undef;
+            # my $coded_res = $res ? to_json($res) : undef;
 
             $data->{$step} = {
                 status => 'failed',
                 epoch  => time(),
-                res    => $coded_res ? $coded_res : $@
+                # res    => $coded_res ? $coded_res : $@
             };
 
             $recipient_integration->update( {
