@@ -159,7 +159,9 @@ sub update_data {
                     'X-API-KEY'  => $ENV{SIMPREP_TOKEN},
                     Content      => encode_json(
                         {
-                            $opts{code} => $opts{answer}
+                            answers => [
+                                $opts{code} => $opts{answer}
+                            ]
                         }
                     )
                 );
