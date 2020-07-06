@@ -2204,7 +2204,7 @@ sub update_sisprep {
             answer  => $answer
         );
     };
-
+    die $@ if $@;
     if ($@) {
         $self->result_source->schema->txn_do( sub {
             my $recipient_integration = $self->result_source->schema->resultset('RecipientIntegration')->find_or_create(
