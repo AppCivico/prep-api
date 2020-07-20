@@ -47,8 +47,9 @@ sub post {
         $recipient->stashes->delete;
         $recipient->quick_reply_logs->delete;
         $recipient->interactions->delete;
-        $recipient->combina_reminder->delete;
-        $recipient->prep_reminder->delete;
+
+        $recipient->combina_reminder->delete if $recipient->combina_reminder;
+        $recipient->prep_reminder->delete    if $recipient->prep_reminder;
 
         for my $voucher ( $recipient->combina_vouchers->all ) {
             $voucher->update( { recipient_id => undef, assigned_at => undef } )
