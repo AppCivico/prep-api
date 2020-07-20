@@ -7,6 +7,7 @@ use Mojo::Promise;
 use Prep::SchemaConnected;
 use Prep::Logger;
 use Prep::TrapSignals;
+use Prep::Utils qw(is_test);
 
 with 'Prep::Worker';
 
@@ -43,7 +44,10 @@ sub _queue_rs {
                     reminder_before      => 1,
                     reminder_after       => 1,
                 ],
-                reminder_temporal_wait_until => { '<=' => \'NOW()' },
+
+                (
+                    is_test ? ( reminder_temporal_wait_until => { '<=' => \'NOW()' } ) : ( reminder_temporal_wait_until => { '<=' => \"NOW() - interval '3 hours'" } )
+                ),
 
                 -or => [
                     reminder_temporal_confirmed_at => \'IS NULL',
