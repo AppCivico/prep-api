@@ -743,7 +743,7 @@ sub action_specs {
                         my $interval_minutes = $parsed_interval->minutes > 10 ? $parsed_interval->minutes : '0' . $parsed_interval->minutes;
 
                         $interval = $interval_hours . ':' . $interval_minutes . ':00';
-                        $interval = \"DATE 'tomorrow' + interval '$interval'";
+                        $interval = is_test ? \"DATE 'tomorrow' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
                     }
 
                     if ($values{prep_reminder_after}) {
@@ -754,7 +754,7 @@ sub action_specs {
 
                         $interval = $parsed_interval->hours . ':' . $parsed_interval->minutes . ':' . $parsed_interval->seconds;
 
-                        $interval = \"DATE 'tomorrow' + interval '$interval'";
+                        $interval = is_test ? \"DATE 'tomorrow' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
                     }
 
                     if ($values{prep_reminder_running_out}) {
