@@ -50,9 +50,13 @@ sub post {
 
         $recipient->prep_reminder->update(
             {
-                reminder_before => 0,
-                reminder_after  => 0,
-                reminder_running_out => 0,
+                reminder_before                => 0,
+                reminder_after                 => 0,
+                reminder_running_out           => 0,
+                reminder_before_interval       => undef,
+                reminder_temporal_wait_until   => undef,
+                reminder_temporal_last_sent_at => undef,
+                reminder_temporal_confirmed_at => undef
             }
         ) if $recipient->prep_reminder;
 
