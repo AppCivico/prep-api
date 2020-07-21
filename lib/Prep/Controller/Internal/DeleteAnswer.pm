@@ -48,8 +48,15 @@ sub post {
         $recipient->quick_reply_logs->delete;
         $recipient->interactions->delete;
 
+        $recipient->prep_reminder->update(
+            {
+                reminder_before => 0,
+                reminder_after  => 0,
+                reminder_running_out => 0,
+            }
+        ) if $recipient->prep_reminder;
+
         $recipient->combina_reminder->delete if $recipient->combina_reminder;
-        $recipient->prep_reminder->delete    if $recipient->prep_reminder;
 
         for my $voucher ( $recipient->combina_vouchers->all ) {
             $voucher->update( { recipient_id => undef, assigned_at => undef } )
