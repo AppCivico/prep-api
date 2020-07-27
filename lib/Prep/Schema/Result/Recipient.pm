@@ -757,32 +757,46 @@ sub action_specs {
                         $interval = is_test ? \"DATE 'tomorrow' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
                     }
 
-                    if ($values{prep_reminder_running_out}) {
-                        defined $values{$_} or die \["$_", 'missing'] for qw( prep_reminder_running_out_date prep_reminder_running_out_count );
+                    # if ($values{prep_reminder_running_out}) {
+                    #     defined $values{$_} or die \["$_", 'missing'] for qw( prep_reminder_running_out_date prep_reminder_running_out_count );
 
-                        my $parsed_date;
-                        eval { $parsed_date = $dt_parser->parse_date($values{prep_reminder_running_out_date}) };
-                        die \['prep_reminder_after_interval', 'invalid'] if $@;
+                    #     my $parsed_date;
+                    #     eval { $parsed_date = $dt_parser->parse_date($values{prep_reminder_running_out_date}) };
+                    #     die \['prep_reminder_after_interval', 'invalid'] if $@;
 
-                        $running_out_date = $parsed_date;
+                    #     $running_out_date = $parsed_date;
 
-                        # Cálculando data que devemos enviar notificação.
-                        # Há 30 comprimidos em um frasco e é consumido 1 por dia.
-                        # Logo calculo quantos já foram consumidos desde a data que foi adquirido
-                        # e marco a notificação para 15 dias antes de esgotar.
-                        my $count = $values{prep_reminder_running_out_count} * 30;
+                    #     # Cálculando data que devemos enviar notificação.
+                    #     # Há 30 comprimidos em um frasco e é consumido 1 por dia.
+                    #     # Logo calculo quantos já foram consumidos desde a data que foi adquirido
+                    #     # e marco a notificação para 15 dias antes de esgotar.
+                    #     my $count = $values{prep_reminder_running_out_count} * 30;
 
-                        my $now = DateTime->now;
-                        my $delta = $now->subtract_datetime( $parsed_date );
-                        my %deltas = $delta->deltas;
+                    #     use DDP; p "parsed_date: "  . $parsed_date->datetime;
+                    #     my $now = DateTime->now;
+                    #     my $delta = $now->subtract_datetime( $parsed_date );
+                    #     my %deltas = $delta->deltas;
+                    #     p  $delta;
+                    #     p "count: " . $count;
+                    #     p \%deltas;
+                    #     p $delta;
 
-                        $now = DateTime->now;
-                        my $remaning_count = $deltas{days} > 0 ? $count - $deltas{days} : 0;
-                        $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
+                    #     my $remaning_count;
+                    #     if ( $delta->days == 0 ) { # Dia atual
+                    #         $remaning_count = $count;
+                    #     }
+                    #     else {
+                    #         $remaning_count = $count - $delta->days
+                    #     }
 
-                        $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
-
-                    }
+                    #     $now = DateTime->now;
+                    #     # my $remaning_count = $deltas{days} > 0 ? $count - $deltas{days} : 0;
+                    #     p $remaning_count;
+                    #     $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
+                    #     p $running_out_followup_wait_until->datetime;
+                    #     $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
+                    #     p $running_out_wait_until->datetime;
+                    # }
 
                     my $prep_reminder;
                     if ($self->prep_reminder) {
@@ -865,7 +879,26 @@ sub action_specs {
 
                     $now = DateTime->now;
 
-                    my $remaning_count = $deltas{days} > 0 ? $count - $deltas{days} : 0;
+                    my $delta_days = 0;
+                    for my $key (grep { $_ =~ /^(days|months)$/ } keys %deltas) {
+
+                        if ($key eq 'months') {
+                            $delta_days += $deltas{$key} * 30;
+                        }
+                        else {
+                            $delta_days += $deltas{$key};
+                        }
+                    }
+
+                    my $remaning_count;
+                    if ( $delta->days == 0 ) { # Dia atual
+                        $remaning_count = $count;
+                    }
+                    else {
+                        $remaning_count = $count - $delta_days
+                    }
+
+                    # my $remaning_count = $deltas{days} > 0 ? $count - $deltas{days} : 0;
                     my $running_out_followup_wait_until = $now->add( days => ($remaning_count) );
 
                     $running_out_wait_until = $running_out_followup_wait_until->subtract( days => 15 );
