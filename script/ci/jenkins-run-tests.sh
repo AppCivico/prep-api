@@ -15,6 +15,7 @@ cp envfile.sh envfile_local.sh
 sed -i "s/prep_dev/$DB_NAME/g" envfile_local.sh
 sed -i "s/prep_dev/$DB_NAME/g" sqitch.conf
 cat sqitch.conf; cat envfile_local.sh;
+
 # como estou rodando o jenkins dentro de um container,
 # é necessário do path no lado do host para executar o mount corretamente
 export REAL_WORKSPACE="/home/jenkins-data/workspace/$JOB_NAME/"

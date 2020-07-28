@@ -79,6 +79,11 @@ __PACKAGE__->table("answer");
   is_nullable: 0
   original: {default_value => \"now()"}
 
+=head2 question_map_iteration
+
+  data_type: 'integer'
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -104,6 +109,8 @@ __PACKAGE__->add_columns(
     is_nullable   => 0,
     original      => { default_value => \"now()" },
   },
+  "question_map_iteration",
+  { data_type => "integer", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -166,8 +173,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-08 16:16:26
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LaBwvhRj2ejUvKTF5neekw
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-05 15:07:18
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:w7uTWetavj8s8nu2BxrKpg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -178,17 +185,41 @@ sub update_stash {
     my ($self, $finished) = @_;
 
     my $recipient = $self->recipient;
-    my $stash     = $recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
     my $question  = $self->question;
     my $rules     = $question->rules_parsed;
+
+    my $stash = $recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
+
+    # Verificando se o type do questionário pode ser iterado
+    # Caso verdadeiro, a flag times_answered é atualizada e mantenho o bool finished como false
+    # E também é resetado o value da stash.
+    my $can_be_iterated = $stash->question_map->category->can_be_iterated;
+
+    my $values_for_finished;
+    if ($can_be_iterated) {
+        $values_for_finished = {
+            # Essa flag será resetada no GET da resposta
+            finished => 1,
+
+            must_be_reseted => 1,
+            times_answered  => $stash->times_answered + 1
+        };
+    }
+    else {
+        $values_for_finished = {
+            finished       => 1,
+            times_answered => 1,
+        };
+    }
 
     $self->result_source->schema->txn_do(sub {
         if ( !$rules ) {
             # Caso não tenham rules, verifico se há perguntas pendentes
             my $next_question = $stash->next_question;
 
+
             if ( !defined $next_question->{question} ) {
-                $stash->update( { finished => 1 } )
+                $stash->update($values_for_finished)
             }
         }
 
@@ -212,7 +243,7 @@ sub update_stash {
                 # Caso seja do quiz devo desqualificar e atualizar os booleans
                 $recipient->recipient_flag->update( { finished_quiz => 1 } ) if $self->question_map->category->name eq 'quiz';
 
-                $stash->update( { finished => 1 } );
+                $stash->update($values_for_finished);
             }
 
         }
@@ -267,6 +298,10 @@ sub update_stash {
             }
         }
 
+        if ($can_be_iterated && !$stash->next_question) {
+            $stash->update($values_for_finished)
+        }
+
     });
 
 }
@@ -288,7 +323,20 @@ sub flags {
         if ( $rules->{flags} && scalar @{ $rules->{flags} } > 0 ) {
             for my $flag ( @{ $rules->{flags} } ) {
 
-                $ret{$flag} = $recipient->$flag;
+                # Tratando flags virtuais
+                if ($flag eq 'entrar_em_contato') {
+                    $ret{$flag} = $self->answer_value eq '1' ? 1 : 0;
+                }
+                elsif ($flag eq 'ir_para_agendamento') {
+                    $ret{$flag} = $self->answer_value eq '1' ? 1 : 0;
+                }
+                elsif ($flag eq 'ir_para_menu') {
+                    $ret{$flag} = $self->answer_value eq '2' ? 1 : 0;
+                }
+                else {
+                    $ret{$flag} = $recipient->$flag;
+                }
+
             }
         }
     }
@@ -304,8 +352,17 @@ sub has_followup_messages {
     if ( $question_map->category->name eq 'quiz' ) {
         return 1 if $self->question->code =~ /^(AC7|A6a)$/;
     }
+    elsif ($question_map->category->name eq 'quiz_brincadeira') {
+        return 1 if $self->question->code eq 'AC6';
+    }
     elsif( $question_map->category->name eq 'fun_questions' ) {
         return 1 if $self->question->code eq 'AC7';
+    }
+    elsif ( $question_map->category->name eq 'deu_ruim_nao_tomei' ) {
+        return 1 if $self->question->code eq 'NT3';
+    }
+    elsif ( $question_map->category->name eq 'duvidas_nao_prep' ) {
+        return 1 if $self->question->code eq 'D4';
     }
     else {
         return 0;
@@ -333,9 +390,109 @@ sub followup_messages {
             push @messages, 'Calma! Compartilha ainda não!';
         }
     }
-    elsif( $question_map->category->name eq 'fun_questions' ) {
+    elsif( $question_map->category->name eq 'quiz_brincadeira' ) {
         push @messages, $self->recipient->message_for_fun_questions_score->{picture};
         push @messages, $self->recipient->message_for_fun_questions_score->{message};
+    }
+    elsif ( $question_map->category->name eq 'deu_ruim_nao_tomei' ) {
+        # Pegando todas as respostas.
+        my @answers = $self->recipient->answers->search(
+            { 'me.question_map_id' => $question_map->id },
+            { order_by => { -asc => 'me.created_at' } }
+        )->get_column('answer_value')->all();
+
+        my $all_answers_string = '';
+        for my $answer (@answers) {
+            # Eles tratam o nosso "2" como "0";
+            $all_answers_string .= $answer eq '2' ? '0' : '1';
+        }
+
+        # Sim, é desse jeito mesmo que eles montaram as regras ¬¬...
+        if ($all_answers_string eq '111') {
+            push @messages, 'Você precisa procurar o serviço o quanto antes, podemos te ajudar, talvez você precise de PEP.';
+        }
+        elsif ($all_answers_string eq '110') {
+            push @messages, 'Você precisa procurar o serviço o quanto antes, podemos te ajudar, talvez você precise de PEP.';
+        }
+        elsif ($all_answers_string eq '101') {
+            push @messages, 'Você já está sem proteção, precisa voltar a tomar a medicação, fale com os humanes para ter orientação.';
+        }
+        elsif ($all_answers_string eq '100') {
+            push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender.';
+        }
+        elsif ($all_answers_string eq '001') {
+            push @messages, 'Quando você toma direitinho, pular 1 ou 2 dias pode não ser um problema. É bom confirmar com os humanes de deve voltar a tomar.';
+        }
+        elsif ($all_answers_string eq '000') {
+            push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender.';
+        }
+        elsif ($all_answers_string eq '010') {
+            push @messages, 'Não precisa agendar consulta, podemos te ajudar, procure o serviço que vamos te atender. Se preferir agendar, entre em contato pelo whatsapp.';
+        }
+        elsif ($all_answers_string eq '011') {
+            push @messages, 'Quando você toma direitinho, pular 1 ou 2 dias pode não ser um problema. É bom confirmar com os humanes de deve voltar a tomar.';
+        }
+    }
+    elsif ($question_map->category->name eq 'duvidas_nao_prep') {
+        my $stash = $self->recipient->stashes->search( { question_map_id => $self->question_map_id } )->next;
+
+        my @answers = $self->recipient->answers->search(
+            {
+                'me.question_map_id'        => $question_map->id,
+                'me.question_map_iteration' => $stash->times_answered
+            },
+            {
+                rows => 4,
+                join     => 'question',
+                order_by => { -asc => 'question.code' }
+            }
+        )->all();
+
+        my $score = 0;
+        my $answer_str = '';
+        for my $answer (@answers) {
+            if ($answer->question->code eq 'D1') {
+                $score += $answer->answer_value eq '1' ? 1 : 0;
+            }
+            elsif ($answer->question->code eq 'D2') {
+                $score += $answer->answer_value eq '1' ? 1 : 0;
+            }
+            else {
+                $score += $answer->answer_value eq '1' ? 1 : 0;
+            }
+            $answer_str .= $answer->answer_value;
+        }
+
+        # Regras retiradas do ticket: https://trello.com/c/dReQ9Yif/410-altera%C3%A7%C3%A3o-de-fluxos-amanda-fluxo-d%C3%BAvidas-n%C3%A3o-prep-2
+        # Se sim nas perguntas 1 e 2, e + um ou dois sim nas perguntas 3 e 4, é alto risco
+        # Se sim na pergunta 1 e 2 e os resto (3 e 4) não, é médio risco
+        # Se não na pergunta 1 ou se sim na 1 e não na 2 é baixo risco,
+        # desde que as respostas na 3 e 4 sejam não.
+        # se não na pergunta 1 ou se sim na 1 e não na 2
+        # e as respostas na 3 e/ou 4 forem sim, é médio risco
+
+        if ($score >= 3 && $answer_str =~ /1{3,}/) {
+            # Se sim nas perguntas 1 e 2, e + um ou dois sim nas perguntas 3 e 4, é alto risco
+            push @messages, 'PrEP é pra vc, se liga!';
+        }
+        elsif ($answer_str =~ /^11/ && $score == 2) {
+            # Se sim na pergunta 1 e 2 e os resto (3 e 4) não, é médio risco
+            push @messages, 'Pelo o que vejo vc já se colocou em risco! Mas nao pira, vemk q posso ajudar!';
+        }
+        elsif ($score <= 1 && $answer_str =~ /(?<=\d{1})2{3}$/) {
+            # Se não na pergunta 1 ou se sim na 1 e não na 2 é baixo risco,
+            # desde que as respostas na 3 e 4 sejam não.
+            push @messages, 'Arrasou! Parece q vc tá por dentro do babado da prevenção! Se quiser saber mais, podemos trocar uma ideia sobre PrEP!';
+        }
+        elsif ($score > 1 && $answer_str =~ /^\d{1}2\d{2}$/ ) {
+            # se não na pergunta 1 ou se sim na 1 e não na 2
+            # e as respostas na 3 e/ou 4 forem sim, é médio risco
+            push @messages, 'Pelo o que vejo vc já se colocou em risco! Mas nao pira, vemk q posso ajudar!';
+        }
+        else {
+            die "faltando definição para regra. answer_string: $answer_str, score: $score";
+        }
+
     }
 
     return @messages;

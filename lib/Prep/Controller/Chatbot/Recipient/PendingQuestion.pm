@@ -13,10 +13,31 @@ sub get {
             post_check => sub {
                 my $category = $c->req->params->to_hash->{category};
 
-                die \['category', 'invalid'] unless $category =~ m/(quiz|screening)/;
+                die \['category', 'invalid'] unless $category =~ m/(quiz|screening|quiz_brincadeira|publico_interesse|recrutamento)/;
             }
         },
     );
+
+    if ($c->req->params->to_hash->{category} eq 'recrutamento') {
+        die \['fb_id', 'invalid'] unless $recipient->recipient_flag->is_target_audience && $recipient->recipient_flag->is_target_audience == 1;
+    }
+
+    # Verificando se a stash precisa ser resetada.
+    my $stash = $recipient->stashes->search(
+        { 'category.name' => $c->req->params->to_hash->{category} },
+        { join => { 'question_map' => 'category' } }
+    )->next;
+
+    if ($stash && $stash->must_be_reseted && $stash->finished) {
+        $stash->update(
+            {
+                finished        => 0,
+                must_be_reseted => 0
+            }
+        );
+
+        $stash->initiate;
+    }
 
     my $pending_question_data = $recipient->get_next_question_data( $c->req->params->to_hash->{category} );
     my $question              = $pending_question_data->{question} ? $pending_question_data->{question}->decoded : undef;

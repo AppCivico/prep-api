@@ -161,5 +161,39 @@ sub create_event {
     return $res;
 }
 
+sub delete_event {
+    my ($self, %opts) = @_;
+
+    my @required_opts = qw( calendar calendar_id event_id );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
+    my $res;
+    if (is_test()) {
+        $res = $Prep::Test::event_deletion_response;
+    }
+    else {
+        my $access_token = $self->generate_token($opts{calendar});
+
+        eval {
+            retry {
+                my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{calendar_id} . '/events/' . $opts{event_id};
+
+                $res = $self->furl->delete(
+                    $url,
+                    [ 'Authorization', 'Bearer ' . $access_token ]
+                );
+
+                die $res->decoded_content unless $res->is_success;
+            }
+            retry_if { shift() < 3 } catch { die $_; };
+        };
+        die $@ if $@;
+
+        $res = decode_json( $res->decoded_content );
+    }
+
+    return $res;
+}
+
 
 1;

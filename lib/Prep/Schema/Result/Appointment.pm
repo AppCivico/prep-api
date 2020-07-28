@@ -287,6 +287,7 @@ sub info {
         datetime_end          => $ymd . 'T' . $quota->{end},
         calendar => {
             id         => $calendar->id,
+            name       => $calendar->name,
             state      => $calendar->address_state,
             city       => $calendar->address_city,
             street     => $calendar->address_street,

@@ -236,6 +236,61 @@ sub get_info {
             }
         ];
     }
+    elsif ($name eq 'prep_reminder_before') {
+        $text = 'Já tomou seus comprimidos?';
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'Sim',
+                payload      => 'notiAlarmeA_Sim'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não',
+                payload      => 'notiAlarmeA_Nao'
+            }
+        ];
+    }
+    elsif ($name eq 'prep_reminder_after') {
+        $text = 'Oie! Já tomou seus comprimidos?';
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'Sim',
+                payload      => 'notiAlarmeB_Sim'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não',
+                payload      => 'notiAlarmeB_Nao'
+            }
+        ];
+    }
+    elsif ($name eq 'prep_reminder_running_out') {
+        $text = 'Oie! Seus comprimidos devem estar acabando!';
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'OK',
+                payload      => 'mainMenu'
+            },
+        ]
+    }
+    elsif ($name eq 'prep_reminder_running_out_followup') {
+        $text = 'Inhai! Rolou a consulta ? ';
+        $quick_replies = [
+            {
+                content_type => 'text',
+                title        => 'Sim',
+                payload      => 'notiAlarmeB_Sim'
+            },
+            {
+                content_type => 'text',
+                title        => 'Não',
+                payload      => 'notiAlarmeB_Nao'
+            }
+        ];
+    }
     else {
         die 'missing dictionary for name=' . $name;
     }

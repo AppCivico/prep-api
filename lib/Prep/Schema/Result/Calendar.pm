@@ -287,7 +287,9 @@ __PACKAGE__->has_many(
 use Prep::Utils qw(get_ymd_by_day_of_the_week);
 
 use Time::Piece;
+use Time::Seconds;
 use DateTime;
+use DateTime::Format::Strptime;
 
 use WebService::GoogleCalendar;
 
@@ -306,7 +308,7 @@ sub available_dates {
     my $appointment_windows = $self->appointment_windows;
     my $now = Time::Piece->new();
 
-    return [
+    my $res = [
         map {
             my $custom_quota_time = $_->custom_quota_time;
             $custom_quota_time    = Time::Piece->strptime( $custom_quota_time, '%H:%M:%S' )
@@ -323,21 +325,32 @@ sub available_dates {
             my $end_time   = Time::Piece->strptime( $_->end_time, '%H:%M:%S' );
             my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
 
-
             # Pego a diferença entre os dois em segundos e divido pelo numero de cotas
-            my $delta = ( $end_time - $start_time );
-            my $seconds_per_quota = ( $custom_quota_time ? ($custom_quota_time->[9]) : ( $delta / $_->quotas ));
+            my $delta = ( $end_time->epoch - $start_time->epoch );
+
+            my $seconds_per_quota = ( $custom_quota_time ? ($custom_quota_time->epoch) : ( $delta / $_->quotas ));
 
             my @days_of_week = $_->appointment_window_days_of_week->search( undef, { rows => 8, order_by => { -asc => 'day_of_week' } } )->get_column('day_of_week')->all();
 
-            for ( 1 .. 2 ) {
-                push @days_of_week, @days_of_week;
+            my $week_i = 0;
+            my @dow_with_week;
+            for ( 1 .. 4 ) {
+                for my $dow (@days_of_week) {
+                    push @dow_with_week, {
+                        week => $week_i,
+                        dow  => $dow
+                    };
+                }
+                $week_i++;
             }
 
             my $week = 0;
+
+
             map {
-                my $ymd = get_ymd_by_day_of_the_week(dow => $_, week => $week);
+                my $ymd = get_ymd_by_day_of_the_week(dow => $_->{dow}, week => $_->{week});
                 $week++;
+
 
                 my @taken_quotas = $appointment_rs->search(
                     {
@@ -373,14 +386,33 @@ sub available_dates {
                                 datetime_start => $is_first_quota ?
                                     ( $ymd . 'T' . $start_time->hms ) :
                                     ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
-                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms
+                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms,
+                                epoch_start => $complete_time->epoch
                             }
                         } @available_quotas
                     ]
                 }
-            } @days_of_week;
+            } @dow_with_week;
         } $self->appointment_windows->search(undef, { page => $page, rows => $rows } )->all()
     ];
+
+    # Removendo dates que já passaram de now().
+    my $now_epoch = time();
+    $now_epoch    = $self->id == 2 ? ($now_epoch - (3600 * 2)) : (($now_epoch - (3600 * 3)));
+
+    for (my $i = 0; $i < scalar @{$res}; $i++) {
+        my $ymd = $res->[$i]->{ymd};
+
+        if ($res->[$i]->{ymd} eq $now->ymd) {
+            @{$res->[$i]->{hours}} = grep { $_->{epoch_start} > $now_epoch } @{$res->[$i]->{hours}};
+
+            if (scalar @{$res->[$i]->{hours}} == 0) {
+                splice @{$res}, $i, 1;
+            }
+        }
+    }
+
+    return $res;
 }
 
 sub sync_appointments {
@@ -388,7 +420,8 @@ sub sync_appointments {
 
     my $res = $self->_calendar->get_calendar_events( calendar => $self, google_id => $self->google_id );
 
-    my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+    my @manual_appointments  = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+    my @deleted_appointments = grep { $_->{description} =~ m/deletado/m } @{ $res->{items} };
 
     $self->result_source->schema->txn_do( sub {
         eval {
@@ -436,6 +469,15 @@ sub sync_appointments {
 
             $self->result_source->schema->resultset('NotificationQueue')->populate(\@notifications);
             $appointment_rs->update( { notification_created_at => \'NOW()' } );
+
+            # Deletando appointments que foram sinalizados como "deletados".
+            for my $deleted_appointment (@deleted_appointments) {
+
+                my %fields = $deleted_appointment->{description} =~ /^(appointment_id)*\s*:\s*(\S+)/m;
+
+                $appointment_rs->search( { 'me.id' => $fields{appointment_id} } )->delete;
+                $self->_calendar->delete_event( calendar => $self, calendar_id => $self->google_id, event_id => $deleted_appointment->{id} );
+            }
         };
         die $@ if $@;
     });

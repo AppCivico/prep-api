@@ -256,7 +256,7 @@ sub assert_quota_number {
     $self->appointment_window_days_of_week->search( { day_of_week => $start_time->day_of_week } )->next
       or die \['datetime_start', 'no appointments on this day of week'];
 
-    my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'invalid'];
+    my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'not-present-in-quota-map'];
 
     # Verificando hms
     die \[ 'datetime_start', 'does not matches quota start time' ] unless $selected_quota->{start} eq $start_time->hms;

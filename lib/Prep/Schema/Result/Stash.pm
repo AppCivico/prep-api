@@ -85,6 +85,18 @@ __PACKAGE__->table("stash");
   default_value: false
   is_nullable: 0
 
+=head2 times_answered
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
+=head2 must_be_reseted
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -111,6 +123,10 @@ __PACKAGE__->add_columns(
     original      => { default_value => \"now()" },
   },
   "finished",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "times_answered",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "must_be_reseted",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
 );
 
@@ -178,8 +194,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-17 22:17:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZFuzH1uxv82JCJT3tFLpuQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-03-05 18:52:35
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5MJyS7LCjx+7XZ/ST+Vb+g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -207,7 +223,17 @@ sub initiate {
 sub answered_questions {
     my ($self) = @_;
 
-    return $self->recipient->answers->question_code_by_map_id( $self->question_map_id )->get_column('question.code')->all();
+    my @codes = $self->recipient->answers->question_code_by_map_id( $self->question_map_id )->get_column('question.code')->all();
+
+    # Caso o questionário seja iterado e já tiver todas as respostas
+    # Verifico se a iteração deve ser "fechada" e iniciada uma nova.
+    if ( $self->question_map->can_be_iterated ) {
+        @codes = $self->recipient->answers->question_code_by_map_id( $self->question_map_id )->search(
+            { 'me.question_map_iteration' => $self->times_answered > 0 ? $self->times_answered + 1 : 1 }
+        )->get_column('question.code')->all();
+    }
+
+    return @codes;
 }
 
 sub next_question {

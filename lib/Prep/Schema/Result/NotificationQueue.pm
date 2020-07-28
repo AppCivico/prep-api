@@ -88,6 +88,12 @@ __PACKAGE__->table("notification_queue");
   data_type: 'text'
   is_nullable: 1
 
+=head2 prep_reminder_id
+
+  data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -117,6 +123,8 @@ __PACKAGE__->add_columns(
   },
   "text",
   { data_type => "text", is_nullable => 1 },
+  "prep_reminder_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -132,6 +140,26 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
+
+=head2 prep_reminder
+
+Type: belongs_to
+
+Related object: L<Prep::Schema::Result::PrepReminder>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "prep_reminder",
+  "Prep::Schema::Result::PrepReminder",
+  { id => "prep_reminder_id" },
+  {
+    is_deferrable => 0,
+    join_type     => "LEFT",
+    on_delete     => "NO ACTION",
+    on_update     => "NO ACTION",
+  },
+);
 
 =head2 recipient
 
@@ -164,8 +192,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-10 14:34:55
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:VkVO1MIX2KBig8+QdRVIqQ
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-13 14:20:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:JH9pgEz+GkUg2drpEaxbCQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

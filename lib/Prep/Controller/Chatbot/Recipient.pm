@@ -50,25 +50,44 @@ sub get {
         status => 200,
         json   => {
 
-            id                       => $recipient->id,
-            fb_id                    => $recipient->fb_id,
-            name                     => $recipient->name,
-            integration_token        => $recipient->integration_token,
-            page_id                  => $recipient->page_id,
-            picture                  => $recipient->picture,
-            opt_in                   => $recipient->opt_in,
-            finished_quiz            => $recipient->finished_quiz,
-            updated_at               => $recipient->updated_at,
-            created_at               => $recipient->created_at,
-            is_eligible_for_research => $recipient->is_eligible_for_research,
-            is_part_of_research      => $recipient->is_part_of_research,
-            is_prep                  => $recipient->is_prep,
-            is_target_audience       => $recipient->is_target_audience,
-            signed_term              => $recipient->signed_term,
-            has_appointments         => $recipient->has_appointments,
-            prep_since               => $recipient->recipient_flag->prep_since,
-            city                     => $recipient->city,
-            system_labels            => $recipient->system_labels
+            (
+                map { $_ => $recipient->$_ } qw(
+                    id fb_id name integration_token page_id
+                    picture opt_in finished_quiz updated_at created_at
+                    signed_term has_appointments city system_labels
+                    phone instagram voucher_type prep_reminder_on_demand
+                    combina_city
+                  )
+            ),
+
+            (
+                map { $_ => $recipient->recipient_flag->$_ } qw(
+                    prep_since is_eligible_for_research is_part_of_research
+                    is_prep is_target_audience finished_publico_interesse
+                    finished_recrutamento finished_quiz_brincadeira risk_group
+                  )
+            ),
+
+            (
+                $recipient->prep_reminder ?
+                    (
+                        map { 'prep_' . $_ => $recipient->prep_reminder->$_ } qw(
+                            reminder_before reminder_before_interval reminder_after reminder_after_interval
+                            reminder_running_out reminder_running_out_date reminder_running_out_count
+                        )
+                    )
+                :   ()
+            ),
+
+            (
+                $recipient->combina_reminder ?
+                    (
+                        map { 'combina_' . $_ => $recipient->combina_reminder->$_ } qw(
+                            reminder_hours_before reminder_hour_exact reminder_22h reminder_double
+                        )
+                    )
+                :   ()
+            )
         }
     )
 }
@@ -80,7 +99,7 @@ sub put {
 
     my $recipient = $c->stash('recipient');
 
-    $recipient->execute(
+    my $recipient_put = $recipient->execute(
         $c,
         for  => 'update',
         with => $params
@@ -89,6 +108,24 @@ sub put {
     return $c->render(
         $c,
         code => 200,
+        json => {
+            id => $recipient->id,
+
+            ( $recipient_put->{running_out_wait_until} ? (running_out_wait_until => $recipient_put->{running_out_wait_until}) : () )
+        }
+    )
+}
+
+sub prep_reminder_yes {
+    my $c = shift;
+
+    my $recipient = $c->stash('recipient');
+
+    eval {$recipient->prep_reminder_confirmation};
+
+    return $c->render(
+        $c,
+        code => $@ ? 400 : 200,
         json => { id => $recipient->id }
     )
 }

@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-set -e
-
 export DB_NAME='prep_dev_persistent'
 export CONTAINER_NAME='prep_api'
 export INSIDE_WORKSPACE=/var/jenkins_home/dev-persistent/$JOB_NAME
@@ -9,8 +7,7 @@ export INSIDE_WORKSPACE=/var/jenkins_home/dev-persistent/$JOB_NAME
 export DOCKER_LAN_IP=172.17.0.1
 
 # porta que será feito o bind
-export LISTEN_PORT=2049
-
+export LISTEN_PORT=5893
 
 mkdir -p $INSIDE_WORKSPACE/src
 mkdir -p $INSIDE_WORKSPACE/data
@@ -19,12 +16,14 @@ chown 1000:1000 $INSIDE_WORKSPACE/data -R
 rsync -av $WORKSPACE/ $INSIDE_WORKSPACE/src;
 
 cd $INSIDE_WORKSPACE/src;
+
 # config do banco
 cp envfile.sh envfile_local.sh
 cat envfile_local.sh;
 sed -i "s/prep_dev/$DB_NAME/g" envfile_local.sh
 cat sqitch.conf;
 sed -i "s/prep_dev/$DB_NAME/g" sqitch.conf
+
 # troca o nome do nutrinet_testing tambem, pois o teste pode ter rodado antes desse script
 sed -i "s/prep_testing/$DB_NAME/g" sqitch.conf
 

@@ -45,7 +45,8 @@ sub verifiers_specs {
                     post_check => sub {
                         my $category = $_[0]->get_value('category');
 
-                        die \['category', 'invalid'] unless $category =~ m/(quiz|screening|fun_questions)/;
+                        $self->result_source->schema->resultset('Category')->search( { name => $category } )->count == 1
+                          or die \['category', 'invalid'];
                     }
                 }
             }
@@ -104,6 +105,16 @@ sub action_specs {
 
             }
 
+            # Verificando a iteração da resposta
+            my $stash = $recipient->stashes->search( { question_map_id => $question_map->id } )->next;
+
+            if ($stash->times_answered == 0) {
+                $values{question_map_iteration} = 1;
+            }
+            else {
+                $values{question_map_iteration} = $stash->times_answered + 1;
+            }
+
             my $integration_failed = 0;
 
             my ($answer, $finished_quiz, %flags, @followup_messages, $simprep_url);
@@ -114,72 +125,85 @@ sub action_specs {
 
                 @followup_messages = $answer->followup_messages if $answer->has_followup_messages;
 
-                if ( $question_map->category_id == 1 ) {
-                    # Caso a resposta seja da pergunta 'A1' devo atualizar a coluna 'city' do recipient
-                    # com o conteúdo da resposta
-                    if ( $answer->question->code eq 'A1' ) {
-                        $recipient->update( { city => $answer->answer_value } );
-                    }
+                if ( $answer->question->code eq 'A1' ) {
+                    $recipient->update( { city => $answer->answer_value } );
+                }
 
-                    $pending_question_data = $recipient->get_next_question_data($category);
+                $pending_question_data = $recipient->get_next_question_data($category);
 
-                    # Caso seja a reposta das perguntas "A6" ou "A6a", valido a flag de target_audience.
-                    # Caso seja false, o quiz é finalizado.
-                    if ( $answer->question->code eq 'A6a' && !$recipient->is_target_audience ) {
+                # Caso seja a A2 e a resposta da A1 tenha sido '4', ou seja, 'nenhuma dessas'.
+                # O quiz deve ser finalizado.
+                if ( $answer->question->code eq 'A2' ) {
+                    my $first_answer = $recipient->answers->search(
+                        { 'question.code' => 'A1' },
+                        { join => 'question' }
+                    )->next;
+
+                    if ($first_answer->answer_value eq '4') {
                         $pending_question_data = undef;
-                        %flags = $answer->flags;
-                        $answer->stash->update( { finished => 1 } );
-                    }
-
-                    if ( defined $pending_question_data->{question} ) {
-
-                        $finished_quiz = 0;
-                    }
-                    else {
-                        $recipient->recipient_flag->update( { finished_quiz => 1 } );
-                        $finished_quiz = 1;
-
-                        my $is_eligible_for_research = $recipient->is_eligible_for_research;
-
-                        eval { $simprep_url = $recipient->register_simprep if $answer->question->code eq 'AC9' && $answer->answer_value eq '1' };
-                        $integration_failed = 1 if $@;
-
-                        %flags = $answer->flags;
-
-                        # Crio uma notificação para atender esse caso: https://trello.com/c/75oiZ3Tn/145-enviar-notifica%C3%A7%C3%B5es-para-pessoas-que-clicaram-em-sim-na-pergunta-23-quer-saber-mais-sobre-a-pesquisa-mas-que-n%C3%A3o-possuem-nenhum
-                        # E no post do appointment, eu verifico se a pessoa possui essa notificação pendente.
-                        $answer->discard_changes;
-                        $recipient->notification_queues->create(
-                            {
-                                type_id    => 8,
-                                wait_until => $answer->created_at->add( days => 7 )
-                            }
-                        ) if $recipient->is_eligible_for_research;
+                        $answer->stash->update( { finished => 1, updated_at => \'NOW()' } );
                     }
                 }
-                elsif ($question_map->category_id == 2) {
-                    $pending_question_data = $recipient->get_next_question_data($category);
 
-                    if ( !$pending_question_data->{question} ) {
-                        $recipient->build_screening_report;
-                        %flags = $answer->flags;
-                        $recipient->reset_screening;
+                if ( defined $pending_question_data->{question} ) {
+                    $finished_quiz = 0;
 
-                        $finished_quiz = 1;
-                    }
-                    else {
-                        $finished_quiz = 0;
+                    # Caso seja questionario do bloco B "recrutamento".
+                    # A cada resposta verifico se a pessoa tem voucher
+                    # Se tiver, mando req de atualização, se não tiver, mando de cadastro
+                    if ( $answer->question_map->category->name eq 'recrutamento' ) {
+
+                        if (!$recipient->integration_token) {
+                            eval {
+                                $recipient->register_sisprep('publico_interesse');
+                            };
+                            die $@ if $@;
+                        }
+                        else {
+                            eval {
+                                $recipient->update_sisprep($answer->question->code, $answer->answer_value);
+                            };
+                            die $@ if $@;
+                        }
                     }
                 }
                 else {
-                    $pending_question_data = $recipient->get_next_question_data($category);
+                    %flags = $answer->flags;
 
-                    if ( defined $pending_question_data->{question} ) {
-                        $finished_quiz = 0;
+                    if ( $answer->question_map->category->name eq 'publico_interesse' ) {
+                        $recipient->recipient_flag->update( { finished_publico_interesse => 1 } );
+
+                        if ($recipient->recipient_flag->is_target_audience == 1) {
+                            # Enviando para o sisprep.
+                            eval {
+                                $recipient->register_sisprep('publico_interesse');
+                            };
+                            die $@ if $@;
+
+                            $answer->discard_changes;
+                            $recipient->notification_queues->create(
+                                {
+                                    type_id    => 8,
+                                    wait_until => $answer->created_at->add( days => 7 )
+                                }
+                            )
+                        }
+
                     }
-                    else {
-                        $finished_quiz = 1;
+                    elsif ( $answer->question_map->category->name eq 'recrutamento' ) {
+                        $recipient->recipient_flag->update( { finished_recrutamento => 1 } );
+                        eval {
+                            $recipient->update_sisprep($answer->question->code, $answer->answer_value);
+                        };
+                        die $@ if $@;
+                        # eval { $recipient->register_sisprep('recrutamento') };
                     }
+                    elsif ( $answer->question_map->category->name eq 'quiz_brincadeira' ) {
+                        $recipient->recipient_flag->update( { finished_quiz_brincadeira => 1 } )
+                    }
+
+                    $recipient->recipient_flag->update( { finished_quiz => 1 } );
+                    $finished_quiz = 1;
                 }
 
             });
