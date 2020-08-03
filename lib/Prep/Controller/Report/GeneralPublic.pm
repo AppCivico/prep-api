@@ -51,21 +51,21 @@ sub get {
             $value  = $view->count_one_interaction;
             $weight = 2;
         }
-        elsif ($key eq 'count_refused_publico_interesse') {
-            $label  = 'Apertaram "agora não" no menu principal';
-            $value  = $view->count_refused_publico_interesse;
-            $weight = 4;
-        }
+        # elsif ($key eq 'count_refused_publico_interesse') {
+        #     $label  = 'Apertaram "agora não" no menu principal';
+        #     $value  = $view->count_refused_publico_interesse;
+        #     $weight = 4;
+        # }
         elsif ($key eq 'count_started_publico_interesse') {
             $label  = 'Começaram o bloco A';
             $value  = $view->count_started_publico_interesse;
             $weight = 6;
         }
-        elsif ($key eq 'count_started_publico_interesse_after_refusal') {
-            $label  = 'Começaram o bloco A após apertar "agora não" no menu principal';
-            $value  = $view->count_started_publico_interesse_after_refusal;
-            $weight = 5;
-        }
+        # elsif ($key eq 'count_started_publico_interesse_after_refusal') {
+        #     $label  = 'Começaram o bloco A após apertar "agora não" no menu principal';
+        #     $value  = $view->count_started_publico_interesse_after_refusal;
+        #     $weight = 5;
+        # }
         elsif ($key eq 'count_recipients') {
             $label  = 'Contatos novos no período';
             $value  = $view->count_recipients;
