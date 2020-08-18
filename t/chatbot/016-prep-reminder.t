@@ -49,7 +49,7 @@ db_transaction {
                 security_token       => $security_token,
                 fb_id                => $fb_id,
                 prep_reminder_before => 1,
-                prep_reminder_before_interval => '15:46:39.286572'
+                prep_reminder_before_interval => '15:00:00'
             }
         )
         ->status_is(400)
@@ -65,7 +65,7 @@ db_transaction {
                 security_token       => $security_token,
                 fb_id                => $fb_id,
                 prep_reminder_before => 1,
-                prep_reminder_before_interval => '15:46:39.286572'
+                prep_reminder_before_interval => '17:00:00'
             }
         )
         ->status_is(200)
@@ -77,7 +77,7 @@ db_transaction {
         is $prep_reminder->reminder_before, 1;
         is $prep_reminder->reminder_after, 0;
 
-        is $prep_reminder->reminder_before_interval, '15:46:39.286572';
+        is $prep_reminder->reminder_before_interval, '17:00:00';
 
         is $notification_queue_rs->count, 0;
 

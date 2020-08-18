@@ -742,12 +742,21 @@ sub action_specs {
                         eval { $parsed_interval = $dt_parser->parse_interval($values{prep_reminder_before_interval}) };
                         die \['prep_reminder_before_interval', 'invalid'] if $@;
 
-                        use DDP;
+                        my $now = DateTime->now(time_zone => 'America/Sao_Paulo')->set_time_zone('floating');
+                        my $today_plus_interval = DateTime->now(time_zone => 'America/Sao_Paulo')->set_time_zone('floating')->truncate( to => 'day' )->add_duration($parsed_interval);
+
+                        my $cmp = DateTime->compare($now, $today_plus_interval);
+
                         my $interval_hours = $parsed_interval->hours >= 10 ? $parsed_interval->hours : '0' . $parsed_interval->hours;
                         my $interval_minutes = $parsed_interval->minutes > 10 ? $parsed_interval->minutes : '0' . $parsed_interval->minutes;
 
                         $interval = $interval_hours . ':' . $interval_minutes . ':00';
-                        $interval = is_test ? \"DATE 'tomorrow' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
+
+                        if ($cmp <= 0) {
+                            $interval = is_test ? \"DATE 'today' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
+                        } else {
+                            $interval = is_test ? \"DATE 'tomorrow' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
+                        }
                     }
 
                     # Alarme pós, "perguntar se tomou"
