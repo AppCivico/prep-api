@@ -111,7 +111,8 @@ sub put {
         json => {
             id => $recipient->id,
 
-            ( $recipient_put->{running_out_wait_until} ? (running_out_wait_until => $recipient_put->{running_out_wait_until}) : () )
+            ( $recipient_put->{running_out_wait_until} ? (running_out_wait_until => $recipient_put->{running_out_wait_until}) : () ),
+            ( $recipient_put->{running_out_date}       ? (running_out_date => $recipient_put->{running_out_date}) : () ),
         }
     )
 }
