@@ -753,7 +753,7 @@ sub action_specs {
                         $interval = $interval_hours . ':' . $interval_minutes . ':00';
 
                         if ($cmp <= 0) {
-                            $interval = is_test ? \"DATE 'today' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
+                            $interval = is_test ? \"DATE 'today' + interval '$interval'" : \"DATE 'today' + interval '$interval' + interval '3 hours'";
                         } else {
                             $interval = is_test ? \"DATE 'tomorrow' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
                         }
