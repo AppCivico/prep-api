@@ -143,7 +143,6 @@ sub process_item {
                 'me.created_at'       => { '>=' => \"NOW() - interval '1 hour'" }
             }
         )->count;
-        use DDP; p $notifications_last_hour;
 
         if ($notifications_last_hour >= 3) {
             $job->update(

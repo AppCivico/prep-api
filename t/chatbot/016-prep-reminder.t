@@ -228,25 +228,26 @@ db_transaction {
 
         is $notification_queue_rs->count, 1;
 
-        # db_transaction{
-        #     $res = $t->put_ok(
-        #     '/api/chatbot/recipient',
-        #         form => {
-        #             security_token       => $security_token,
-        #             fb_id                => $fb_id,
-        #             prep_reminder_running_out => 1,
-        #             prep_reminder_running_out_date => DateTime->now->ymd,
-        #             prep_reminder_running_out_count => '1',
-        #         }
-        #     )
-        #     ->status_is(200)
-        #     ->tx->res->json;
-        # };
-
         db_transaction{
-            use DDP; p my $foo = DateTime->now->subtract(days => 30)->ymd;
             $res = $t->put_ok(
             '/api/chatbot/recipient',
+                form => {
+                    security_token       => $security_token,
+                    fb_id                => $fb_id,
+                    prep_reminder_running_out => 1,
+                    prep_reminder_running_out_date => DateTime->now->ymd,
+                    prep_reminder_running_out_count => '1',
+                }
+            )
+            ->status_is(200)
+            ->tx->res->json;
+        };
+
+        db_transaction{
+            is $schema->resultset('NotificationQueue')->count, 1;
+
+            $res = $t->put_ok(
+                '/api/chatbot/recipient',
                 form => {
                     security_token       => $security_token,
                     fb_id                => $fb_id,
@@ -258,6 +259,10 @@ db_transaction {
             ->status_is(200)
             ->tx->res->json;
 
+            ok defined $res->{running_out_date};
+            ok defined $res->{running_out_wait_until};
+
+            is $schema->resultset('NotificationQueue')->count, 1;
         };
 
         $res = $t->put_ok(
@@ -272,7 +277,6 @@ db_transaction {
         )
         ->status_is(200)
         ->tx->res->json;
-        # is $notification_queue_rs->count, 3;
 
         $date = $date->add( days => '5' );
 
@@ -288,7 +292,6 @@ db_transaction {
         ->status_is(200)
         ->tx->res->json;
 
-        # is $notification_queue_rs->count, 4;
     };
 
 };

@@ -724,7 +724,7 @@ sub action_specs {
                 die \['prep_reminder_after_interval', 'missing'] unless $values{prep_reminder_after_interval};
             }
 
-            my $running_out_wait_until;
+            my ($running_out_wait_until, $running_out_followup_wait_until);
             $self->result_source->schema->txn_do( sub {
 
 
@@ -733,7 +733,7 @@ sub action_specs {
                     die \['fb_id', 'must-be-prep'] unless $self->recipient_flag->is_prep;
 
                     my $dt_parser = DateTime::Format::Pg->new();
-                    my ($interval, $running_out_date, $running_out_count, $running_out_followup_wait_until);
+                    my ($interval, $running_out_date, $running_out_count);
 
                     # Alarme antes, "lembrar de tomar"
                     if ($values{prep_reminder_before}) {
@@ -807,6 +807,19 @@ sub action_specs {
 
                         $running_out_wait_until = DateTime->now->add( days => ($remaning_count) );
                         $running_out_wait_until = $running_out_wait_until->subtract( days => 15 );
+
+                        my $cmp_running_out_followup_wait_until = DateTime->compare( $now, $running_out_followup_wait_until );
+                        my $cmp_running_out_wait_until          = DateTime->compare( $now, $running_out_wait_until );
+
+                        # use DDP;
+                        # p 'now: ' . $now->datetime;
+                        # p 'running_out_followup_wait_until: ' . $running_out_followup_wait_until->datetime . ', cmp: ' . $cmp_running_out_followup_wait_until;
+                        # p 'running_out_wait_until: ' . $running_out_wait_until->datetime . ', cmp: ' . $cmp_running_out_wait_until;
+                        if ( $cmp_running_out_followup_wait_until >= 0 ) {
+                            # Não agendo nenhum alarme e não ativo o alarme de running_out
+
+                            $values{prep_reminder_running_out} = 0;
+                        }
                     }
 
                     # Setup da table de alarme
@@ -859,6 +872,9 @@ sub action_specs {
                             }
                         )->delete;
 
+                        my $followup_date = $running_out_followup_wait_until;
+                        $followup_date->add( days => 5 );
+
                         my @notifications = (
                             {
                                 prep_reminder_id => $prep_reminder->id,
@@ -868,7 +884,7 @@ sub action_specs {
                             {
                                 prep_reminder_id => $prep_reminder->id,
                                 type_id          => 12,
-                                wait_until       => $running_out_followup_wait_until,
+                                wait_until       => $followup_date,
                             }
                         );
 
@@ -1022,7 +1038,8 @@ sub action_specs {
             return {
                 recipient => $self,
 
-                ( $running_out_wait_until ? (running_out_wait_until => $running_out_wait_until->dmy) : () )
+                ( $running_out_wait_until ? (running_out_wait_until => $running_out_wait_until->dmy) : () ),
+                ( $running_out_followup_wait_until ? (running_out_date => $running_out_followup_wait_until->dmy) : () )
             };
         },
         research_participation => sub {
