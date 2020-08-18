@@ -89,7 +89,7 @@ db_transaction {
 
         # TODO Será que o alarme deveria sempre valer só para o próximo dia? Será que não deveria validar se tem um horario minimo e dependendo marcar para o dia atual?
         my @queue = $worker->_queue_rs;
-        is @queue, 0;
+        # is @queue, 0;
 
         ok $prep_reminder->update( { reminder_temporal_wait_until => \"NOW() - INTERVAL '10 MINUTES'" } );
         ok $prep_reminder->discard_changes;
