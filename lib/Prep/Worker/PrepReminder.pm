@@ -145,10 +145,12 @@ sub process_item {
         )->count;
 
         if ($notifications_last_hour >= 3) {
+            my $interval = $job->reminder_before ? $job->reminder_before_interval : $job->reminder_after_interval;
+
             $job->update(
                 {
                     reminder_temporal_last_sent_at => \'NOW()',
-                    reminder_temporal_wait_until   => \"NOW() + INTERVAL '3 hours'"
+                    reminder_temporal_wait_until   => \"DATE 'tomorrow' + INTERVAL '$interval'"
                 }
             );
         }
