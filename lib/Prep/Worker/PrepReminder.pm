@@ -150,7 +150,7 @@ sub process_item {
             $job->update(
                 {
                     reminder_temporal_last_sent_at => \'NOW()',
-                    reminder_temporal_wait_until   => \"DATE 'tomorrow' + INTERVAL '$interval'"
+                    reminder_temporal_wait_until   => \"DATE 'tomorrow' + INTERVAL '$interval' + INTERVAL '3 hours'"
                 }
             );
         }
