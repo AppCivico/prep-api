@@ -2406,7 +2406,7 @@ sub prep_reminder_confirmation {
     return $prep_reminder->update(
         {
             reminder_temporal_confirmed_at => \'NOW()',
-            reminder_temporal_wait_until   => \"(NOW()::DATE + interval '1 day') + interval '$interval'"
+            reminder_temporal_wait_until   => \"(NOW()::DATE + interval '1 day') + interval '$interval' + interval '3 hours'"
         }
     );
 }
