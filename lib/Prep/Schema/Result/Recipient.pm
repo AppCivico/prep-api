@@ -1027,7 +1027,7 @@ sub action_specs {
                 recipient => $self,
 
                 ( $running_out_wait_until ? (running_out_wait_until => $running_out_wait_until->dmy) : () ),
-                ( $running_out_followup_wait_until ? (running_out_date => $running_out_followup_wait_until->dmy) : () )
+                ( $running_out_followup_wait_until ? (running_out_date => $running_out_followup_wait_until->subtract( days => 5 )->dmy) : () )
             };
         },
         research_participation => sub {
