@@ -787,43 +787,22 @@ sub action_specs {
                         # e marco a notificação para 15 dias antes de esgotar.
                         my $count = $values{prep_reminder_running_out_count} * 30;
 
-                        my $now = DateTime->now;
-                        my $delta = $now->subtract_datetime( $parsed_date );
-                        my %deltas = $delta->deltas;
+                        my $now        = DateTime->now;
+                        my $delta      = $now->delta_days( $parsed_date );
+                        my $delta_days = $delta->delta_days;
 
                         $now = DateTime->now;
 
-                        my $delta_days = 0;
-                        for my $key (grep { $_ =~ /^(days|months)$/ } keys %deltas) {
-
-                            if ($key eq 'months') {
-                                $delta_days += $deltas{$key} * 30;
-                            }
-                            else {
-                                $delta_days += $deltas{$key};
-                            }
-                        }
-
-                        my $remaning_count;
-                        if ( $delta->days == 0 ) { # Dia atual
-                            $remaning_count = $count;
-                        }
-                        else {
-                            $remaning_count = $count - $delta_days
-                        }
+                        my $remaning_count = $count - $delta_days;
 
                         $running_out_followup_wait_until = DateTime->now->add( days => ($remaning_count) );
 
                         $running_out_wait_until = DateTime->now->add( days => ($remaning_count) );
                         $running_out_wait_until = $running_out_wait_until->subtract( days => 15 );
 
-                        my $cmp_running_out_followup_wait_until = DateTime->compare( $now, $running_out_followup_wait_until );
+                        my $cmp_running_out_followup_wait_until = DateTime->compare( DateTime->now, $running_out_followup_wait_until );
                         my $cmp_running_out_wait_until          = DateTime->compare( $now, $running_out_wait_until );
 
-                        # use DDP;
-                        # p 'now: ' . $now->datetime;
-                        # p 'running_out_followup_wait_until: ' . $running_out_followup_wait_until->datetime . ', cmp: ' . $cmp_running_out_followup_wait_until;
-                        # p 'running_out_wait_until: ' . $running_out_wait_until->datetime . ', cmp: ' . $cmp_running_out_wait_until;
                         if ( $cmp_running_out_followup_wait_until >= 0 ) {
                             # Não agendo nenhum alarme e não ativo o alarme de running_out
 
@@ -1048,7 +1027,7 @@ sub action_specs {
                 recipient => $self,
 
                 ( $running_out_wait_until ? (running_out_wait_until => $running_out_wait_until->dmy) : () ),
-                ( $running_out_followup_wait_until ? (running_out_date => $running_out_followup_wait_until->dmy) : () )
+                ( $running_out_followup_wait_until ? (running_out_date => $running_out_followup_wait_until->subtract( days => 5 )->dmy) : () )
             };
         },
         research_participation => sub {
