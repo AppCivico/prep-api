@@ -17,8 +17,6 @@ sub generate_token {
     my ($self, $calendar) = @_;
 
     my $token;
-    use DDP;
-    p $calendar->token_valid_until;
     if ( !$calendar->token || $calendar->token_valid_until <= DateTime->now() ) {
         my $oauth = Net::Google::OAuth->new(
             -client_id     => $calendar->client_id,
