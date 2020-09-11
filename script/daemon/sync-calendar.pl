@@ -17,7 +17,7 @@ my $calendar_rs = $schema->resultset('Calendar');
 
 
 while (1) {
-    sleep 3600;
+    sleep 60 * 5;
     eval {
         while ( my $calendar = $calendar_rs->next() ) {
             $calendar->sync_appointments;
