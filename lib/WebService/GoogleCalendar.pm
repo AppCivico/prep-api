@@ -55,7 +55,7 @@ sub get_calendar_events {
         my $access_token = $self->generate_token($opts{calendar});
 
         eval {
-            my $tomorrow = DateTime->today->add( days => 1 );
+            my $tomorrow = DateTime->today;
             $tomorrow    = $tomorrow . 'Z';
 
             my $url = $ENV{GOOGLE_CALENDAR_API_URL} . '/calendars/' . $opts{google_id} . "/events?timeMin=$tomorrow";
