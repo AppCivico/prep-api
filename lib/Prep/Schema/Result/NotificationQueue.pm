@@ -219,7 +219,7 @@ sub send {
     if ( $type->name =~ /^(no_appointment_after_7_days_quiz|prep_reminder_before|prep_reminder_after|prep_reminder_running_out|prep_reminder_running_out_followup)$/ ) {
         $body = encode_json {
             messaging_type => "MESSAGE_TAG",
-            tag            => "CONFIRMED_EVENT_UPDATE",
+            tag            => "ACCOUNT_UPDATE",
             recipient      => { id => $recipient->fb_id },
             message        => {
                 text          => $self->text ? $self->text : $notification_info->{text},
