@@ -277,9 +277,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 calendar_holidays
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 10:08:18
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:T95CoBCMnmEbPOjn2D+HdQ
+Type: has_many
+
+Related object: L<Prep::Schema::Result::CalendarHoliday>
+
+=cut
+
+__PACKAGE__->has_many(
+  "calendar_holidays",
+  "Prep::Schema::Result::CalendarHoliday",
+  { "foreign.calendar_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-11-18 14:26:04
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Qj8jd8HpndmX7tEqa0XG1Q
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -345,12 +360,10 @@ sub available_dates {
             }
 
             my $week = 0;
-
-
+            use DDP; p \@dow_with_week;
             map {
                 my $ymd = get_ymd_by_day_of_the_week(dow => $_->{dow}, week => $_->{week});
                 $week++;
-
 
                 my @taken_quotas = $appointment_rs->search(
                     {
