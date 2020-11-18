@@ -23,3 +23,5 @@ export FB_API_URL="https://graph.facebook.com/v3.2"
 export ASSISTENTE_CIVICO_API_URL="https://dapi-assistente.appcivico.com"
 export ASSISTENTE_CIVICO_CHATBOT_ID="226"
 export ASSISTENTE_CIVICO_METRICS_SECURITY_TOKEN="prep-dev"
+
+export HOLIDAY_API_ACCESS_TOKEN="bHVjYXMuYW5zZWlAYXBwY2l2aWNvLmNvbSZoYXNoPTMyMjYzNDcz"

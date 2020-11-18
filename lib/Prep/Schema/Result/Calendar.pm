@@ -146,6 +146,12 @@ __PACKAGE__->table("calendar");
   data_type: 'text'
   is_nullable: 1
 
+=head2 active
+
+  data_type: 'boolean'
+  default_value: true
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -217,6 +223,8 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "phone",
   { data_type => "text", is_nullable => 1 },
+  "active",
+  { data_type => "boolean", default_value => \"true", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -277,9 +285,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 calendar_holiday
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 10:08:18
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:T95CoBCMnmEbPOjn2D+HdQ
+Type: might_have
+
+Related object: L<Prep::Schema::Result::CalendarHoliday>
+
+=cut
+
+__PACKAGE__->might_have(
+  "calendar_holiday",
+  "Prep::Schema::Result::CalendarHoliday",
+  { "foreign.calendar_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-11-18 17:07:20
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:zxEqppx5dvJgjuUIb4b8cQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -307,6 +330,22 @@ sub available_dates {
     my $appointment_rs = $self->result_source->schema->resultset('Appointment');
     my $appointment_windows = $self->appointment_windows;
     my $now = Time::Piece->new();
+
+    # Buscando feriados para usar na filtragem
+    my $holidays = $self->calendar_holiday;
+
+    if (!$holidays) {
+        $holidays = $self->result_source->schema->resultset('CalendarHoliday')->create(
+            {
+                calendar_id => $self->id,
+                year        => $now->year,
+                content     => '{}'
+            }
+        );
+
+    }
+    $holidays->check_for_update;
+    my @holidays = $holidays->get_holidays_ymd;
 
     my $res = [
         map {
@@ -346,51 +385,56 @@ sub available_dates {
 
             my $week = 0;
 
-
             map {
                 my $ymd = get_ymd_by_day_of_the_week(dow => $_->{dow}, week => $_->{week});
                 $week++;
 
+                my $should_skip = grep { $ymd eq $_ } @holidays;
 
-                my @taken_quotas = $appointment_rs->search(
-                    {
-                        appointment_window_id  => $appointment_window_id,
-                        appointment_at         => { '>=' => \"'$ymd'::date", '<' => \"'$ymd'::date + interval '1 day'"},
+                if ($should_skip) {
+                    +{}
+                }
+                else {
+                    my @taken_quotas = $appointment_rs->search(
+                        {
+                            appointment_window_id  => $appointment_window_id,
+                            appointment_at         => { '>=' => \"'$ymd'::date", '<' => \"'$ymd'::date + interval '1 day'"},
+                        }
+                    )->get_column('quota_number')->all();
+
+                    my %taken_quotas = map { $_ => 1 } @taken_quotas;
+
+                    my @available_quotas = grep { not $taken_quotas{$_} } @base_quotas;
+
+                    +{
+                        appointment_window_id => $appointment_window_id,
+                        ymd                   => $ymd,
+                        hours => [
+                            map {
+                                my $is_first_quota = $_ == 1 ? 1 : 0;
+
+                                my $time     = $start_time->add( $seconds_per_quota * $_);
+                                my $time_hms = $time->hms;
+
+                                my $complete_time = "$ymd $time_hms";
+                                $complete_time    = Time::Piece->strptime( $complete_time, '%Y-%m-%d %H:%M:%S' );
+
+                                +{
+                                    quota => $_,
+                                    # Tratando o primeiro caso
+                                    # No primeiro caso o começo não deve ser somado
+                                    time  => $is_first_quota ?
+                                        ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
+                                        ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
+                                    datetime_start => $is_first_quota ?
+                                        ( $ymd . 'T' . $start_time->hms ) :
+                                        ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
+                                    datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms,
+                                    epoch_start => $complete_time->epoch
+                                }
+                            } @available_quotas
+                        ]
                     }
-                )->get_column('quota_number')->all();
-
-                my %taken_quotas = map { $_ => 1 } @taken_quotas;
-
-                my @available_quotas = grep { not $taken_quotas{$_} } @base_quotas;
-
-                +{
-                    appointment_window_id => $appointment_window_id,
-                    ymd                   => $ymd,
-                    hours => [
-                        map {
-                            my $is_first_quota = $_ == 1 ? 1 : 0;
-
-                            my $time     = $start_time->add( $seconds_per_quota * $_);
-                            my $time_hms = $time->hms;
-
-                            my $complete_time = "$ymd $time_hms";
-                            $complete_time    = Time::Piece->strptime( $complete_time, '%Y-%m-%d %H:%M:%S' );
-
-                            +{
-                                quota => $_,
-                                # Tratando o primeiro caso
-                                # No primeiro caso o começo não deve ser somado
-                                time  => $is_first_quota ?
-                                    ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
-                                    ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
-                                datetime_start => $is_first_quota ?
-                                    ( $ymd . 'T' . $start_time->hms ) :
-                                    ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
-                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms,
-                                epoch_start => $complete_time->epoch
-                            }
-                        } @available_quotas
-                    ]
                 }
             } @dow_with_week;
         } $self->appointment_windows->search(undef, { page => $page, rows => $rows } )->all()
