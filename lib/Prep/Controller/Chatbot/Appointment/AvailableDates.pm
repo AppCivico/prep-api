@@ -13,6 +13,9 @@ sub get {
     my $page = $c->req->params->to_hash->{page};
     my $rows = $c->req->params->to_hash->{rows};
 
+    my $available_dates = $calendar->available_dates($page, $rows);
+    my @dates           = grep { $_->{ymd} } @{$available_dates};
+
     return $c->render(
         status => 200,
         json   => {
@@ -20,7 +23,7 @@ sub get {
             google_id => $calendar->google_id,
             name      => $calendar->name,
             time_zone => $calendar->time_zone,
-            dates     => $calendar->available_dates($page, $rows)
+            dates     => \@dates
         }
     )
 }
