@@ -50,7 +50,10 @@ sub get {
                         time_zone  => $_->time_zone,
                     }
                 } $c->schema->resultset('Calendar')->search(
-                    { $address_city ? ( address_city => $address_city ) : () }
+                    {
+                        active => 1,
+                        $address_city ? ( address_city => $address_city ) : ()
+                    }
                 )->all()
             ]
         }
