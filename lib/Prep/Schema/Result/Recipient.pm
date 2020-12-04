@@ -1082,6 +1082,10 @@ sub action_specs {
             for my $flag (@updatable_flags) {
                 next unless defined $values{$flag};
 
+                if ( $flag eq 'is_prep' && $values{$flag} == 0 && $self->prep_reminder ) {
+                    $self->prep_reminder->delete;
+                }
+
                 $self->recipient_flag->update( { $flag => $values{$flag} } );
                 delete $values{$flag};
             }
