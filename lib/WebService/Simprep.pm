@@ -7,10 +7,18 @@ use LWP::UserAgent;
 use Try::Tiny::Retry;
 use Prep::Utils;
 use DateTime;
+use Prep::Logger;
 
 has 'ua' => ( is => 'rw', lazy => 1, builder => '_build_ua' );
 
+has logger => (
+    is      => 'rw',
+    lazy    => 1,
+    builder => '_build_logger',
+);
+
 sub _build_ua { LWP::UserAgent->new() }
+sub _build_logger { &get_logger }
 
 sub register_recipient {
     my ( $self, %opts ) = @_;
@@ -210,6 +218,8 @@ sub notify_reminder {
             retry {
                 my $url = $ENV{SIMPREP_API_URL} . '/recrutamento/' . $opts{voucher} . '/lembrete';
 
+                $self->logger->info("Fazendo request /lembrete. voucher($opts{voucher}), action($opts{action})");
+                
                 $res = $self->ua->post(
                     $url,
                     Content_Type => 'application/json',
