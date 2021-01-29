@@ -532,11 +532,18 @@ with 'Prep::Role::Verification';
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
 
 use WebService::Simprep;
+use Prep::Logger;
 
 has _simprep => (
     is         => 'ro',
     isa        => 'WebService::Simprep',
     lazy_build => 1,
+);
+
+has logger => (
+    is      => 'rw',
+    lazy    => 1,
+    builder => '_build_logger',
 );
 
 use Prep::Utils qw(is_test);
@@ -549,6 +556,7 @@ use DateTime::Format::Pg;
 use Prep::Types qw(MobileNumber);
 
 sub _build__simprep { WebService::Simprep->instance }
+sub _build_logger { &get_logger }
 
 sub verifiers_specs {
     my $self = shift;
@@ -696,6 +704,8 @@ sub action_specs {
     return {
         update => sub {
             my $r = shift;
+
+            my $logger = $self->logger;
 
             my %values = $r->valid_values;
 
@@ -850,7 +860,7 @@ sub action_specs {
                         };
 
                         if ($@) {
-                            use DDP; p $@;
+                            $logger->info('fail at prep_reminder req: ' . $@);
                         }
                     }
                     else {
@@ -885,7 +895,7 @@ sub action_specs {
                         };
 
                         if ($@) {
-                            use DDP; p $@;
+                            $logger->info('fail at prep_reminder req: ' . $@);
                         }
                     }
 
