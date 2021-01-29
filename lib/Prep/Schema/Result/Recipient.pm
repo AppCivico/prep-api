@@ -882,7 +882,7 @@ sub action_specs {
                         );
 
                         # Notificando sisprep da criação do alarme
-                        my $action = defined $values{prep_reminder_before} && $values{prep_reminder_before} == 1 ? 'created' : 'deactivated';
+                        my $action = defined $values{prep_reminder_before} && $values{prep_reminder_before} == 1 ? 'activated' : 'deactivated';
 
                         eval {
                             $self->_simprep->notify_reminder(
@@ -2449,6 +2449,19 @@ sub prep_reminder_confirmation {
             reminder_temporal_wait_until   => \"(NOW()::DATE + interval '1 day') + interval '$interval' + interval '3 hours'"
         }
     );
+}
+
+sub prep_reminder_no {
+    my $self = shift;
+
+    eval {
+        $self->_simprep->notify_reminder(
+            action  => 'notification_denied',
+            voucher => $self->integration_token,
+        );
+    };
+
+    return 1
 }
 
 __PACKAGE__->meta->make_immutable;
