@@ -829,6 +829,29 @@ sub action_specs {
                                 reminder_running_out_wait_until => $running_out_wait_until,
                             },
                         );
+
+                        # Notificando sisprep a edição do alarme
+                        my $action;
+                        if ( $prep_reminder->reminder_before == 1 && $values{prep_reminder_before_interval} ) {
+                            $action = 'reconfigured'
+                        }
+                        else {
+                            $action = 'deactivated'
+                        }
+
+                        eval {
+                            $self->_simprep->notify_reminder(
+                                action  => $action,
+                                voucher => $self->integration_token,
+
+                                # Apenas o prep_reminder_before_interval é utilizado
+                                ( $action eq 'reconfigured' ? ( remind_at => $values{prep_reminder_before_interval} ) : () )
+                            );
+                        };
+
+                        if ($@) {
+                            use DDP; p $@;
+                        }
                     }
                     else {
                         $prep_reminder = $self->result_source->schema->resultset('PrepReminder')->create(
@@ -847,6 +870,23 @@ sub action_specs {
                                 reminder_running_out_wait_until => $running_out_wait_until,
                             },
                         );
+
+                        # Notificando sisprep da criação do alarme
+                        my $action = defined $values{prep_reminder_before} && $values{prep_reminder_before} == 1 ? 'created' : 'deactivated';
+
+                        eval {
+                            $self->_simprep->notify_reminder(
+                                action  => $action,
+                                voucher => $self->integration_token,
+
+                                # Apenas o prep_reminder_before_interval é utilizado
+                                remind_at => $values{prep_reminder_before_interval}
+                            );
+                        };
+
+                        if ($@) {
+                            use DDP; p $@;
+                        }
                     }
 
                     # Criando notificação de running_out;
@@ -2385,6 +2425,13 @@ sub prep_reminder_confirmation {
     else {
         $interval = $prep_reminder->reminder_after_interval;
     }
+
+    eval {
+        $self->_simprep->notify_reminder(
+            action  => 'notification_confirmed',
+            voucher => $self->integration_token,
+        );
+    };
 
     return $prep_reminder->update(
         {
