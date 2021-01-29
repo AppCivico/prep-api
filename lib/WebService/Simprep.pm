@@ -188,7 +188,7 @@ sub notify_reminder {
 
     my @required_opts = qw( action voucher );
     defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
-    use DDP; p \%opts;
+
     my $body = { action => $opts{action}, date_time => DateTime->now->datetime };
 
     if ($opts{action} =~ /^(activated|reconfigured)$/) {
