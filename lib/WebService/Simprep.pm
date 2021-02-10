@@ -6,10 +6,19 @@ use JSON;
 use LWP::UserAgent;
 use Try::Tiny::Retry;
 use Prep::Utils;
+use DateTime;
+use Prep::Logger;
 
 has 'ua' => ( is => 'rw', lazy => 1, builder => '_build_ua' );
 
+has logger => (
+    is      => 'rw',
+    lazy    => 1,
+    builder => '_build_logger',
+);
+
 sub _build_ua { LWP::UserAgent->new() }
+sub _build_logger { &get_logger }
 
 sub register_recipient {
     my ( $self, %opts ) = @_;
@@ -166,6 +175,57 @@ sub update_data {
                                 }
                             ]
                         }
+                    )
+                );
+                die $res->decoded_content unless $res->is_success;
+
+                my $response = decode_json( $res->decoded_content );
+                die 'invalid responde' unless $response->{status} eq 'success';
+
+            }
+            retry_if { shift() < 3 } catch { die $_; };
+        };
+        die $@ if $@;
+
+        return decode_json( $res->decoded_content );
+    }
+}
+
+sub notify_reminder {
+    my ($self, %opts) = @_;
+
+    my @required_opts = qw( action voucher );
+    defined $opts{$_} or die \["opts{$_}", 'missing'] for @required_opts;
+
+    my $body = { action => $opts{action}, date_time => DateTime->now->datetime };
+
+    if ($opts{action} =~ /^(activated|reconfigured)$/) {
+        die \['opts{remind_at}', 'missing'] unless defined $opts{remind_at};
+
+        $body->{remind_at} = $opts{remind_at};
+    };
+
+    if (is_test()) {
+        return {
+            status  => 'success',
+            message => 'Informações de lembretes gravadas com sucesso!'
+        };
+    }
+    else {
+        my $res;
+
+        eval {
+            retry {
+                my $url = $ENV{SIMPREP_API_URL} . '/recrutamento/' . $opts{voucher} . '/lembrete';
+
+                $self->logger->info("Fazendo request /lembrete. voucher($opts{voucher}), action($opts{action})");
+                
+                $res = $self->ua->post(
+                    $url,
+                    Content_Type => 'application/json',
+                    'X-API-KEY'  => $ENV{SIMPREP_TOKEN},
+                    Content      => encode_json(
+                        { prep_daily_reminder => $body }
                     )
                 );
                 die $res->decoded_content unless $res->is_success;

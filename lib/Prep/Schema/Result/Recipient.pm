@@ -532,11 +532,18 @@ with 'Prep::Role::Verification';
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
 
 use WebService::Simprep;
+use Prep::Logger;
 
 has _simprep => (
     is         => 'ro',
     isa        => 'WebService::Simprep',
     lazy_build => 1,
+);
+
+has logger => (
+    is      => 'rw',
+    lazy    => 1,
+    builder => '_build_logger',
 );
 
 use Prep::Utils qw(is_test);
@@ -549,6 +556,7 @@ use DateTime::Format::Pg;
 use Prep::Types qw(MobileNumber);
 
 sub _build__simprep { WebService::Simprep->instance }
+sub _build_logger { &get_logger }
 
 sub verifiers_specs {
     my $self = shift;
@@ -697,6 +705,8 @@ sub action_specs {
         update => sub {
             my $r = shift;
 
+            my $logger = $self->logger;
+
             my %values = $r->valid_values;
 
             for my $key (keys %values) {
@@ -829,6 +839,29 @@ sub action_specs {
                                 reminder_running_out_wait_until => $running_out_wait_until,
                             },
                         );
+
+                        # Notificando sisprep a edição do alarme
+                        my $action;
+                        if ( $prep_reminder->reminder_before == 1 && $values{prep_reminder_before_interval} ) {
+                            $action = 'reconfigured'
+                        }
+                        else {
+                            $action = 'deactivated'
+                        }
+
+                        eval {
+                            $self->_simprep->notify_reminder(
+                                action  => $action,
+                                voucher => $self->integration_token,
+
+                                # Apenas o prep_reminder_before_interval é utilizado
+                                ( $action eq 'reconfigured' ? ( remind_at => $values{prep_reminder_before_interval} ) : () )
+                            );
+                        };
+
+                        if ($@) {
+                            $logger->info('fail at prep_reminder req: ' . $@);
+                        }
                     }
                     else {
                         $prep_reminder = $self->result_source->schema->resultset('PrepReminder')->create(
@@ -847,6 +880,23 @@ sub action_specs {
                                 reminder_running_out_wait_until => $running_out_wait_until,
                             },
                         );
+
+                        # Notificando sisprep da criação do alarme
+                        my $action = defined $values{prep_reminder_before} && $values{prep_reminder_before} == 1 ? 'activated' : 'deactivated';
+
+                        eval {
+                            $self->_simprep->notify_reminder(
+                                action  => $action,
+                                voucher => $self->integration_token,
+
+                                # Apenas o prep_reminder_before_interval é utilizado
+                                remind_at => $values{prep_reminder_before_interval}
+                            );
+                        };
+
+                        if ($@) {
+                            $logger->info('fail at prep_reminder req: ' . $@);
+                        }
                     }
 
                     # Criando notificação de running_out;
@@ -2386,12 +2436,32 @@ sub prep_reminder_confirmation {
         $interval = $prep_reminder->reminder_after_interval;
     }
 
+    eval {
+        $self->_simprep->notify_reminder(
+            action  => 'notification_confirmed',
+            voucher => $self->integration_token,
+        );
+    };
+
     return $prep_reminder->update(
         {
             reminder_temporal_confirmed_at => \'NOW()',
             reminder_temporal_wait_until   => \"(NOW()::DATE + interval '1 day') + interval '$interval' + interval '3 hours'"
         }
     );
+}
+
+sub prep_reminder_no {
+    my $self = shift;
+
+    eval {
+        $self->_simprep->notify_reminder(
+            action  => 'notification_denied',
+            voucher => $self->integration_token,
+        );
+    };
+
+    return 1
 }
 
 __PACKAGE__->meta->make_immutable;

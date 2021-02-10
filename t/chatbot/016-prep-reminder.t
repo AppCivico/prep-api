@@ -56,6 +56,7 @@ db_transaction {
         ->tx->res->json;
 
         ok $recipient->recipient_flag->update( { is_prep => 1 } );
+        ok $recipient->update( { integration_token => '111111111111111' } );
 
         ok !defined $recipient->prep_reminder;
 

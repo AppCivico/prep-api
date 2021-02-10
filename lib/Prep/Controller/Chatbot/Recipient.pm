@@ -131,4 +131,19 @@ sub prep_reminder_yes {
     )
 }
 
+sub prep_reminder_no {
+    my $c = shift;
+
+    my $recipient = $c->stash('recipient');
+
+    eval {$recipient->notify_reminder_no};
+
+    return $c->render(
+        $c,
+        code => $@ ? 400 : 200,
+        json => { id => $recipient->id }
+    )
+}
+
+
 1;
