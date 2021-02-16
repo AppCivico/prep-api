@@ -38,52 +38,51 @@ sub get_general {
     my @interaction_window_metrics;
 
     for ( 1 .. 4 ) {
-        my $label;
+        my ($label, $interaction_metric);
 
         if ($_ == 1) {
             $label = 'Últimos 3 dias';
 
             $interaction_metric_since = $now_epoch - (86400 * 3);
+
+            $interaction_metric = $interaction_rs->search(
+            {
+                '-and' => [
+                    \['started_at >= to_timestamp(?)', $interaction_metric_since],
+                ]
+            }
+        );
         }
         elsif ($_ == 2) {
             $label = '4 a 7 dias';
 
-            $interaction_metric_since = $now_epoch - (86400 * 7 - 1);
-            $interaction_metric_until = $now_epoch - (86400 * 3 - 1);
+            $interaction_metric = $interaction_rs->search({
+                '-and' => [
+                    \["started_at >= (now()::date - interval '7 days')"],
+                    \["closed_at <= (now()::date - interval '4 days')"],
+                ]
+            });
         }
         elsif ($_ == 3) {
             $label = '8 a 15 dias';
 
-            $interaction_metric_since = $now_epoch - (86400 * 15 - 1);
-            $interaction_metric_until = $now_epoch - (86400 * 7 - 1);
+            $interaction_metric = $interaction_rs->search({
+                '-and' => [
+                    \["started_at >= (now()::date - interval '15 days')"],
+                    \["closed_at <= (now()::date - interval '8 days')"],
+                ]
+            });
         }
         else {
             $label = 'Mais de 15 dias';
 
-            $interaction_metric_until = $now_epoch - (86400 * 8 - 1);
-        }
-
-        my $interaction_metric = $interaction_rs->search(
-            {
+            $interaction_metric = $interaction_rs->search({
                 '-and' => [
-                    (
-                        $interaction_metric_since ?
-                            (
-                                \['started_at >= to_timestamp(?)', $interaction_metric_since],
-                            ) :
-                            ( )
-                    ),
-
-                    (
-                        $interaction_metric_until ?
-                            (
-                                \['closed_at <= to_timestamp(?)', $interaction_metric_until],
-                            ) :
-                            ( )
-                    )
+                    \["started_at <= (now()::date - interval '15 days')"],
+                    \["closed_at is not null"],
                 ]
-            }
-        );
+            });
+        }
 
         push @interaction_window_metrics, {label => $label, value => $interaction_metric->count};
 

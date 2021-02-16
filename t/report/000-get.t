@@ -763,10 +763,11 @@ db_transaction {
 
         ok $interaction->update(
             {
-                started_at => \['to_timestamp(?)', $now - (86400 * 4)],
-                closed_at  => \['to_timestamp(?)', $now - (86400 * 3)]
+                started_at => \['to_timestamp(?)', $now - (86400 * 7)],
+                closed_at  => \['to_timestamp(?)', $now - (86400 * 6)]
             }
         );
+        ok $interaction->discard_changes;
 
         $res = $t->get_ok(
             "/api/report/interaction?security_token=$security_token",
@@ -784,8 +785,8 @@ db_transaction {
 
         ok $interaction->update(
             {
-                started_at => \['to_timestamp(?)', $now - (86400 * 8)],
-                closed_at  => \['to_timestamp(?)', $now - (86400 * 7)]
+                started_at => \['to_timestamp(?)', $now - (86400 * 15)],
+                closed_at  => \['to_timestamp(?)', $now - (86400 * 14)]
             }
         );
 
@@ -805,10 +806,11 @@ db_transaction {
 
         ok $interaction->update(
             {
-                started_at => \['to_timestamp(?)', $now - (86400 * 15)],
-                closed_at  => \['to_timestamp(?)', $now - (86400 * 14)]
+                started_at => \['to_timestamp(?)', $now - (86400 * 16)],
+                closed_at  => \['to_timestamp(?)', $now - (86400 * 15)]
             }
         );
+        ok $interaction->discard_changes;
 
         $res = $t->get_ok(
             "/api/report/interaction?security_token=$security_token",
