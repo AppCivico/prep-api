@@ -146,6 +146,12 @@ __PACKAGE__->table("calendar");
   data_type: 'text'
   is_nullable: 1
 
+=head2 active
+
+  data_type: 'boolean'
+  default_value: true
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -217,6 +223,8 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 1 },
   "phone",
   { data_type => "text", is_nullable => 1 },
+  "active",
+  { data_type => "boolean", default_value => \"true", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -277,9 +285,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 calendar_holiday
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-02-13 10:08:18
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:T95CoBCMnmEbPOjn2D+HdQ
+Type: might_have
+
+Related object: L<Prep::Schema::Result::CalendarHoliday>
+
+=cut
+
+__PACKAGE__->might_have(
+  "calendar_holiday",
+  "Prep::Schema::Result::CalendarHoliday",
+  { "foreign.calendar_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-11-18 17:07:20
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:zxEqppx5dvJgjuUIb4b8cQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -287,7 +310,9 @@ __PACKAGE__->has_many(
 use Prep::Utils qw(get_ymd_by_day_of_the_week);
 
 use Time::Piece;
+use Time::Seconds;
 use DateTime;
+use DateTime::Format::Strptime;
 
 use WebService::GoogleCalendar;
 
@@ -304,9 +329,30 @@ sub available_dates {
 
     my $appointment_rs = $self->result_source->schema->resultset('Appointment');
     my $appointment_windows = $self->appointment_windows;
+    my $now = Time::Piece->new();
 
-    return [
+    # Buscando feriados para usar na filtragem
+    my $holidays = $self->calendar_holiday;
+
+    if (!$holidays) {
+        $holidays = $self->result_source->schema->resultset('CalendarHoliday')->create(
+            {
+                calendar_id => $self->id,
+                year        => $now->year,
+                content     => '{}'
+            }
+        );
+
+    }
+    $holidays->check_for_update;
+    my @holidays = $holidays->get_holidays_ymd;
+
+    my $res = [
         map {
+            my $custom_quota_time = $_->custom_quota_time;
+            $custom_quota_time    = Time::Piece->strptime( $custom_quota_time, '%H:%M:%S' )
+              if defined $custom_quota_time;
+
             my $interval;
 
             my $appointment_window_id = $_->id;
@@ -319,49 +365,98 @@ sub available_dates {
             my $start_time = Time::Piece->strptime( $_->start_time, '%H:%M:%S' );
 
             # Pego a diferença entre os dois em segundos e divido pelo numero de cotas
-            my $delta = ( $end_time - $start_time );
-            my $seconds_per_quota = ( $delta / $_->quotas );
+            my $delta = ( $end_time->epoch - $start_time->epoch );
+
+            my $seconds_per_quota = ( $custom_quota_time ? ($custom_quota_time->epoch) : ( $delta / $_->quotas ));
 
             my @days_of_week = $_->appointment_window_days_of_week->search( undef, { rows => 8, order_by => { -asc => 'day_of_week' } } )->get_column('day_of_week')->all();
 
-            map {
-                my $ymd = get_ymd_by_day_of_the_week($_);
-
-                my @taken_quotas = $appointment_rs->search(
-                    {
-                        appointment_window_id  => $appointment_window_id,
-                        appointment_at         => { '>=' => \"'$ymd'::date", '<' => \"'$ymd'::date + interval '1 day'"},
-                    }
-                )->get_column('quota_number')->all();
-
-                my %taken_quotas = map { $_ => 1 } @taken_quotas;
-
-                my @available_quotas = grep { not $taken_quotas{$_} } @base_quotas;
-
-                +{
-                    appointment_window_id => $appointment_window_id,
-                    ymd                   => $ymd,
-                    hours => [
-                        map {
-
-                            +{
-                                quota => $_,
-                                # Tratando o primeiro caso
-                                # No primeiro caso o começo não deve ser somado
-                                time  => $_ == 1 ?
-                                    ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
-                                    ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
-                                datetime_start => $_ == 1 ?
-                                    ( $ymd . 'T' . $start_time->hms ) :
-                                    ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
-                                datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms
-                            }
-                        } @available_quotas
-                    ]
+            my $week_i = 0;
+            my @dow_with_week;
+            for ( 1 .. 4 ) {
+                for my $dow (@days_of_week) {
+                    push @dow_with_week, {
+                        week => $week_i,
+                        dow  => $dow
+                    };
                 }
-            } @days_of_week;
+                $week_i++;
+            }
+
+            my $week = 0;
+
+            map {
+                my $ymd = get_ymd_by_day_of_the_week(dow => $_->{dow}, week => $_->{week});
+                $week++;
+
+                my $should_skip = grep { $ymd eq $_ } @holidays;
+
+                if ($should_skip) {
+                    +{}
+                }
+                else {
+                    my @taken_quotas = $appointment_rs->search(
+                        {
+                            appointment_window_id  => $appointment_window_id,
+                            appointment_at         => { '>=' => \"'$ymd'::date", '<' => \"'$ymd'::date + interval '1 day'"},
+                        }
+                    )->get_column('quota_number')->all();
+
+                    my %taken_quotas = map { $_ => 1 } @taken_quotas;
+
+                    my @available_quotas = grep { not $taken_quotas{$_} } @base_quotas;
+
+                    +{
+                        appointment_window_id => $appointment_window_id,
+                        ymd                   => $ymd,
+                        hours => [
+                            map {
+                                my $is_first_quota = $_ == 1 ? 1 : 0;
+
+                                my $time     = $start_time->add( $seconds_per_quota * $_);
+                                my $time_hms = $time->hms;
+
+                                my $complete_time = "$ymd $time_hms";
+                                $complete_time    = Time::Piece->strptime( $complete_time, '%Y-%m-%d %H:%M:%S' );
+
+                                +{
+                                    quota => $_,
+                                    # Tratando o primeiro caso
+                                    # No primeiro caso o começo não deve ser somado
+                                    time  => $is_first_quota ?
+                                        ( $start_time->hms . ' - ' . $start_time->add($seconds_per_quota * $_ )->hms ) :
+                                        ( $start_time->add($seconds_per_quota * ($_ - 1))->hms . ' - ' . $start_time->add($seconds_per_quota * $_)->hms ),
+                                    datetime_start => $is_first_quota ?
+                                        ( $ymd . 'T' . $start_time->hms ) :
+                                        ( $ymd . 'T' . $start_time->add($seconds_per_quota * ($_ - 1))->hms ),
+                                    datetime_end => $ymd . 'T' . $start_time->add($seconds_per_quota * $_ )->hms,
+                                    epoch_start => $complete_time->epoch
+                                }
+                            } @available_quotas
+                        ]
+                    }
+                }
+            } @dow_with_week;
         } $self->appointment_windows->search(undef, { page => $page, rows => $rows } )->all()
     ];
+
+    # Removendo dates que já passaram de now().
+    my $now_epoch = time();
+    $now_epoch    = $self->id == 2 ? ($now_epoch - (3600 * 2)) : (($now_epoch - (3600 * 3)));
+
+    for (my $i = 0; $i < scalar @{$res}; $i++) {
+        my $ymd = $res->[$i]->{ymd};
+
+        if ($res->[$i]->{ymd} eq $now->ymd) {
+            @{$res->[$i]->{hours}} = grep { $_->{epoch_start} > $now_epoch } @{$res->[$i]->{hours}};
+
+            if (scalar @{$res->[$i]->{hours}} == 0) {
+                splice @{$res}, $i, 1;
+            }
+        }
+    }
+
+    return $res;
 }
 
 sub sync_appointments {
@@ -369,25 +464,67 @@ sub sync_appointments {
 
     my $res = $self->_calendar->get_calendar_events( calendar => $self, google_id => $self->google_id );
 
-    my @manual_appointments = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+    my @manual_appointments  = grep { $_->{description} !~ m/agendamento_chatbot/gm } @{ $res->{items} };
+    my @deleted_appointments = grep { $_->{description} =~ m/deletado/m } @{ $res->{items} };
 
-    eval {
-        for my $appointment (@manual_appointments) {
-            my %fields = $appointment->{description} =~ /^(identificador)*\s*:\s*(\S+)/gm;
+    $self->result_source->schema->txn_do( sub {
+        eval {
+            my $voucher;
+            for my $appointment (@manual_appointments) {
+                my %fields = $appointment->{description} =~ /^(voucher)*\s*:\s*(\S+)/gm;
 
-            my $recipient = $self->result_source->schema->resultset('Recipient')->search( { integration_token => $fields{identificador} } )->next;
-            next unless $recipient;
+                my $recipient = $self->result_source->schema->resultset('Recipient')->search( { integration_token => $fields{voucher} } )->next;
+                next unless $recipient;
 
-            $recipient->appointments->find_or_create(
-                {
-                    appointment_at => $appointment->{start}->{dateTime},
-                    calendar_id    => $self->id
-                },
-                { key => 'recipient_calendar_id' }
-            );
-        }
-    };
-    die $@ if $@;
+                $voucher = $recipient->integration_token;
+
+                $recipient->appointments->find_or_create(
+                    {
+                        appointment_at => $appointment->{start}->{dateTime},
+                        calendar_id    => $self->id
+                    },
+                    { key => 'recipient_calendar_id' }
+                );
+
+            }
+
+            # Criando notificações
+            my $appointment_rs = $self->result_source->schema->resultset('Appointment')->search( { notification_created_at => \'IS NULL' } );
+
+            my (@notifications, @appointments_ids);
+            while ( my $appointment = $appointment_rs->next() ) {
+                my $appointment_ts = $appointment->appointment_at;
+
+                my $day   = $appointment_ts->day;
+                my $month = $appointment_ts->month;
+                my $hms   = $appointment_ts->hms;
+
+                my $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms. E toma aqui o seu voucher: $voucher.";
+
+                my $notification = {
+                    type_id      => 2,
+                    text         => $text,
+                    recipient_id => $appointment->recipient_id,
+                    wait_until   => $appointment->appointment_at->subtract( days => 2 )
+                };
+
+                push @notifications, $notification;
+            }
+
+            $self->result_source->schema->resultset('NotificationQueue')->populate(\@notifications);
+            $appointment_rs->update( { notification_created_at => \'NOW()' } );
+
+            # Deletando appointments que foram sinalizados como "deletados".
+            for my $deleted_appointment (@deleted_appointments) {
+
+                my %fields = $deleted_appointment->{description} =~ /^(appointment_id)*\s*:\s*(\S+)/m;
+
+                $appointment_rs->search( { 'me.id' => $fields{appointment_id} } )->delete;
+                $self->_calendar->delete_event( calendar => $self, calendar_id => $self->google_id, event_id => $deleted_appointment->{id} );
+            }
+        };
+        die $@ if $@;
+    });
 
     return 1;
 }

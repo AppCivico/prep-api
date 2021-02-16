@@ -35,15 +35,6 @@ db_transaction {
     };
 
     subtest 'Chatbot | Assign external integration token' => sub {
-        $t->post_ok(
-            '/api/chatbot/recipient/integration-token',
-            form => {
-                fb_id             => '111111',
-                security_token    => $security_token,
-                integration_token => 'FOOBAR'
-            }
-        )
-        ->status_is(400);
 
         $t->post_ok(
             '/api/chatbot/recipient/integration-token',

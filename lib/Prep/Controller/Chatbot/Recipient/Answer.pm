@@ -1,6 +1,8 @@
 package Prep::Controller::Chatbot::Recipient::Answer;
 use Mojo::Base 'Prep::Controller';
 
+use Prep::Logger;
+
 sub post {
     my $c = shift;
 
@@ -28,6 +30,15 @@ sub post {
         $recipient->reset_screening;
     }
 
+    if ( $answer->{integration_failed} ) {
+        return $c->render(
+            status => 400,
+            json   => {
+                error => 'integration_error'
+            }
+        );
+    }
+
     return $c->render(
         status => 201,
         json   => {
@@ -43,7 +54,11 @@ sub post {
             ( exists $answer->{suggest_wait_for_test}         ? ( suggest_wait_for_test => $answer->{suggest_wait_for_test} ) : () ),
             ( exists $answer->{go_to_test}                    ? ( go_to_test => $answer->{go_to_test} ) : () ),
             ( exists $answer->{followup_messages}             ? ( followup_messages => $answer->{followup_messages} ) : () ),
-            ( exists $answer->{offline_pre_registration_form} ? ( offline_pre_registration_form => $answer->{offline_pre_registration_form} ) : () )
+            ( exists $answer->{offline_pre_registration_form} ? ( offline_pre_registration_form => $answer->{offline_pre_registration_form} ) : () ),
+            ( exists $answer->{risk_group}                    ? ( risk_group => $answer->{risk_group} ) : () ),
+            ( exists $answer->{ir_para_menu}                  ? ( ir_para_menu => $answer->{ir_para_menu} ) : () ),
+            ( exists $answer->{ir_para_agendamento}           ? ( ir_para_agendamento => $answer->{ir_para_agendamento} ) : () ),
+            ( exists $answer->{entrar_em_contato}             ? ( entrar_em_contato => $answer->{entrar_em_contato} ) : () ),
         }
     )
 }

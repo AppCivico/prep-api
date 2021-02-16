@@ -7,6 +7,22 @@ sub register {
 
     my $api = $r->route('/api');
 
+    # Report
+    my $report = $api->route('/report')->under->to('report#base');
+
+    # Report::Interaction
+    my $report_interaction                 = $report->route('/interaction')->to('report-interaction#get_general');
+    my $report_interaction_public_audience = $report->route('/interaction-target-audience')->to('report-interaction#get_target_audience');
+
+    # Report::GeneralPublic
+    my $report_general_public = $report->route('/general-public')->to('report-general_public#get');
+
+    # Report::TargetAudience
+    my $report_target_audience = $report->route('/target-audience')->to('report-target_audience#get');
+
+    # Report::Intents
+    my $report_intents = $report->route('/intents')->to('report-intents#get');
+
     # Chatbot
     my $chatbot = $api->route('/chatbot')->under->to('chatbot#validade_security_token');
 
@@ -14,6 +30,13 @@ sub register {
     my $recipient = $chatbot->route('/recipient')->under->to('chatbot-recipient#stasher');
     $recipient->get('/')->to('chatbot-recipient#get');
     $recipient->put('/')->to('chatbot-recipient#put');
+
+    # Recipient::PrepReminder
+    my $prep_reminder = $recipient->route('/prep-reminder-yes');
+    $prep_reminder->post('/')->to('chatbot-recipient#prep_reminder_yes');
+    
+    my $prep_reminder_no = $recipient->route('/prep-reminder-no');
+    $prep_reminder_no->post('/')->to('chatbot-recipient#prep_reminder_no');
 
     # Recipient POST
     # Para não passar pelo método stasher
@@ -55,6 +78,21 @@ sub register {
     my $term_signature = $recipient->route('/term-signature');
     $term_signature->post('/')->to('chatbot-recipient-term_signature#post');
 
+    # Recipient::CountQuizBrincadeira
+    my $recipient_quiz_brincadeira = $recipient->route('/count-quiz-brincadeira');
+    $recipient_quiz_brincadeira->post('/')->to('chatbot-recipient-count_quiz_brincadeira#post');
+    $recipient_quiz_brincadeira->get('/')->to('chatbot-recipient-count_quiz_brincadeira#get');
+
+    # Recipient::CountPublicoInteresse
+    my $recipient_count_publico_interesse = $recipient->route('/count-publico-interesse');
+    $recipient_count_publico_interesse->post('/')->to('chatbot-recipient-count_publico_interesse#post');
+    $recipient_count_publico_interesse->get('/')->to('chatbot-recipient-count_publico_interesse#get');
+
+    # Recipient::CountRecrutamento
+    my $recipient_count_recrutamento = $recipient->route('/count-recrutamento');
+    $recipient_count_recrutamento->post('/')->to('chatbot-recipient-count_recrutamento#post');
+    $recipient_count_recrutamento->get('/')->to('chatbot-recipient-count_recrutamento#get');
+
     # Recipient::ResetScreening
     my $reset_screening = $recipient->route('/reset-screening');
     $reset_screening->post('/')->to('chatbot-recipient-reset_screening#post');
@@ -62,6 +100,21 @@ sub register {
     # Recipient::Research
     my $research = $recipient->route('/research-participation');
     $research->post('/')->to('chatbot-recipient-research#post');
+
+    # Recipient::Interaction
+    my $interaction = $recipient->route('/interaction');
+    $interaction->post('/')->to('chatbot-recipient-interaction#create');
+    $interaction->post('/close')->to('chatbot-recipient-interaction#close');
+    $interaction->get('/')->to('chatbot-recipient-interaction#get');
+
+    # Recipient::QuickReplyLog
+    my $quick_reply_log = $recipient->route('/quick-reply-log');
+    $quick_reply_log->post('/')->to('chatbot-recipient-quick_reply_log#create');
+    $quick_reply_log->get('/')->to('chatbot-recipient-quick_reply_log#get');
+
+    # Recipient::TestRequest
+    my $recipient_test = $recipient->route('/test-request');
+    $recipient_test->post('/')->to('chatbot-recipient-test_request#post');
 
     # Appointment
     my $appointment = $chatbot->route('/appointment');
@@ -79,6 +132,10 @@ sub register {
     my $delete_answer = $internal->route('/delete-answers')->under->to('internal#validade_security_token');
     $delete_answer->post('/')->to('internal-delete_answer#post');
 
+    # Internal::SetProfilePrep
+    my $prep_profile = $internal->route('/set-profile')->under->to('internal#validade_security_token');
+    $prep_profile->post('/')->to('internal-set_profile_prep#post');
+
     # Internal::Integration
     my $internal_integration = $internal->route('/integration')->under->to('internal-integration#validate_header_and_pass');
 
@@ -88,6 +145,10 @@ sub register {
     # Internal::Integration::Recipient::Sync
     my $sync = $integration_recipient->route('/sync');
     $sync->post('/')->to('internal-integration-recipient-sync#post');
+
+    # Internal::AvailableCombinaVouchers
+    my $combina_vouchers = $internal->route('/available-combina-vouchers')->under->to('internal#validade_security_token');
+    $combina_vouchers->get('/')->to('internal-available_combina_vouchers#get');
 }
 
 1;

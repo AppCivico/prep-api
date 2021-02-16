@@ -2,6 +2,7 @@ use common::sense;
 use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
+use Prep::Worker::PrepReminder;
 use Prep::Test;
 use JSON;
 
@@ -100,6 +101,7 @@ db_transaction {
         );
     };
 
+    my $recipient;
     subtest 'Chatbot | Create recipient' => sub {
 
         subtest 'Invalid' => sub {
@@ -183,6 +185,9 @@ db_transaction {
         )
         ->status_is(201)
         ->json_has('/id');
+
+        my $recipient_id = $t->tx->res->json->{id};
+        ok $recipient = $schema->resultset('Recipient')->find($recipient_id);
 
         # fb_id repetido
         $t->post_ok(
@@ -296,6 +301,291 @@ db_transaction {
 		->json_is('/opt_in', 0)
 		->json_has('/system_labels')
         ->json_has('/system_labels/0/name');
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                phone          => '+5599901010101',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id');
+
+        $t->get_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+		->json_has('/phone');
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                phone          => '+5599901010101111',
+            }
+        )
+        ->status_is(400);
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                phone          => 'wrong type',
+            }
+        )
+        ->status_is(400);
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                instagram      => 'foobar_profile',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id');
+
+        $t->get_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+		->json_has('/instagram');
+
+        $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724',
+                voucher_type   => 'foobar'
+            }
+        )
+        ->status_is(400);
+
+        for (1 .. 3) {
+
+            my $voucher_type;
+            if ($_ == 1) {
+                $voucher_type = 'sisprep';
+            }
+            elsif($_ == 2) {
+                $voucher_type = 'combina';
+
+                ok $schema->resultset('CombinaVoucher')->create( { value => 'lalalala' } );
+            }
+            else {
+                $voucher_type = 'sus';
+            }
+
+            $t->put_ok(
+                '/api/chatbot/recipient',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => '710488549074724',
+                    voucher_type   => $voucher_type,
+                    ( $voucher_type eq 'combina' ? (integration_token => 'lalalala') : () )
+                }
+            )
+            ->status_is(200)
+            ->json_has('/id');
+
+            $t->get_ok(
+            '/api/chatbot/recipient',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => '710488549074724'
+                }
+            )
+            ->status_is(200)
+            ->json_has('/voucher_type')
+            ->json_is('/voucher_type', $voucher_type);
+
+        }
+
+        # Tornando recipient como prep
+        ok $recipient->recipient_flag->update( { is_prep => 1 } );
+
+        my $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+                prep_reminder_before => 1,
+                prep_reminder_before_interval => '10:00:00'
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        $res = $t->get_ok(
+        '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+        ->json_is('/prep_reminder_before', 1)
+        ->json_is('/prep_reminder_before_interval', '10:00:00')
+        ->tx->res->json;
+
+        my $prep_reminder = $schema->resultset('PrepReminder')->next;
+
+        db_transaction{
+            $res = $t->put_ok(
+                '/api/chatbot/recipient',
+                form => {
+                    security_token       => $security_token,
+                    fb_id                => '710488549074724',
+                    prep_reminder_before => 0,
+                }
+            )
+            ->status_is(200)
+            ->json_has('/id')
+            ->tx->res->json;
+
+            $res = $t->get_ok(
+            '/api/chatbot/recipient',
+                form => {
+                    security_token => $security_token,
+                    fb_id          => '710488549074724'
+                }
+            )
+            ->status_is(200)
+            ->json_is('/prep_reminder_before', 0)
+            ->tx->res->json;
+        };
+
+        my $notification_queue_rs = $schema->resultset('NotificationQueue');
+
+        ok my $worker = Prep::Worker::PrepReminder->new(
+            schema      => $schema,
+            logger      => $t->app->log,
+            max_process => 1,
+        );
+
+        my @queue = $worker->_queue_rs;
+        is @queue, 0;
+
+        ok $prep_reminder->update( { reminder_temporal_wait_until => \"NOW() - INTERVAL '10 MINUTES'" } );
+        ok $prep_reminder->discard_changes;
+
+        @queue = $worker->_queue_rs;
+        is @queue, 1;
+
+        ok $worker->run_once();
+
+        @queue = $worker->_queue_rs;
+        is @queue, 0;
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/prep-reminder-yes',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        ok $prep_reminder->discard_changes;
+        ok defined $prep_reminder->reminder_temporal_last_sent_at;
+        ok defined $prep_reminder->reminder_temporal_confirmed_at;
+
+        @queue = $worker->_queue_rs;
+        is @queue, 0;
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/prep-reminder-yes',
+            form => {
+                security_token => $security_token,
+                combina_city   => 'São Paulo',
+            }
+        )
+        ->status_is(400)
+        ->tx->res->json;
+
+        $res = $t->post_ok(
+            '/api/chatbot/recipient/prep-reminder-yes',
+            form => {
+                security_token => $security_token,
+                voucher_type   => 'combina',
+                combina_city   => 'Ribeirão Preto',
+            }
+        )
+        ->status_is(400)
+        ->tx->res->json;
+
+        $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+                combina_reminder_hours_before => '10:00:00',
+                combina_reminder_hour_exact => '20:00:00',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        $res = $t->get_ok(
+        '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
+
+        $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+                combina_reminder_22h => '2020-04-24T14:32:24.759',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        $res = $t->put_ok(
+            '/api/chatbot/recipient',
+            form => {
+                security_token       => $security_token,
+                fb_id                => '710488549074724',
+                combina_reminder_double => '2020-04-24T14:32:24',
+            }
+        )
+        ->status_is(200)
+        ->json_has('/id')
+        ->tx->res->json;
+
+        $res = $t->get_ok(
+        '/api/chatbot/recipient',
+            form => {
+                security_token => $security_token,
+                fb_id          => '710488549074724'
+            }
+        )
+        ->status_is(200)
+        ->tx->res->json;
     };
 };
 

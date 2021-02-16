@@ -20,15 +20,18 @@ sub is_test {
 }
 
 sub get_ymd_by_day_of_the_week {
-    my ($day_of_the_week) = @_;
+    my (%opts) = @_;
 
-    my $now = DateTime->now;
+    my $day_of_the_week = $opts{dow};
 
-    while ( $now->day_of_week != $day_of_the_week ) {
-        $now->add( days => 1 );
+    my $now  = DateTime->now;
+    my $date = $now->add( weeks => $opts{week} );
+
+    while ( $date->day_of_week != $day_of_the_week ) {
+        $date->add( days => 1 );
     }
 
-    return $now->ymd;
+    return $date->ymd;
 }
 
 sub env { return $ENV{${\shift}} }

@@ -4,9 +4,13 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ASKED_TO_EXIT	./lib/Prep/TrapSignals.pm	/^sub ASKED_TO_EXIT {$/;"	s
 Data::Verifier	./lib/Data/Verifier.pm	/^package Data::Verifier;$/;"	p
+EXIT_IF_ASKED	./lib/Prep/TrapSignals.pm	/^sub EXIT_IF_ASKED {$/;"	s
 Mojolicious::Plugin::Detach	./lib/Mojolicious/Plugin/Detach.pm	/^package Mojolicious::Plugin::Detach;$/;"	p
 Mojolicious::Plugin::SimpleAuthentication	./lib/Mojolicious/Plugin/SimpleAuthentication.pm	/^package Mojolicious::Plugin::SimpleAuthentication;$/;"	p
+ON_TERM_EXIT	./lib/Prep/TrapSignals.pm	/^sub ON_TERM_EXIT {$/;"	s
+ON_TERM_WAIT	./lib/Prep/TrapSignals.pm	/^sub ON_TERM_WAIT {$/;"	s
 Prep	./lib/Prep.pm	/^package Prep;$/;"	p
 Prep::Authentication	./lib/Prep/Authentication.pm	/^package Prep::Authentication;$/;"	p
 Prep::Authorization	./lib/Prep/Authorization.pm	/^package Prep::Authorization;$/;"	p
@@ -34,6 +38,7 @@ Prep::Controller::Internal::Integration::Recipient::Notification	./lib/Prep/Cont
 Prep::Controller::Internal::Integration::Recipient::Sync	./lib/Prep/Controller/Internal/Integration/Recipient/Sync.pm	/^package Prep::Controller::Internal::Integration::Recipient::Sync;$/;"	p
 Prep::Data::Manager	./lib/Prep/Data/Manager.pm	/^package Prep::Data::Manager;$/;"	p
 Prep::Data::Visitor	./lib/Prep/Data/Visitor.pm	/^package Prep::Data::Visitor;$/;"	p
+Prep::Logger	./lib/Prep/Logger.pm	/^package Prep::Logger;$/;"	p
 Prep::Role::Verification	./lib/Prep/Role/Verification.pm	/^package Prep::Role::Verification;$/;"	p
 Prep::Role::Verification::TransactionalActions	./lib/Prep/Role/Verification/TransactionalActions.pm	/^package Prep::Role::Verification::TransactionalActions;$/;"	p
 Prep::Role::Verification::TransactionalActions::DBIC	./lib/Prep/Role/Verification/TransactionalActions/DBIC.pm	/^package Prep::Role::Verification::TransactionalActions::DBIC;$/;"	p
@@ -54,6 +59,8 @@ Prep::Schema::Result::MinionJob	./lib/Prep/Schema/Result/MinionJob.pm	/^package 
 Prep::Schema::Result::MinionLock	./lib/Prep/Schema/Result/MinionLock.pm	/^package Prep::Schema::Result::MinionLock;$/;"	p
 Prep::Schema::Result::MinionWorker	./lib/Prep/Schema/Result/MinionWorker.pm	/^package Prep::Schema::Result::MinionWorker;$/;"	p
 Prep::Schema::Result::MojoMigration	./lib/Prep/Schema/Result/MojoMigration.pm	/^package Prep::Schema::Result::MojoMigration;$/;"	p
+Prep::Schema::Result::NotificationQueue	./lib/Prep/Schema/Result/NotificationQueue.pm	/^package Prep::Schema::Result::NotificationQueue;$/;"	p
+Prep::Schema::Result::NotificationType	./lib/Prep/Schema/Result/NotificationType.pm	/^package Prep::Schema::Result::NotificationType;$/;"	p
 Prep::Schema::Result::Question	./lib/Prep/Schema/Result/Question.pm	/^package Prep::Schema::Result::Question;$/;"	p
 Prep::Schema::Result::QuestionMap	./lib/Prep/Schema/Result/QuestionMap.pm	/^package Prep::Schema::Result::QuestionMap;$/;"	p
 Prep::Schema::Result::Recipient	./lib/Prep/Schema/Result/Recipient.pm	/^package Prep::Schema::Result::Recipient;$/;"	p
@@ -74,17 +81,26 @@ Prep::Schema::ResultSet::QuestionMap	./lib/Prep/Schema/ResultSet/QuestionMap.pm	
 Prep::Schema::ResultSet::Recipient	./lib/Prep/Schema/ResultSet/Recipient.pm	/^package Prep::Schema::ResultSet::Recipient;$/;"	p
 Prep::Schema::ResultSet::TermSignature	./lib/Prep/Schema/ResultSet/TermSignature.pm	/^package Prep::Schema::ResultSet::TermSignature;$/;"	p
 Prep::SchemaConnected	./lib/Prep/SchemaConnected.pm	/^package Prep::SchemaConnected;$/;"	p
+Prep::TrapSignals	./lib/Prep/TrapSignals.pm	/^package Prep::TrapSignals;$/;"	p
 Prep::Types	./lib/Prep/Types.pm	/^package Prep::Types;$/;"	p
 Prep::Utils	./lib/Prep/Utils.pm	/^package Prep::Utils;$/;"	p
+Prep::Worker	./lib/Prep/Worker.pm	/^package Prep::Worker;$/;"	p
+Prep::Worker::Notify	./lib/Prep/Worker/Notify.pm	/^package Prep::Worker::Notify;$/;"	p
 WebService::Facebook	./lib/WebService/Facebook.pm	/^package WebService::Facebook;$/;"	p
 WebService::GoogleCalendar	./lib/WebService/GoogleCalendar.pm	/^package WebService::GoogleCalendar;$/;"	p
 WebService::Simprep	./lib/WebService/Simprep.pm	/^package WebService::Simprep;$/;"	p
 _build__calendar	./lib/Prep/Schema/Result/Calendar.pm	/^sub _build__calendar { WebService::GoogleCalendar->instance }$/;"	s
+_build__simprep	./lib/Prep/Schema/Result/Recipient.pm	/^sub _build__simprep { WebService::Simprep->instance }$/;"	s
 _build_furl	./lib/WebService/GoogleCalendar.pm	/^sub _build_furl { Furl->new() }$/;"	s
+_build_ioloop	./lib/Prep/Worker/Notify.pm	/^sub _build_ioloop { Mojo::IOLoop->singleton }$/;"	s
+_build_logger	./lib/Prep/Worker/Notify.pm	/^sub _build_logger { &get_logger }$/;"	s
+_build_schema	./lib/Prep/Worker/Notify.pm	/^sub _build_schema { &get_schema }$/;"	s
 _build_ua	./lib/WebService/Facebook.pm	/^sub _build_ua { LWP::UserAgent->new() }$/;"	s
 _build_ua	./lib/WebService/Simprep.pm	/^sub _build_ua { LWP::UserAgent->new() }$/;"	s
+_extract_basename	./lib/Prep/Logger.pm	/^sub _extract_basename {$/;"	s
 _filter_value	./lib/Data/Verifier.pm	/^sub _filter_value {$/;"	s
 _get_random_string	./lib/Mojolicious/Plugin/Detach.pm	/^sub _get_random_string {$/;"	s
+_queue_rs	./lib/Prep/Worker/Notify.pm	/^sub _queue_rs {$/;"	s
 _wrap_in_transaction	./lib/Prep/Role/Verification/TransactionalActions/DBIC.pm	/^sub _wrap_in_transaction {$/;"	s
 action_specs	./lib/Prep/Schema/Result/Recipient.pm	/^sub action_specs {$/;"	s
 action_specs	./lib/Prep/Schema/ResultSet/Answer.pm	/^sub action_specs {$/;"	s
@@ -96,6 +112,7 @@ all_flags	./lib/Prep/Schema/Result/Recipient.pm	/^sub all_flags {$/;"	s
 all_screening_flags	./lib/Prep/Schema/Result/Recipient.pm	/^sub all_screening_flags {$/;"	s
 answer_by_choice_value	./lib/Prep/Schema/Result/Question.pm	/^sub answer_by_choice_value {$/;"	s
 answered_questions	./lib/Prep/Schema/Result/Stash.pm	/^sub answered_questions {$/;"	s
+answers_for_integration	./lib/Prep/Schema/Result/Recipient.pm	/^sub answers_for_integration {$/;"	s
 apply	./lib/Prep/Data/Manager.pm	/^sub apply {$/;"	s
 appointment_description	./lib/Prep/Schema/Result/Recipient.pm	/^sub appointment_description {$/;"	s
 assert_quota_number	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub assert_quota_number {$/;"	s
@@ -118,6 +135,8 @@ execute	./lib/Prep/Role/Verification.pm	/^sub execute {$/;"	s
 fail_render	./lib/Prep/Authorization.pm	/^sub fail_render {$/;"	s
 finished_quiz	./lib/Prep/Schema/Result/Recipient.pm	/^sub finished_quiz {$/;"	s
 flags	./lib/Prep/Schema/Result/Answer.pm	/^sub flags {$/;"	s
+followup_messages	./lib/Prep/Schema/Result/Answer.pm	/^sub followup_messages {$/;"	s
+fun_questions_score	./lib/Prep/Schema/Result/Recipient.pm	/^sub fun_questions_score {$/;"	s
 generate_integration_token	./lib/Prep/Schema/Result/Recipient.pm	/^sub generate_integration_token {$/;"	s
 generate_token	./lib/WebService/GoogleCalendar.pm	/^sub generate_token {$/;"	s
 get	./lib/Prep/Controller/Chatbot/Appointment/AvailableCalendars.pm	/^sub get {$/;"	s
@@ -133,6 +152,7 @@ get_calendar_event_at_time	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar
 get_calendar_events	./lib/WebService/GoogleCalendar.pm	/^sub get_calendar_events {$/;"	s
 get_connect_info	./lib/Prep/SchemaConnected.pm	/^sub get_connect_info {$/;"	s
 get_form_for_notification	./lib/WebService/Simprep.pm	/^sub get_form_for_notification {$/;"	s
+get_info	./lib/Prep/Schema/Result/NotificationType.pm	/^sub get_info {$/;"	s
 get_next_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_next_question_data {$/;"	s
 get_pending_question_data	./lib/Prep/Schema/Result/Recipient.pm	/^sub get_pending_question_data {$/;"	s
 get_persona	./lib/WebService/Facebook.pm	/^sub get_persona {$/;"	s
@@ -142,6 +162,7 @@ get_ymd_by_day_of_the_week	./lib/Prep/Utils.pm	/^sub get_ymd_by_day_of_the_week 
 go_to_appointment	./lib/Prep/Schema/Result/Recipient.pm	/^sub go_to_appointment {$/;"	s
 go_to_test	./lib/Prep/Schema/Result/Recipient.pm	/^sub go_to_test {$/;"	s
 has_appointments	./lib/Prep/Schema/Result/Recipient.pm	/^sub has_appointments {$/;"	s
+has_followup_messages	./lib/Prep/Schema/Result/Answer.pm	/^sub has_followup_messages {$/;"	s
 has_priv	./lib/Prep/Authorization.pm	/^sub has_priv {$/;"	s
 info	./lib/Prep/Schema/Result/Appointment.pm	/^sub info {$/;"	s
 initiate	./lib/Prep/Schema/Result/Stash.pm	/^sub initiate {$/;"	s
@@ -152,12 +173,21 @@ is_prep	./lib/Prep/Schema/Result/Recipient.pm	/^sub is_prep {$/;"	s
 is_role	./lib/Prep/Authorization.pm	/^sub is_role    {$/;"	s
 is_target_audience	./lib/Prep/Schema/Result/Recipient.pm	/^sub is_target_audience {$/;"	s
 is_test	./lib/Prep/Utils.pm	/^sub is_test {$/;"	s
+listen_queue	./lib/Prep/Worker/Notify.pm	/^sub listen_queue {$/;"	s
 load_user	./lib/Prep/Authentication.pm	/^sub load_user {$/;"	s
+log_and_exit	./lib/Prep/TrapSignals.pm	/^sub log_and_exit {$/;"	s
+log_and_wait	./lib/Prep/TrapSignals.pm	/^sub log_and_wait {$/;"	s
+log_error	./lib/Prep/Logger.pm	/^sub log_error {$/;"	s
+log_fatal	./lib/Prep/Logger.pm	/^sub log_fatal {$/;"	s
+log_info	./lib/Prep/Logger.pm	/^sub log_info {$/;"	s
+message_for_fun_questions_score	./lib/Prep/Schema/Result/Recipient.pm	/^sub message_for_fun_questions_score {$/;"	s
 most_recent_screening	./lib/Prep/Schema/Result/Recipient.pm	/^sub most_recent_screening {$/;"	s
+multiple_choices_score_map	./lib/Prep/Schema/Result/Question.pm	/^sub multiple_choices_score_map {$/;"	s
 next_question	./lib/Prep/Schema/Result/Stash.pm	/^sub next_question {$/;"	s
 parsed	./lib/Prep/Schema/Result/QuestionMap.pm	/^sub parsed {$/;"	s
 parsed	./lib/Prep/Schema/Result/Stash.pm	/^sub parsed {$/;"	s
 parsed	./lib/Prep/Schema/ResultSet/QuestionMap.pm	/^sub parsed {$/;"	s
+pending_jobs	./lib/Prep/Worker/Notify.pm	/^sub pending_jobs {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/Answer.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Chatbot/Recipient/Appointment.pm	/^sub post {$/;"	s
@@ -171,6 +201,7 @@ post	./lib/Prep/Controller/Chatbot/Recipient/TermSignature.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Internal/DeleteAnswer.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Internal/Integration/Recipient/Notification.pm	/^sub post {$/;"	s
 post	./lib/Prep/Controller/Internal/Integration/Recipient/Sync.pm	/^sub post {$/;"	s
+process_item_p	./lib/Prep/Worker/Notify.pm	/^sub process_item_p {$/;"	s
 put	./lib/Prep/Controller/Chatbot/Recipient.pm	/^sub put {$/;"	s
 question_code_by_map_id	./lib/Prep/Schema/ResultSet/Answer.pm	/^sub question_code_by_map_id {$/;"	s
 quota_map	./lib/Prep/Schema/Result/AppointmentWindow.pm	/^sub quota_map {$/;"	s
@@ -178,14 +209,19 @@ register	./lib/Mojolicious/Plugin/Detach.pm	/^sub register {$/;"	s
 register	./lib/Mojolicious/Plugin/SimpleAuthentication.pm	/^sub register {$/;"	s
 register	./lib/Prep/Routes.pm	/^sub register {$/;"	s
 register_recipient	./lib/WebService/Simprep.pm	/^sub register_recipient {$/;"	s
+register_simprep	./lib/Prep/Schema/Result/Recipient.pm	/^sub register_simprep {$/;"	s
 remove_question	./lib/Prep/Schema/Result/Stash.pm	/^sub remove_question {$/;"	s
 reply_exception	./lib/Prep/Controller.pm	/^sub reply_exception {$/;"	s
 reply_forbidden	./lib/Prep/Controller.pm	/^sub reply_forbidden {$/;"	s
 reply_not_found	./lib/Prep/Controller.pm	/^sub reply_not_found {$/;"	s
 reset_screening	./lib/Prep/Schema/Result/Recipient.pm	/^sub reset_screening {$/;"	s
 rules_parsed	./lib/Prep/Schema/Result/Question.pm	/^sub rules_parsed {$/;"	s
+run_all	./lib/Prep/Worker/Notify.pm	/^sub run_all {$/;"	s
+run_once	./lib/Prep/Worker/Notify.pm	/^sub run_once {$/;"	s
 save_asset	./lib/WebService/Facebook.pm	/^sub save_asset {$/;"	s
+score_for_answer_value	./lib/Prep/Schema/Result/Question.pm	/^sub score_for_answer_value {$/;"	s
 screening_first_answer	./lib/Prep/Schema/Result/Recipient.pm	/^sub screening_first_answer {$/;"	s
+send	./lib/Prep/Schema/Result/NotificationQueue.pm	/^sub send {$/;"	s
 send_message	./lib/WebService/Facebook.pm	/^sub send_message {$/;"	s
 signed_term	./lib/Prep/Schema/Result/Recipient.pm	/^sub signed_term {$/;"	s
 startup	./lib/Prep.pm	/^sub startup {$/;"	s
@@ -216,4 +252,5 @@ verifiers_specs	./lib/Prep/Schema/ResultSet/Recipient.pm	/^sub verifiers_specs {
 verifiers_specs	./lib/Prep/Schema/ResultSet/TermSignature.pm	/^sub verifiers_specs {$/;"	s
 verify	./lib/Data/Verifier.pm	/^sub verify {$/;"	s
 verify_question_condition	./lib/Prep/Schema/Result/Recipient.pm	/^sub verify_question_condition {$/;"	s
+verify_voucher	./lib/WebService/Simprep.pm	/^sub verify_voucher {$/;"	s
 visit_hash	./lib/Prep/Data/Visitor.pm	/^sub visit_hash {$/;"	s

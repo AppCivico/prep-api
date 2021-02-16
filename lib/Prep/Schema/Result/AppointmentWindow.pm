@@ -84,7 +84,7 @@ __PACKAGE__->table("appointment_window");
 
 =head2 custom_quota_time
 
-  data_type: 'time'
+  data_type: 'interval'
   is_nullable: 1
 
 =cut
@@ -115,7 +115,7 @@ __PACKAGE__->add_columns(
     original      => { default_value => \"now()" },
   },
   "custom_quota_time",
-  { data_type => "time", is_nullable => 1 },
+  { data_type => "interval", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -178,8 +178,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-01-28 09:47:50
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LnsdPwYR7lyvanwrbZgzcQ
+# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-06-21 09:48:37
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:7eE0tw+yKnK2/e05BwTQTA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -202,7 +202,7 @@ sub get_quota_info {
     my ($count, $time_in_secs);
     if ( $self->custom_quota_time ) {
         $time_in_secs = Time::Piece->strptime( $self->custom_quota_time, '%H:%M:%S' );
-        $time_in_secs = ( $time_in_secs->min * 60 ) + $time_in_secs->sec;
+        $time_in_secs = $time_in_secs->[9];
 
         $count = $delta / $time_in_secs;
     }
@@ -256,7 +256,7 @@ sub assert_quota_number {
     $self->appointment_window_days_of_week->search( { day_of_week => $start_time->day_of_week } )->next
       or die \['datetime_start', 'no appointments on this day of week'];
 
-    my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'invalid'];
+    my $selected_quota = $quota_map->{ $opts{quota_number} } or die \['quota_number', 'not-present-in-quota-map'];
 
     # Verificando hms
     die \[ 'datetime_start', 'does not matches quota start time' ] unless $selected_quota->{start} eq $start_time->hms;

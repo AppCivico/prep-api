@@ -8,3 +8,6 @@
 /log/development.log
 /log/production.log
 tags
+perltidy.ERR
+.vscode/
+prep.sql

@@ -36,3 +36,32 @@
 0032-add-city [0031-add-prep_since] 2019-04-03T19:22:33Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the 'city' column to the 'recipient' table
 0033-update-city [0032-add-city] 2019-04-04T16:47:35Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Updating the city
 0034-signature-url [0033-update-city] 2019-05-24T18:09:03Z Lucas Ansei,,, <lucas@lucas-G750JX> # Removing not null on url for term signature
+0035-add-notification_queue [0034-signature-url] 2019-06-03T14:27:39Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding the notification_queue table
+0036-add-created_by_chatbot [0035-add-notification_queue] 2019-06-10T17:05:48Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding the 'created_by_chatbot' boolean on the 'appointment' table
+0037-custom_quota_time [0036-add-created_by_chatbot] 2019-06-21T12:53:24Z Lucas Ansei,,, <lucas@lucas-G750JX> # Updating the custom quota time column
+0038-add-notification_type [0037-custom_quota_time] 2019-09-16T14:04:12Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding one notification type
+0039-add-categories [0038-add-notification_type] 2020-01-23T19:03:35Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding new quiz categories
+0040-add-risk-group [0039-add-categories] 2020-01-23T19:03:58Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding risk group flag
+0041-add-flags [0040-add-risk-group] 2020-02-04T18:30:11Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding more flags
+0042-recipient_integration [0041-add-flags] 2020-02-04T18:30:55Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the recipient_integration table
+0043-add-counts [0042-recipient_integration] 2020-02-04T19:42:47Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # adding more counts to the recipient table
+0044-add-phone-instagram [0043-add-counts] 2020-02-07T14:33:54Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding both the 'phone' and 'instagram' cols on the 'recipient' table
+0045-add-interaction [0044-add-phone-instagram] 2020-02-10T18:40:25Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Creating the interaction table
+0046-add-quick_reply_log [0045-add-interaction] 2020-02-11T18:02:10Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding quick_reply_log table
+0047-allow-multiple-responses [0046-add-quick_reply_log] 2020-03-05T22:00:09Z lucas-eokoe,,, <lucas-eokoe@lucaseokoe-Lenovo-G400s> # Adding cols needed in order to support multiple responses
+0048-add-cols [0047-allow-multiple-responses] 2020-03-17T17:41:18Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding cols to the 'recipient' table
+0049-is_prep-default [0048-add-cols] 2020-03-20T20:15:56Z Lucas Ansei,,, <lucas@lucas-G750JX> # Removing default value for 'is_prep' boolean
+0050-add-category [0049-is_prep-default] 2020-03-20T20:16:53Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding a new category for a question map
+0051-add-triagem-category [0050-add-category] 2020-03-23T18:21:21Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding the 'triagem' question_map category
+0052-update-col [0051-add-triagem-category] 2020-03-25T18:59:42Z Lucas Ansei,,, <lucas@lucas-G750JX> # Updating the reminder col
+0053-add-reminder [0052-update-col] 2020-04-13T18:56:50Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding reminder
+0054-add-test_request [0053-add-reminder] 2020-04-16T16:47:43Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding test-request
+0055-add-quiz-type [0054-add-test_request] 2020-04-16T17:04:29Z Lucas Ansei,,, <lucas@lucas-G750JX> # adding the 'duvidas_nao_prep' quiz type
+0056-add-running-out-data [0055-add-quiz-type] 2020-04-22T17:25:27Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding prep reminder running out
+0057-add-notification-type [0056-add-running-out-data] 2020-04-23T17:51:51Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding new notification type
+0058-add-combina-voucher [0057-add-notification-type] 2020-04-23T19:51:53Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding the 'combina_voucher' table
+0059-add-combina_city [0058-add-combina-voucher] 2020-04-24T18:36:51Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding combina_city on the recipient table
+0060-add-combina-reminder [0059-add-combina_city] 2020-04-24T20:34:03Z Lucas Ansei,,, <lucas@lucas-G750JX> # Creating the 'combina_reminder' table
+0061-add-uniq-combina_voucher [0060-add-combina-reminder] 2020-04-27T18:08:21Z Lucas Ansei,,, <lucas@lucas-G750JX> # Adding unique constraint on the 'combina_voucher' table
+0062-add-calendar-holidays [0061-add-uniq-combina_voucher] 2020-11-18T19:40:18Z lucas,,, <lucas@lucas-G750JX> # i
+0063-add-active-calendars [0062-add-calendar-holidays] 2020-11-18T20:06:03Z lucas,,, <lucas@lucas-G750JX> # i

@@ -19,3 +19,9 @@ export SIMPREP_API_URL="http://206.189.170.15/api"
 export SIMPREP_TOKEN="f1ed2d512acf7525c3a8244091711b4b16b9f33e"
 
 export FB_API_URL="https://graph.facebook.com/v3.2"
+
+export ASSISTENTE_CIVICO_API_URL="https://dapi-assistente.appcivico.com"
+export ASSISTENTE_CIVICO_CHATBOT_ID="226"
+export ASSISTENTE_CIVICO_METRICS_SECURITY_TOKEN="prep-dev"
+
+export HOLIDAY_API_ACCESS_TOKEN="bHVjYXMuYW5zZWlAYXBwY2l2aWNvLmNvbSZoYXNoPTMyMjYzNDcz"

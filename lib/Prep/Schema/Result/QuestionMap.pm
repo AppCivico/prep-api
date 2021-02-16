@@ -194,6 +194,20 @@ sub parsed {
     return decode_json( $self->map );
 }
 
+sub can_be_iterated {
+    my $self = shift;
+
+    return $self->category->can_be_iterated;
+}
+
+sub count_questions {
+    my $self = shift;
+
+    my $questions = $self->parsed;
+
+    return scalar keys %{ $questions };
+}
+
 sub build_conditions {
     my ($self, %opts) = @_;
 

@@ -48,7 +48,7 @@ sub verifiers_specs {
                             }
                         )->count;
 
-                        die \['quota_number', 'invalid'] if $count > 0;
+                        die \['quota_number', 'invalid'] if $count == 1;
 
                         return 1;
                     }
@@ -85,42 +85,79 @@ sub action_specs {
             my %values = $r->valid_values;
             not defined $values{$_} and delete $values{$_} for keys %values;
 
-            my $type = delete $values{type};
-            $type    = $self->result_source->schema->resultset('AppointmentType')->search( { name => $type } )->next;
+            my $appointment;
+            $self->result_source->schema->txn_do( sub {
 
-            # TODO verificar pelo WS do GCalendar para ver se o horario está
-            # disponivel ainda
-            my $ws = WebService::GoogleCalendar->instance();
+                my $type = delete $values{type};
+                $type    = $self->result_source->schema->resultset('AppointmentType')->search( { name => $type } )->next;
 
-            my $datetime_start = delete $values{datetime_start};
-            my $datetime_end   = delete $values{datetime_end};
+                # TODO verificar pelo WS do GCalendar para ver se o horario está
+                # disponivel ainda
+                my $ws = WebService::GoogleCalendar->instance();
 
-            my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
-            my $calendar           = $appointment_window->calendar;
+                my $datetime_start = delete $values{datetime_start};
+                my $datetime_end   = delete $values{datetime_end};
 
-            $values{calendar_id}         = $calendar->id;
-            $values{appointment_at}      = $datetime_start;
-            $values{appointment_type_id} = $type->id;
+                my $appointment_window = $self->result_source->schema->resultset('AppointmentWindow')->find($values{appointment_window_id});
+                my $calendar           = $appointment_window->calendar;
 
-            # Verificando se o número da quota bate com o horário
-            $appointment_window->assert_quota_number(
-                quota_number   => $values{quota_number},
-                datetime_start => $datetime_start,
-                datetime_end   => $datetime_end
-            );
+                $values{calendar_id}         = $calendar->id;
+                $values{appointment_at}      = $datetime_start;
+                $values{appointment_type_id} = $type->id;
+                $values{created_by_chatbot}  = 1;
+                $values{notification_created_at} = \'NOW()';
 
-            my $appointment = $self->create(\%values);
+                # Verificando se o número da quota bate com o horário
+                $appointment_window->assert_quota_number(
+                    quota_number   => $values{quota_number},
+                    datetime_start => $datetime_start,
+                    datetime_end   => $datetime_end
+                );
 
-            my $recipient = $appointment->recipient;
+                $appointment = $self->create(\%values);
 
-            $ws->create_event(
-               calendar       => $calendar,
-               calendar_id    => $calendar->google_id,
-               datetime_start => $datetime_start,
-               datetime_end   => $datetime_end,
-               summary        => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
-               description    => $recipient->appointment_description
-            );
+                my $recipient = $appointment->recipient;
+
+                $ws->create_event(
+                    calendar           => $calendar,
+                    calendar_id        => $calendar->google_id,
+                    datetime_start     => $datetime_start,
+                    datetime_end       => $datetime_end,
+                    summary            => 'Consulta de ' . $type->name .  ': ' . $recipient->name,
+                    description        => $recipient->appointment_description($appointment->id),
+                );
+
+                # Criando notificação
+                my $notification_rs = $self->result_source->schema->resultset('NotificationQueue');
+                my $appointment_ts  = $appointment->appointment_at;
+
+                my $day   = $appointment_ts->day;
+                my $month = $appointment_ts->month;
+                my $hms   = $appointment_ts->hms;
+
+                my $voucher = $recipient->integration_token;
+                my $text;
+
+                if (defined $voucher) {
+                    $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms. E toma aqui o seu voucher: $voucher.";
+                }
+                else {
+                    $text = "Bafo! Tem uma consulta chegando, olha só: dia $day/$month às $hms.";
+                }
+
+                my $notification = $notification_rs->create(
+                    {
+                        recipient_id => $appointment->recipient_id,
+                        type_id      => 2,
+                        text         => $text,
+                        wait_until   => $appointment->appointment_at->subtract( days => 2 )
+                    }
+                );
+
+                # Verifico se o recipient ainda possui pendente a notificação 'no_appointment_after_7_days_quiz'
+                # Caso seja possua, removo-a.
+                $recipient->notification_queues->search( { type_id => 8, sent_at => \'IS NULL' } )->delete;
+            });
 
             return $appointment;
         }

@@ -128,6 +128,50 @@ __PACKAGE__->table("recipient");
   data_type: 'text'
   is_nullable: 1
 
+=head2 count_publico_interesse
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
+=head2 count_recrutamento
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
+=head2 count_quiz_brincadeira
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
+=head2 phone
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 instagram
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 voucher_type
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 prep_reminder_on_demand
+
+  data_type: 'boolean'
+  default_value: false
+  is_nullable: 0
+
+=head2 combina_city
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -179,6 +223,22 @@ __PACKAGE__->add_columns(
   { data_type => "integer", default_value => 0, is_nullable => 0 },
   "city",
   { data_type => "text", is_nullable => 1 },
+  "count_publico_interesse",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "count_recrutamento",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "count_quiz_brincadeira",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
+  "phone",
+  { data_type => "text", is_nullable => 1 },
+  "instagram",
+  { data_type => "text", is_nullable => 1 },
+  "voucher_type",
+  { data_type => "text", is_nullable => 1 },
+  "prep_reminder_on_demand",
+  { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "combina_city",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -206,6 +266,18 @@ __PACKAGE__->set_primary_key("id");
 =cut
 
 __PACKAGE__->add_unique_constraint("recipient_fb_id_key", ["fb_id"]);
+
+=head2 C<voucher_unique>
+
+=over 4
+
+=item * L</integration_token>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint("voucher_unique", ["integration_token"]);
 
 =head1 RELATIONS
 
@@ -254,6 +326,36 @@ __PACKAGE__->might_have(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 combina_reminder
+
+Type: might_have
+
+Related object: L<Prep::Schema::Result::CombinaReminder>
+
+=cut
+
+__PACKAGE__->might_have(
+  "combina_reminder",
+  "Prep::Schema::Result::CombinaReminder",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 combina_vouchers
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::CombinaVoucher>
+
+=cut
+
+__PACKAGE__->has_many(
+  "combina_vouchers",
+  "Prep::Schema::Result::CombinaVoucher",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 external_notifications
 
 Type: has_many
@@ -269,6 +371,66 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 interactions
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::Interaction>
+
+=cut
+
+__PACKAGE__->has_many(
+  "interactions",
+  "Prep::Schema::Result::Interaction",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 notification_queues
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::NotificationQueue>
+
+=cut
+
+__PACKAGE__->has_many(
+  "notification_queues",
+  "Prep::Schema::Result::NotificationQueue",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 prep_reminder
+
+Type: might_have
+
+Related object: L<Prep::Schema::Result::PrepReminder>
+
+=cut
+
+__PACKAGE__->might_have(
+  "prep_reminder",
+  "Prep::Schema::Result::PrepReminder",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 quick_reply_logs
+
+Type: has_many
+
+Related object: L<Prep::Schema::Result::QuickReplyLog>
+
+=cut
+
+__PACKAGE__->has_many(
+  "quick_reply_logs",
+  "Prep::Schema::Result::QuickReplyLog",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 recipient_flag
 
 Type: might_have
@@ -280,6 +442,21 @@ Related object: L<Prep::Schema::Result::RecipientFlag>
 __PACKAGE__->might_have(
   "recipient_flag",
   "Prep::Schema::Result::RecipientFlag",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 recipient_integration
+
+Type: might_have
+
+Related object: L<Prep::Schema::Result::RecipientIntegration>
+
+=cut
+
+__PACKAGE__->might_have(
+  "recipient_integration",
+  "Prep::Schema::Result::RecipientIntegration",
   { "foreign.recipient_id" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
 );
@@ -329,9 +506,24 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 test_requests
 
-# Created by DBIx::Class::Schema::Loader v0.07047 @ 2019-04-03 16:11:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:IPRb2gU+2jAqA3tXFJOubw
+Type: has_many
+
+Related object: L<Prep::Schema::Result::TestRequest>
+
+=cut
+
+__PACKAGE__->has_many(
+  "test_requests",
+  "Prep::Schema::Result::TestRequest",
+  { "foreign.recipient_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07049 @ 2020-04-24 17:07:31
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:D3KBRt1jzKM6OTby7//S0w
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
@@ -340,6 +532,7 @@ with 'Prep::Role::Verification';
 with 'Prep::Role::Verification::TransactionalActions::DBIC';
 
 use WebService::Simprep;
+use Prep::Logger;
 
 has _simprep => (
     is         => 'ro',
@@ -347,13 +540,23 @@ has _simprep => (
     lazy_build => 1,
 );
 
+has logger => (
+    is      => 'rw',
+    lazy    => 1,
+    builder => '_build_logger',
+);
+
 use Prep::Utils qw(is_test);
 
 use Text::CSV;
 use DateTime;
 use JSON;
+use DateTime::Format::Pg;
+
+use Prep::Types qw(MobileNumber);
 
 sub _build__simprep { WebService::Simprep->instance }
+sub _build_logger { &get_logger }
 
 sub verifiers_specs {
     my $self = shift;
@@ -381,7 +584,89 @@ sub verifiers_specs {
                 is_prep => {
                     required => 0,
                     type     => 'Bool'
-                }
+                },
+                phone => {
+                    required => 0,
+                    type     => MobileNumber,
+                },
+                instagram => {
+                    required   => 0,
+                    type       => 'Str',
+                    max_length => 30,
+                },
+                voucher_type => {
+                    required   => 0,
+                    type       => 'Str',
+                    post_check => sub {
+                        my $voucher_type = $_[0]->get_value('voucher_type');
+
+                        die \['voucher_type', 'invalid'] unless $voucher_type =~ /^(sus|sisprep|combina)$/;
+
+                        return 1;
+                    }
+                },
+                prep_reminder_before => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                prep_reminder_before_interval => {
+                    required => 0,
+                    type     => 'Str'
+                    # TODO mudar type e adicionar verificação
+                },
+                prep_reminder_after => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                prep_reminder_after_interval => {
+                    required => 0,
+                    type     => 'Str'
+                    # TODO mudar type e adicionar verificação
+                },
+                prep_reminder_on_demand => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                prep_reminder_running_out => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                prep_reminder_running_out_date => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                prep_reminder_running_out_count => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                cancel_prep_reminder => {
+                    required => 0,
+                    type     => 'Bool'
+                },
+                integration_token => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_city => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_reminder_hours_before => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_reminder_hour_exact => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_reminder_22h => {
+                    required => 0,
+                    type     => 'Str'
+                },
+                combina_reminder_double => {
+                    required => 0,
+                    type     => 'Str'
+                },
             }
         ),
         research_participation => Data::Verifier->new(
@@ -404,7 +689,7 @@ sub verifiers_specs {
                     required => 0,
                     type     => 'Bool'
                 },
-                Appointment => {
+                appointment => {
                     required => 0,
                     type     => 'HashRef'
                 }
@@ -420,8 +705,14 @@ sub action_specs {
         update => sub {
             my $r = shift;
 
+            my $logger = $self->logger;
+
             my %values = $r->valid_values;
-            not defined $values{$_} and delete $values{$_} for keys %values;
+
+            for my $key (keys %values) {
+                next if $key =~ /^(prep_reminder_after|prep_reminder_before)$/;
+                not defined $values{$key} and delete $values{$key}
+            }
 
             my @updatable_flags = qw( is_part_of_research is_prep );
             for my $flag ( @updatable_flags ) {
@@ -431,7 +722,363 @@ sub action_specs {
                 delete $values{$flag};
             }
 
-            $self->update(\%values);
+            if ($values{prep_reminder_before} && $values{prep_reminder_after}) {
+                die \['prep_reminder_after', 'not-allowed'];
+            }
+
+            if ($values{prep_reminder_before}) {
+                die \['prep_reminder_before_interval', 'missing'] unless $values{prep_reminder_before_interval};
+            }
+
+            if ($values{prep_reminder_after}) {
+                die \['prep_reminder_after_interval', 'missing'] unless $values{prep_reminder_after_interval};
+            }
+
+            my ($running_out_wait_until, $running_out_followup_wait_until);
+            $self->result_source->schema->txn_do( sub {
+
+
+                # Tratando config de alarmes.
+                if ( defined $values{prep_reminder_after} || defined $values{prep_reminder_before} || defined $values{prep_reminder_running_out} ) {
+                    die \['fb_id', 'must-be-prep'] unless $self->recipient_flag->is_prep;
+
+                    my $dt_parser = DateTime::Format::Pg->new();
+                    my ($interval, $running_out_date, $running_out_count);
+
+                    # Alarme antes, "lembrar de tomar"
+                    if ($values{prep_reminder_before}) {
+                        my $parsed_interval;
+
+                        eval { $parsed_interval = $dt_parser->parse_interval($values{prep_reminder_before_interval}) };
+                        die \['prep_reminder_before_interval', 'invalid'] if $@;
+
+                        my $now = DateTime->now(time_zone => 'America/Sao_Paulo')->set_time_zone('floating');
+                        my $today_plus_interval = DateTime->now(time_zone => 'America/Sao_Paulo')->set_time_zone('floating')->truncate( to => 'day' )->add_duration($parsed_interval);
+
+                        my $cmp = DateTime->compare($now, $today_plus_interval);
+
+                        my $interval_hours = $parsed_interval->hours >= 10 ? $parsed_interval->hours : '0' . $parsed_interval->hours;
+                        my $interval_minutes = $parsed_interval->minutes > 10 ? $parsed_interval->minutes : '0' . $parsed_interval->minutes;
+
+                        $interval = $interval_hours . ':' . $interval_minutes . ':00';
+
+                        if ($cmp <= 0) {
+                            $interval = is_test ? \"DATE 'today' + interval '$interval'" : \"DATE 'today' + interval '$interval' + interval '3 hours'";
+                        } else {
+                            $interval = is_test ? \"DATE 'tomorrow' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
+                        }
+                    }
+
+                    # Alarme pós, "perguntar se tomou"
+                    if ($values{prep_reminder_after}) {
+                        my $parsed_interval;
+
+                        eval { $parsed_interval = $dt_parser->parse_interval($values{prep_reminder_after_interval}) };
+                        die \['prep_reminder_after_interval', 'invalid'] if $@;
+
+                        $interval = $parsed_interval->hours . ':' . $parsed_interval->minutes . ':' . $parsed_interval->seconds;
+
+                        $interval = is_test ? \"DATE 'tomorrow' + interval '$interval'" : \"DATE 'tomorrow' + interval '$interval' + interval '3 hours'";
+                    }
+
+                    # Alarme de estoque de remédio
+                    if ($values{prep_reminder_running_out}) {
+                        defined $values{$_} or die \["$_", 'missing'] for qw( prep_reminder_running_out_date prep_reminder_running_out_count );
+
+                        my $parsed_date;
+                        eval { $parsed_date = $dt_parser->parse_date($values{prep_reminder_running_out_date}) };
+                        die \['prep_reminder_after_interval', 'invalid'] if $@;
+
+                        $running_out_date = $parsed_date;
+
+                        # Cálculando data que devemos enviar notificação.
+                        # Há 30 comprimidos em um frasco e é consumido 1 por dia.
+                        # Logo calculo quantos já foram consumidos desde a data que foi adquirido
+                        # e marco a notificação para 15 dias antes de esgotar.
+                        my $count = $values{prep_reminder_running_out_count} * 30;
+
+                        my $now        = DateTime->now;
+                        my $delta      = $now->delta_days( $parsed_date );
+                        my $delta_days = $delta->delta_days;
+
+                        $now = DateTime->now;
+
+                        my $remaning_count = $count - $delta_days;
+
+                        $running_out_followup_wait_until = DateTime->now->add( days => ($remaning_count) );
+
+                        $running_out_wait_until = DateTime->now->add( days => ($remaning_count) );
+                        $running_out_wait_until = $running_out_wait_until->subtract( days => 15 );
+
+                        my $cmp_running_out_followup_wait_until = DateTime->compare( DateTime->now, $running_out_followup_wait_until );
+                        my $cmp_running_out_wait_until          = DateTime->compare( $now, $running_out_wait_until );
+
+                        if ( $cmp_running_out_followup_wait_until >= 0 ) {
+                            # Não agendo nenhum alarme e não ativo o alarme de running_out
+
+                            $values{prep_reminder_running_out} = 0;
+                        }
+                    }
+
+                    # Setup da table de alarme
+                    my $prep_reminder;
+                    if ($self->prep_reminder) {
+                        $prep_reminder = $self->prep_reminder;
+
+                        $prep_reminder = $prep_reminder->update(
+                            {
+                                reminder_before              => $values{prep_reminder_before} ? 1 : 0,
+                                reminder_before_interval     => $values{prep_reminder_before_interval},
+                                reminder_after               => $values{prep_reminder_after} ? 1 : 0,
+                                reminder_after_interval      => $values{prep_reminder_after_interval},
+                                reminder_temporal_wait_until => $interval,
+
+                                reminder_running_out            => $values{prep_reminder_running_out} ? 1 : 0,
+                                reminder_running_out_date       => $running_out_date,
+                                reminder_running_out_count      => $running_out_count,
+                                reminder_running_out_wait_until => $running_out_wait_until,
+                            },
+                        );
+
+                        # Notificando sisprep a edição do alarme
+                        my $action;
+                        if ( $prep_reminder->reminder_before == 1 && $values{prep_reminder_before_interval} ) {
+                            $action = 'reconfigured'
+                        }
+                        else {
+                            $action = 'deactivated'
+                        }
+
+                        eval {
+                            $self->_simprep->notify_reminder(
+                                action  => $action,
+                                voucher => $self->integration_token,
+
+                                # Apenas o prep_reminder_before_interval é utilizado
+                                ( $action eq 'reconfigured' ? ( remind_at => $values{prep_reminder_before_interval} ) : () )
+                            );
+                        };
+
+                        if ($@) {
+                            $logger->info('fail at prep_reminder req: ' . $@);
+                        }
+                    }
+                    else {
+                        $prep_reminder = $self->result_source->schema->resultset('PrepReminder')->create(
+                            {
+                                recipient_id => $self->id,
+
+                                reminder_before              => $values{prep_reminder_before} ? 1 : 0,
+                                reminder_before_interval     => $values{prep_reminder_before_interval},
+                                reminder_after               => $values{prep_reminder_after} ? 1 : 0,
+                                reminder_after_interval      => $values{prep_reminder_after_interval},
+                                reminder_temporal_wait_until => $interval,
+
+                                reminder_running_out            => $values{prep_reminder_running_out} ? 1 : 0,
+                                reminder_running_out_date       => $running_out_date,
+                                reminder_running_out_count      => $running_out_count,
+                                reminder_running_out_wait_until => $running_out_wait_until,
+                            },
+                        );
+
+                        # Notificando sisprep da criação do alarme
+                        my $action = defined $values{prep_reminder_before} && $values{prep_reminder_before} == 1 ? 'activated' : 'deactivated';
+
+                        eval {
+                            $self->_simprep->notify_reminder(
+                                action  => $action,
+                                voucher => $self->integration_token,
+
+                                # Apenas o prep_reminder_before_interval é utilizado
+                                remind_at => $values{prep_reminder_before_interval}
+                            );
+                        };
+
+                        if ($@) {
+                            $logger->info('fail at prep_reminder req: ' . $@);
+                        }
+                    }
+
+                    # Criando notificação de running_out;
+                    if ($values{prep_reminder_running_out} == 1) {
+                        # Deletando notificação já marcada, se existir
+                        $self->notification_queues->search(
+                            {
+                                prep_reminder_id => $prep_reminder->id,
+                                type_id          => { -in => [11, 12] },
+                                sent_at          => \'IS NULL'
+                            }
+                        )->delete;
+
+                        my $followup_date = $running_out_followup_wait_until;
+                        $followup_date->add( days => 5 );
+
+                        my @notifications = (
+                            {
+                                prep_reminder_id => $prep_reminder->id,
+                                type_id          => 11,
+                                wait_until       => $running_out_wait_until,
+                            },
+                            {
+                                prep_reminder_id => $prep_reminder->id,
+                                type_id          => 12,
+                                wait_until       => $followup_date,
+                            }
+                        );
+
+                        $self->notification_queues->populate(\@notifications);
+                    }
+                }
+
+                if ($values{cancel_prep_reminder}) {
+                    delete $values{cancel_prep_reminder};
+
+                    my $prep_reminder = $self->prep_reminder;
+
+                    if ( $prep_reminder ) {
+                        $prep_reminder->update(
+                            {
+                                reminder_before                 => 0,
+                                reminder_before_interval        => undef,
+                                reminder_after                  => 0,
+                                reminder_after_interval         => undef,
+                                reminder_running_out            => 0,
+                                reminder_running_out_date       => undef,
+                                reminder_running_out_count      => undef,
+                                reminder_running_out_wait_until => undef,
+                            }
+                        );
+
+                        $self->result_source->schema->resultset('NotificationQueue')->search(
+                            {
+                                prep_reminder_id => $prep_reminder->id,
+                                sent_at          => \'IS NULL',
+                            }
+                        )->delete;
+                    }
+                }
+
+
+                delete $values{$_} for qw(
+                    prep_reminder_before prep_reminder_before_interval
+                    prep_reminder_after prep_reminder_after_interval
+                    prep_reminder_running_out prep_reminder_running_out_date prep_reminder_running_out_count
+                );
+
+                if ($values{voucher_type} && $values{voucher_type} eq 'combina') {
+                    die \['integration_token', 'missing'] unless $values{integration_token};
+
+                    my $voucher = $self->result_source->schema->resultset('CombinaVoucher')->search( { value => $values{integration_token}, recipient_id => \'IS NULL' } )->next
+                      or die \['integration_token', 'invalid'];
+
+                    die \['fb_id', 'already-has-voucher'] if $self->combina_vouchers->count >= 1;
+
+                    $voucher->update( { recipient_id => $self->id, assigned_at => \'NOW()' } );
+                    $self->recipient_flag->update(
+                        {
+                            finished_quiz              => 1,
+                            finished_publico_interesse => 1,
+                            is_prep                    => 1,
+                        }
+                    );
+                }
+
+                if ($values{voucher_type} && $values{voucher_type} =~ /^(sus|sisprep)$/) {
+                    $self->recipient_flag->update(
+                        {
+                            finished_quiz              => 1,
+                            finished_publico_interesse => 1,
+                            is_prep                    => 1,
+                        }
+                    );
+                }
+
+                if ($values{combina_city}) {
+                    die \['fb_id', 'must-be-combina']
+                      unless $self->voucher_type eq 'combina' || $values{voucher_type} eq 'combina';
+
+                    die \['combina_city', 'invalid'] unless $values{combina_city} =~ m/^(CRT São Paulo|Campos Elíseos - SP|Fortaleza|Porto Alegre|Ribeirão Preto|Curitiba)$/;
+                }
+
+                # Tratando alarmes do Combina.
+                if (my $combina_reminder_hours_before = delete $values{combina_reminder_hours_before}) {
+                    die \['combina_reminder_hour_exact', 'missing']
+                      unless my $combina_reminder_hours_exact = delete $values{combina_reminder_hour_exact};
+
+                    my $combina_reminder = $self->result_source->schema->resultset('CombinaReminder')->find_or_create(
+                        { recipient_id => $self->id },
+                        { key => 'combina_reminder_recipient_id_key' }
+                    );
+
+                    my $dt_parser = DateTime::Format::Pg->new();
+
+                    my $parsed_date;
+
+                    eval {
+                        $combina_reminder_hours_before = $dt_parser->parse_interval($combina_reminder_hours_before);
+                        $combina_reminder_hours_before = $combina_reminder_hours_before->hours . ':' . $combina_reminder_hours_before->minutes . ':' . $combina_reminder_hours_before->seconds;
+                    };
+                    die \['combina_reminder_hours_before', 'invalid'] if $@;
+
+                    eval {
+                        $combina_reminder_hours_exact  = $dt_parser->parse_interval($combina_reminder_hours_exact);
+                        $combina_reminder_hours_exact = $combina_reminder_hours_exact->hours . ':' . $combina_reminder_hours_exact->minutes . ':' . $combina_reminder_hours_exact->seconds;
+                    };
+                    die \['combina_reminder_hour_exact', 'invalid'] if $@;
+
+                    $combina_reminder->update(
+                        {
+                            reminder_hour_exact => $combina_reminder_hours_exact,
+                            reminder_hours_before => $combina_reminder_hours_before
+                        }
+                    );
+                }
+
+                if (my $combina_reminder_22h = delete $values{combina_reminder_22h}) {
+                    my $combina_reminder = $self->result_source->schema->resultset('CombinaReminder')->find_or_create(
+                        { recipient_id => $self->id },
+                        { key => 'combina_reminder_recipient_id_key' }
+                    );
+
+                    my $dt_parser = DateTime::Format::Pg->new();
+
+                    my $parsed_date;
+
+                    eval {
+                        $combina_reminder_22h = $dt_parser->parse_datetime($combina_reminder_22h);
+                    };
+                    die \['combina_reminder_22h', 'invalid'] if $@;
+
+                    $combina_reminder->update( { reminder_22h => $combina_reminder_22h } );
+                }
+
+                if (my $combina_reminder_double = delete $values{combina_reminder_double}) {
+                    my $combina_reminder = $self->result_source->schema->resultset('CombinaReminder')->find_or_create(
+                        { recipient_id => $self->id },
+                        { key => 'combina_reminder_recipient_id_key' }
+                    );
+
+                    my $dt_parser = DateTime::Format::Pg->new();
+
+                    my $parsed_date;
+
+                    eval {
+                        $combina_reminder_double = $dt_parser->parse_datetime($combina_reminder_double);
+                    };
+                    die \['combina_reminder_double', 'invalid'] if $@;
+
+                    $combina_reminder->update( { reminder_double => $combina_reminder_double } );
+                }
+
+                $self->update(\%values);
+            });
+
+            return {
+                recipient => $self,
+
+                ( $running_out_wait_until ? (running_out_wait_until => $running_out_wait_until->dmy) : () ),
+                ( $running_out_followup_wait_until ? (running_out_date => $running_out_followup_wait_until->subtract( days => 5 )->dmy) : () )
+            };
         },
         research_participation => sub {
             my $r = shift;
@@ -455,10 +1102,39 @@ sub action_specs {
 
             # Tratando consulta
             my $appointment = delete $values{appointment};
+            if ( ref $appointment ) {
+                die \['appointment', 'invalid'] unless defined $appointment->{type_id};
+
+                # Agendando notificação
+                my $type_id = $appointment->{type_id};
+
+                if ($type_id == 1) {
+                    # Notificações de recrutamento
+                    $self->notification_queues->create(
+                        {
+                            type_id      => 3,
+                            recipient_id => $self->id,
+                            wait_until   => \"NOW() + '7 days'::interval"
+                        }
+                    );
+                    $self->notification_queues->create(
+                        {
+                            type_id      => 4,
+                            recipient_id => $self->id,
+                            wait_until   => \"NOW() + '17 days'::interval"
+                        }
+                    );
+
+                }
+            }
 
             my @updatable_flags = qw( is_part_of_research is_prep );
             for my $flag (@updatable_flags) {
                 next unless defined $values{$flag};
+
+                if ( $flag eq 'is_prep' && $values{$flag} == 0 && $self->prep_reminder ) {
+                    $self->prep_reminder->delete;
+                }
 
                 $self->recipient_flag->update( { $flag => $values{$flag} } );
                 delete $values{$flag};
@@ -886,35 +1562,41 @@ sub is_eligible_for_research {
 sub update_is_eligible_for_research {
     my ($self) = @_;
 
-    if ( !$self->is_target_audience ) {
-        return $self->recipient_flag->update(
-            {
-                is_eligible_for_research => 0,
-                updated_at               => \'NOW()'
-            }
-        )
-    }
+    # if ( !$self->is_target_audience ) {
+    #     return $self->recipient_flag->update(
+    #         {
+    #             is_eligible_for_research => 0,
+    #             updated_at               => \'NOW()'
+    #         }
+    #     )
+    # }
 
-    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9' ] } }, { prefetch => 'question' } );
+    my $answer_rs = $self->answers->search( { 'question.code' => { 'in' => [ 'B1', 'B2', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10' ] } }, { prefetch => 'question' } );
 
     my $conditions_met = 0;
+    my $city_condition = 0;
+    my $is_eligible_for_research = $answer_rs->count > 0 ? 0 : undef;
+
     while ( my $answer = $answer_rs->next() ) {
         my $code = $answer->question->code;
 
         if ( $code eq 'B7' ) {
 
-            $conditions_met = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
+            $is_eligible_for_research = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
+        }
+        elsif ($code eq 'A1') {
+            $city_condition = 1 if $answer->answer_value =~ m/^(1|2|3)$/g;
         }
         else {
-            $conditions_met = 1 if $answer->answer_value eq '1';
+            $is_eligible_for_research = 1 if $answer->answer_value eq '1';
         }
 
-        next if $conditions_met == 1;
+        last if $is_eligible_for_research == 1;
     }
 
     $self->recipient_flag->update(
         {
-            is_eligible_for_research => $conditions_met ? 1 : 0,
+            is_eligible_for_research => $is_eligible_for_research,
             updated_at               => \'NOW()'
         }
     )
@@ -927,7 +1609,9 @@ sub upcoming_appointments {
 }
 
 sub appointment_description {
-    my ($self) = @_;
+    my ($self, $appointment_id) = @_;
+
+    die 'appointment_id missing' unless $appointment_id;
 
     my @codes = [
         'A1', 'A5', 'A2', 'A3',
@@ -955,7 +1639,8 @@ sub appointment_description {
 
     # Adicionando flag e fb_id na descrição para identificar no sync
     $answers->[$i]     = { agendamento_chatbot => 1 };
-    $answers->[$i + 1] = { identificador       => $self->integration_token };
+    $answers->[$i + 1] = { voucher             => $self->integration_token };
+    $answers->[$i + 2] = { appointment_id      => $appointment_id };
 
     my $json = JSON->new->pretty(1);
     $answers = $json->encode( $answers );
@@ -968,25 +1653,53 @@ sub appointment_description {
 sub assign_token {
     my ($self, $integration_token) = @_;
 
+    # Verificando se alguem já está com o token.
+    $self->result_source->schema->resultset('Recipient')->search( { integration_token => $integration_token } )->count
+      and die \['integration_token', 'in-use'];
+
     $self->result_source->schema->txn_do( sub {
-        my $token_rs = $self->result_source->schema->resultset('ExternalIntegrationToken');
-        my $token    = $token_rs->search(
-            {
-                value       => $integration_token,
-                assigned_at => \'IS NULL'
-            }
-        )->next;
+        # Verificando se o token existe
+        my $res = $self->_simprep->verify_voucher( voucher => $integration_token );
+        die \['integration_token', 'invalid'] unless $res->{status} eq 'success';
 
-        die \['integration_token', 'invalid'] unless $token;
+        my @required_res = qw(is_prep is_part_of_research);
+        defined $res->{data}->{$_} or die \["integration_res{$_}", 'missing'] for @required_res;
 
-        $self->update(
+        my $data = $res->{data};
+
+        $self->recipient_flag->update(
             {
-                integration_token    => $token->value,
-                using_external_token => 1
+                finished_quiz       => 1,
+                is_target_audience  => 1,
+                is_prep             => $data->{is_prep},
+                is_part_of_research => $data->{is_part_of_research},
             }
         );
 
-        $token->update( { assigned_at => \'NOW()' } );
+        my $city_code = substr $integration_token, 0, 3;
+
+        my $city;
+        if ($city_code eq '001') {
+            $city = '2'
+        }
+        elsif ($city_code eq '002') {
+            $city = '3'
+        }
+        elsif ($city_code eq '003') {
+            $city = '1';
+        }
+
+
+        $self->update(
+            {
+                integration_token    => $integration_token,
+                using_external_token => 1,
+                voucher_type        => 'sisprep',
+
+                ( $city ? ( city => $city ) : () )
+            }
+        );
+
     });
 }
 
@@ -1024,7 +1737,7 @@ sub update_is_target_audience {
     my ($self) = @_;
 
     my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
-        { 'category.name' => 'quiz' },
+        { 'category.name' => 'publico_interesse' },
         {
             join => 'category',
             order_by => { -desc => 'created_at' }
@@ -1033,8 +1746,13 @@ sub update_is_target_audience {
 
     my $answer_rs = $self->answers->search(
         {
-            'question.code'      => { -in => ['A2', 'A6', 'A1', 'A3'] },
-            'me.question_map_id' => $question_map->id
+            'question.code' => { -in => ['A1', 'A2', 'A6','A3'] },
+            (
+                $question_map ?
+                ( 'me.question_map_id' => $question_map->id ) :
+                ()
+
+            )
         },
         { join => 'question' }
     );
@@ -1045,17 +1763,17 @@ sub update_is_target_audience {
 
         my $code = $answer->question->code;
 
-        if ( $code eq 'A2' ) {
+        if ( $code eq 'A1' ) {
+            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
+        }
+        elsif ( $code eq 'A2' ) {
             $is_target_audience = 0 unless $answer->answer_value =~ /^(15|16|17|18|19)$/;
         }
         elsif ( $code eq 'A6' ) {
             $is_target_audience = 0 unless $answer->answer_value eq '1';
         }
         elsif ( $code eq 'A3' ) {
-            $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3)$/;
-        }
-        elsif ( $code eq 'A1' ) {
-            $is_target_audience = 0 unless $answer->answer_value =~ /^(1|2|3)$/;
+            $is_target_audience = 0 unless $answer->answer_value !~ /^(2|3|8)$/;
         }
 
         last if $is_target_audience == 0;
@@ -1069,10 +1787,75 @@ sub update_is_target_audience {
     );
 }
 
+sub risk_group {
+    my $self = shift;
+
+    if ( !$self->recipient_flag->risk_group ) {
+        $self->update_risk_group();
+    }
+
+    return $self->recipient_flag->risk_group;
+}
+
+sub update_risk_group {
+    my $self = shift;
+
+    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+        { 'category.name' => 'publico_interesse' },
+        {
+            join => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    my $answer = $self->answers->search(
+        {
+            'question.code'      => 'A6',
+            'me.question_map_id' => $question_map->id
+        },
+        { join => 'question' }
+    )->next;
+
+    if ($answer) {
+        my $risk_group;
+
+        if ($answer->answer_value == 1) {
+            # Procurando pela resposta da A6a
+
+            my $next_answer = $self->answers->search(
+                {
+                    'question.code'      => 'A6a',
+                    'me.question_map_id' => $question_map->id
+                },
+                { join => 'question' }
+            )->next;
+
+            if ($next_answer->answer_value == 1) {
+                $risk_group = 1;
+            }
+            else {
+                $risk_group = 0;
+            }
+        }
+        else {
+            $risk_group = 0;
+        }
+
+        $self->recipient_flag->update(
+            {
+                risk_group => $risk_group,
+                updated_at => \'NOW()'
+            }
+        );
+    }
+
+    return 1;
+}
+
 sub is_target_audience {
     my ($self) = @_;
 
-    if ( !$self->recipient_flag->is_target_audience || $self->recipient_flag->is_target_audience == 1 ) {
+    if ( !$self->recipient_flag->is_target_audience ) {
         $self->update_is_target_audience();
     }
 
@@ -1221,7 +2004,7 @@ sub stash_by_category {
 sub all_flags {
     my ($self) = @_;
 
-    my @flags = qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz );
+    my @flags = qw( is_target_audience is_eligible_for_research is_part_of_research finished_quiz risk_group );
 
     return
         map {
@@ -1328,27 +2111,28 @@ sub system_labels {
 }
 
 sub answers_for_integration {
-    my ($self) = @_;
+    my $self = shift;
 
-    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
-        { 'category.name' => 'quiz' },
-        {
-            join     => 'category',
-            order_by => { -desc => 'created_at' }
-        }
-    )->next;
+    my @codes;
+    @codes = qw(A1 A2 A3 A4 A4a A4b A5 A6 A6a B1 B2 B3 B4 B5 B6 B7 B8 B9 B10);
+    # if ($self->recipient_flag->finished_recrutamento) {
+    # }
+    # elsif ($self->recipient_flag->finished_publico_interesse) {
+    #     @codes = qw(A1 A2 A3 A4 A4a A4b A5 A6);
+    # }
+    # else {
+    #     die "must have at least 'publico_interesse' finished"
+    # }
 
-    # Removendo perguntas adicionadas por nós
-    my @questions_to_skip = qw(AC1 AC2 AC3 AC4 AC5 AC6 AC7 AC8 A4a A4b);
-
-    my $answer_rs = $self->answers->search( { 'me.question_map_id' => $question_map->id } );
-    my $answers   = $answer_rs->search(
-        { 'question.code' => { -not_in => \@questions_to_skip } },
+    my $answer_rs = $self->answers->search(
+        { 'question.code' => { -in => \@codes } },
         { join => 'question' }
     );
 
-    my @yes_no_questions = qw( A6 B4 B5 B6 B8 B9 B10 );
-    $answers = [
+    my @answers = $answer_rs->all();
+
+    my @yes_no_questions = qw( A6.1 A6.2 B4 B5 B6 B8 B9 B10 );
+    my $answers = [
         map {
             my $a = $_;
 
@@ -1384,9 +2168,16 @@ sub answers_for_integration {
                     $answer = '13'
                 }
                 else {
-                    die 'error at Result::Recipient::answers_for_integration';
+                    die 'error at Result::Recipient::answers_for_publico_interesse_integration';
                 }
             }
+
+            # Caso seja a A6 e A6a mudo para A6.1 e A6.2
+            if ( $question_code eq 'A6' ) {
+                $question_code = 'A6.1';
+            }elsif ( $question_code eq 'A6a' ) {
+                $question_code = 'A6.2';
+            } else { }
 
             # Questões de sim/não devem ser enviadas como 1 ou 0
             if ( grep { $question_code eq $_ } @yes_no_questions ) {
@@ -1401,39 +2192,181 @@ sub answers_for_integration {
                     value         => $answer
                 }
             }
-        } $answers->all()
+        } @answers
     ];
 
-    # Adicionando pergunta B11, ela só existe offline e consiste na pergunta se a pessoa quer participar da pesquisa.
-    push @{$answers}, { question_code => 'B11', value => 1 };
-
-    return $answers
+    return $answers;
 }
 
-sub register_simprep {
-    my ($self) = @_;
+sub register_sisprep {
+    my ($self, $step) = @_;
 
-    my $res = $self->_simprep->register_recipient(
-        answers => $self->answers_for_integration,
-        signed  => $self->signed_term
-    );
+    die 'missing step unless step' unless $step;
 
-    $self->update( { integration_token => $res->{data}->{voucher} } );
+    my $success;
+    $self->result_source->schema->txn_do( sub {
+        my $recipient_integration = $self->result_source->schema->resultset('RecipientIntegration')->find_or_create(
+            { recipient_id => $self->id },
+            { key => 'recipient_integration_recipient_id_key' }
+        );
 
-    return $res->{data}->{url}
+        my $data = $recipient_integration->data;
+
+        my $res;
+        eval {
+            $res = $self->_simprep->register_recipient(
+                answers       => $self->answers_for_integration,
+                facebook_name => $self->name
+            );
+        };
+
+        if ($@ || $res->{status} ne 'success') {
+            # my $coded_res = $res ? to_json($res) : undef;
+
+            $data->{$step} = {
+                status => 'failed',
+                epoch  => time(),
+                # res    => $coded_res ? $coded_res : $@
+            };
+
+            $recipient_integration->update( {
+                # err_msg => $coded_res ? $coded_res : $@,
+                next_retry_at => \"NOW() + interval '4 hours'" } );
+            $success = 0;
+        }
+        else {
+            $data->{$step} = {
+                status => 'success',
+                epoch  => time(),
+            };
+
+            $self->update( { integration_token => $res->{data}->{voucher} } );
+            $success = 1;
+        }
+
+        $recipient_integration->update( { data => $data } );
+    });
+
+    return $success;
+}
+
+sub update_sisprep {
+    my ($self, $code, $answer) = @_;
+
+    my @yes_no_questions = qw( A6.1 A6.2 B4 B5 B6 B8 B9 B10 );
+
+    if ( grep { $code eq $_ } @yes_no_questions ) {
+        $answer = $answer eq '2' ? 0 : 1;
+    }
+
+    my $res;
+    eval {
+        $res = $self->_simprep->update_data(
+            voucher => $self->integration_token,
+            code    => $code,
+            answer  => $answer
+        );
+    };
+    die $@ if $@;
+    if ($@) {
+        $self->result_source->schema->txn_do( sub {
+            my $recipient_integration = $self->result_source->schema->resultset('RecipientIntegration')->find_or_create(
+                { recipient_id => $self->id },
+                { key => 'recipient_integration_recipient_id_key' }
+            );
+
+
+            $recipient_integration->update(
+                {
+                    err_msg => $@,
+                    next_retry_at => \"NOW() + interval '4 hours'"
+                }
+            );
+        });
+    }
+
+    return 1;
+}
+
+sub register_first_questionnaire {
+    my ($self, $step) = @_;
+
+    die 'missing step unless step' unless $step;
+
+    my $success;
+    $self->result_source->schema->txn_do( sub {
+        my $recipient_integration = $self->result_source->schema->resultset('RecipientIntegration')->find_or_create(
+            { recipient_id => $self->id },
+            { key => 'recipient_integration_recipient_id_key' }
+        );
+
+        my $data = $recipient_integration->data;
+
+        my $res;
+        eval {
+            $res = $self->_simprep->register_recipient(
+                answers       => $self->answers_for_integration,
+                facebook_name => $self->name
+            );
+        };
+
+        if ($@ || $res->{status} ne 'success') {
+            my $coded_res = $res ? to_json($res) : undef;
+
+            $data->{$step} = {
+                status => 'failed',
+                epoch  => time(),
+                res    => $coded_res ? $coded_res : $@
+            };
+
+            $recipient_integration->update( { err_msg => $coded_res ? $coded_res : $@ } );
+            $success = 0;
+        }
+        else {
+            $data->{$step} = {
+                status => 'success',
+                epoch  => time(),
+            };
+
+            $self->update( { integration_token => $res->{data}->{voucher} } );
+            $success = 1;
+        }
+
+        $recipient_integration->update( { data => $data } );
+    });
+
+    return $success;
 }
 
 sub fun_questions_score {
     my ($self) = @_;
 
-    my $question_map = $self->result_source->schema->resultset('QuestionMap')->search(
+    my $question_map_rs = $self->result_source->schema->resultset('QuestionMap');
+
+    my $latest_quiz     = $question_map_rs->search(
         { 'category.name' => 'quiz' },
         {
-            join => 'category',
+            join     => 'category',
             order_by => { -desc => 'created_at' }
         }
     )->next;
 
+    my $latest_quiz_fun_questions = $question_map_rs->search(
+        { 'category.name' => 'fun_questions' },
+        {
+            join     => 'category',
+            order_by => { -desc => 'created_at' }
+        }
+    )->next;
+
+    my $fun_questions_answer_count = 0;
+    if ($latest_quiz_fun_questions) {
+        $fun_questions_answer_count = $self->answers->search(
+            { 'me.question_map_id' => $latest_quiz_fun_questions->id }
+        )->count;
+    }
+
+    my $question_map = $fun_questions_answer_count > 0 ? $latest_quiz_fun_questions : $latest_quiz;
     my @questions = qw( AC2 AC3 AC4 AC5 AC6 AC7 );
 
     my $answer_rs = $self->answers->search(
@@ -1459,23 +2392,76 @@ sub message_for_fun_questions_score {
     my $score = $self->fun_questions_score;
 
     if ( $score <= 69 ) {
-        $ret = 'VC É A PABLLO VITTAR, YUKEEEÊ???
-Famosissimah nos rolês, mas tá só nas love song que nem a Pablo, nenon? Você parece ser mais de boas quando o assunto é sexo com várias pessoas - ou pelo menos está numa fase de boas, bem romantiquinha. Pode ser que vc não sinta mta necessidady de sarrar, pode ser q esteja namorando fechado e seu tesão se direcione mais para um/uma parceiro/a fixo, pode ser q vc prefira poucos (e bons) doq muitos, pode ser mil coisas - o importante é vc fazer (ou não fazer) oq vc tiver vontade <3';
+        $ret = {
+            message => 'VC É A PABLLO VITTAR, YUKEEEÊ???
+Famosissimah nos rolês, mas tá só nas love song que nem a Pablo, nenon? Você parece ser mais de boas quando o assunto é sexo com várias pessoas - ou pelo menos está numa fase de boas, bem romantiquinha. Pode ser que vc não sinta mta necessidady de sarrar, pode ser q esteja namorando fechado e seu tesão se direcione mais para um/uma parceiro/a fixo, pode ser q vc prefira poucos (e bons) doq muitos, pode ser mil coisas - o importante é vc fazer (ou não fazer) oq vc tiver vontade <3',
+            picture => 'https://i.imgur.com/u6khXYZ.png'
+        }
     }
     elsif ( $score >= 70 && $score <= 129 ) {
-        $ret = 'VC É A LINN DA QUEBRADA! #TRA #TRA
-Afinal, pra qq eu kro pica se eu tenho todos esses dedo??? Pelo q eu catei, vc curte transar mas vê o sexo como algo q vai muito além de penetração - tb ama viver outras experiências além da neca no edi: chupação, dedo, linguada, de repente até um brinquedinho, nenon? Amo que a sra é super sensorial e tá aberta a experiências, acho um bapho SYM';
+        $ret = {
+            message => 'VC É A LINN DA QUEBRADA! #TRA #TRA
+Afinal, pra qq eu kro pica se eu tenho todos esses dedo??? Pelo q eu catei, vc curte transar mas vê o sexo como algo q vai muito além de penetração - tb ama viver outras experiências além da neca no edi: chupação, dedo, linguada, de repente até um brinquedinho, nenon? Amo que a sra é super sensorial e tá aberta a experiências, acho um bapho SYM',
+            picture => 'https://i.imgur.com/nZksGbf.png'
+        }
     }
     elsif ( $score >= 130 && $score <= 200 ) {
-        $ret = 'VC É A GLORIA GROOVE! LIGADYNHA NO PROCEDER
-Vc é GLORIOSA gatan, toda dona de vc meixxxma! Assim como a Gloria, passa logo o proceder, joga o papo reto, sabe oq tu quer (e quem tu quer, kkkk) e vive suas vontadys livremente - mto empoderada ela. Vc é rainha na pista, e convoca geral pra arrastar e sarrar com autonomia - mas sempre ligadinha na prevenção. Ai que coisa boa!';
+        $ret = {
+            message => 'VC É A GLORIA GROOVE! LIGADYNHA NO PROCEDER
+Vc é GLORIOSA gatan, toda dona de vc meixxxma! Assim como a Gloria, passa logo o proceder, joga o papo reto, sabe oq tu quer (e quem tu quer, kkkk) e vive suas vontadys livremente - mto empoderada ela. Vc é rainha na pista, e convoca geral pra arrastar e sarrar com autonomia - mas sempre ligadinha na prevenção. Ai que coisa boa!',
+            picture => 'https://i.imgur.com/QwscttE.png'
+        }
     }
     else {
-        $ret = 'VC É A MULHER PEPITA! RANNNNNN
-Uma vez piranha, smp piranha, piranha eu sempre hei de ser RANNNN kkk. Kerida, a sra é deshtruidora mesmo 🔥🔥🔥Gosta de sexo sem tabu e sem moralismo, e deve adorar novas experiências, nenon? Deve ter uns sagitário babado nesse mapa astral, aloka. E é isso ai mana, se joga - o segredynho é saber os riscos das suas escolhas e pensar um jeito babado de manter a saúde sexual em dia sem deixar de fazer nada q tu keira.';
+        $ret = {
+            message => 'VC É A MULHER PEPITA! RANNNNNN
+Uma vez piranha, smp piranha, piranha eu sempre hei de ser RANNNN kkk. Kerida, a sra é deshtruidora mesmo 🔥🔥🔥Gosta de sexo sem tabu e sem moralismo, e deve adorar novas experiências, nenon? Deve ter uns sagitário babado nesse mapa astral, aloka. E é isso ai mana, se joga - o segredynho é saber os riscos das suas escolhas e pensar um jeito babado de manter a saúde sexual em dia sem deixar de fazer nada q tu keira.',
+            picture => 'https://i.imgur.com/DKuRSXT.png'
+        }
     }
 
     return $ret;
+}
+
+sub prep_reminder_confirmation {
+    my $self = shift;
+
+    my $prep_reminder = $self->prep_reminder;
+
+    my $interval;
+    if ($prep_reminder->reminder_before) {
+        $interval = $prep_reminder->reminder_before_interval;
+    }
+    else {
+        $interval = $prep_reminder->reminder_after_interval;
+    }
+
+    eval {
+        $self->_simprep->notify_reminder(
+            action  => 'notification_confirmed',
+            voucher => $self->integration_token,
+        );
+    };
+
+    return $prep_reminder->update(
+        {
+            reminder_temporal_confirmed_at => \'NOW()',
+            reminder_temporal_wait_until   => \"(NOW()::DATE + interval '1 day') + interval '$interval' + interval '3 hours'"
+        }
+    );
+}
+
+sub prep_reminder_no {
+    my $self = shift;
+
+    eval {
+        $self->_simprep->notify_reminder(
+            action  => 'notification_denied',
+            voucher => $self->integration_token,
+        );
+    };
+
+    return 1
 }
 
 __PACKAGE__->meta->make_immutable;
