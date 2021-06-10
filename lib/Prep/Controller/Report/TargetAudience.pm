@@ -292,32 +292,33 @@ sub get {
     )->count;
     push @metrics, {label => 'Agendamentos totais', value => $total_appointments};
 
-    # Métricas de contato
-    my @contact_metrics;
-    for (1 .. 2) {
-        my ($label, $value);
+    my $whatsapp_count = $recipient_rs->search({'me.phone' => \'IS NOT NULL'})->count;
+    push @metrics, {label => 'Passaram WhatsApp', value => $whatsapp_count};
 
-        if ($_ == 1) {
-            $label = 'Passaram WhatsApp';
-            $value = $recipient_rs->search(
-                {
-                    'me.phone'      => \'IS NOT NULL',
-                    'me.created_at' => {'>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
-                }
-            )->count;
-        }
-        else {
-            $label = 'Passaram Instagram';
-            $value = $recipient_rs->search(
-                {
-                    'me.instagram'  => \'IS NOT NULL',
-                    'me.created_at' => {'>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
-                }
-            )->count;
-        }
-        push @contact_metrics, {label => $label, value => $value};
-    }
-    push @metrics, {sub_group => 'Passaram contato após bloco A', metrics => \@contact_metrics};
+    my $instagram_count = $recipient_rs->search({'me.instagram' => \'IS NOT NULL'})->count;
+    push @metrics, {label => 'Passaram Instagram', value => $instagram_count};
+
+    # Métricas de contato
+    # my @contact_metrics;
+    # for (1 .. 2) {
+    #     my ($label, $value);
+
+    #     if ($_ == 1) {
+    #         $label = 'Passaram WhatsApp';
+    #         $value =;
+    #     }
+    #     else {
+    #         $label = 'Passaram Instagram';
+    #         $value = $recipient_rs->search(
+    #             {
+    #                 'me.instagram'  => \'IS NOT NULL',
+    #                 'me.created_at' => {'>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
+    #             }
+    #         )->count;
+    #     }
+    #     push @contact_metrics, {label => $label, value => $value};
+    # }
+    # push @metrics, {sub_group => 'Passaram contato após bloco A', metrics => \@contact_metrics};
 
     return $c->render(
         status => 200,
