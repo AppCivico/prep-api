@@ -213,22 +213,22 @@ sub get {
 
         if ($_ == 1) {
             $label = 'Aceitaram o TCLE';
-            $value = $term_signature_rs->search(
+            $value = $recipient_rs->search(
                 {
-                    'me.signed'    => 1,
-                    'me.signed_at' => {'>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
+                    '-and' => [
+                        \['EXISTS (SELECT 1 FROM term_signature s WHERE s.recipient_id = me.id AND s.signed = true)'],
+                    ]
                 },
-                {group_by => 'me.recipient_id'}
             )->count;
         }
         elsif ($_ == 2) {
             $label = 'Não aceitaram o TCLE';
-            $value = $term_signature_rs->search(
+            $value = $recipient_rs->search(
                 {
-                    'me.signed'    => 0,
-                    'me.signed_at' => {'>=' => \"to_timestamp($since)", '<=' => \"to_timestamp($until)"}
+                    '-and' => [
+                        \['EXISTS (SELECT 1 FROM term_signature s WHERE s.recipient_id = me.id AND s.signed = false)'],
+                    ]
                 },
-                {group_by => 'me.recipient_id'}
             )->count;
         }
         else {
