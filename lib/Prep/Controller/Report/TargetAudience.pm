@@ -280,8 +280,16 @@ sub get {
     )->count;
     push @metrics, {label => 'Criaram agendamento', value => $created_appointment};
 
-    my $total_appointments
-      = $c->schema->resultset('Appointment')->search({'me.created_at' => {'-between' => [$since, $until]}})->count;
+    my $total_appointments = $c->schema->resultset('Appointment')->search(
+        {
+            '-and' => [
+                \[
+                    'me.created_at BETWEEN to_timestamp(?) AND to_timestamp(?)',
+                    $since, $until
+                ]
+            ]
+        }
+    )->count;
     push @metrics, {label => 'Agendamentos totais', value => $total_appointments};
 
     # Métricas de contato
