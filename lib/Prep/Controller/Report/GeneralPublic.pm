@@ -82,7 +82,7 @@ sub get {
             # nada
         }
 
-        push @metrics, {label => $label, value => $value, weight => $weight};
+        push @metrics, {label => $label, value => $value, weight => $weight} if defined $label;
     }
 
     @metrics = sort { $a->{weight} <=> $b->{weight} } @metrics;
