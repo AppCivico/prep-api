@@ -10,15 +10,15 @@ __PACKAGE__->table('ViewReportGeneral');
 
 __PACKAGE__->add_columns(
     qw(
-        count_one_interaction
-        count_multiple_interactions
-        count_refused_publico_interesse
-        count_started_publico_interesse_after_refusal
-        count_started_publico_interesse
-        count_finished_publico_interesse
-        count_started_quiz_brincadeira
-        count_finished_quiz_brincadeira
-        count_recipients
+      count_one_interaction
+      count_multiple_interactions
+      count_refused_publico_interesse
+      count_started_publico_interesse_after_refusal
+      count_started_publico_interesse
+      count_finished_publico_interesse
+      count_started_quiz_brincadeira
+      count_finished_quiz_brincadeira
+      count_recipients
     )
 );
 
@@ -74,7 +74,7 @@ SELECT
         FROM recipient_flags f
         JOIN answers_filtered a ON a.recipient_id = f.recipient_id
         WHERE f.finished_publico_interesse = true
-        AND a.code = 'A6'
+        AND a.code = 'AC1'
     ) AS count_finished_publico_interesse,
     (SELECT count(1) FROM answers_filtered a JOIN question q ON a.question_id = q.id WHERE q.code = 'AC1' ) AS count_started_quiz_brincadeira,
     (
