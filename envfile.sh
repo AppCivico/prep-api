@@ -15,7 +15,7 @@ export GOOGLE_CLIENT_SECRET=""
 export REFRESH_TOKEN=""
 export GOOGLE_CALENDAR_API_URL="https://www.googleapis.com/calendar/v3"
 
-export SIMPREP_API_URL="http://206.189.170.15/api"
+export SIMPREP_API_URL="https://homologacao.sisprep1519.org/api"
 export SIMPREP_TOKEN="f1ed2d512acf7525c3a8244091711b4b16b9f33e"
 
 export FB_API_URL="https://graph.facebook.com/v3.2"
