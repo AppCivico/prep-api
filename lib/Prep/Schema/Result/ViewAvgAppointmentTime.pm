@@ -23,7 +23,7 @@ WITH avg_per_recipient AS (
     JOIN appointment a ON a.recipient_id = r.id
     WHERE r.created_at BETWEEN to_timestamp(?) AND to_timestamp(?)
     GROUP BY a.recipient_id
-) SELECT round(avg(epoch)/3600, 2) avg_epoch FROM avg_per_recipient
+) SELECT round((avg(epoch)/3600)::NUMERIC, 2) avg_epoch FROM avg_per_recipient
 
 SQL_QUERY
 
