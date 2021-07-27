@@ -24,7 +24,7 @@ WITH avg_per_recipient AS (
     WHERE r.created_at BETWEEN to_timestamp(?) AND to_timestamp(?)
         AND r.created_at > '2019-06-21 00:00:00.000000+00'
     GROUP BY a.recipient_id
-) SELECT avg(epoch)/3600 avg_epoch FROM avg_per_recipient
+) SELECT round(avg(epoch)/3600, 2) avg_epoch FROM avg_per_recipient
 
 SQL_QUERY
 

@@ -299,7 +299,7 @@ sub get {
     push @metrics,
       {
         label => 'Tempo médio entre criação do contato e criação de agendamento (em horas)',
-        value => sprintf("%.3f", $avg_appointment_creation_time->avg_epoch);
+        value => $avg_appointment_creation_time->avg_epoch
       };
 
     my $whatsapp_count = $recipient_rs->search({'me.phone' => \'IS NOT NULL'})->count;
