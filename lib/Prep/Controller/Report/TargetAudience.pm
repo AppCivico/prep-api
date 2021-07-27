@@ -292,6 +292,16 @@ sub get {
     )->count;
     push @metrics, {label => 'Agendamentos totais', value => $total_appointments};
 
+    my $avg_appointment_creation_time = $c->schema->resultset('ViewAvgAppointmentTime')->search(
+        undef,
+        {bind => [$since, $until]}
+    )->next;
+    push @metrics,
+      {
+        label => 'Tempo médio entre criação do contato e criação de agendamento (em horas)',
+        value => $avg_appointment_creation_time->avg_epoch
+      };
+
     my $whatsapp_count = $recipient_rs->search({'me.phone' => \'IS NOT NULL'})->count;
     push @metrics, {label => 'Passaram WhatsApp', value => $whatsapp_count};
 
