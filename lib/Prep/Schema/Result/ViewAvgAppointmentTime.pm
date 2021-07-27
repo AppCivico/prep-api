@@ -22,6 +22,7 @@ WITH avg_per_recipient AS (
         recipient r
     JOIN appointment a ON a.recipient_id = r.id
     WHERE r.created_at BETWEEN to_timestamp(?) AND to_timestamp(?)
+        AND r.created_at > '2019-06-21 00:00:00.000000+00'
     GROUP BY a.recipient_id
 ) SELECT avg(epoch)/3600 avg_epoch FROM avg_per_recipient
 
